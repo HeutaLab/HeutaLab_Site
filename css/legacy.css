@@ -138,6 +138,55 @@ a.chip:hover { background: #e0e6ef; }
 .backlink { max-width: 840px; margin-top: 26px; font-weight: 800; font-size: 13px; text-transform: uppercase; }
 .backlink a:hover { color: var(--cobalt); }
 
+/* ---- hub pages: homepage-style content cards ------------------------ */
+.toc-row { max-width: 900px; margin-top: 20px; }
+.toc-row .chip { background: white; border: 1px solid #e2e6ee; }
+.toc-row .chip:hover { border-color: var(--cobalt); color: var(--cobalt); background: white; }
+
+.card-stack { display: grid; gap: 22px; margin-top: 30px; max-width: 980px; }
+.content-card {
+  padding: 30px 34px 26px;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(43, 48, 63, 0.05);
+  overflow: hidden;
+  scroll-margin-top: 24px;
+}
+.tone-blue   { background: linear-gradient(135deg, #f7fbff, #e9f1f9); }
+.tone-purple { background: linear-gradient(135deg, #fbfaff, #ebe8fb); }
+.tone-warm   { background: linear-gradient(135deg, #fffdf6, #fff1da); }
+.tone-mint   { background: linear-gradient(135deg, #f5fcf9, #e2f4ec); }
+.coral-eyebrow { color: #15182b; }
+.coral-eyebrow::after { background: var(--coral); }
+.mint-eyebrow { color: #15182b; }
+.mint-eyebrow::after { background: var(--mint); }
+
+.card-title {
+  margin: 18px 0 0;
+  font-size: 26px;
+  line-height: 1.12;
+  letter-spacing: -0.7px;
+  font-weight: 850;
+}
+.card-prose { margin-top: 12px; font-size: 16px; max-width: none; }
+.card-prose h1, .card-prose h2 { font-size: 20px; }
+.card-prose h3 { font-size: 17.5px; }
+.card-prose h4 { font-size: 16px; }
+.card-prose img {
+  background: white;
+  max-height: 460px;
+  width: auto;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+.card-prose .embed { max-width: 760px; margin-left: auto; margin-right: auto; }
+.card-prose > :first-child { margin-top: 0; }
+.card-prose > :last-child { margin-bottom: 0; }
+
+@media (max-width: 620px) {
+  .content-card { padding: 20px 18px 18px; }
+}
+
 /* ---- about ---------------------------------------------------------- */
 .prose .about-photo { max-width: 320px; border-radius: 12px; }
 .about-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 22px; }

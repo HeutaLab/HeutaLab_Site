@@ -246,12 +246,143 @@ def build_blog_index():
 
 
 # ------------------------------------------------------------- legacy pages
+# Nav-level hub pages get the homepage's panel-card treatment; the rest stay
+# as plain prose articles.
+HUB_META = {
+    '/resources': ('Resource library',
+                   'Classroom-ready projects, files and how-to videos from fifteen years of teaching with technology.'),
+    '/coding': ('Coding',
+                'Schemes of work and projects for teaching programming — Scratch, Sonic Pi, robots and more.'),
+    '/presenting': ('Presenting',
+                    'Workshop and conference resources: Minecraft Education, Sonic Pi and hands-on sessions.'),
+    '/media': ('Media',
+               'Making things in the classroom — 3D printing, Photoshop, MinecraftEDU and stop-motion animation.'),
+    '/game-based-learning': ('Game-based learning',
+                             'Learning through games, from Minecraft story worlds to classroom game design.'),
+    '/experimental': ('Experimental',
+                      'Prototypes and future-classroom experiments — digital canvases, new hardware, new habits.'),
+    '/eyfs': ('Early Years (EYFS)',
+              'Websites, apps and interactives that actually work with 3–5 year olds.'),
+    '/professional-development': ('Professional development',
+                                  'Teacher training sessions, masterclasses and conference workshops.'),
+}
+CARD_TONES = ['tone-blue', 'tone-purple', 'tone-warm', 'tone-mint']
+EYEBROW_TONES = ['blue', 'purple', 'coral-eyebrow', 'mint-eyebrow']
+H_SPLIT = re.compile(r'<h([12])\b[^>]*>(.*?)</h\1>', re.S | re.I)
+
+
+def anchor_slug(text, used):
+    base = re.sub(r'[^a-z0-9]+', '-', text.lower()).strip('-')[:60] or 'section'
+    slug, n = base, 2
+    while slug in used:
+        slug, n = f'{base}-{n}', n + 1
+    used.add(slug)
+    return slug
+
+
+DIV_TOKEN = re.compile(r'<div\b[^>]*>|</div\s*>', re.I)
+
+
+def balance_divs(fragment):
+    """Heading-boundary splits can cut through Squarespace wrapper divs,
+    leaving orphan closers that would end our card early. Drop closers with no
+    opener in the fragment and close any left open."""
+    out, depth = [], 0
+    pos = 0
+    for m in DIV_TOKEN.finditer(fragment):
+        out.append(fragment[pos:m.start()])
+        tok = m.group(0)
+        if tok.lower().startswith('<div'):
+            depth += 1
+            out.append(tok)
+        elif depth > 0:
+            depth -= 1
+            out.append(tok)
+        # else: orphan </div> — drop it
+        pos = m.end()
+    out.append(fragment[pos:])
+    return ''.join(out) + '</div>' * depth
+
+
+def sectionize(body):
+    """Split cleaned page HTML into (intro, [(heading_text, inner_html), ...])
+    at its top-most heading level. Empty headings merge into the previous
+    section (Squarespace used them as spacers)."""
+    levels = [m.group(1) for m in H_SPLIT.finditer(body)]
+    if not levels:
+        return body, []
+    top = min(levels)
+    parts = re.split(r'(<h%s\b[^>]*>.*?</h%s\s*>)' % (top, top), body, flags=re.S | re.I)
+    intro, sections = parts[0], []
+    for i in range(1, len(parts), 2):
+        heading_html, content = parts[i], parts[i + 1] if i + 1 < len(parts) else ''
+        heading = text_of(heading_html).strip()
+        if not heading and sections:
+            sections[-1] = (sections[-1][0], sections[-1][1] + content)
+        elif not heading:
+            intro += content
+        else:
+            sections.append((heading, content))
+    return intro, sections
+
+
+def hub_inner(title, blurb, body):
+    intro, sections = sectionize(body)
+    used = set()
+    cards, chips = [], []
+    intro = balance_divs(intro)
+    # "Part 2" / "Day 3"-style headings are continuations, not new topics
+    merged = []
+    for heading, content in sections:
+        if merged and re.match(r'^(part|day|session|lesson)\s*\d+\b', heading, re.I):
+            merged[-1] = (merged[-1][0],
+                          merged[-1][1] + f'<h2>{esc(heading)}</h2>' + content)
+        else:
+            merged.append((heading, content))
+    sections = [(h, balance_divs(c)) for h, c in merged]
+    for i, (heading, content) in enumerate(sections):
+        sid = anchor_slug(heading, used)
+        tone = CARD_TONES[i % len(CARD_TONES)]
+        eyebrow = EYEBROW_TONES[i % len(EYEBROW_TONES)]
+        chips.append(f'<a class="chip" href="#{sid}">{esc(heading)}</a>')
+        cards.append(f'''        <section class="content-card {tone}" id="{sid}">
+          <p class="eyebrow {eyebrow}">{esc(title)} · {i + 1:02d}</p>
+          <h2 class="card-title">{esc(heading)}</h2>
+          <div class="prose card-prose">
+{content.strip()}
+          </div>
+        </section>''')
+    intro_html = f'<div class="prose">\n{intro.strip()}\n</div>\n' if text_of(intro).strip() else ''
+    toc = f'<nav class="chip-row toc-row" aria-label="On this page">{"".join(chips)}</nav>' if len(chips) > 1 else ''
+    return f'''      <div class="page-wrap shell">
+        <div class="page-hero">
+          <p class="eyebrow purple">Library · EdTech Lounge archive</p>
+          <h1>{esc(title)}<span>.</span></h1>
+          <div class="lime-stroke" aria-hidden="true"></div>
+          <p class="hero-sub">{esc(blurb)}</p>
+        </div>
+        {toc}
+        {intro_html}<div class="card-stack">
+{chr(10).join(cards)}
+        </div>
+        <p class="backlink"><a href="/site-index/">← Site index</a></p>
+      </div>'''
+
+
 def build_legacy_pages():
     for path, pg in sorted(PAGES.items()):
         new_path = path.rstrip('/') + '/'
         body = clean_html(pg['body'], ctx=new_path)
-        title = pg['title'] or path.strip('/').replace('-', ' ').title()
-        inner = f'''      <article class="page-wrap shell">
+        if path in HUB_META:
+            title, blurb = HUB_META[path]
+            inner = hub_inner(title, blurb, body)
+            desc = blurb
+        else:
+            title = pg['title'] or path.strip('/').replace('-', ' ').title()
+            if title.isupper() and len(title) > 6:
+                title = title.capitalize()
+            desc = excerpt_of(pg) or f'{title} — from the EdTech Lounge archive.'
+            inner = f'''      <article class="page-wrap shell">
         <div class="page-hero">
           <p class="eyebrow purple">Library · EdTech Lounge archive</p>
           <h1>{esc(title)}<span>.</span></h1>
@@ -263,10 +394,9 @@ def build_legacy_pages():
         <p class="backlink"><a href="/site-index/">← Site index</a></p>
       </article>'''
         write_page(new_path, page_shell(
-            title=f'{title} — HeutaLab',
-            description=excerpt_of(pg) or f'{title} — from the EdTech Lounge archive.',
+            title=f'{title} — HeutaLab', description=desc,
             path=new_path, active='', inner=inner))
-    print(f'legacy pages: {len(PAGES)}')
+    print(f'legacy pages: {len(PAGES)} ({len(HUB_META)} hub-style)')
 
 
 # ------------------------------------------------- collection landing pages
