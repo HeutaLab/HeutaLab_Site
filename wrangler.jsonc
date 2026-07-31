@@ -1,0 +1,10 @@
+{
+  // Deploys the static site to the existing Worker behind heutalab.com.
+  // Usage: npx wrangler login (once), then: npx wrangler deploy
+  "name": "hidden-hall-06d6",
+  "compatibility_date": "2026-07-01",
+  "assets": {
+    "directory": ".",
+    "not_found_handling": "404-page"
+  }
+}
