@@ -68,8 +68,8 @@ def page_shell(*, title, description, path, active, inner, extra_head=''):
     <link rel="alternate" type="application/rss+xml" title="HeutaLab blog" href="/blog/feed.xml" />
     <title>{esc(title)}</title>
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/css/styles.css" />
-    <link rel="stylesheet" href="/css/legacy.css" />
+    <link rel="stylesheet" href="/css/styles.css?v=2" />
+    <link rel="stylesheet" href="/css/legacy.css?v=2" />
 {extra_head}  </head>
   <body>
     <main id="top">
