@@ -4,6 +4,7 @@
 .DS_Store
 .assetsignore
 wrangler.jsonc
+package.json
 README.md
 migration
 /heutalab-static-site.zip
