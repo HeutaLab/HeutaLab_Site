@@ -42,12 +42,8 @@ img { display: block; }
 }
 
 .brand { display: inline-flex; align-items: center; gap: 12px; width: max-content; }
-.brand-mark { width: 68px; height: 61px; position: relative; display: block; }
-.brand-mark .bar { position: absolute; bottom: 0; width: 13px; border-radius: 4px 4px 0 0; transform-origin: bottom; }
-.brand-mark .one { left: 1px; height: 59px; background: linear-gradient(#ff3e45, #ff5655); }
-.brand-mark .two { left: 16px; height: 40px; background: linear-gradient(#0863d7, #2783f0); clip-path: polygon(0 0,100% 19%,100% 100%,0 100%); }
-.brand-mark .three { left: 32px; height: 58px; background: linear-gradient(#f7b229, #ff7b35); }
-.brand-mark .four { left: 49px; height: 50px; background: linear-gradient(#1eb18f, #32c19d); clip-path: polygon(100% 0,100% 78%,0 100%,0 18%); }
+.brand-mark { width: 58px; height: 58px; display: block; }
+.brand-mark svg { width: 100%; height: 100%; display: block; }
 .brand-name { display: block; font-size: 39px; line-height: .9; font-weight: 850; letter-spacing: -2px; }
 .brand-name span { color: var(--coral); }
 .brand-copy small { display: block; margin-top: 8px; font: 10px/1.1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1.1px; color: var(--muted); }
