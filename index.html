@@ -19,7 +19,7 @@
     <title>HeutaLab — EdTech for Curious Minds</title>
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="assets/brand/apple-touch-180.png" />
-    <link rel="stylesheet" href="css/styles.css?v=2" />
+    <link rel="stylesheet" href="css/styles.css?v=3" />
     <script src="js/main.js" defer></script>
   </head>
   <body>
@@ -46,6 +46,8 @@
             <summary>Apps</summary>
             <div class="nav-menu">
               <a href="#apps">Classroom tools</a>
+              <a href="https://trycreance.app">Creance</a>
+              <a href="https://sagestage.app">Sage on the Stage</a>
               <a href="#categories">Browse categories</a>
             </div>
           </details>
@@ -208,8 +210,107 @@
         </a>
       </section>
 
+      <section class="app-showcase shell" id="apps" aria-labelledby="apps-title">
+        <div class="showcase-intro">
+          <p class="eyebrow blue">Our apps</p>
+          <h2 id="apps-title">Two apps, built while teaching<span>.</span></h2>
+          <p>
+            Both run in the browser, both keep your class data on your own
+            device, and both were written for the jobs that eat a teacher's
+            week — recording what children can actually do, and running the
+            screen at the front of the room.
+          </p>
+        </div>
+
+        <article class="app-feature creance-feature">
+          <div class="app-feature-copy">
+            <p class="app-badge"><i class="creance-mark" aria-hidden="true">C</i> Creance</p>
+            <h3>Assessment recorded while<br class="desktop-break" /> you teach, not after.</h3>
+            <p>
+              Paste in a class list, add your own success criteria, and mark
+              against them as you move around the room. Every child's picture
+              builds up criterion by criterion, so the gaps show themselves
+              before the end of the unit rather than after it.
+            </p>
+            <ul class="app-points">
+              <li>Mark as Not started, Developing, Secure or Mastered — in Grid, Focus or Tap mode, the last built for marking from a phone on the move.</li>
+              <li>High achiever and encouragement flags appear on their own, next to the children they apply to.</li>
+              <li>Class breakdown and analytics show how the whole group is doing on a topic at a glance.</li>
+              <li>Export the lot as a spreadsheet when reports are due.</li>
+              <li>Names, notes and photos stay on the device behind a PIN — back everything up to a single file.</li>
+            </ul>
+            <div class="app-links">
+              <a class="button button-creance" href="https://trycreance.app">
+                Open the example <span aria-hidden="true">→</span>
+              </a>
+            </div>
+            <p class="app-note">
+              Opens on the class shown here — two invented classes and a term of marks, so there
+              is something to look at. Your school's own copy lives at
+              <a href="https://creance.heutalab.com">creance.heutalab.com</a>, starts empty, and
+              keeps its data separate from anything tried out here.
+            </p>
+          </div>
+
+          <figure class="app-shot">
+            <img
+              src="assets/apps/creance-assess.png"
+              width="1400"
+              height="774"
+              loading="lazy"
+              decoding="async"
+              alt="Creance's Assess grid under a banner reading “These children are not real”. A Year 5 class is listed down the left with a coverage percentage each, five Earth and Space success criteria run across the top, and each cell is a four-part bar coloured for Developing, Secure or Mastered. Confidence stars and teacher notes sit on the right, with a class breakdown along the bottom."
+            />
+            <figcaption>
+              The Assess grid, mid-topic — and exactly what opens when you tap
+              through. The banner is the app's, not ours.
+            </figcaption>
+          </figure>
+        </article>
+
+        <article class="app-feature sage-feature reverse">
+          <div class="app-feature-copy">
+            <p class="app-badge"><i class="sage-mark" aria-hidden="true">S</i> Sage on the Stage</p>
+            <h3>The screen at the front<br class="desktop-break" /> of the room.</h3>
+            <p>
+              Around fifty widgets — timers, name picker, group maker, traffic
+              light, draw pad, teaching clock, noise meter — that you drop onto
+              a screen and arrange however the lesson needs. Build a deck ahead
+              of time, or add a tool the moment you need it.
+            </p>
+            <ul class="app-points">
+              <li>Screens you can prepare as a deck, so a lesson's tools are one tap apart.</li>
+              <li>Paste a class register once and every name tool uses it.</li>
+              <li>Nothing is recorded or sent anywhere — the noise meter and webcam included.</li>
+              <li>Every widget is documented, with a shareable link straight to any one of them.</li>
+            </ul>
+            <div class="app-links">
+              <a class="button button-sage" href="https://sagestage.app">
+                Try it in your browser <span aria-hidden="true">→</span>
+              </a>
+              <a class="button button-outline" href="https://sagestage.co.uk">Every widget, explained</a>
+            </div>
+          </div>
+
+          <figure class="app-shot">
+            <img
+              src="assets/apps/sagestage-board.jpg"
+              width="1400"
+              height="872"
+              loading="lazy"
+              decoding="async"
+              alt="A Sage on the Stage screen holding five widgets: a five-minute timer, a name picker showing a chosen name, a traffic light on green, the morning's agenda as a tickable list, and a clock. The widget dock runs along the bottom of the screen."
+            />
+            <figcaption>
+              One screen of a lesson deck, with the widget dock along the
+              bottom. Demonstration class list.
+            </figcaption>
+          </figure>
+        </article>
+      </section>
+
       <section class="feature-grid shell" id="resources">
-        <article class="panel apps-panel" id="apps">
+        <article class="panel apps-panel">
           <div class="panel-intro">
             <p class="eyebrow blue">Our apps</p>
             <h2>
@@ -220,33 +321,33 @@
               Save time, reduce workload,<br />
               improve outcomes.
             </p>
-            <a class="small-button" href="#categories">
+            <a class="small-button" href="#apps">
               View all apps <span aria-hidden="true">→</span>
             </a>
           </div>
 
           <div class="app-list">
-            <a class="app-row" href="#newsletter">
-              <span class="app-icon mint" aria-hidden="true">●●</span>
+            <a class="app-row" href="https://trycreance.app">
+              <span class="app-icon creance-mark" aria-hidden="true">C</span>
               <span>
-                <strong>Classroom Helper</strong>
-                <small>Plan, assess and report with confidence.</small>
+                <strong>Creance</strong>
+                <small>Assess against your own success criteria, as you teach.</small>
               </span>
               <span aria-hidden="true">→</span>
             </a>
-            <a class="app-row" href="#newsletter">
-              <span class="app-icon coral" aria-hidden="true">▤</span>
+            <a class="app-row" href="https://sagestage.app">
+              <span class="app-icon sage-mark" aria-hidden="true">S</span>
               <span>
-                <strong>AI Report Writer</strong>
-                <small>Smart reports in minutes, not hours.</small>
+                <strong>Sage on the Stage</strong>
+                <small>Fifty classroom widgets for the screen at the front.</small>
               </span>
               <span aria-hidden="true">→</span>
             </a>
-            <a class="app-row" href="#newsletter">
-              <span class="app-icon violet" aria-hidden="true">▣</span>
+            <a class="app-row" href="https://sagestage.co.uk">
+              <span class="app-icon violet" aria-hidden="true">?</span>
               <span>
-                <strong>Classroom Screen</strong>
-                <small>Engage every learner, every lesson.</small>
+                <strong>Sage Stage help</strong>
+                <small>Every widget, explained on one page.</small>
               </span>
               <span aria-hidden="true">→</span>
             </a>
