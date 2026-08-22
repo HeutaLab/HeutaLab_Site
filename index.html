@@ -19,7 +19,13 @@
     <title>HeutaLab — EdTech for Curious Minds</title>
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="assets/brand/apple-touch-180.png" />
-    <link rel="stylesheet" href="css/styles.css?v=3" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap"
+    />
+    <link rel="stylesheet" href="/css/styles.css?v=4" />
     <script src="js/main.js" defer></script>
   </head>
   <body>
@@ -99,15 +105,11 @@
         </div>
 
         <div class="hero-copy">
-          <h1 id="hero-title">
-            Tools, ideas and<br />
-            training for better<br />
-            learning<span>.</span>
-          </h1>
+          <h1 id="hero-title">Tools, ideas and training for better learning<span>.</span></h1>
           <div class="lime-stroke" aria-hidden="true"></div>
           <p>
-            Practical EdTech for teachers, leaders and parents<br class="desktop-break" />
-            of 5–13 year olds. Built by a teacher. Used in classrooms.
+            Practical EdTech for teachers, leaders and parents of 5–13 year
+            olds. Built by a teacher. Used in classrooms.
           </p>
           <div class="hero-actions">
             <a class="button button-primary" href="#apps">
@@ -115,99 +117,40 @@
             </a>
             <a class="button button-outline" href="/resources/">Browse resources</a>
           </div>
+          <p class="hero-proof">
+            <strong>Two apps, both free to try in the browser.</strong>
+            Class data stays on your own device.
+          </p>
         </div>
 
-        <div
-          class="hero-art"
-          role="img"
-          aria-label="A learner wearing headphones and using a laptop"
-        >
-          <div class="reference-crop"></div>
-          <span class="dot-grid" aria-hidden="true">
-            <i></i><i></i><i></i><i></i><i></i>
-            <i></i><i></i><i></i><i></i><i></i>
-            <i></i><i></i><i></i><i></i><i></i>
-          </span>
-          <div class="hero-circle" aria-hidden="true"></div>
-          <blockquote class="hero-quote">
-            <span class="quote-mark" aria-hidden="true">“</span>
-            <p>
-              The best way<br />
-              to predict the<br />
-              future is to<br />
-              create it.
-            </p>
-            <footer>— Alan Kay</footer>
-          </blockquote>
-        </div>
+        <figure class="hero-shot">
+          <img
+            src="assets/apps/creance-assess.png"
+            width="1400"
+            height="774"
+            fetchpriority="high"
+            decoding="async"
+            alt="A close view of Creance's Assess grid: a Year 5 class listed down the left with a coverage percentage each, Earth and Space success criteria across the top, and every cell a four-part bar coloured for Developing, Secure or Mastered."
+          />
+          <figcaption>
+            Creance, marking against your own success criteria. Demonstration
+            class — the names and marks are invented.
+          </figcaption>
+        </figure>
       </section>
 
-      <section class="category-strip shell" id="categories" aria-label="Browse topics">
-        <a class="category-card" href="/game-based-learning/">
-          <span class="category-art game" aria-hidden="true">
-            <img
-              class="tile-image"
-              src="assets/tiles/game-based-learning.png"
-              alt=""
-            />
-            <i class="shape-a"></i><i class="shape-b"></i><i class="shape-c"></i>
-          </span>
-          <span>Game-based learning</span>
-        </a>
-
-        <a class="category-card" href="/media/">
-          <span class="category-art media" aria-hidden="true">
-            <img class="tile-image" src="assets/tiles/media.png" alt="" />
-            <i class="shape-a"></i><i class="shape-b"></i><i class="shape-c"></i>
-          </span>
-          <span>Media</span>
-        </a>
-
-        <a class="category-card" href="/coding/">
-          <span class="category-art coding" aria-hidden="true">
-            <img class="tile-image" src="assets/tiles/coding.png" alt="" />
-            <i class="shape-a"></i><i class="shape-b"></i><i class="shape-c"></i>
-          </span>
-          <span>Coding</span>
-        </a>
-
-        <a class="category-card" href="/resources/">
-          <span class="category-art resources" aria-hidden="true">
-            <i class="shape-a"></i><i class="shape-b"></i><i class="shape-c"></i>
-          </span>
-          <span>Resources</span>
-        </a>
-
-        <a class="category-card" href="/presenting/">
-          <span class="category-art presenting" aria-hidden="true">
-            <img class="tile-image" src="assets/tiles/presenting.png" alt="" />
-            <i class="shape-a"></i><i class="shape-b"></i><i class="shape-c"></i>
-          </span>
-          <span>Presenting</span>
-        </a>
-
-        <a class="category-card" href="/experimental/">
-          <span class="category-art experimental" aria-hidden="true">
-            <i class="shape-a"></i><i class="shape-b"></i><i class="shape-c"></i>
-          </span>
-          <span>Experimental</span>
-        </a>
-
-        <a class="category-card" href="/professional-development/">
-          <span class="category-art pd" aria-hidden="true">
-            <img class="tile-image" src="assets/tiles/pd.png" alt="" />
-            <i class="shape-a"></i><i class="shape-b"></i><i class="shape-c"></i>
-          </span>
-          <span>PD</span>
-        </a>
-
-        <a class="category-card" href="/blog/">
-          <span class="category-art archive" aria-hidden="true">
-            <i class="shape-a"></i><i class="shape-b"></i><i class="shape-c"></i>
-            <b>☼</b><em>♙</em>
-          </span>
-          <span>Archive</span>
-        </a>
+      <section class="category-strip shell" id="categories" aria-labelledby="categories-title">
+        <p class="eyebrow blue" id="categories-title">Browse by topic</p>
+        <div class="category-links">
+          <a class="category-link" href="/game-based-learning/">Game-based learning</a>
+          <a class="category-link" href="/media/">Media</a>
+          <a class="category-link" href="/coding/">Coding</a>
+          <a class="category-link" href="/resources/">Resources</a>
+          <a class="category-link" href="/presenting/">Presenting</a>
+          <a class="category-link" href="/experimental/">Experimental</a>
+          <a class="category-link" href="/professional-development/">Professional development</a>
+          <a class="category-link" href="/blog/">Archive</a>
+        </div>
       </section>
 
       <section class="app-showcase shell" id="apps" aria-labelledby="apps-title">
@@ -259,7 +202,7 @@
               height="774"
               loading="lazy"
               decoding="async"
-              alt="Creance's Assess grid under a banner reading “These children are not real”. A Year 5 class is listed down the left with a coverage percentage each, five Earth and Space success criteria run across the top, and each cell is a four-part bar coloured for Developing, Secure or Mastered. Confidence stars and teacher notes sit on the right, with a class breakdown along the bottom."
+              alt="The same Creance Assess grid shown at the top of the page, with the class list, success criteria columns and per-cell progress bars."
             />
             <figcaption>
               The Assess grid, mid-topic — and exactly what opens when you tap
@@ -309,147 +252,38 @@
         </article>
       </section>
 
-      <section class="feature-grid shell" id="resources">
-        <article class="panel apps-panel">
-          <div class="panel-intro">
-            <p class="eyebrow blue">Our apps</p>
-            <h2>
-              Practical tools for<br />
-              modern classrooms.
-            </h2>
-            <p class="panel-copy">
-              Save time, reduce workload,<br />
-              improve outcomes.
-            </p>
-            <a class="small-button" href="#apps">
-              View all apps <span aria-hidden="true">→</span>
-            </a>
-          </div>
+      <section class="curriculum-band shell" id="curriculum" aria-labelledby="curriculum-title">
+        <div>
+          <p class="eyebrow purple">Curriculum &amp; training</p>
+          <h2 id="curriculum-title">Media literacy for young learners.</h2>
+          <p>
+            Future-ready resources and training that build critical thinking,
+            creativity and digital citizenship.
+          </p>
+          <a class="small-button purple-button" href="/media/">
+            Explore curriculum <span aria-hidden="true">→</span>
+          </a>
+        </div>
 
-          <div class="app-list">
-            <a class="app-row" href="https://trycreance.app">
-              <span class="app-icon creance-mark" aria-hidden="true">C</span>
-              <span>
-                <strong>Creance</strong>
-                <small>Assess against your own success criteria, as you teach.</small>
-              </span>
-              <span aria-hidden="true">→</span>
-            </a>
-            <a class="app-row" href="https://sagestage.app">
-              <span class="app-icon sage-mark" aria-hidden="true">S</span>
-              <span>
-                <strong>Sage on the Stage</strong>
-                <small>Fifty classroom widgets for the screen at the front.</small>
-              </span>
-              <span aria-hidden="true">→</span>
-            </a>
-            <a class="app-row" href="https://sagestage.co.uk">
-              <span class="app-icon violet" aria-hidden="true">?</span>
-              <span>
-                <strong>Sage Stage help</strong>
-                <small>Every widget, explained on one page.</small>
-              </span>
-              <span aria-hidden="true">→</span>
-            </a>
-          </div>
-
-          <div class="panel-decor" aria-hidden="true">
-            <i></i>
-            <span class="dot-grid dot-grid-dark">
-              <i></i><i></i><i></i><i></i>
-              <i></i><i></i><i></i><i></i>
-              <i></i><i></i><i></i><i></i>
-            </span>
-            <b></b>
-          </div>
-        </article>
-
-        <article class="panel curriculum-panel" id="curriculum">
-          <div class="curriculum-copy">
-            <p class="eyebrow purple">Curriculum &amp; training</p>
-            <h2>
-              Media literacy for<br />
-              young learners.
-            </h2>
-            <p class="panel-copy">
-              Future-ready resources and training that build<br class="desktop-break" />
-              critical thinking, creativity and digital citizenship.
-            </p>
-            <ul>
-              <li>Classroom-ready units (5–13 years)</li>
-              <li>Teacher training &amp; workshops</li>
-              <li>Parent guides &amp; webinars</li>
-            </ul>
-            <a class="small-button purple-button" href="#newsletter">
-              Explore curriculum <span aria-hidden="true">→</span>
-            </a>
-          </div>
-
-          <div class="line-people" aria-hidden="true">
-            <span class="play-bubble">▷</span>
-            <span class="person person-one"><i></i><b></b></span>
-            <span class="person person-two"><i></i><b></b></span>
-            <span class="device">▱</span>
-            <span class="chat">•••</span>
-          </div>
-          <div class="purple-orb" aria-hidden="true"></div>
-          <span class="dot-grid dot-grid-dark" aria-hidden="true">
-            <i></i><i></i><i></i><i></i><i></i>
-            <i></i><i></i><i></i><i></i><i></i>
-            <i></i><i></i><i></i><i></i><i></i>
-          </span>
-        </article>
-
-        <article class="panel testimonial-panel" id="about">
-          <span class="quote-mark coral-text" aria-hidden="true">“</span>
-          <blockquote id="testimonial-quote">
-            HeutaLab has become an essential part of how we teach, plan and
-            support our learners.
-          </blockquote>
-          <div class="person-credit">
-            <span class="avatar" id="testimonial-avatar" aria-hidden="true">RT</span>
-            <p>
-              <strong id="testimonial-name">Rebecca T.</strong>
-              <small id="testimonial-role">
-                Year 6 Teacher<br />
-                International School
-              </small>
-            </p>
-          </div>
-          <div class="carousel-controls" aria-label="Testimonial controls">
-            <button type="button" data-carousel="prev" aria-label="Previous testimonial">
-              ‹
-            </button>
-            <span class="carousel-dots" aria-label="Choose a testimonial">
-              <button
-                class="carousel-dot selected"
-                type="button"
-                data-slide="0"
-                aria-label="Show testimonial 1"
-              ></button>
-              <button
-                class="carousel-dot"
-                type="button"
-                data-slide="1"
-                aria-label="Show testimonial 2"
-              ></button>
-              <button
-                class="carousel-dot"
-                type="button"
-                data-slide="2"
-                aria-label="Show testimonial 3"
-              ></button>
-            </span>
-            <button type="button" data-carousel="next" aria-label="Next testimonial">
-              ›
-            </button>
-          </div>
-        </article>
+        <div class="curriculum-strands">
+          <a class="strand" href="/media/">
+            <strong>Classroom-ready units</strong>
+            <small>Media literacy for 5–13 year olds.</small>
+          </a>
+          <a class="strand" href="/professional-development/">
+            <strong>Teacher training &amp; workshops</strong>
+            <small>Professional development sessions and materials.</small>
+          </a>
+          <a class="strand" href="/resources/">
+            <strong>Parent guides &amp; webinars</strong>
+            <small>Plain-English help for families at home.</small>
+          </a>
+        </div>
       </section>
 
       <section class="newsletter shell" id="newsletter">
         <div class="newsletter-copy">
-          <span class="mail-icon" aria-hidden="true">⌁</span>
+          <span class="mail-icon" aria-hidden="true">✉</span>
           <p>
             <strong>Ideas, updates and free resources.</strong>
             <small>Straight to your inbox.</small>
@@ -472,6 +306,8 @@
           <p class="form-status" id="newsletter-status" aria-live="polite"></p>
         </div>
 
+        <!-- TODO: these are still placeholders. Swap in the real profile URLs
+             and contact address, or delete the block. -->
         <div class="socials" aria-label="Social links">
           <strong>Follow</strong>
           <a href="#" aria-label="X">𝕏</a>
