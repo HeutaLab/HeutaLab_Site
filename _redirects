@@ -213,3 +213,24 @@
 /tag/* /blog/ 301
 # squarespace file store
 /s/* /assets/files/:splat 301
+
+# Archive downloads: the Scratch schemes of work kept their old Squarespace
+# /storage/ paths in the migrated posts, but the files landed in assets/legacy
+# under content hashes. Sources are percent-encoded because _redirects splits
+# on whitespace; browsers encode the spaces in the hrefs the same way.
+# Mapping recovered from migration/asset-map.json and checked against the
+# archives' own directory names.
+/storage/Year%201%20teachers%20template.sb /assets/legacy/ce9a304c-Year-1-teachers-template.sb 301
+/storage/scratch-files/year1/Year%201%20Scratch%20files%20.7z /assets/legacy/62eff582.7z 301
+/storage/scratch-files/year2/Year%203%20Lesson%202.zip /assets/legacy/3457a2b4.zip 301
+/storage/scratch-files/year3/Year%203%20Lesson%201.zip /assets/legacy/a84be8b6.zip 301
+/storage/scratch-files/year3/Year%203%20Lesson%203.zip /assets/legacy/3fcb06b0.zip 301
+/storage/scratch-files/year3/Year%203%20Lesson%204.zip /assets/legacy/5c976774.zip 301
+/storage/scratch-files/year4/Year%204%20Lesson%201%20-%20Introduction%20to%20scratch%20-%20basics.zip /assets/legacy/8dca29db.zip 301
+/storage/scratch-files/year4/Year%204%20Lesson%202%20-%20adding%20directions%20-%20X%20and%20Y%20movement.zip /assets/legacy/02d2c5d0.zip 301
+/storage/scratch-files/year4/Year%204%20Lesson%203%20-%20Costumes%20and%20levels.zip /assets/legacy/4d238e35.zip 301
+/storage/scratch-files/year4/Year%204%20Maze%20Game%20like%20pacman%20additonal%20examples.zip /assets/legacy/ec27fadd.zip 301
+/storage/scratch-files/year5/Scratch%20Lesson%201.zip /assets/legacy/40dd925e.zip 301
+/storage/scratch-files/year5/Scratch%20Lesson%202.zip /assets/legacy/80abe0ab.zip 301
+/storage/scratch-files/year5/Scratch%20Lesson%203.zip /assets/legacy/1a093195.zip 301
+/storage/scratch-files/year5/Scratch%20Lesson%204.zip /assets/legacy/c0d63c48.zip 301

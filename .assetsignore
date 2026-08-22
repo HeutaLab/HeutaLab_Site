@@ -9,8 +9,3 @@ package.json
 README.md
 migration
 /heutalab-static-site.zip
-
-# Archive download bundles: kept in git (they exist nowhere else) but not
-# served as Worker assets yet - nothing links to them until the /storage/
-# paths are mapped in _redirects.
-assets/legacy/*.zip
