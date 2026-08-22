@@ -1,0 +1,733 @@
+/* ===================================================================
+   HeutaLab homepage -- "Slab"
+   -------------------------------------------------------------------
+   Self-contained: the homepage does NOT load styles.css or legacy.css,
+   so nothing here can reach the other 166 pages. Those keep their own
+   chrome and tokens untouched.
+
+   If you change the type here, update the Google Fonts <link> in
+   index.html to match.
+   =================================================================== */
+
+/* ===================================================================
+   HeutaLab -- "Slab" direction
+   A single committed visual world: bright classroom software laid out
+   as objects on a dark ink table. Painted explicitly so it holds on
+   either host ground; no theme inversion.
+   =================================================================== */
+
+:root {
+  /* Ground: HeutaLab ink (#071428) pushed down two stops. Navy-black,
+     never neutral -- every grey below is biased the same way. */
+  --ground:     #060e1b;
+  --ground-lift:#0d1930;
+  --hairline:   rgba(242, 239, 231, 0.14);
+
+  /* Paper: warm chalk, not white. The card ground. */
+  --paper:      #f2efe7;
+  --paper-dim:  rgba(242, 239, 231, 0.62);
+  --paper-faint:rgba(242, 239, 231, 0.34);
+
+  /* Brand hues, used as large fields rather than accents-on-white */
+  --coral:      #ff4b4d;
+  --coral-deep: #c9302f;
+  --cobalt:     #0757d7;
+  --lime:       #b9d539;
+  --amber:      #f7b229;
+
+  --font-word: "Poppins", "Futura", "Century Gothic", sans-serif;
+  --font-text: "Hanken Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --gutter: 14px;
+  --r-lg: 30px;
+  --r-md: 18px;
+  --r-sm: 12px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--paper);
+  font-family: var(--font-text);
+  font-size: 17px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* height:auto is load-bearing. The width/height attributes on each <img>
+   land as presentational hints; setting only `width` in CSS overrides the
+   width hint and leaves height="774" in force, which renders the app
+   screenshots at column-width by 774px -- a 2.7x vertical stretch. */
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+
+:where(a, button, input):focus-visible {
+  outline: 3px solid var(--amber);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ---- Shared atoms --------------------------------------------------- */
+
+.bleed { padding-inline: var(--gutter); }
+.inner { width: min(1440px, 100%); margin-inline: auto; }
+
+.label {
+  margin: 0;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.slab {
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  position: relative;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 24px;
+  border-radius: 999px;
+  border: 1.5px solid transparent;
+  font-family: var(--font-text);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: transform .18s ease, background-color .18s ease, color .18s ease;
+}
+.pill:hover { transform: translateY(-2px); }
+.pill .arw { font-weight: 500; font-size: 17px; line-height: 1; }
+
+.pill-coral { background: var(--coral-deep); color: var(--paper); }
+.pill-coral:hover { background: var(--coral); }
+.pill-ink    { background: var(--ground); color: var(--paper); }
+.pill-ink:hover { background: var(--ground-lift); }
+.pill-paper  { background: var(--paper); color: var(--ground); }
+.pill-ghost-light { border-color: rgba(242,239,231,.45); color: var(--paper); background: transparent; }
+.pill-ghost-light:hover { background: rgba(242,239,231,.12); }
+.pill-ghost-dark { border-color: rgba(6,14,27,.30); color: var(--ground); background: transparent; }
+.pill-ghost-dark:hover { background: rgba(6,14,27,.08); }
+
+/* ---- Announcement rail ---------------------------------------------- */
+
+.rail {
+  min-height: 34px;
+  padding: 9px 20px;
+  border-radius: 999px;
+  background: var(--paper);
+  color: rgba(6,14,27,.62);
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.rail b { color: var(--ground); font-weight: 700; }
+
+/* ---- Floating nav ---------------------------------------------------- */
+
+.nav-wrap { position: sticky; top: var(--gutter); z-index: 50; }
+
+.nav {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  height: 62px;
+  margin-top: var(--gutter);
+  padding: 0 26px;
+  border-radius: 999px;
+  background: var(--coral-deep);
+  border: 1px solid transparent;
+  box-shadow: 0 10px 30px rgba(4, 9, 15, .38);
+}
+.nav-links, .desktop-nav { display: flex; gap: 26px; align-items: center; }
+.nav-links a, .desktop-nav > a, .desktop-nav summary {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: rgba(242,239,231,.78);
+  transition: color .15s ease;
+}
+.nav-links a:hover, .desktop-nav > a:hover, .desktop-nav summary:hover,
+.nav-links a[aria-current] { color: var(--paper); }
+.nav-links a.pill-paper, .nav-links a.pill-paper:hover,
+.desktop-nav a.pill-paper, .desktop-nav a.pill-paper:hover { color: var(--ground); }
+
+/* Dropdowns ------------------------------------------------------------
+   <details>/<summary>, so the menus work with JavaScript off; main.js only
+   adds the close-the-others-on-open behaviour. */
+.desktop-nav details { position: relative; }
+.desktop-nav summary { cursor: pointer; list-style: none; white-space: nowrap; }
+.desktop-nav summary::-webkit-details-marker { display: none; }
+.desktop-nav summary::after {
+  content: ""; display: inline-block; margin-left: 8px;
+  border: 4px solid transparent; border-top-color: currentColor;
+  transform: translateY(2px);
+}
+.desktop-nav details[open] summary { color: var(--paper); }
+.nav-menu {
+  position: absolute; left: -14px; top: 34px; z-index: 60;
+  min-width: 232px; padding: 8px;
+  display: grid; gap: 2px;
+  border-radius: var(--r-md);
+  background: var(--ground-lift);
+  border: 1px solid var(--hairline);
+  box-shadow: 0 18px 44px rgba(4, 9, 15, .55);
+}
+.nav-menu a {
+  padding: 10px 12px; border-radius: 9px;
+  font-family: var(--font-text); font-size: 14.5px; font-weight: 600;
+  letter-spacing: 0; text-transform: none; color: var(--paper-dim);
+  white-space: nowrap;
+}
+.nav-menu a:hover { background: rgba(242, 239, 231, .09); color: var(--paper); }
+
+/* Hamburger ------------------------------------------------------------ */
+.mobile-menu { display: none; position: relative; }
+.mobile-menu > summary {
+  width: 42px; height: 42px; padding: 11px; cursor: pointer;
+  display: grid; align-content: center; gap: 5px;
+  border-radius: 12px; background: rgba(242, 239, 231, .14);
+  list-style: none;
+}
+.mobile-menu > summary::-webkit-details-marker { display: none; }
+.mobile-menu > summary span { height: 2px; border-radius: 2px; background: var(--paper); }
+.mobile-menu nav {
+  position: absolute; right: 0; top: 52px; z-index: 60;
+  min-width: 208px; padding: 8px; display: grid; gap: 2px;
+  border-radius: var(--r-md);
+  background: var(--ground-lift);
+  border: 1px solid var(--hairline);
+  box-shadow: 0 18px 44px rgba(4, 9, 15, .55);
+}
+.mobile-menu nav a {
+  padding: 11px 12px; border-radius: 9px;
+  font-size: 15px; font-weight: 600; color: var(--paper-dim);
+}
+.mobile-menu nav a:hover { background: rgba(242, 239, 231, .09); color: var(--paper); }
+.nav-right { justify-content: flex-end; }
+
+.wordmark {
+  font-family: var(--font-word);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+.nav .wordmark { font-size: 26px; }
+.wordmark i { font-style: normal; color: var(--coral); }
+.nav .wordmark i { color: rgba(6,14,27,.72); }
+
+.nav-burger { display: none !important; }
+
+/* ---- Hero -------------------------------------------------------------
+   The wordmark IS the hero. A darkened photograph carries it, the headline
+   sits above at a deliberately modest size, and "heutalab" runs off both
+   edges at the baseline. Everything else in the hero defers to it.
+   ---------------------------------------------------------------------- */
+
+.hero {
+  margin-top: var(--gutter);
+  background: #04090f;
+  min-height: clamp(520px, 76vh, 780px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  isolation: isolate;
+}
+
+/* The source frame is small and bright, so it is pushed down hard and
+   drained of colour until it reads as a room in low light. */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 52% 44%;
+  filter: grayscale(.55) brightness(.46) contrast(1.12) saturate(.8);
+  z-index: 0;
+}
+
+/* Two scrims: one flattening the whole frame so white type always clears
+   it, one weighting the foot of the card where the wordmark lands. */
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(4,9,15,.62) 0%, rgba(4,9,15,.30) 34%, rgba(4,9,15,.72) 78%, rgba(4,9,15,.90) 100%),
+    radial-gradient(105% 82% at 48% 40%, transparent 24%, rgba(4,9,15,.42) 62%, rgba(4,9,15,.78) 100%);
+}
+
+/* Grain. The photograph is upscaled well past its native size; a little
+   noise reads as film and hides what would otherwise look like blur. */
+.hero-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: .30;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='0.55'/></svg>");
+  background-size: 160px 160px;
+}
+
+.hero-body {
+  position: relative;
+  z-index: 4;
+  padding: clamp(44px, 8vh, 108px) clamp(24px, 4vw, 68px) 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: clamp(28px, 4vw, 64px);
+  align-items: start;
+}
+
+.hero h1 {
+  margin: 0;
+  text-align: right;
+  font-size: clamp(1.9rem, 3.5vw, 3.3rem);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  font-weight: 800;
+  color: var(--paper);
+  text-shadow: 0 2px 24px rgba(4,9,15,.55);
+}
+.hero h1 em { font-style: normal; color: var(--coral); }
+
+.hero-aside { padding-top: 6px; max-width: 34ch; }
+.hero-aside p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgba(242,239,231,.88);
+  text-shadow: 0 2px 18px rgba(4,9,15,.6);
+}
+.hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+
+/* Baseline flush with the foot of the card, overflowing both edges. */
+.hero-word {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  margin: 0;
+  font-family: var(--font-word);
+  font-weight: 800;
+  font-size: clamp(4.4rem, 24.2vw, 21.5rem);
+  line-height: 0.755;
+  letter-spacing: -0.055em;
+  color: var(--paper);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+.hero-word i { font-style: normal; color: inherit; }
+
+/* ---- Marquee --------------------------------------------------------- */
+
+.marquee {
+  margin-top: var(--gutter);
+  background: var(--paper);
+  color: var(--ground);
+  border-radius: 999px;
+  overflow: hidden;
+  padding: 13px 0;
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: slide 38s linear infinite;
+}
+.marquee-track span {
+  padding: 0 34px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.marquee-track span::after { content: "\25C6"; margin-left: 34px; color: var(--coral-deep); font-size: 8px; vertical-align: middle; }
+@keyframes slide { to { transform: translateX(-50%); } }
+
+/* ---- Section scaffolding --------------------------------------------- */
+
+.section { margin-top: clamp(56px, 7vw, 104px); }
+.section-head { max-width: 62ch; margin-bottom: 30px; }
+.section-head .label { color: var(--coral); }
+.section-head h2 {
+  margin: 16px 0 0;
+  font-size: clamp(2.1rem, 3.6vw, 3.4rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+  text-wrap: balance;
+}
+.section-head p { margin: 16px 0 0; color: var(--paper-dim); font-size: 18px; max-width: 58ch; }
+
+/* ---- App pairs ------------------------------------------------------- */
+
+.pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+  gap: var(--gutter);
+  margin-top: var(--gutter);
+}
+.pair.flip { grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); }
+.pair.flip .field { order: 2; }
+
+.field { padding: clamp(30px, 3.4vw, 52px); display: flex; flex-direction: column; }
+.field-lime   { background: var(--lime);   color: var(--ground); }
+.field-cobalt { background: var(--cobalt); color: var(--paper); }
+
+.app-tag {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;
+}
+.app-tag b {
+  width: 34px; height: 34px; display: grid; place-items: center;
+  border-radius: 10px; font-family: var(--font-word); font-size: 17px; letter-spacing: 0;
+}
+.field-lime  .app-tag b { background: var(--ground); color: var(--lime); }
+.field-cobalt .app-tag b { background: var(--paper); color: var(--cobalt); }
+
+.field h3 {
+  margin: 26px 0 0;
+  font-size: clamp(1.75rem, 2.7vw, 2.6rem);
+  line-height: 1.03;
+  letter-spacing: -0.032em;
+  font-weight: 800;
+  text-wrap: balance;
+  max-width: 19ch;
+}
+.field > p { margin: 18px 0 0; font-size: 17px; max-width: 46ch; }
+.field-lime > p { color: rgba(6,14,27,.78); }
+.field-cobalt > p { color: rgba(242,239,231,.84); }
+
+.pts { list-style: none; margin: 26px 0 0; padding: 0; display: grid; gap: 12px; max-width: 58ch; font-size: 15.5px; line-height: 1.45; }
+.pts li { display: grid; grid-template-columns: 9px 1fr; gap: 14px; align-items: start; }
+.pts li::before {
+  content: ""; width: 9px; height: 9px; margin-top: 8px; border-radius: 999px;
+  background: currentColor; opacity: .55;
+}
+.field-lime .pts { color: rgba(6,14,27,.82); }
+.field-cobalt .pts { color: rgba(242,239,231,.86); }
+
+.field-foot { margin-top: auto; padding-top: 32px; display: flex; flex-wrap: wrap; gap: 12px; }
+.field-note { margin: 18px 0 0; font-size: 13.5px; line-height: 1.5; max-width: 52ch; }
+.field-lime .field-note { color: rgba(6,14,27,.62); }
+.field-note a { text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+
+.shotcard { background: var(--paper); padding: clamp(20px, 2.2vw, 34px); display: flex; flex-direction: column; gap: 20px; }
+.shotcard figure { margin: 0; border-radius: var(--r-sm); overflow: hidden; background: #fff; box-shadow: 0 18px 44px rgba(6,14,27,.20); }
+/* Where the paired field card runs longer than the picture, the gap is
+   filled with the spec rather than stretched paper. */
+.spec { margin-top: auto; padding-top: 22px; display: grid; gap: 0; }
+.spec div {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 20px;
+  padding: 13px 0; border-top: 1px solid rgba(6,14,27,.14);
+}
+.spec div:last-child { border-bottom: 1px solid rgba(6,14,27,.14); }
+.spec dt {
+  font-size: 11.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  color: rgba(6,14,27,.55);
+}
+.spec dd {
+  margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -.01em;
+  color: var(--ground); text-align: right; font-variant-numeric: tabular-nums;
+}
+.shotcard figcaption { color: rgba(6,14,27,.60); font-size: 13.5px; line-height: 1.5; }
+.shotcard img { width: 100%; }
+
+/* ---- Four claims ----------------------------------------------------- */
+
+.claims { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); margin-top: var(--gutter); }
+.claim {
+  padding: 30px 26px 28px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  background: var(--ground-lift);
+}
+.claim .swatch { width: 30px; height: 6px; border-radius: 999px; display: block; }
+.claim h4 {
+  margin: 22px 0 0; font-size: 14px; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.claim p { margin: 12px 0 0; font-size: 15px; line-height: 1.5; color: var(--paper-dim); }
+
+/* ---- Tile grid --------------------------------------------------------
+   The eight category tiles are symbols, not decoration: Atari fluting for
+   game-based learning, the monolith for media, <:> for coding, an RSS fan
+   for resources, the PowerPoint mark for presenting, a pencil nib for
+   experimental, a book spine for PD, and the EdTech Lounge lockup for the
+   archive. They are carried across untouched -- recolouring them to the
+   HeutaLab palette would break the thing each one refers to.
+
+   What harmonises eight unrelated palettes is the ground, not the art: one
+   frame, one radius, one aspect, on ink. Each tile then lends its own
+   dominant hue back to the system as --tint, used for its hairline and its
+   label on hover, so the set reads as one component without a single pixel
+   of the artwork changing.
+   ---------------------------------------------------------------------- */
+
+.tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); margin-top: var(--gutter); }
+.tile {
+  display: block;
+  /* The container has to be the card, not the art. An element that declares
+     container-type is a container for its DESCENDANTS only -- cqw used in a
+     property on that same element falls back to the viewport, which is what
+     was blowing the RSS fan's band widths up by 14x. */
+  container-type: inline-size;
+}
+
+.tile-art {
+  position: relative;
+  display: block;
+  aspect-ratio: 422 / 618;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  background: #f3f3ef;
+  box-shadow: inset 0 0 0 1px rgba(242, 239, 231, .16);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+/* The ring is an outline with an offset, so a band of ink always separates
+   it from the artwork. Two earlier attempts failed for the same reason in
+   mirror image: inset, the ring landed on the tile's own colour and vanished
+   (resources only worked because its lime sits on near-black); flush to the
+   edge, a red ring on the red tile just read as the artwork growing by 3px.
+
+   The ink gap fixes the backdrop. It does NOT by itself make the eight read
+   at equal strength -- sampled straight off the artwork the tints spanned
+   CIE L* 53.5 to 78.4, so the ambers and limes rang about twice as loud as
+   the purple and the magenta. The tints below are therefore normalised to a
+   common OKLab lightness (0.68), holding each hue and as much chroma as the
+   sRGB gamut allows (0.90 or better in every case). That target is the
+   median of the sampled set, so the three bright tints come down and the
+   dark ones come up, rather than everything being washed toward white --
+   which is what equalising on WCAG contrast alone does, and it turns the
+   archive magenta into pale pink.
+
+   Measured after: L* spread 25.0 -> 4.9, contrast span 2.21x -> 1.18x,
+   floor 6.01:1. Comfortably past the 3:1 that UI components need and the
+   4.5:1 the tint-coloured labels need, so the ring doubles as the focus
+   indicator. */
+.tile:hover .tile-art,
+.tile:focus-visible .tile-art {
+  transform: translateY(-4px);
+  outline: 3px solid var(--tint);
+  outline-offset: 4px;
+  box-shadow:
+    inset 0 0 0 1px rgba(242, 239, 231, .16),
+    0 20px 44px rgba(4, 9, 15, .62);
+}
+/* One ring, not two: the tile supplies its own focus affordance above. */
+.tile:focus-visible { outline: none; }
+
+.tile-name {
+  display: block; margin-top: 15px;
+  font-size: 12px; font-weight: 800; letter-spacing: .13em;
+  text-transform: uppercase; color: var(--paper);
+  transition: color .2s ease;
+}
+.tile:hover .tile-name { color: var(--tint); }
+.tile-sub { display: block; margin-top: 5px; font-size: 14px; line-height: 1.4; color: var(--paper-faint); }
+
+/* Artwork bleeds past the tile edge; these offsets are the shipped ones. */
+.tile-image { position: absolute; z-index: 2; max-width: none; pointer-events: none; user-select: none; }
+.t-game .tile-image       { width: 117.06%; height: 112.16%; left: -15.88%; top: -10.37%; }
+.t-media .tile-image      { width: 105.21%; height: 105.35%; left: -2.13%;  top: -2.27%; }
+.t-coding .tile-image     { width: 109.48%; height: 106.47%; left: -6.40%;  top: -1.94%; }
+.t-presenting .tile-image { width: 108.53%; height: 106.17%; left: -4.98%;  top: -3.57%; }
+.t-pd .tile-image         { width: 107.58%; height: 108.09%; left: -6.87%;  top: -6.47%; }
+
+/* RSS fan */
+.t-resources { background: repeating-radial-gradient(circle at -5% 103%, transparent 0 20.00cqw, #fff 20.67cqw 30.67cqw, #343434 31.33cqw 44.00cqw, var(--lime) 44.67cqw 58.67cqw); }
+
+/* Pencil nib. The shipped CSS drew a rounded arch and a corner block with
+   no graphite anywhere, so the one thing the tile is named after was the one
+   thing missing -- and at 150px the empty green below it read as texture,
+   while at 340px it reads as a mistake. Redrawn as flat geometry in the same
+   vocabulary as its neighbours: one ground, a white facet, a shaded facet,
+   a charcoal point. The nib now takes the lower half of the frame. */
+.t-experimental { background: #9acb64; }
+.tile-art svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* A stylised at-sign, constructed from an arc and two solids rather than
+   typeset, so it sits in the same flat-geometric language as the Atari
+   fluting and the RSS fan. It replaces two dingbats (a sun and a chess pawn)
+   set in white circles, which read as emoji at any size. Magenta ring, amber
+   tail, charcoal counter, on the old site's pale ground; the halftone keeps
+   the weathered character. */
+.t-archive { background: #e9eeee; }
+
+/* ---- Term register --------------------------------------------------- */
+
+.register { background: var(--paper); color: var(--ground); padding: clamp(32px, 4vw, 60px); margin-top: var(--gutter); }
+.register .label { color: var(--coral-deep); }
+.register h2 {
+  margin: 16px 0 0;
+  font-size: clamp(2rem, 3.4vw, 3.1rem);
+  line-height: 1.02; letter-spacing: -0.035em; font-weight: 800;
+  max-width: 20ch; text-wrap: balance;
+}
+.stops { display: grid; grid-template-columns: repeat(4, 1fr); gap: 26px; margin-top: 48px; }
+.stop { border-top: 2px solid rgba(6,14,27,.20); padding-top: 20px; position: relative; }
+.stop::before {
+  content: ""; position: absolute; top: -7px; left: 0;
+  width: 12px; height: 12px; border-radius: 999px; background: var(--coral-deep);
+}
+.stop .when {
+  margin: 0; font-size: 12px; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: rgba(6,14,27,.52);
+  font-variant-numeric: tabular-nums;
+}
+.stop h5 { margin: 12px 0 0; font-size: 21px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.15; }
+.stop p { margin: 10px 0 0; font-size: 15px; line-height: 1.5; color: rgba(6,14,27,.68); }
+
+/* ---- Blog ------------------------------------------------------------ */
+
+.posts { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gutter); margin-top: var(--gutter); }
+.post {
+  display: flex; flex-direction: column; gap: 16px;
+  padding: 30px 28px 28px;
+  border: 1px solid var(--hairline); border-radius: var(--r-md);
+  background: var(--ground-lift);
+  transition: background-color .18s ease;
+}
+.post:hover { background: #14213c; }
+.post .kind { font-size: 11.5px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber); }
+.post h4 { margin: 0; font-size: 21px; line-height: 1.2; letter-spacing: -0.025em; font-weight: 700; text-wrap: balance; }
+.post .more { margin-top: auto; font-size: 14px; font-weight: 700; color: var(--paper-dim); }
+.post:hover .more { color: var(--coral); }
+
+/* ---- Signup ---------------------------------------------------------- */
+
+.signup {
+  margin-top: var(--gutter);
+  background: var(--amber); color: var(--ground);
+  padding: clamp(30px, 3.6vw, 54px);
+  display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+  gap: clamp(24px, 3vw, 54px); align-items: center;
+}
+.signup h3 { margin: 14px 0 0; font-size: clamp(1.7rem, 2.6vw, 2.4rem); line-height: 1.05; letter-spacing: -0.032em; font-weight: 800; text-wrap: balance; }
+.signup .label { color: rgba(6,14,27,.6); }
+.signup p { margin: 14px 0 0; font-size: 16px; color: rgba(6,14,27,.75); max-width: 42ch; }
+.signup form { display: flex; gap: 10px; flex-wrap: wrap; }
+.signup input {
+  flex: 1 1 240px; min-width: 0; height: 54px; padding: 0 20px;
+  border: 2px solid var(--ground); border-radius: 999px;
+  background: var(--paper); color: var(--ground);
+  font-family: var(--font-text); font-size: 16px;
+}
+.signup input::placeholder { color: rgba(6,14,27,.45); }
+.signup button { height: 54px; border: 0; }
+.signup .small { margin-top: 14px; font-size: 13px; color: rgba(6,14,27,.62); }
+
+/* Visually hidden, still read aloud. The mockup inlined this on the one
+   label that needed it; the real page uses the class. */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+/* ---- Footer ---------------------------------------------------------- */
+
+.foot { margin-top: clamp(56px, 7vw, 96px); }
+.foot-cols {
+  display: grid; grid-template-columns: 1.4fr repeat(3, 1fr);
+  gap: 40px; padding-bottom: 44px; border-bottom: 1px solid var(--hairline);
+}
+.foot-cols .wordmark { font-size: 34px; }
+.foot-blurb { margin: 16px 0 0; color: var(--paper-faint); font-size: 15px; max-width: 30ch; }
+.foot h6 { margin: 0 0 16px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--paper-faint); }
+.foot ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: 15px; }
+.foot ul a { color: var(--paper-dim); }
+.foot ul a:hover { color: var(--paper); }
+.foot-base { padding: 22px 0 0; display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; font-size: 13px; color: var(--paper-faint); }
+
+/* The wordmark returns full-bleed, cropped at the baseline -- the page
+   signs off with the same gesture it opened with. */
+.signoff {
+  margin-top: 40px;
+  overflow: hidden;
+  height: clamp(78px, 12vw, 190px);
+}
+.signoff span {
+  display: block;
+  font-family: var(--font-word);
+  font-weight: 800;
+  font-size: clamp(6rem, 21.5vw, 21rem);
+  line-height: 0.74;
+  letter-spacing: -0.052em;
+  color: rgba(242, 239, 231, 0.09);
+  white-space: nowrap;
+  user-select: none;
+}
+.signoff i { font-style: normal; color: rgba(255, 75, 77, 0.22); }
+
+/* ---- Responsive ------------------------------------------------------ */
+
+@media (max-width: 1080px) {
+  .claims, .stops { grid-template-columns: repeat(2, 1fr); }
+  .tiles { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .posts { grid-template-columns: 1fr; }
+  .foot-cols { grid-template-columns: 1fr 1fr; }
+  .pair, .pair.flip { grid-template-columns: 1fr; }
+  .pair.flip .field { order: 0; }
+
+  /* Stacked, the field card is the full width of the page, so its copy
+     opens into a two-column spread rather than hugging the left edge and
+     leaving half the slab empty. */
+  .field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: clamp(28px, 5vw, 64px);
+    align-content: start;
+  }
+  .field .app-tag   { grid-column: 1 / -1; grid-row: 1; }
+  .field h3         { grid-column: 1; grid-row: 2; max-width: 15ch; }
+  .field > p        { grid-column: 1; grid-row: 3; }
+  .field .pts       { grid-column: 2; grid-row: 2 / span 2; margin-top: 8px; align-self: start; }
+  .field .field-foot{ grid-column: 1 / -1; grid-row: 4; margin-top: 34px; }
+  .field .field-note{ grid-column: 1 / -1; grid-row: 5; max-width: 68ch; }
+}
+
+@media (max-width: 900px) {
+  .nav { grid-template-columns: 1fr auto; height: 58px; padding: 0 10px 0 20px; }
+  .desktop-nav { display: none; }
+  .mobile-menu { display: block; justify-self: end; }
+  .nav .wordmark { justify-self: start; }
+  .hero { min-height: clamp(460px, 66vh, 620px); }
+  .hero-body { grid-template-columns: 1fr; row-gap: 22px; }
+  .hero h1 { text-align: left; }
+  .hero-aside { max-width: 46ch; }
+  .signup { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 620px) {
+  body { font-size: 16px; }
+  .claims, .stops { grid-template-columns: 1fr; }
+  .tiles { grid-template-columns: repeat(2, 1fr); }
+  .foot-cols { grid-template-columns: 1fr; gap: 30px; }
+  .rail { font-size: 11px; padding-inline: 16px; }
+  .hero { min-height: clamp(420px, 62vh, 540px); }
+  .hero-body { padding-top: 26px; }
+  .hero-word { font-size: 22vw; letter-spacing: -0.06em; }
+  .field { display: flex; }
+  .field h3 { max-width: none; }
+  .field .pts { margin-top: 26px; }
+  .field .field-foot { margin-top: 30px; }
+  .nav { padding: 0 8px 0 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+  * { transition-duration: .01ms !important; }
+}

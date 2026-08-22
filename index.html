@@ -14,350 +14,410 @@
     />
     <meta property="og:image" content="https://heutalab.com/assets/og.png" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#060e1b" />
     <link rel="canonical" href="https://heutalab.com/" />
     <link rel="alternate" type="application/rss+xml" title="HeutaLab blog" href="/blog/feed.xml" />
     <title>HeutaLab — EdTech for Curious Minds</title>
-    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="assets/brand/apple-touch-180.png" />
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/brand/apple-touch-180.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Poppins:wght@700;800&display=swap"
     />
-    <link rel="stylesheet" href="/css/styles.css?v=4" />
-    <script src="js/main.js" defer></script>
+    <link rel="stylesheet" href="/css/home.css?v=1" />
+    <script src="/js/main.js" defer></script>
   </head>
   <body>
-    <main id="top">
-      <header class="site-header shell">
-        <a class="brand" href="#top" aria-label="HeutaLab home">
-          <span class="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 60 60">
-              <path fill="#0757d7" d="M0 26 A34 34 0 0 1 34 60 H0 Z"/>
-              <path fill="#f7b229" d="M34 60 L58 60 L58 35 Z"/>
-              <circle fill="#ff4b4d" cx="41" cy="18" r="9.5"/>
-              <path fill="none" stroke="#b9d539" stroke-width="3" stroke-linecap="round" d="M31.5 31.5 Q41 36 50.5 31.5"/>
-            </svg>
-          </span>
-          <span class="brand-copy">
-            <span class="brand-name">Heuta<span>Lab</span></span>
-            <small>EDTECH FOR CURIOUS MINDS</small>
-          </span>
-        </a>
+    <div class="bleed">
+      <div class="inner">
 
-        <nav class="desktop-nav" aria-label="Primary navigation">
-          <a class="active" href="#top">Home</a>
-          <details>
-            <summary>Apps</summary>
-            <div class="nav-menu">
-              <a href="#apps">Classroom tools</a>
-              <a href="https://trycreance.app">Creance</a>
-              <a href="https://sagestage.app">Sage on the Stage</a>
-              <a href="#categories">Browse categories</a>
-            </div>
-          </details>
-          <details>
-            <summary>Curriculum</summary>
-            <div class="nav-menu">
-              <a href="/media/">Media literacy</a>
-              <a href="/resources/">Resource library</a>
-            </div>
-          </details>
-          <details>
-            <summary>Training</summary>
-            <div class="nav-menu">
-              <a href="/professional-development/">Teacher workshops</a>
-              <a href="#curriculum">Parent webinars</a>
-            </div>
-          </details>
-          <a href="/blog/">Blog</a>
-          <details>
-            <summary>Resources</summary>
-            <div class="nav-menu">
-              <a href="/resources/">Free downloads</a>
-              <a href="/site-index/">Legacy library</a>
-              <a href="#newsletter">Newsletter</a>
-            </div>
-          </details>
-          <a href="/about/">About</a>
-        </nav>
+        <p class="rail"><b>Free to try in the browser.</b>&nbsp; No account, no install &mdash; class data stays on your device.</p>
 
-        <a class="login" id="login" href="#newsletter">Login</a>
+        <div class="nav-wrap">
+          <nav class="nav" aria-label="Primary">
+            <div class="desktop-nav nav-left">
+              <details>
+                <summary>Apps</summary>
+                <div class="nav-menu">
+                  <a href="#apps">Both apps</a>
+                  <a href="https://trycreance.app">Creance</a>
+                  <a href="https://sagestage.app">Sage on the Stage</a>
+                </div>
+              </details>
+              <details>
+                <summary>Library</summary>
+                <div class="nav-menu">
+                  <a href="/media/">Media literacy</a>
+                  <a href="/coding/">Coding</a>
+                  <a href="/game-based-learning/">Game-based learning</a>
+                  <a href="/professional-development/">Professional development</a>
+                  <a href="/resources/">Free downloads</a>
+                  <a href="/site-index/">Everything (site index)</a>
+                </div>
+              </details>
+              <a href="/blog/">Blog</a>
+            </div>
 
-        <details class="mobile-menu">
-          <summary aria-label="Open navigation">
-            <span></span><span></span><span></span>
-          </summary>
-          <nav aria-label="Mobile navigation">
-            <a href="#apps">Apps</a>
-            <a href="/blog/">Blog</a>
-            <a href="/resources/">Resources</a>
-            <a href="/about/">About</a>
-            <a href="#newsletter">Login</a>
+            <a class="wordmark" href="#top" aria-label="HeutaLab home">heuta<i>lab</i></a>
+
+            <div class="desktop-nav nav-right">
+              <a href="/about/">About</a>
+              <a href="#newsletter" class="desk-sub">Subscribe</a>
+              <a class="pill pill-paper nav-burger" href="#newsletter" style="min-height:38px;padding:0 18px;font-size:12px;letter-spacing:.1em;text-transform:uppercase">Subscribe</a>
+            </div>
+
+            <details class="mobile-menu">
+              <summary aria-label="Open navigation"><span></span><span></span><span></span></summary>
+              <nav aria-label="Mobile navigation">
+                <a href="#apps">Apps</a>
+                <a href="/blog/">Blog</a>
+                <a href="/resources/">Resources</a>
+                <a href="/site-index/">Site index</a>
+                <a href="/about/">About</a>
+                <a href="#newsletter">Subscribe</a>
+              </nav>
+            </details>
           </nav>
-        </details>
-      </header>
-
-      <section class="hero shell" aria-labelledby="hero-title">
-        <div class="hero-ribbons" aria-hidden="true">
-          <i></i><i></i><i></i>
         </div>
 
-        <div class="hero-copy">
-          <h1 id="hero-title">Tools, ideas and training for better learning<span>.</span></h1>
-          <div class="lime-stroke" aria-hidden="true"></div>
-          <p>
-            Practical EdTech for teachers, leaders and parents of 5–13 year
-            olds. Built by a teacher. Used in classrooms.
-          </p>
-          <div class="hero-actions">
-            <a class="button button-primary" href="#apps">
-              Explore apps <span aria-hidden="true">→</span>
+        <!-- ============================ HERO ============================ -->
+        <header class="hero slab" id="top">
+          <img class="hero-bg" src="/assets/apps/hero-classroom.jpg" width="562" height="355" fetchpriority="high"
+               alt="A child in headphones at a laptop, building in Minecraft, lit low against blocks of HeutaLab blue, lime and orange." />
+          <div class="hero-scrim" aria-hidden="true"></div>
+          <div class="hero-grain" aria-hidden="true"></div>
+
+          <div class="hero-body">
+            <h1>Tools, ideas<br />and training for<br />better learning<em>.</em></h1>
+            <div class="hero-aside">
+              <p>
+                Practical EdTech for teachers, leaders and parents of 5&ndash;13 year olds.
+                Built by a teacher. Used in classrooms.
+              </p>
+              <div class="hero-cta">
+                <a class="pill pill-coral" href="#apps">Explore the apps <span class="arw" aria-hidden="true">&rarr;</span></a>
+              </div>
+            </div>
+          </div>
+
+          <p class="hero-word" aria-hidden="true">heuta<i>lab</i></p>
+        </header>
+
+        <!-- ========================== MARQUEE =========================== -->
+        <div class="marquee" aria-hidden="true">
+          <div class="marquee-track">
+            <span>Built by a teacher</span><span>Used in classrooms</span><span>Runs in the browser</span><span>Nothing leaves the device</span><span>Free to try</span><span>Ages 5&ndash;13</span>
+            <span>Built by a teacher</span><span>Used in classrooms</span><span>Runs in the browser</span><span>Nothing leaves the device</span><span>Free to try</span><span>Ages 5&ndash;13</span>
+          </div>
+        </div>
+
+        <!-- ============================ APPS ============================ -->
+        <section class="section" id="apps">
+          <div class="section-head">
+            <p class="label">Our apps</p>
+            <h2>Two apps, built while teaching.</h2>
+            <p>
+              Both run in the browser, both keep your class data on your own device, and both
+              were written for the jobs that eat a teacher's week &mdash; recording what children can
+              actually do, and running the screen at the front of the room.
+            </p>
+          </div>
+
+          <div class="pair">
+            <div class="field field-lime slab">
+              <p class="app-tag"><b>C</b> Creance</p>
+              <h3>Assessment recorded while you teach, not after.</h3>
+              <p>
+                Paste in a class list, add your own success criteria, and mark against them as
+                you move around the room. Every child's picture builds up criterion by criterion,
+                so the gaps show themselves before the end of the unit rather than after it.
+              </p>
+              <ul class="pts">
+                <li>Mark as Not started, Developing, Secure or Mastered &mdash; in Grid, Focus or Tap mode.</li>
+                <li>High achiever and encouragement flags appear on their own, next to the children they apply to.</li>
+                <li>Class breakdown and analytics show how the whole group is doing at a glance.</li>
+                <li>Export the lot as a spreadsheet when reports are due.</li>
+              </ul>
+              <div class="field-foot">
+                <a class="pill pill-ink" href="https://trycreance.app">Open the example <span class="arw" aria-hidden="true">&rarr;</span></a>
+                <a class="pill pill-ghost-dark" href="https://creance.heutalab.com">Start an empty copy</a>
+              </div>
+              <p class="field-note">
+                Opens on two invented classes and a term of marks, so there is something to look at.
+                Your school's own copy at <a href="https://creance.heutalab.com">creance.heutalab.com</a>
+                starts empty and keeps its data separate.
+              </p>
+            </div>
+
+            <div class="shotcard slab">
+              <figure>
+                <img src="/assets/apps/creance-assess.png" width="1400" height="774" loading="lazy" decoding="async" alt="The Creance Assess grid mid-topic: a class list down the left, five success criteria across the top, a coloured progress bar in every cell, and confidence stars and teacher notes on the right." />
+              </figure>
+              <figcaption>The Assess grid, mid-topic &mdash; and exactly what opens when you tap through. The banner across the top is the app's, not ours.</figcaption>
+              <dl class="spec">
+                <div><dt>Marking modes</dt><dd>Grid &middot; Focus &middot; Tap</dd></div>
+                <div><dt>Levels per criterion</dt><dd>4</dd></div>
+                <div><dt>Accounts needed</dt><dd>0</dd></div>
+                <div><dt>Reports export</dt><dd>Spreadsheet</dd></div>
+              </dl>
+            </div>
+          </div>
+
+          <div class="pair flip">
+            <div class="field field-cobalt slab">
+              <p class="app-tag"><b>S</b> Sage on the Stage</p>
+              <h3>The screen at the front of the room.</h3>
+              <p>
+                Around fifty widgets &mdash; timers, name picker, group maker, traffic light, draw pad,
+                teaching clock, noise meter &mdash; that you drop onto a screen and arrange however the
+                lesson needs. Build a deck ahead of time, or add a tool the moment you need it.
+              </p>
+              <ul class="pts">
+                <li>Screens you can prepare as a deck, so a lesson's tools are one tap apart.</li>
+                <li>Paste a class register once and every name tool uses it.</li>
+                <li>Nothing is recorded or sent anywhere &mdash; the noise meter and webcam included.</li>
+                <li>Every widget is documented, with a shareable link straight to any one of them.</li>
+              </ul>
+              <div class="field-foot">
+                <a class="pill pill-paper" href="https://sagestage.app">Try it in your browser <span class="arw" aria-hidden="true">&rarr;</span></a>
+                <a class="pill pill-ghost-light" href="https://sagestage.co.uk">Every widget, explained</a>
+              </div>
+              <p class="field-note" style="color:rgba(242,239,231,.68)">
+                Opens on a demonstration class, so the name tools have something to pick from.
+                The reference at <a href="https://sagestage.co.uk">sagestage.co.uk</a> documents
+                every widget and links straight to any one of them.
+              </p>
+            </div>
+
+            <div class="shotcard slab">
+              <figure>
+                <img src="/assets/apps/sagestage-board.jpg" width="1400" height="872" loading="lazy" decoding="async" alt="A Sage on the Stage screen holding five widgets: a five-minute timer, a name picker, a traffic light on green, the morning's agenda and a clock, with the widget dock along the bottom." />
+              </figure>
+              <figcaption>One screen of a lesson deck, with the widget dock along the bottom. Demonstration class list.</figcaption>
+              <dl class="spec">
+                <div><dt>Widgets</dt><dd>About 50</dd></div>
+                <div><dt>Class register</dt><dd>Paste once</dd></div>
+                <div><dt>Recorded or sent</dt><dd>Nothing</dd></div>
+                <div><dt>Sign-in</dt><dd>None</dd></div>
+              </dl>
+            </div>
+          </div>
+
+          <div class="claims">
+            <div class="claim">
+              <span class="swatch" style="background:var(--coral)"></span>
+              <h4>Built by a teacher</h4>
+              <p>Written in the gaps of a real timetable, for the jobs that actually eat the week.</p>
+            </div>
+            <div class="claim">
+              <span class="swatch" style="background:var(--lime)"></span>
+              <h4>Runs in a browser</h4>
+              <p>No install, no admin ticket, no account. Open the link on whatever the school gave you.</p>
+            </div>
+            <div class="claim">
+              <span class="swatch" style="background:var(--cobalt)"></span>
+              <h4>Data stays put</h4>
+              <p>Names, notes and photos live on the device behind a PIN. Back up to a single file.</p>
+            </div>
+            <div class="claim">
+              <span class="swatch" style="background:var(--amber)"></span>
+              <h4>Free to try</h4>
+              <p>Both apps open on a worked example, so you can see what they do before committing.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- =========================== TOPICS ============================ -->
+        <section class="section" id="topics">
+          <span id="categories" hidden></span>
+          <div class="section-head">
+            <p class="label">The library</p>
+            <h2>Fifteen years of classroom material, still where you left it.</h2>
+            <p>
+              Everything from the EdTech Lounge years, carried across intact &mdash; lesson ideas,
+              how-tos, competition rules, gallery pages and all.
+            </p>
+          </div>
+
+          <div class="tiles">
+            <a class="tile" href="/game-based-learning/" style="--tint:#ff5451">
+              <span class="tile-art t-game"><img class="tile-image" src="/assets/tiles/game-based-learning.png" alt="Atari-style fluting in red and white." loading="lazy" decoding="async" /></span>
+              <span class="tile-name">Game-based learning</span>
+              <span class="tile-sub">Minecraft, competitions, planning</span>
             </a>
-            <a class="button button-outline" href="/resources/">Browse resources</a>
+            <a class="tile" href="/media/" style="--tint:#4e9ee6">
+              <span class="tile-art t-media"><img class="tile-image" src="/assets/tiles/media.png" alt="A monolith against a blue sky." loading="lazy" decoding="async" /></span>
+              <span class="tile-name">Media</span>
+              <span class="tile-sub">Video, sound, media literacy</span>
+            </a>
+            <a class="tile" href="/coding/" style="--tint:#ca8902">
+              <span class="tile-art t-coding"><img class="tile-image" src="/assets/tiles/coding.png" alt="An angle-bracket ellipsis, <:>, in amber." loading="lazy" decoding="async" /></span>
+              <span class="tile-name">Coding</span>
+              <span class="tile-sub">Scratch, block-based learning</span>
+            </a>
+            <a class="tile" href="/resources/" style="--tint:#90a402">
+              <span class="tile-art t-resources" role="img" aria-label="An RSS fan in lime, white and charcoal."></span>
+              <span class="tile-name">Resources</span>
+              <span class="tile-sub">Free downloads and templates</span>
+            </a>
+            <a class="tile" href="/presenting/" style="--tint:#b56fff">
+              <span class="tile-art t-presenting"><img class="tile-image" src="/assets/tiles/presenting.png" alt="The old PowerPoint mark in purple." loading="lazy" decoding="async" /></span>
+              <span class="tile-name">Presenting</span>
+              <span class="tile-sub">Slides, portfolios, showing work</span>
+            </a>
+            <a class="tile" href="/experimental/" style="--tint:#7aa942">
+              <span class="tile-art t-experimental">
+                <svg viewBox="0 0 422 618" role="img" aria-label="A sharpened pencil pointing down, drawn flat in white and charcoal on green.">
+                  <path d="M118 -12H225V296H118Z" fill="#ffffff" />
+                  <path d="M225 -12H304V296H225Z" fill="#d2d7cd" />
+                  <path d="M118 296H225L211 600Z" fill="#ffffff" />
+                  <path d="M225 296H304L211 600Z" fill="#bfc5b9" />
+                  <path d="M173 476H217L211 600Z" fill="#3a3a3a" />
+                  <path d="M217 476H249L211 600Z" fill="#1e1e1e" />
+                </svg>
+              </span>
+              <span class="tile-name">Experimental</span>
+              <span class="tile-sub">Half-built ideas worth stealing</span>
+            </a>
+            <a class="tile" href="/professional-development/" style="--tint:#5aae6c">
+              <span class="tile-art t-pd"><img class="tile-image" src="/assets/tiles/pd.png" alt="A book spine, seen open, in green." loading="lazy" decoding="async" /></span>
+              <span class="tile-name">Professional development</span>
+              <span class="tile-sub">Workshops and staff training</span>
+            </a>
+            <a class="tile" href="/site-index/" style="--tint:#f94e92">
+              <span class="tile-art t-archive">
+                <svg viewBox="0 0 422 618" role="img" aria-label="A stylised at-sign: the mark for the EdTech Lounge archive.">
+                  <defs>
+                    <pattern id="ar-grain" width="6" height="6" patternUnits="userSpaceOnUse">
+                      <rect width="3" height="3" fill="#0b1a22" />
+                      <rect x="3" y="3" width="3" height="3" fill="#0b1a22" />
+                    </pattern>
+                  </defs>
+                  <g font-family="Poppins, Futura, 'Century Gothic', sans-serif" font-weight="800" font-size="346" text-anchor="middle">
+                    <text x="216" y="314" dominant-baseline="central" fill="#f6bd32">@</text>
+                    <text x="206" y="304" dominant-baseline="central" fill="#f1468b">@</text>
+                  </g>
+                  <rect width="422" height="618" fill="url(#ar-grain)" opacity=".07" />
+                </svg>
+              </span>
+              <span class="tile-name">Full archive index</span>
+              <span class="tile-sub">Every legacy page, listed</span>
+            </a>
           </div>
-          <p class="hero-proof">
-            <strong>Two apps, both free to try in the browser.</strong>
-            Class data stays on your own device.
-          </p>
-        </div>
+        </section>
 
-        <figure class="hero-shot">
-          <img
-            src="assets/apps/hero-classroom.jpg"
-            width="562"
-            height="355"
-            fetchpriority="high"
-            decoding="async"
-            alt="A child in headphones at a laptop, building in Minecraft, set against blocks of HeutaLab blue, lime and orange."
-          />
-        </figure>
-      </section>
-
-      <section class="category-strip shell" id="categories" aria-labelledby="categories-title">
-        <p class="eyebrow blue" id="categories-title">Browse by topic</p>
-        <div class="category-grid">
-          <a class="category-card" href="/game-based-learning/">
-            <span class="category-art game" aria-hidden="true">
-            <img class="tile-image" src="assets/tiles/game-based-learning.png" alt="" loading="lazy" decoding="async" />
-            </span>
-            <span>Game-based learning</span>
-          </a>
-
-          <a class="category-card" href="/media/">
-            <span class="category-art media" aria-hidden="true">
-            <img class="tile-image" src="assets/tiles/media.png" alt="" loading="lazy" decoding="async" />
-            </span>
-            <span>Media</span>
-          </a>
-
-          <a class="category-card" href="/coding/">
-            <span class="category-art coding" aria-hidden="true">
-            <img class="tile-image" src="assets/tiles/coding.png" alt="" loading="lazy" decoding="async" />
-            </span>
-            <span>Coding</span>
-          </a>
-
-          <a class="category-card" href="/resources/">
-            <span class="category-art resources" aria-hidden="true">
-            </span>
-            <span>Resources</span>
-          </a>
-
-          <a class="category-card" href="/presenting/">
-            <span class="category-art presenting" aria-hidden="true">
-            <img class="tile-image" src="assets/tiles/presenting.png" alt="" loading="lazy" decoding="async" />
-            </span>
-            <span>Presenting</span>
-          </a>
-
-          <a class="category-card" href="/experimental/">
-            <span class="category-art experimental" aria-hidden="true">
-            </span>
-            <span>Experimental</span>
-          </a>
-
-          <a class="category-card" href="/professional-development/">
-            <span class="category-art pd" aria-hidden="true">
-            <img class="tile-image" src="assets/tiles/pd.png" alt="" loading="lazy" decoding="async" />
-            </span>
-            <span>PD</span>
-          </a>
-
-          <a class="category-card" href="/blog/">
-            <span class="category-art archive" aria-hidden="true">
-            <b>☼</b><em>♙</em>
-            </span>
-            <span>Archive</span>
-          </a>
-        </div>
-      </section>
-
-      <section class="app-showcase shell" id="apps" aria-labelledby="apps-title">
-        <div class="showcase-intro">
-          <p class="eyebrow blue">Our apps</p>
-          <h2 id="apps-title">Two apps, built while teaching<span>.</span></h2>
-          <p>
-            Both run in the browser, both keep your class data on your own
-            device, and both were written for the jobs that eat a teacher's
-            week — recording what children can actually do, and running the
-            screen at the front of the room.
-          </p>
-        </div>
-
-        <article class="app-feature creance-feature">
-          <div class="app-feature-copy">
-            <p class="app-badge"><i class="creance-mark" aria-hidden="true">C</i> Creance</p>
-            <h3>Assessment recorded while<br class="desktop-break" /> you teach, not after.</h3>
-            <p>
-              Paste in a class list, add your own success criteria, and mark
-              against them as you move around the room. Every child's picture
-              builds up criterion by criterion, so the gaps show themselves
-              before the end of the unit rather than after it.
-            </p>
-            <ul class="app-points">
-              <li>Mark as Not started, Developing, Secure or Mastered — in Grid, Focus or Tap mode, the last built for marking from a phone on the move.</li>
-              <li>High achiever and encouragement flags appear on their own, next to the children they apply to.</li>
-              <li>Class breakdown and analytics show how the whole group is doing on a topic at a glance.</li>
-              <li>Export the lot as a spreadsheet when reports are due.</li>
-              <li>Names, notes and photos stay on the device behind a PIN — back everything up to a single file.</li>
-            </ul>
-            <div class="app-links">
-              <a class="button button-creance" href="https://trycreance.app">
-                Open the example <span aria-hidden="true">→</span>
-              </a>
+        <!-- ========================= TERM REGISTER ======================== -->
+        <section class="section register slab" id="year">
+          <p class="label">How it plays out</p>
+          <h2>One class, one year, four moments.</h2>
+          <div class="stops">
+            <div class="stop">
+              <p class="when">Lesson 001</p>
+              <h5>Mark on the move</h5>
+              <p>A class list and your own success criteria. Marks go in while you are still walking the room.</p>
             </div>
-            <p class="app-note">
-              Opens on the class shown here — two invented classes and a term of marks, so there
-              is something to look at. Your school's own copy lives at
-              <a href="https://creance.heutalab.com">creance.heutalab.com</a>, starts empty, and
-              keeps its data separate from anything tried out here.
-            </p>
-          </div>
-
-          <figure class="app-shot">
-            <img
-              src="assets/apps/creance-assess.png"
-              width="1400"
-              height="774"
-              loading="lazy"
-              decoding="async"
-              alt="The same Creance Assess grid shown at the top of the page, with the class list, success criteria columns and per-cell progress bars."
-            />
-            <figcaption>
-              The Assess grid, mid-topic — and exactly what opens when you tap
-              through. The banner is the app's, not ours.
-            </figcaption>
-          </figure>
-        </article>
-
-        <article class="app-feature sage-feature reverse">
-          <div class="app-feature-copy">
-            <p class="app-badge"><i class="sage-mark" aria-hidden="true">S</i> Sage on the Stage</p>
-            <h3>The screen at the front<br class="desktop-break" /> of the room.</h3>
-            <p>
-              Around fifty widgets — timers, name picker, group maker, traffic
-              light, draw pad, teaching clock, noise meter — that you drop onto
-              a screen and arrange however the lesson needs. Build a deck ahead
-              of time, or add a tool the moment you need it.
-            </p>
-            <ul class="app-points">
-              <li>Screens you can prepare as a deck, so a lesson's tools are one tap apart.</li>
-              <li>Paste a class register once and every name tool uses it.</li>
-              <li>Nothing is recorded or sent anywhere — the noise meter and webcam included.</li>
-              <li>Every widget is documented, with a shareable link straight to any one of them.</li>
-            </ul>
-            <div class="app-links">
-              <a class="button button-sage" href="https://sagestage.app">
-                Try it in your browser <span aria-hidden="true">→</span>
-              </a>
-              <a class="button button-outline" href="https://sagestage.co.uk">Every widget, explained</a>
+            <div class="stop">
+              <p class="when">Week 006</p>
+              <h5>The gaps surface</h5>
+              <p>Enough marks to see the pattern &mdash; the criterion half the class has not met is now obvious.</p>
+            </div>
+            <div class="stop">
+              <p class="when">Term 002</p>
+              <h5>The picture holds</h5>
+              <p>Class breakdown and analytics across topics, so the conversation with the leadership team has evidence in it.</p>
+            </div>
+            <div class="stop">
+              <p class="when">Reports week</p>
+              <h5>Export and go home</h5>
+              <p>The whole year comes out as a spreadsheet. Nothing to reconstruct from memory.</p>
             </div>
           </div>
+        </section>
 
-          <figure class="app-shot">
-            <img
-              src="assets/apps/sagestage-board.jpg"
-              width="1400"
-              height="872"
-              loading="lazy"
-              decoding="async"
-              alt="A Sage on the Stage screen holding five widgets: a five-minute timer, a name picker showing a chosen name, a traffic light on green, the morning's agenda as a tickable list, and a clock. The widget dock runs along the bottom of the screen."
-            />
-            <figcaption>
-              One screen of a lesson deck, with the widget dock along the
-              bottom. Demonstration class list.
-            </figcaption>
-          </figure>
-        </article>
-      </section>
+        <!-- ============================ BLOG ============================= -->
+        <section class="section" id="writing">
+          <div class="section-head">
+            <p class="label">From the blog</p>
+            <h2>Thinking out loud about the tools.</h2>
+          </div>
+          <div class="posts">
+            <a class="post" href="/blog/">
+              <span class="kind">Framework</span>
+              <h4>Your Partner For Ideas: A Framework</h4>
+              <span class="more">Read the post &rarr;</span>
+            </a>
+            <a class="post" href="/blog/">
+              <span class="kind">Practice</span>
+              <h4>Rethinking AI and LLMs: Beyond Hype and Toward Practicality</h4>
+              <span class="more">Read the post &rarr;</span>
+            </a>
+            <a class="post" href="/blog/">
+              <span class="kind">Classroom</span>
+              <h4>Fostering Student Creativity with Minecraft Education Edition</h4>
+              <span class="more">Read the post &rarr;</span>
+            </a>
+          </div>
+        </section>
 
-      <section class="curriculum-band shell" id="curriculum" aria-labelledby="curriculum-title">
-        <div>
-          <p class="eyebrow purple">Curriculum &amp; training</p>
-          <h2 id="curriculum-title">Media literacy for young learners.</h2>
-          <p>
-            Future-ready resources and training that build critical thinking,
-            creativity and digital citizenship.
-          </p>
-          <a class="small-button purple-button" href="/media/">
-            Explore curriculum <span aria-hidden="true">→</span>
-          </a>
-        </div>
+        <!-- =========================== SIGNUP ============================ -->
+        <section class="signup slab" id="signup">
+          <div>
+            <p class="label">Newsletter</p>
+            <h3>Ideas, updates and free resources.</h3>
+            <p>Straight to your inbox, when there is genuinely something worth sending.</p>
+          </div>
+          <div>
+            <form id="newsletter-form">
+              <label class="sr-only" for="newsletter-email">Email address</label>
+              <input id="newsletter-email" name="email" type="email" autocomplete="email" placeholder="you@school.org" required />
+              <button class="pill pill-ink" type="submit">Subscribe</button>
+            </form>
+            <p class="small" id="newsletter-status" aria-live="polite">No tracking pixels, no list rental. Unsubscribe in one click.</p>
+          </div>
+        </section>
 
-        <div class="curriculum-strands">
-          <a class="strand" href="/media/">
-            <strong>Classroom-ready units</strong>
-            <small>Media literacy for 5–13 year olds.</small>
-          </a>
-          <a class="strand" href="/professional-development/">
-            <strong>Teacher training &amp; workshops</strong>
-            <small>Professional development sessions and materials.</small>
-          </a>
-          <a class="strand" href="/resources/">
-            <strong>Parent guides &amp; webinars</strong>
-            <small>Plain-English help for families at home.</small>
-          </a>
-        </div>
-      </section>
+        <!-- =========================== FOOTER ============================ -->
+        <footer class="foot">
+          <div class="foot-cols">
+            <div>
+              <span class="wordmark">heuta<i>lab</i></span>
+              <p class="foot-blurb">Practical EdTech tools, ideas and training for teachers, leaders and parents.</p>
+            </div>
+            <div>
+              <h6>Apps</h6>
+              <ul>
+                <li><a href="https://trycreance.app">Creance</a></li>
+                <li><a href="https://sagestage.app">Sage on the Stage</a></li>
+                <li><a href="https://sagestage.co.uk">Widget reference</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Library</h6>
+              <ul>
+                <li><a href="/resources/">Free downloads</a></li>
+                <li><a href="/media/">Media literacy</a></li>
+                <li><a href="/site-index/">Legacy archive</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>HeutaLab</h6>
+              <ul>
+                <li><a href="/about/">About</a></li>
+                <li><a href="/blog/">Blog</a></li>
+                <li><a href="/blog/feed.xml">RSS</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="foot-base">
+            <span>&copy; 2026 HeutaLab</span>
+            <span>Formerly EdTech Lounge &middot; Every old link still works</span>
+          </div>
+          <div class="signoff" aria-hidden="true"><span>heuta<i>lab</i></span></div>
+        </footer>
 
-      <section class="newsletter shell" id="newsletter">
-        <div class="newsletter-copy">
-          <span class="mail-icon" aria-hidden="true">✉</span>
-          <p>
-            <strong>Ideas, updates and free resources.</strong>
-            <small>Straight to your inbox.</small>
-          </p>
-        </div>
-
-        <div class="newsletter-form-wrap">
-          <form id="newsletter-form">
-            <label class="sr-only" for="email">Email address</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autocomplete="email"
-              placeholder="Enter your email address"
-              required
-            />
-            <button type="submit">Subscribe</button>
-          </form>
-          <p class="form-status" id="newsletter-status" aria-live="polite"></p>
-        </div>
-
-        <!-- TODO: these are still placeholders. Swap in the real profile URLs
-             and contact address, or delete the block. -->
-        <div class="socials" aria-label="Social links">
-          <strong>Follow</strong>
-          <a href="#" aria-label="X">𝕏</a>
-          <a href="#" aria-label="YouTube">▶</a>
-          <a href="#" aria-label="Instagram">◎</a>
-          <a href="#" aria-label="LinkedIn">in</a>
-          <a href="mailto:hello@heutalab.example" aria-label="Email">✉</a>
-        </div>
-      </section>
-    </main>
+      </div>
+    </div>
   </body>
 </html>
