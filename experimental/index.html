@@ -15,43 +15,46 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Poppins:wght@700;800&display=swap"
     />
-    <link rel="stylesheet" href="/css/styles.css?v=4" />
-    <link rel="stylesheet" href="/css/legacy.css?v=4" />
+    <link rel="stylesheet" href="/css/tokens.css?v=5" />
+    <link rel="stylesheet" href="/css/styles.css?v=5" />
+    <link rel="stylesheet" href="/css/legacy.css?v=5" />
+    <script src="/js/main.js" defer></script>
   </head>
   <body>
-    <main id="top">
+    <div id="top">
       <header class="site-header shell">
-        <a class="brand" href="/" aria-label="HeutaLab home">
-          <span class="brand-mark" aria-hidden="true">
-            <i class="bar one"></i><i class="bar two"></i><i class="bar three"></i><i class="bar four"></i>
-          </span>
-          <span class="brand-copy">
-            <span class="brand-name">Heuta<span>Lab</span></span>
-            <small>EDTECH FOR CURIOUS MINDS</small>
-          </span>
-        </a>
-        <nav class="desktop-nav" aria-label="Primary navigation">
-          <a href="/">Home</a>
-          <a href="/blog/">Blog</a>
+        <nav class="desktop-nav nav-left" aria-label="Primary">
+          <details>
+            <summary>Apps</summary>
+            <div class="nav-menu">
+              <a href="/#apps">Both apps</a>
+              <a href="https://trycreance.app">Creance</a>
+              <a href="https://sagestage.app">Sage on the Stage</a>
+            </div>
+          </details>
           <details>
             <summary>Library</summary>
             <div class="nav-menu">
-              <a href="/resources/">Resource library</a>
+              <a href="/media/">Media literacy</a>
               <a href="/coding/">Coding</a>
               <a href="/game-based-learning/">Game-based learning</a>
-              <a href="/media/">Media</a>
-              <a href="/presenting/">Presenting</a>
-              <a href="/eyfs/">Early Years (EYFS)</a>
               <a href="/professional-development/">Professional development</a>
-              <a href="/experimental/">Experimental</a>
+              <a href="/resources/">Free downloads</a>
               <a href="/site-index/">Everything (site index)</a>
             </div>
           </details>
-          <a href="/about/">About</a>
+          <a href="/blog/">Blog</a>
         </nav>
-        <a class="login" href="/#newsletter">Login</a>
+
+        <a class="wordmark" href="/" aria-label="HeutaLab home">heuta<i>lab</i></a>
+
+        <nav class="desktop-nav nav-right" aria-label="Secondary">
+          <a href="/about/">About</a>
+          <a href="/#newsletter">Subscribe</a>
+        </nav>
+
         <details class="mobile-menu">
           <summary aria-label="Open navigation"><span></span><span></span><span></span></summary>
           <nav aria-label="Mobile navigation">
@@ -64,7 +67,7 @@
         </details>
       </header>
 
-      <div class="page-wrap shell">
+      <main class="page-wrap shell">
         <div class="page-hero">
           <p class="eyebrow purple">Library · EdTech Lounge archive</p>
           <h1>Experimental<span>.</span></h1>
@@ -281,12 +284,45 @@
         </section>
         </div>
         <p class="backlink"><a href="/site-index/">← Site index</a></p>
-      </div>
+      </main>
 
       <footer class="site-footer shell">
-        <p><strong>HeutaLab</strong> · <a href="/blog/">Blog</a> · <a href="/resources/">Resources</a> · <a href="/site-index/">Site index</a> · <a href="/about/">About</a></p>
-        <p class="footnote">Includes the EdTech Lounge archive (2009–2024), migrated from Squarespace to this site.</p>
+        <div class="foot-cols">
+          <div>
+            <span class="wordmark">heuta<i>lab</i></span>
+            <p class="foot-blurb">Practical EdTech tools, ideas and training for teachers, leaders and parents.</p>
+          </div>
+          <div>
+            <h6>Apps</h6>
+            <ul>
+              <li><a href="https://trycreance.app">Creance</a></li>
+              <li><a href="https://sagestage.app">Sage on the Stage</a></li>
+              <li><a href="https://sagestage.co.uk">Widget reference</a></li>
+            </ul>
+          </div>
+          <div>
+            <h6>Library</h6>
+            <ul>
+              <li><a href="/resources/">Free downloads</a></li>
+              <li><a href="/media/">Media literacy</a></li>
+              <li><a href="/site-index/">Legacy archive</a></li>
+            </ul>
+          </div>
+          <div>
+            <h6>HeutaLab</h6>
+            <ul>
+              <li><a href="/about/">About</a></li>
+              <li><a href="/blog/">Blog</a></li>
+              <li><a href="/blog/feed.xml">RSS</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot-base">
+          <span>&copy; 2026 HeutaLab</span>
+          <span>Includes the EdTech Lounge archive (2009&ndash;2024), migrated from Squarespace to this site.</span>
+        </div>
+        <div class="signoff" aria-hidden="true"><span>heuta<i>lab</i></span></div>
       </footer>
-    </main>
+    </div>
   </body>
 </html>

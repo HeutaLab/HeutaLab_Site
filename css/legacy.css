@@ -1,8 +1,21 @@
 /* Styles for the blog + legacy library pages (EdTech Lounge archive).
-   Uses the tokens defined in styles.css - no raw sizes, radii or
-   shadows below. */
+   Uses the tokens defined in tokens.css - no raw sizes, radii or
+   shadows below.
 
-.page-wrap { padding: var(--space-5) 0 var(--space-8); }
+   These pages now read as a warm paper slab laid on the dark ink
+   ground, so the surface tints below are warmed to sit on paper rather
+   than on white. */
+
+/* The paper slab. Everything you read sits on this; the ink ground
+   shows around it and behind the chrome. */
+.page-wrap {
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: var(--r-lg);
+  margin-top: var(--gutter);
+  padding: clamp(24px, 4vw, 56px) clamp(20px, 4vw, 64px) clamp(40px, 6vw, 72px);
+  box-shadow: 0 24px 60px rgba(4, 9, 15, .38);
+}
 
 .page-hero { max-width: 900px; padding: var(--space-5) 0 var(--space-2); }
 .page-hero h1 {
@@ -13,7 +26,7 @@
   letter-spacing: var(--track-tighter);
   font-weight: var(--weight-bold);
 }
-.page-hero h1 span { color: var(--coral); }
+.page-hero h1 span { color: var(--coral-deep); }  /* --coral is 2.87:1 on paper */
 .page-hero .lime-stroke { margin-left: 2px; }
 .hero-sub { max-width: 760px; margin: var(--space-2) 0 0; color: var(--ink-soft); font-size: var(--text-lg); line-height: 1.55; }
 .hero-sub a { color: var(--cobalt); text-decoration: underline; }
@@ -31,15 +44,20 @@
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
 }
-a.chip:hover { background: #e0e6ef; }
+a.chip:hover { background: #ded8c9; }
 .chip i { font-style: normal; color: var(--muted); font-weight: var(--weight-normal); }
 .chip-btn { border: 1px solid var(--line); cursor: pointer; }
 .chip-btn.selected { background: var(--ink); color: white; }
-.chip-btn.selected i { color: #b7c0cf; }
+.chip-btn.selected i { color: #a9a394; }
 .chip-row { margin: var(--space-5) 0 var(--space-2); }
 .filter-empty { color: var(--muted); font-size: var(--text-base); padding: var(--space-6) 0; }
 
 /* ---- article body -------------------------------------------------- */
+/* Archive prose predates the slab; anything wider than it scrolls inside
+   its own box rather than pushing the page sideways onto the ink. */
+.prose table, .prose pre { display: block; max-width: 100%; overflow-x: auto; }
+.prose { overflow-wrap: break-word; }
+
 .prose {
   max-width: 720px;
   margin-top: var(--space-5);
@@ -61,7 +79,7 @@ a.chip:hover { background: #e0e6ef; }
 .prose h4 { font-size: var(--text-base); }
 .prose p { margin: 0 0 1.05em; }
 .prose a { color: var(--cobalt); text-decoration: underline; text-underline-offset: 2px; }
-.prose a:hover { color: #0a45a8; }
+.prose a:hover { color: #063f9b; }
 .prose ul, .prose ol { margin: 0 0 1.2em; padding-left: var(--space-5); }
 .prose li { margin-bottom: .35em; }
 .prose li p { margin-bottom: .3em; }
@@ -101,8 +119,8 @@ a.chip:hover { background: #e0e6ef; }
   margin: var(--space-5) 0;
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
-  background: #fff7ec;
-  border: 1px solid #f4dfc0;
+  background: #f8efdc;
+  border: 1px solid #e6cfa8;
   color: #6b533a;
   font-size: var(--text-sm);
   line-height: 1.5;
@@ -154,10 +172,10 @@ a.chip:hover { background: #e0e6ef; }
   overflow: hidden;
   scroll-margin-top: var(--space-5);
 }
-.tone-blue   { background: linear-gradient(135deg, #f7fbff, #e9f1f9); }
-.tone-purple { background: linear-gradient(135deg, #fbfaff, #ebe8fb); }
-.tone-warm   { background: linear-gradient(135deg, #fffdf6, #fff1da); }
-.tone-mint   { background: linear-gradient(135deg, #f5fcf9, #e2f4ec); }
+.tone-blue   { background: linear-gradient(135deg, #eef3f7, #e0e9f2); }
+.tone-purple { background: linear-gradient(135deg, #f2f0f8, #e6e1f4); }
+.tone-warm   { background: linear-gradient(135deg, #f7f3e6, #f6e9cf); }
+.tone-mint   { background: linear-gradient(135deg, #edf6f1, #dcefe5); }
 .coral-eyebrow::after { background: var(--coral); }
 .mint-eyebrow::after { background: var(--mint); }
 
@@ -195,17 +213,7 @@ a.chip:hover { background: #e0e6ef; }
 .prose a.button { text-decoration: none; }
 .prose a.button-primary { color: white; }
 
-/* ---- footer --------------------------------------------------------- */
-.site-footer {
-  margin-top: var(--space-6);
-  padding: var(--space-5) 0 var(--space-6);
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-  font-size: var(--text-sm);
-}
-.site-footer a { color: var(--ink); font-weight: var(--weight-semibold); }
-.site-footer a:hover { color: var(--cobalt); }
-.site-footer .footnote { margin-top: var(--space-1); font-size: var(--text-xs); }
+/* The footer now lives on the ink ground and is defined in styles.css. */
 
 @media (max-width: 620px) {
   .post-nav { flex-direction: column; }

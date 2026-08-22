@@ -1,79 +1,11 @@
 /* ===================================================================
-   HeutaLab homepage -- "Slab"
+   HeutaLab homepage sections
    -------------------------------------------------------------------
-   Self-contained: the homepage does NOT load styles.css or legacy.css,
-   so nothing here can reach the other 166 pages. Those keep their own
-   chrome and tokens untouched.
-
-   If you change the type here, update the Google Fonts <link> in
-   index.html to match.
+   Loaded after tokens.css and styles.css, and only by index.html.
+   Tokens come from tokens.css; the reset, the pill nav, the buttons
+   and the footer come from styles.css -- this file is the homepage's
+   own sections and nothing else.
    =================================================================== */
-
-/* ===================================================================
-   HeutaLab -- "Slab" direction
-   A single committed visual world: bright classroom software laid out
-   as objects on a dark ink table. Painted explicitly so it holds on
-   either host ground; no theme inversion.
-   =================================================================== */
-
-:root {
-  /* Ground: HeutaLab ink (#071428) pushed down two stops. Navy-black,
-     never neutral -- every grey below is biased the same way. */
-  --ground:     #060e1b;
-  --ground-lift:#0d1930;
-  --hairline:   rgba(242, 239, 231, 0.14);
-
-  /* Paper: warm chalk, not white. The card ground. */
-  --paper:      #f2efe7;
-  --paper-dim:  rgba(242, 239, 231, 0.62);
-  --paper-faint:rgba(242, 239, 231, 0.34);
-
-  /* Brand hues, used as large fields rather than accents-on-white */
-  --coral:      #ff4b4d;
-  --coral-deep: #c9302f;
-  --cobalt:     #0757d7;
-  --lime:       #b9d539;
-  --amber:      #f7b229;
-
-  --font-word: "Poppins", "Futura", "Century Gothic", sans-serif;
-  --font-text: "Hanken Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
-
-  --gutter: 14px;
-  --r-lg: 30px;
-  --r-md: 18px;
-  --r-sm: 12px;
-}
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  background: var(--ground);
-  color: var(--paper);
-  font-family: var(--font-text);
-  font-size: 17px;
-  line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-}
-
-/* height:auto is load-bearing. The width/height attributes on each <img>
-   land as presentational hints; setting only `width` in CSS overrides the
-   width hint and leaves height="774" in force, which renders the app
-   screenshots at column-width by 774px -- a 2.7x vertical stretch. */
-img { display: block; max-width: 100%; height: auto; }
-a { color: inherit; text-decoration: none; }
-
-:where(a, button, input):focus-visible {
-  outline: 3px solid var(--amber);
-  outline-offset: 3px;
-  border-radius: 4px;
-}
-
-/* ---- Shared atoms --------------------------------------------------- */
-
-.bleed { padding-inline: var(--gutter); }
-.inner { width: min(1440px, 100%); margin-inline: auto; }
 
 .label {
   margin: 0;
@@ -117,6 +49,13 @@ a { color: inherit; text-decoration: none; }
 .pill-ghost-dark { border-color: rgba(6,14,27,.30); color: var(--ground); background: transparent; }
 .pill-ghost-dark:hover { background: rgba(6,14,27,.08); }
 
+/* The homepage's sections sit on the ink ground, so its default text is
+   paper. Every light-ground component below (.rail, .marquee, .field-lime,
+   .register, .signup, .shotcard) sets its own colour, so this only reaches
+   the type that needs it. Without it the h2/h4s inherit --ink from
+   styles.css and render ink-on-ink at 1.05:1. */
+body { color: var(--paper); }
+
 /* ---- Announcement rail ---------------------------------------------- */
 
 .rail {
@@ -132,98 +71,6 @@ a { color: inherit; text-decoration: none; }
 }
 .rail b { color: var(--ground); font-weight: 700; }
 
-/* ---- Floating nav ---------------------------------------------------- */
-
-.nav-wrap { position: sticky; top: var(--gutter); z-index: 50; }
-
-.nav {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  height: 62px;
-  margin-top: var(--gutter);
-  padding: 0 26px;
-  border-radius: 999px;
-  background: var(--coral-deep);
-  border: 1px solid transparent;
-  box-shadow: 0 10px 30px rgba(4, 9, 15, .38);
-}
-.nav-links, .desktop-nav { display: flex; gap: 26px; align-items: center; }
-.nav-links a, .desktop-nav > a, .desktop-nav summary {
-  font-size: 12px; font-weight: 700; letter-spacing: 0.12em;
-  text-transform: uppercase; color: rgba(242,239,231,.78);
-  transition: color .15s ease;
-}
-.nav-links a:hover, .desktop-nav > a:hover, .desktop-nav summary:hover,
-.nav-links a[aria-current] { color: var(--paper); }
-.nav-links a.pill-paper, .nav-links a.pill-paper:hover,
-.desktop-nav a.pill-paper, .desktop-nav a.pill-paper:hover { color: var(--ground); }
-
-/* Dropdowns ------------------------------------------------------------
-   <details>/<summary>, so the menus work with JavaScript off; main.js only
-   adds the close-the-others-on-open behaviour. */
-.desktop-nav details { position: relative; }
-.desktop-nav summary { cursor: pointer; list-style: none; white-space: nowrap; }
-.desktop-nav summary::-webkit-details-marker { display: none; }
-.desktop-nav summary::after {
-  content: ""; display: inline-block; margin-left: 8px;
-  border: 4px solid transparent; border-top-color: currentColor;
-  transform: translateY(2px);
-}
-.desktop-nav details[open] summary { color: var(--paper); }
-.nav-menu {
-  position: absolute; left: -14px; top: 34px; z-index: 60;
-  min-width: 232px; padding: 8px;
-  display: grid; gap: 2px;
-  border-radius: var(--r-md);
-  background: var(--ground-lift);
-  border: 1px solid var(--hairline);
-  box-shadow: 0 18px 44px rgba(4, 9, 15, .55);
-}
-.nav-menu a {
-  padding: 10px 12px; border-radius: 9px;
-  font-family: var(--font-text); font-size: 14.5px; font-weight: 600;
-  letter-spacing: 0; text-transform: none; color: var(--paper-dim);
-  white-space: nowrap;
-}
-.nav-menu a:hover { background: rgba(242, 239, 231, .09); color: var(--paper); }
-
-/* Hamburger ------------------------------------------------------------ */
-.mobile-menu { display: none; position: relative; }
-.mobile-menu > summary {
-  width: 42px; height: 42px; padding: 11px; cursor: pointer;
-  display: grid; align-content: center; gap: 5px;
-  border-radius: 12px; background: rgba(242, 239, 231, .14);
-  list-style: none;
-}
-.mobile-menu > summary::-webkit-details-marker { display: none; }
-.mobile-menu > summary span { height: 2px; border-radius: 2px; background: var(--paper); }
-.mobile-menu nav {
-  position: absolute; right: 0; top: 52px; z-index: 60;
-  min-width: 208px; padding: 8px; display: grid; gap: 2px;
-  border-radius: var(--r-md);
-  background: var(--ground-lift);
-  border: 1px solid var(--hairline);
-  box-shadow: 0 18px 44px rgba(4, 9, 15, .55);
-}
-.mobile-menu nav a {
-  padding: 11px 12px; border-radius: 9px;
-  font-size: 15px; font-weight: 600; color: var(--paper-dim);
-}
-.mobile-menu nav a:hover { background: rgba(242, 239, 231, .09); color: var(--paper); }
-.nav-right { justify-content: flex-end; }
-
-.wordmark {
-  font-family: var(--font-word);
-  font-weight: 800;
-  letter-spacing: -0.045em;
-  line-height: 1;
-}
-.nav .wordmark { font-size: 26px; }
-.wordmark i { font-style: normal; color: var(--coral); }
-.nav .wordmark i { color: rgba(6,14,27,.72); }
-
-.nav-burger { display: none !important; }
 
 /* ---- Hero -------------------------------------------------------------
    The wordmark IS the hero. A darkened photograph carries it, the headline
@@ -629,56 +476,12 @@ a { color: inherit; text-decoration: none; }
 .signup button { height: 54px; border: 0; }
 .signup .small { margin-top: 14px; font-size: 13px; color: rgba(6,14,27,.62); }
 
-/* Visually hidden, still read aloud. The mockup inlined this on the one
-   label that needed it; the real page uses the class. */
-.sr-only {
-  position: absolute; width: 1px; height: 1px;
-  padding: 0; margin: -1px; overflow: hidden;
-  clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
-}
-
-/* ---- Footer ---------------------------------------------------------- */
-
-.foot { margin-top: clamp(56px, 7vw, 96px); }
-.foot-cols {
-  display: grid; grid-template-columns: 1.4fr repeat(3, 1fr);
-  gap: 40px; padding-bottom: 44px; border-bottom: 1px solid var(--hairline);
-}
-.foot-cols .wordmark { font-size: 34px; }
-.foot-blurb { margin: 16px 0 0; color: var(--paper-faint); font-size: 15px; max-width: 30ch; }
-.foot h6 { margin: 0 0 16px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--paper-faint); }
-.foot ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: 15px; }
-.foot ul a { color: var(--paper-dim); }
-.foot ul a:hover { color: var(--paper); }
-.foot-base { padding: 22px 0 0; display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; font-size: 13px; color: var(--paper-faint); }
-
-/* The wordmark returns full-bleed, cropped at the baseline -- the page
-   signs off with the same gesture it opened with. */
-.signoff {
-  margin-top: 40px;
-  overflow: hidden;
-  height: clamp(78px, 12vw, 190px);
-}
-.signoff span {
-  display: block;
-  font-family: var(--font-word);
-  font-weight: 800;
-  font-size: clamp(6rem, 21.5vw, 21rem);
-  line-height: 0.74;
-  letter-spacing: -0.052em;
-  color: rgba(242, 239, 231, 0.09);
-  white-space: nowrap;
-  user-select: none;
-}
-.signoff i { font-style: normal; color: rgba(255, 75, 77, 0.22); }
-
 /* ---- Responsive ------------------------------------------------------ */
 
 @media (max-width: 1080px) {
   .claims, .stops { grid-template-columns: repeat(2, 1fr); }
   .tiles { grid-template-columns: repeat(4, 1fr); gap: 10px; }
   .posts { grid-template-columns: 1fr; }
-  .foot-cols { grid-template-columns: 1fr 1fr; }
   .pair, .pair.flip { grid-template-columns: 1fr; }
   .pair.flip .field { order: 0; }
 
@@ -700,10 +503,6 @@ a { color: inherit; text-decoration: none; }
 }
 
 @media (max-width: 900px) {
-  .nav { grid-template-columns: 1fr auto; height: 58px; padding: 0 10px 0 20px; }
-  .desktop-nav { display: none; }
-  .mobile-menu { display: block; justify-self: end; }
-  .nav .wordmark { justify-self: start; }
   .hero { min-height: clamp(460px, 66vh, 620px); }
   .hero-body { grid-template-columns: 1fr; row-gap: 22px; }
   .hero h1 { text-align: left; }
@@ -715,7 +514,6 @@ a { color: inherit; text-decoration: none; }
   body { font-size: 16px; }
   .claims, .stops { grid-template-columns: 1fr; }
   .tiles { grid-template-columns: repeat(2, 1fr); }
-  .foot-cols { grid-template-columns: 1fr; gap: 30px; }
   .rail { font-size: 11px; padding-inline: 16px; }
   .hero { min-height: clamp(420px, 62vh, 540px); }
   .hero-body { padding-top: 26px; }
@@ -724,7 +522,6 @@ a { color: inherit; text-decoration: none; }
   .field h3 { max-width: none; }
   .field .pts { margin-top: 26px; }
   .field .field-foot { margin-top: 30px; }
-  .nav { padding: 0 8px 0 18px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

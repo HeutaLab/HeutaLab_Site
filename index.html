@@ -26,7 +26,9 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Poppins:wght@700;800&display=swap"
     />
-    <link rel="stylesheet" href="/css/home.css?v=1" />
+    <link rel="stylesheet" href="/css/tokens.css?v=5" />
+    <link rel="stylesheet" href="/css/styles.css?v=5" />
+    <link rel="stylesheet" href="/css/home.css?v=5" />
     <script src="/js/main.js" defer></script>
   </head>
   <body>
@@ -35,9 +37,8 @@
 
         <p class="rail"><b>Free to try in the browser.</b>&nbsp; No account, no install &mdash; class data stays on your device.</p>
 
-        <div class="nav-wrap">
-          <nav class="nav" aria-label="Primary">
-            <div class="desktop-nav nav-left">
+        <header class="site-header">
+            <nav class="desktop-nav nav-left" aria-label="Primary">
               <details>
                 <summary>Apps</summary>
                 <div class="nav-menu">
@@ -58,15 +59,14 @@
                 </div>
               </details>
               <a href="/blog/">Blog</a>
-            </div>
+            </nav>
 
             <a class="wordmark" href="#top" aria-label="HeutaLab home">heuta<i>lab</i></a>
 
-            <div class="desktop-nav nav-right">
+            <nav class="desktop-nav nav-right" aria-label="Secondary">
               <a href="/about/">About</a>
-              <a href="#newsletter" class="desk-sub">Subscribe</a>
-              <a class="pill pill-paper nav-burger" href="#newsletter" style="min-height:38px;padding:0 18px;font-size:12px;letter-spacing:.1em;text-transform:uppercase">Subscribe</a>
-            </div>
+              <a href="#newsletter">Subscribe</a>
+            </nav>
 
             <details class="mobile-menu">
               <summary aria-label="Open navigation"><span></span><span></span><span></span></summary>
@@ -79,11 +79,11 @@
                 <a href="#newsletter">Subscribe</a>
               </nav>
             </details>
-          </nav>
-        </div>
+        </header>
 
+        <main>
         <!-- ============================ HERO ============================ -->
-        <header class="hero slab" id="top">
+        <section class="hero slab" id="top" aria-label="Introduction">
           <img class="hero-bg" src="/assets/apps/hero-classroom.jpg" width="562" height="355" fetchpriority="high"
                alt="A child in headphones at a laptop, building in Minecraft, lit low against blocks of HeutaLab blue, lime and orange." />
           <div class="hero-scrim" aria-hidden="true"></div>
@@ -103,7 +103,7 @@
           </div>
 
           <p class="hero-word" aria-hidden="true">heuta<i>lab</i></p>
-        </header>
+        </section>
 
         <!-- ========================== MARQUEE =========================== -->
         <div class="marquee" aria-hidden="true">
@@ -362,7 +362,7 @@
         </section>
 
         <!-- =========================== SIGNUP ============================ -->
-        <section class="signup slab" id="signup">
+        <section class="signup slab" id="newsletter">
           <div>
             <p class="label">Newsletter</p>
             <h3>Ideas, updates and free resources.</h3>
@@ -378,8 +378,10 @@
           </div>
         </section>
 
-        <!-- =========================== FOOTER ============================ -->
-        <footer class="foot">
+            </main>
+
+    <!-- =========================== FOOTER ============================ -->
+        <footer class="site-footer">
           <div class="foot-cols">
             <div>
               <span class="wordmark">heuta<i>lab</i></span>

@@ -1,0 +1,103 @@
+/* ===================================================================
+   HeutaLab design tokens
+   -------------------------------------------------------------------
+   One source of truth, loaded first by every page. styles.css,
+   legacy.css and home.css all consume these and define no tokens of
+   their own -- change a value here and the whole site follows.
+
+   The type names are kept from the original system so the ~450
+   existing var() references keep working; only the values moved.
+   =================================================================== */
+
+:root {
+  /* ---- Type families ----------------------------------------------
+     Poppins is the wordmark face (it is what the brand lockup in
+     assets/brand is drawn from), used only at display sizes. Hanken
+     Grotesk carries everything else. Update the Google Fonts <link>
+     in the page <head> if these change. */
+  --font-word: "Poppins", Futura, "Century Gothic", sans-serif;
+  --font-display: "Hanken Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-text: "Hanken Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* ---- Type scale -------------------------------------------------- */
+  --text-xs: 0.75rem;    /* 12px - eyebrows, labels, uppercase chrome */
+  --text-sm: 0.875rem;   /* 14px - captions, meta, list items         */
+  --text-base: 1rem;     /* 16px - body copy                          */
+  --text-lg: 1.1875rem;  /* 19px - lead paragraphs, pull quotes       */
+  --text-xl: 1.5rem;     /* 24px - card titles                        */
+  --text-2xl: clamp(1.75rem, 2.4vw, 2.125rem);  /* 28-34 - h3         */
+  --text-3xl: clamp(2.125rem, 3vw, 2.75rem);    /* 34-44 - h2         */
+  --text-4xl: clamp(2.5rem, 4.4vw, 3.875rem);   /* 40-62 - page h1    */
+
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-black: 800;   /* Hanken and Poppins both carry a real 800 */
+
+  --track-tight: -0.02em;
+  --track-tighter: -0.03em;
+  --track-label: 0.08em;
+
+  /* ---- Space scale (4px base) -------------------------------------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* ---- Radii --------------------------------------------------------
+     radius-* are the original names still used through legacy.css;
+     r-* are the larger slab radii the new layout is built on. */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --r-sm: 12px;
+  --r-md: 18px;
+  --r-lg: 30px;
+  --gutter: 14px;
+
+  /* ---- Elevation ----------------------------------------------------
+     Shadows now fall on ink rather than white, so they are deeper. */
+  --shadow-1: 0 1px 2px rgba(4, 9, 15, .16), 0 4px 16px rgba(4, 9, 15, .14);
+  --shadow-2: 0 2px 4px rgba(4, 9, 15, .18), 0 16px 40px rgba(4, 9, 15, .28);
+  --soft-shadow: var(--shadow-1);
+
+  /* ---- Ground -------------------------------------------------------
+     The page is a dark ink table; everything you read sits on a warm
+     paper slab laid on top of it. */
+  --ground: #060e1b;
+  --ground-lift: #0d1930;
+  --hairline: rgba(242, 239, 231, .14);
+
+  --paper: #f2efe7;                        /* the reading surface      */
+  --paper-dim: rgba(242, 239, 231, .62);   /* on ink -- 6.8:1          */
+  /* .34 measured 2.82:1 and carried real footer copy on all 167 pages.
+     .58 is 6.1:1 and still steps down clearly from --paper-dim. */
+  --paper-faint: rgba(242, 239, 231, .58); /* on ink -- 6.1:1          */
+
+  --ink: #071428;                          /* text on paper            */
+  --ink-soft: #233047;
+  --muted: #536072;
+  --line: #ddd8cc;                         /* rules on paper, warmed   */
+  --wash: #e9e5da;                         /* tint on paper, warmed    */
+
+  /* ---- Brand hues ---------------------------------------------------
+     Normalised to a common OKLab lightness (0.68) so no single hue
+     shouts louder than the rest when they sit side by side on ink. */
+  --coral: #ff4b4d;
+  --coral-deep: #c9302f;
+  --cobalt: #0757d7;
+  --lime: #b9d539;
+  --violet: #7140bc;
+  --mint: #16ad88;
+  --amber: #f7b229;
+
+  --creance: #a8442a;
+  --sage: #1a6a55;
+}
