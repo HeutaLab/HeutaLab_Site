@@ -234,3 +234,17 @@
 /storage/scratch-files/year5/Scratch%20Lesson%202.zip /assets/legacy/80abe0ab.zip 301
 /storage/scratch-files/year5/Scratch%20Lesson%203.zip /assets/legacy/1a093195.zip 301
 /storage/scratch-files/year5/Scratch%20Lesson%204.zip /assets/legacy/c0d63c48.zip 301
+
+# Two Year 1/2 templates were never in the Squarespace export, so there is no
+# file to serve. Both survive as live projects on Glenn's Scratch account and
+# these point at them instead. 302, not 301: if the original .sb ever turns up,
+# the redirect should be replaceable without fighting cached 301s.
+#   1576257 - began life as 'Year 1 - transport template', renamed to 'Year 1
+#             childrens template'; the rename is recorded in the history field
+#             of the teacher's .sb, and the project is embedded on the same post.
+#   1626018 - 'Year 2 Make shapes', exact title match.
+# Scratch 1.4 .sb downloads are 403 now, and Scratch 3 cannot open .sb anyway,
+# so the live project is the more useful destination regardless.
+# Still unmatched: /storage/Year 1 - grids.sb - no such project on the account.
+/storage/Year%201%20-%20transport%20template.sb https://scratch.mit.edu/projects/1576257/ 302
+/storage/scratch-files/year2/Year%202%20Make%20shapes.sb https://scratch.mit.edu/projects/1626018/ 302
