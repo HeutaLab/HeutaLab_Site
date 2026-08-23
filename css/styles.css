@@ -43,13 +43,15 @@ img { display: block; max-width: 100%; height: auto; }
 :where(a, button, input):focus-visible {
   outline: 3px solid var(--focus, var(--amber));
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: var(--r-inset);
 }
 /* Light surfaces flip the ring to ink -- amber on paper is 1.6:1. */
 .page-wrap, .marquee, .shotcard, .register { --focus: var(--ground); }
-/* Solid brand fields take a paper ring: 4.6:1 on coral, 5.5:1 on blue,
-   where amber would only manage 2.9 and 3.4. */
-.signup, .field-apps { --focus: var(--paper); }
+/* The ring has to follow the field, not the family: paper reads on the dark
+   fields (4.6:1 on coral, 5.5:1 on blue) but only 1.6:1 on yellow and 1.45:1
+   on lime, so those take ink instead. */
+.signup, .field-apps, .field-make { --focus: var(--paper); }
+.field-resources, .field-lab { --focus: var(--ground); }
 
 /* The sticky header would otherwise cover the top of any #anchor target. */
 [id] { scroll-margin-top: calc(62px + var(--gutter) * 3); }
@@ -86,8 +88,7 @@ img { display: block; max-width: 100%; height: auto; }
      coral bar would compete with every call to action beneath it.
      Paper on this reads 15.6:1 against 4.63:1 on the old coral. */
   background: var(--ground-lift);
-  border: 1px solid var(--hairline);
-  box-shadow: 0 10px 30px rgba(4, 9, 15, .45);
+  border: 1px solid var(--edge-navy);
 }
 
 .desktop-nav { display: flex; gap: 26px; align-items: center; }
@@ -118,11 +119,10 @@ img { display: block; max-width: 100%; height: auto; }
   min-width: 232px; padding: 8px; display: grid; gap: 2px;
   border-radius: var(--r-md);
   background: var(--ground-lift);
-  border: 1px solid var(--hairline);
-  box-shadow: 0 18px 44px rgba(4, 9, 15, .55);
+  border: 1px solid var(--edge-navy);
 }
 .nav-menu a {
-  padding: 10px 12px; border-radius: 9px;
+  padding: 10px 12px; border-radius: var(--r-inset);
   font-size: 14.5px; font-weight: var(--weight-semibold);
   letter-spacing: 0; text-transform: none;
   color: var(--paper-dim); white-space: nowrap;
@@ -156,11 +156,10 @@ img { display: block; max-width: 100%; height: auto; }
   min-width: 208px; padding: 8px; display: grid; gap: 2px;
   border-radius: var(--r-md);
   background: var(--ground-lift);
-  border: 1px solid var(--hairline);
-  box-shadow: 0 18px 44px rgba(4, 9, 15, .55);
+  border: 1px solid var(--edge-navy);
 }
 .mobile-menu nav a {
-  padding: 11px 12px; border-radius: 9px;
+  padding: 11px 12px; border-radius: var(--r-inset);
   font-size: 15px; font-weight: var(--weight-semibold); color: var(--paper-dim);
 }
 .mobile-menu nav a:hover { background: rgba(242, 239, 231, .09); color: var(--paper); }

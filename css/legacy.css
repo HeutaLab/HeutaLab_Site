@@ -14,7 +14,6 @@
   border-radius: var(--r-lg);
   margin-top: var(--gutter);
   padding: clamp(24px, 4vw, 56px) clamp(20px, 4vw, 64px) clamp(40px, 6vw, 72px);
-  box-shadow: 0 24px 60px rgba(4, 9, 15, .38);
 }
 
 .page-hero { max-width: 900px; padding: var(--space-5) 0 var(--space-2); }
@@ -165,17 +164,19 @@ a.chip:hover { background: #ded8c9; }
 .toc-row .chip:hover { border-color: var(--cobalt); color: var(--cobalt); background: white; }
 
 .card-stack { display: grid; gap: var(--space-5); margin-top: var(--space-6); max-width: 980px; }
+/* The four .tone-* gradients are gone. They rotated blue/purple/warm/mint by
+   document order with no relation to content, and measured 1.007-1.017:1
+   against each other -- four names for one tint. A card now sits on the slab
+   with a hairline and takes its page's section colour on the title rule. */
 .content-card {
   padding: var(--space-6) var(--space-6) var(--space-5);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-1);
+  border-radius: var(--r-card);
+  background: var(--wash);
+  border: 1px solid var(--edge-paper);
+  border-top: 3px solid var(--sec, var(--muted));
   overflow: hidden;
-  scroll-margin-top: var(--space-5);
+  scroll-margin-top: calc(62px + var(--gutter) * 3);
 }
-.tone-blue   { background: linear-gradient(135deg, #eef3f7, #e0e9f2); }
-.tone-purple { background: linear-gradient(135deg, #f2f0f8, #e6e1f4); }
-.tone-warm   { background: linear-gradient(135deg, #f7f3e6, #f6e9cf); }
-.tone-mint   { background: linear-gradient(135deg, #edf6f1, #dcefe5); }
 
 
 

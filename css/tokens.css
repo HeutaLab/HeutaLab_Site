@@ -53,20 +53,36 @@
   /* ---- Radii --------------------------------------------------------
      radius-* are the original names still used through legacy.css;
      r-* are the larger slab radii the new layout is built on. */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-pill: 999px;
-  --r-sm: 12px;
-  --r-md: 18px;
-  --r-lg: 30px;
+  /* Four radii, keyed to what the box IS, never to how big it is.
+     There were seven in play before this. */
+  --r-pill: 999px;   /* height is the defining dimension: nav, chips, buttons */
+  --r-slab: 28px;    /* the box is a section of the page: .page-wrap, hero, offers */
+  --r-card: 14px;    /* one item in a set                                        */
+  --r-inset: 6px;    /* a part nested inside a card, or media in prose           */
+
+  /* Old names, aliased so the ~40 existing references keep working. */
+  --radius-sm: var(--r-inset);
+  --radius-md: var(--r-inset);
+  --radius-lg: var(--r-card);
+  --radius-pill: var(--r-pill);
+  --r-sm: var(--r-inset);
+  --r-md: var(--r-card);
+  --r-lg: var(--r-slab);
   --gutter: 14px;
 
   /* ---- Elevation ----------------------------------------------------
-     Shadows now fall on ink rather than white, so they are deeper. */
+     The two grounds have inverted headroom, so they cannot share a tool.
+
+     On PAPER a shadow works: --shadow-1 composites to 1.9:1.
+     On NAVY a shadow is a no-op. Measured, every drop shadow the site was
+     shipping over the ink ground came out at 1.014-1.022:1 -- invisible at
+     any opacity, because near-black has nowhere darker to go. Those are
+     deleted; separation on navy is a hairline instead. */
   --shadow-1: 0 1px 2px rgba(4, 9, 15, .16), 0 4px 16px rgba(4, 9, 15, .14);
   --shadow-2: 0 2px 4px rgba(4, 9, 15, .18), 0 16px 40px rgba(4, 9, 15, .28);
   --soft-shadow: var(--shadow-1);
+  --edge-navy: rgba(242, 239, 231, .16);   /* separation ON the ink ground */
+  --edge-paper: rgba(7, 20, 40, .16);      /* separation ON the paper slab */
 
   /* ---- Ground -------------------------------------------------------
      The page is a dark ink table; everything you read sits on a warm
@@ -120,7 +136,11 @@
      resources, and at 2.91:1 on navy it was the weakest of the set. */
 
   --sec-structure-sky:  #f2efe7;   /* 16.8 on navy  */
-  --sec-structure-ink:  #071428;   /* 16.8 on paper */
+  /* Was #071428 -- byte-identical to --ink, so on the 126 structure pages
+     the section label rendered in exactly the body-text colour and the
+     signal was invisible. A slate that still clears 4.5 but reads as a
+     label rather than as prose. */
+  --sec-structure-ink:  #46586f;   /*  6.3 on paper */
 
   --sec-make-sky:       #ff4b4d;   /*  5.9 on navy  */
   --sec-make-ink:       #c9302f;   /*  4.6 on paper */

@@ -8,6 +8,30 @@ Outputs (committed to the repo):
   about/, site-index/, 404.html, sitemap.xml, _redirects
 Re-run any time with: python3 migration/build_site.py
 """
+import sys as _sys
+
+# ---------------------------------------------------------------------------
+# STOP. This script can no longer regenerate this site.
+#
+# It was the one-off Squarespace migration tool and it has not tracked the
+# site since. Checked 2026-08-23, it still emits:
+#   * the old chrome -- <a class="brand"> with four <i class="bar"> elements
+#     that have had no CSS for months and render as an empty 58x58 box
+#   * no tokens.css link, no sec-* section classes, no wordmark, no new footer
+#   * CARD_TONES / EYEBROW_TONES, the four-way colour rotation that was
+#     deleted deliberately (the tints measured 1.007-1.017:1 against each
+#     other -- four names for one tint)
+#
+# Running it would silently revert the design system across 166 pages.
+# Bring it up to date before removing this guard, or delete the script.
+# ---------------------------------------------------------------------------
+if __name__ == '__main__':
+    _sys.exit(
+        "build_site.py is stale and would revert the live design system.\n"
+        "See the guard comment at the top of this file."
+    )
+
+
 import html as htmllib
 import json
 import re
@@ -266,8 +290,8 @@ HUB_META = {
     '/professional-development': ('Professional development',
                                   'Teacher training sessions, masterclasses and conference workshops.'),
 }
-CARD_TONES = ['tone-blue', 'tone-purple', 'tone-warm', 'tone-mint']
-EYEBROW_TONES = ['blue', 'purple', 'coral-eyebrow', 'mint-eyebrow']
+CARD_TONES = ['']          # retired: rotation by document order, no meaning
+EYEBROW_TONES = ['']       # retired: .eyebrow now reads the page's section
 H_SPLIT = re.compile(r'<h([12])\b[^>]*>(.*?)</h\1>', re.S | re.I)
 
 
