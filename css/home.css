@@ -50,27 +50,11 @@
 .pill-ghost-dark:hover { background: rgba(6,14,27,.08); }
 
 /* The homepage's sections sit on the ink ground, so its default text is
-   paper. Every light-ground component below (.rail, .marquee, .field-lime,
+   paper. Every light-ground component below (.marquee, .field-apps,
    .register, .signup, .shotcard) sets its own colour, so this only reaches
    the type that needs it. Without it the h2/h4s inherit --ink from
    styles.css and render ink-on-ink at 1.05:1. */
 body { color: var(--paper); }
-
-/* ---- Announcement rail ---------------------------------------------- */
-
-.rail {
-  min-height: 34px;
-  padding: 9px 20px;
-  border-radius: 999px;
-  background: var(--paper);
-  color: rgba(6,14,27,.62);
-  text-align: center;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-.rail b { color: var(--ground); font-weight: 700; }
-
 
 /* ---- Hero -------------------------------------------------------------
    The wordmark IS the hero. A darkened photograph carries it, the headline
@@ -207,7 +191,7 @@ body { color: var(--paper); }
 
 .section { margin-top: clamp(56px, 7vw, 104px); }
 .section-head { max-width: 62ch; margin-bottom: 30px; }
-.section-head .label { color: var(--coral); }
+.section-head .label { color: var(--sec-sky, var(--paper-dim)); }
 .section-head h2 {
   margin: 16px 0 0;
   font-size: clamp(2.1rem, 3.6vw, 3.4rem);
@@ -230,8 +214,7 @@ body { color: var(--paper); }
 .pair.flip .field { order: 2; }
 
 .field { padding: clamp(30px, 3.4vw, 52px); display: flex; flex-direction: column; }
-.field-lime   { background: var(--lime);   color: var(--ground); }
-.field-cobalt { background: var(--cobalt); color: var(--paper); }
+.field-apps { background: var(--field-apps); color: var(--paper); }
 
 .app-tag {
   display: inline-flex; align-items: center; gap: 12px;
@@ -241,8 +224,9 @@ body { color: var(--paper); }
   width: 34px; height: 34px; display: grid; place-items: center;
   border-radius: 10px; font-family: var(--font-word); font-size: 17px; letter-spacing: 0;
 }
-.field-lime  .app-tag b { background: var(--ground); color: var(--lime); }
-.field-cobalt .app-tag b { background: var(--paper); color: var(--cobalt); }
+.field-apps .app-tag b { background: var(--paper); color: var(--sec-apps-ink); }
+.field-apps .creance-mark { background: var(--creance); color: var(--paper); }
+.field-apps .sage-mark    { background: var(--sage);    color: var(--paper); }
 
 .field h3 {
   margin: 26px 0 0;
@@ -254,8 +238,7 @@ body { color: var(--paper); }
   max-width: 19ch;
 }
 .field > p { margin: 18px 0 0; font-size: 17px; max-width: 46ch; }
-.field-lime > p { color: rgba(6,14,27,.78); }
-.field-cobalt > p { color: rgba(242,239,231,.84); }
+.field-apps > p { color: rgba(242,239,231,.86); }
 
 .pts { list-style: none; margin: 26px 0 0; padding: 0; display: grid; gap: 12px; max-width: 58ch; font-size: 15.5px; line-height: 1.45; }
 .pts li { display: grid; grid-template-columns: 9px 1fr; gap: 14px; align-items: start; }
@@ -263,12 +246,11 @@ body { color: var(--paper); }
   content: ""; width: 9px; height: 9px; margin-top: 8px; border-radius: 999px;
   background: currentColor; opacity: .55;
 }
-.field-lime .pts { color: rgba(6,14,27,.82); }
-.field-cobalt .pts { color: rgba(242,239,231,.86); }
+.field-apps .pts { color: rgba(242,239,231,.88); }
 
 .field-foot { margin-top: auto; padding-top: 32px; display: flex; flex-wrap: wrap; gap: 12px; }
 .field-note { margin: 18px 0 0; font-size: 13.5px; line-height: 1.5; max-width: 52ch; }
-.field-lime .field-note { color: rgba(6,14,27,.62); }
+.field-apps .field-note { color: rgba(242,239,231,.90); }  /* 4.7:1 on the blue field */
 .field-note a { text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
 
 .shotcard { background: var(--paper); padding: clamp(20px, 2.2vw, 34px); display: flex; flex-direction: column; gap: 20px; }
@@ -301,7 +283,7 @@ body { color: var(--paper); }
   border-radius: var(--r-md);
   background: var(--ground-lift);
 }
-.claim .swatch { width: 30px; height: 6px; border-radius: 999px; display: block; }
+.claim .swatch { width: 30px; height: 6px; border-radius: 999px; display: block; background: var(--sec-make-sky); }
 .claim h4 {
   margin: 22px 0 0; font-size: 14px; font-weight: 800;
   letter-spacing: 0.1em; text-transform: uppercase;
@@ -383,6 +365,11 @@ body { color: var(--paper); }
   transition: color .2s ease;
 }
 .tile:hover .tile-name { color: var(--tint); }
+.tile-cat {
+  display: block; margin-bottom: 9px;
+  font-size: 10.5px; font-weight: 800; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--sec-sky, var(--paper-faint));
+}
 .tile-sub { display: block; margin-top: 5px; font-size: 14px; line-height: 1.4; color: var(--paper-faint); }
 
 /* Artwork bleeds past the tile edge; these offsets are the shipped ones. */
@@ -416,7 +403,7 @@ body { color: var(--paper); }
 /* ---- Term register --------------------------------------------------- */
 
 .register { background: var(--paper); color: var(--ground); padding: clamp(32px, 4vw, 60px); margin-top: var(--gutter); }
-.register .label { color: var(--coral-deep); }
+.register .label { color: var(--sec, var(--muted)); }
 .register h2 {
   margin: 16px 0 0;
   font-size: clamp(2rem, 3.4vw, 3.1rem);
@@ -457,24 +444,24 @@ body { color: var(--paper); }
 
 .signup {
   margin-top: var(--gutter);
-  background: var(--amber); color: var(--ground);
+  background: var(--field-make); color: var(--paper);
   padding: clamp(30px, 3.6vw, 54px);
   display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr);
   gap: clamp(24px, 3vw, 54px); align-items: center;
 }
+.signup .label { color: rgba(242,239,231,.78); }
 .signup h3 { margin: 14px 0 0; font-size: clamp(1.7rem, 2.6vw, 2.4rem); line-height: 1.05; letter-spacing: -0.032em; font-weight: 800; text-wrap: balance; }
-.signup .label { color: rgba(6,14,27,.6); }
-.signup p { margin: 14px 0 0; font-size: 16px; color: rgba(6,14,27,.75); max-width: 42ch; }
+.signup p { margin: 14px 0 0; font-size: 16px; color: rgba(242,239,231,.86); max-width: 42ch; }
 .signup form { display: flex; gap: 10px; flex-wrap: wrap; }
 .signup input {
   flex: 1 1 240px; min-width: 0; height: 54px; padding: 0 20px;
-  border: 2px solid var(--ground); border-radius: 999px;
+  border: 2px solid var(--paper); border-radius: 999px;
   background: var(--paper); color: var(--ground);
   font-family: var(--font-text); font-size: 16px;
 }
 .signup input::placeholder { color: rgba(6,14,27,.45); }
 .signup button { height: 54px; border: 0; }
-.signup .small { margin-top: 14px; font-size: 13px; color: rgba(6,14,27,.62); }
+.signup .small { margin-top: 14px; font-size: 13px; color: rgba(242,239,231,.78); }
 
 /* ---- Responsive ------------------------------------------------------ */
 
@@ -514,7 +501,6 @@ body { color: var(--paper); }
   body { font-size: 16px; }
   .claims, .stops { grid-template-columns: 1fr; }
   .tiles { grid-template-columns: repeat(2, 1fr); }
-  .rail { font-size: 11px; padding-inline: 16px; }
   .hero { min-height: clamp(420px, 62vh, 540px); }
   .hero-body { padding-top: 26px; }
   .hero-word { font-size: 22vw; letter-spacing: -0.06em; }

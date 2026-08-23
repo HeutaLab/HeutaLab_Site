@@ -87,17 +87,57 @@
   --line: #ddd8cc;                         /* rules on paper, warmed   */
   --wash: #e9e5da;                         /* tint on paper, warmed    */
 
-  /* ---- Brand hues ---------------------------------------------------
-     Normalised to a common OKLab lightness (0.68) so no single hue
-     shouts louder than the rest when they sit side by side on ink. */
+  /* ---- Brand hues (raw) ---------------------------------------------
+     The pigments. Do not reach for these directly in a component --
+     use the semantic pairs below, which are the same hues corrected
+     for the ground they land on. */
   --coral: #ff4b4d;
   --coral-deep: #c9302f;
   --cobalt: #0757d7;
   --lime: #b9d539;
-  --violet: #7140bc;
-  --mint: #16ad88;
   --amber: #f7b229;
 
-  --creance: #a8442a;
+  --creance: #a8442a;   /* the two apps keep their own marks */
   --sage: #1a6a55;
+
+  /* ---- Section semantics --------------------------------------------
+     Colour names a section here; it is not decoration. Five jobs:
+
+       structure  navy    HeutaLab itself, chrome, the archive
+       make       coral   action, participation, training, anything
+                          asking a person to do something
+       apps       blue    software, technology, digital making
+       resources  yellow  ideas, curriculum, teaching material
+       lab        lime    experiments, work in progress
+
+     Every hue reads on one ground and fails on the other -- lime is
+     11.6:1 on navy and 1.45:1 on paper; cobalt is the reverse. So each
+     job carries a value per ground rather than a single hex, and every
+     pair clears 4.5:1 as text. Reach for -ink when you are on the paper
+     slab, -sky when you are on the navy ground.
+
+     Violet is retired: it had no job left once curriculum folded into
+     resources, and at 2.91:1 on navy it was the weakest of the set. */
+
+  --sec-structure-sky:  #f2efe7;   /* 16.8 on navy  */
+  --sec-structure-ink:  #071428;   /* 16.8 on paper */
+
+  --sec-make-sky:       #ff4b4d;   /*  5.9 on navy  */
+  --sec-make-ink:       #c9302f;   /*  4.6 on paper */
+
+  --sec-apps-sky:       #3e86f9;   /*  5.5 on navy  */
+  --sec-apps-ink:       #0757d7;   /*  5.5 on paper */
+
+  --sec-resources-sky:  #f7b229;   /* 10.5 on navy  */
+  --sec-resources-ink:  #8a5d05;   /*  5.0 on paper */
+
+  --sec-lab-sky:        #b9d539;   /* 11.6 on navy  */
+  --sec-lab-ink:        #5d6d17;   /*  5.0 on paper */
+
+  /* Field colours. Used as a card ground, not as text -- the comment
+     says which text passes on each. */
+  --field-make:      #c9302f;  /* paper text, 4.6 */
+  --field-apps:      #0757d7;  /* paper text, 5.5 */
+  --field-resources: #f7b229;  /* navy  text, 10.5 */
+  --field-lab:       #b9d539;  /* navy  text, 11.6 */
 }

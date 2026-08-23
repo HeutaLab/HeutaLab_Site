@@ -26,16 +26,14 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Poppins:wght@700;800&display=swap"
     />
-    <link rel="stylesheet" href="/css/tokens.css?v=5" />
-    <link rel="stylesheet" href="/css/styles.css?v=5" />
-    <link rel="stylesheet" href="/css/home.css?v=5" />
+    <link rel="stylesheet" href="/css/tokens.css?v=8" />
+    <link rel="stylesheet" href="/css/styles.css?v=8" />
+    <link rel="stylesheet" href="/css/home.css?v=8" />
     <script src="/js/main.js" defer></script>
   </head>
   <body>
     <div class="bleed">
       <div class="inner">
-
-        <p class="rail"><b>Free to try in the browser.</b>&nbsp; No account, no install &mdash; class data stays on your device.</p>
 
         <header class="site-header">
             <nav class="desktop-nav nav-left" aria-label="Primary">
@@ -114,7 +112,7 @@
         </div>
 
         <!-- ============================ APPS ============================ -->
-        <section class="section" id="apps">
+        <section class="section sec-apps" id="apps">
           <div class="section-head">
             <p class="label">Our apps</p>
             <h2>Two apps, built while teaching.</h2>
@@ -126,7 +124,7 @@
           </div>
 
           <div class="pair">
-            <div class="field field-lime slab">
+            <div class="field field-apps slab">
               <p class="app-tag"><b>C</b> Creance</p>
               <h3>Assessment recorded while you teach, not after.</h3>
               <p>
@@ -141,8 +139,8 @@
                 <li>Export the lot as a spreadsheet when reports are due.</li>
               </ul>
               <div class="field-foot">
-                <a class="pill pill-ink" href="https://trycreance.app">Open the example <span class="arw" aria-hidden="true">&rarr;</span></a>
-                <a class="pill pill-ghost-dark" href="https://creance.heutalab.com">Start an empty copy</a>
+                <a class="pill pill-paper" href="https://trycreance.app">Open the example <span class="arw" aria-hidden="true">&rarr;</span></a>
+                <a class="pill pill-ghost-light" href="https://creance.heutalab.com">Start an empty copy</a>
               </div>
               <p class="field-note">
                 Opens on two invented classes and a term of marks, so there is something to look at.
@@ -166,7 +164,7 @@
           </div>
 
           <div class="pair flip">
-            <div class="field field-cobalt slab">
+            <div class="field field-apps slab">
               <p class="app-tag"><b>S</b> Sage on the Stage</p>
               <h3>The screen at the front of the room.</h3>
               <p>
@@ -184,7 +182,7 @@
                 <a class="pill pill-paper" href="https://sagestage.app">Try it in your browser <span class="arw" aria-hidden="true">&rarr;</span></a>
                 <a class="pill pill-ghost-light" href="https://sagestage.co.uk">Every widget, explained</a>
               </div>
-              <p class="field-note" style="color:rgba(242,239,231,.68)">
+              <p class="field-note">
                 Opens on a demonstration class, so the name tools have something to pick from.
                 The reference at <a href="https://sagestage.co.uk">sagestage.co.uk</a> documents
                 every widget and links straight to any one of them.
@@ -230,7 +228,7 @@
         </section>
 
         <!-- =========================== TOPICS ============================ -->
-        <section class="section" id="topics">
+        <section class="section sec-resources" id="topics">
           <span id="categories" hidden></span>
           <div class="section-head">
             <p class="label">The library</p>
@@ -242,32 +240,37 @@
           </div>
 
           <div class="tiles">
-            <a class="tile" href="/game-based-learning/" style="--tint:#ff5451">
+            <a class="tile sec-resources" href="/game-based-learning/" style="--tint:#ff5451">
               <span class="tile-art t-game"><img class="tile-image" src="/assets/tiles/game-based-learning.png" alt="Atari-style fluting in red and white." loading="lazy" decoding="async" /></span>
-              <span class="tile-name">Game-based learning</span>
+              <span class="tile-cat">Curriculum</span>
+          <span class="tile-name">Game-based learning</span>
               <span class="tile-sub">Minecraft, competitions, planning</span>
             </a>
-            <a class="tile" href="/media/" style="--tint:#4e9ee6">
+            <a class="tile sec-resources" href="/media/" style="--tint:#4e9ee6">
               <span class="tile-art t-media"><img class="tile-image" src="/assets/tiles/media.png" alt="A monolith against a blue sky." loading="lazy" decoding="async" /></span>
-              <span class="tile-name">Media</span>
+              <span class="tile-cat">Curriculum</span>
+          <span class="tile-name">Media</span>
               <span class="tile-sub">Video, sound, media literacy</span>
             </a>
-            <a class="tile" href="/coding/" style="--tint:#ca8902">
+            <a class="tile sec-apps" href="/coding/" style="--tint:#ca8902">
               <span class="tile-art t-coding"><img class="tile-image" src="/assets/tiles/coding.png" alt="An angle-bracket ellipsis, <:>, in amber." loading="lazy" decoding="async" /></span>
-              <span class="tile-name">Coding</span>
+              <span class="tile-cat">Apps</span>
+          <span class="tile-name">Coding</span>
               <span class="tile-sub">Scratch, block-based learning</span>
             </a>
-            <a class="tile" href="/resources/" style="--tint:#90a402">
+            <a class="tile sec-resources" href="/resources/" style="--tint:#90a402">
               <span class="tile-art t-resources" role="img" aria-label="An RSS fan in lime, white and charcoal."></span>
-              <span class="tile-name">Resources</span>
+              <span class="tile-cat">Resources</span>
+          <span class="tile-name">Resources</span>
               <span class="tile-sub">Free downloads and templates</span>
             </a>
-            <a class="tile" href="/presenting/" style="--tint:#b56fff">
+            <a class="tile sec-resources" href="/presenting/" style="--tint:#b56fff">
               <span class="tile-art t-presenting"><img class="tile-image" src="/assets/tiles/presenting.png" alt="The old PowerPoint mark in purple." loading="lazy" decoding="async" /></span>
-              <span class="tile-name">Presenting</span>
+              <span class="tile-cat">Curriculum</span>
+          <span class="tile-name">Presenting</span>
               <span class="tile-sub">Slides, portfolios, showing work</span>
             </a>
-            <a class="tile" href="/experimental/" style="--tint:#7aa942">
+            <a class="tile sec-lab" href="/experimental/" style="--tint:#7aa942">
               <span class="tile-art t-experimental">
                 <svg viewBox="0 0 422 618" role="img" aria-label="A sharpened pencil pointing down, drawn flat in white and charcoal on green.">
                   <path d="M118 -12H225V296H118Z" fill="#ffffff" />
@@ -278,15 +281,17 @@
                   <path d="M217 476H249L211 600Z" fill="#1e1e1e" />
                 </svg>
               </span>
-              <span class="tile-name">Experimental</span>
+              <span class="tile-cat">Lab</span>
+          <span class="tile-name">Experimental</span>
               <span class="tile-sub">Half-built ideas worth stealing</span>
             </a>
-            <a class="tile" href="/professional-development/" style="--tint:#5aae6c">
+            <a class="tile sec-make" href="/professional-development/" style="--tint:#5aae6c">
               <span class="tile-art t-pd"><img class="tile-image" src="/assets/tiles/pd.png" alt="A book spine, seen open, in green." loading="lazy" decoding="async" /></span>
-              <span class="tile-name">Professional development</span>
+              <span class="tile-cat">Training</span>
+          <span class="tile-name">Professional development</span>
               <span class="tile-sub">Workshops and staff training</span>
             </a>
-            <a class="tile" href="/site-index/" style="--tint:#f94e92">
+            <a class="tile sec-structure" href="/site-index/" style="--tint:#f94e92">
               <span class="tile-art t-archive">
                 <svg viewBox="0 0 422 618" role="img" aria-label="A stylised at-sign: the mark for the EdTech Lounge archive.">
                   <defs>
@@ -302,14 +307,15 @@
                   <rect width="422" height="618" fill="url(#ar-grain)" opacity=".07" />
                 </svg>
               </span>
-              <span class="tile-name">Full archive index</span>
+              <span class="tile-cat">Archive</span>
+          <span class="tile-name">Full archive index</span>
               <span class="tile-sub">Every legacy page, listed</span>
             </a>
           </div>
         </section>
 
         <!-- ========================= TERM REGISTER ======================== -->
-        <section class="section register slab" id="year">
+        <section class="section register slab sec-apps" id="year">
           <p class="label">How it plays out</p>
           <h2>One class, one year, four moments.</h2>
           <div class="stops">
@@ -337,7 +343,7 @@
         </section>
 
         <!-- ============================ BLOG ============================= -->
-        <section class="section" id="writing">
+        <section class="section sec-structure" id="writing">
           <div class="section-head">
             <p class="label">From the blog</p>
             <h2>Thinking out loud about the tools.</h2>

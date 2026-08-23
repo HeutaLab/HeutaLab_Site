@@ -176,8 +176,8 @@ a.chip:hover { background: #ded8c9; }
 .tone-purple { background: linear-gradient(135deg, #f2f0f8, #e6e1f4); }
 .tone-warm   { background: linear-gradient(135deg, #f7f3e6, #f6e9cf); }
 .tone-mint   { background: linear-gradient(135deg, #edf6f1, #dcefe5); }
-.coral-eyebrow::after { background: var(--coral); }
-.mint-eyebrow::after { background: var(--mint); }
+
+
 
 .card-title {
   margin: var(--space-4) 0 0;

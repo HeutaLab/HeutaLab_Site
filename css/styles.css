@@ -46,7 +46,10 @@ img { display: block; max-width: 100%; height: auto; }
   border-radius: 4px;
 }
 /* Light surfaces flip the ring to ink -- amber on paper is 1.6:1. */
-.page-wrap, .rail, .marquee, .field-lime, .shotcard, .register, .signup { --focus: var(--ground); }
+.page-wrap, .marquee, .shotcard, .register { --focus: var(--ground); }
+/* Solid brand fields take a paper ring: 4.6:1 on coral, 5.5:1 on blue,
+   where amber would only manage 2.9 and 3.4. */
+.signup, .field-apps { --focus: var(--paper); }
 
 /* The sticky header would otherwise cover the top of any #anchor target. */
 [id] { scroll-margin-top: calc(62px + var(--gutter) * 3); }
@@ -79,21 +82,25 @@ img { display: block; max-width: 100%; height: auto; }
   height: 62px;
   padding: 0 26px;
   border-radius: var(--radius-pill);
-  background: var(--coral-deep);
-  box-shadow: 0 10px 30px rgba(4, 9, 15, .38);
+  /* Navy, not coral: coral means "do something" now, and a full-width
+     coral bar would compete with every call to action beneath it.
+     Paper on this reads 15.6:1 against 4.63:1 on the old coral. */
+  background: var(--ground-lift);
+  border: 1px solid var(--hairline);
+  box-shadow: 0 10px 30px rgba(4, 9, 15, .45);
 }
 
 .desktop-nav { display: flex; gap: 26px; align-items: center; }
 .desktop-nav > a, .desktop-nav summary {
   font-size: var(--text-xs); font-weight: var(--weight-bold);
   letter-spacing: var(--track-label); text-transform: uppercase;
-  color: var(--paper);   /* 4.63:1 on the coral pill; .78 alpha was 3.34 */
+  color: var(--paper-dim);
   text-decoration: 2px solid transparent underline;
   text-underline-offset: 6px;
-  transition: text-decoration-color .15s ease;
+  transition: color .15s ease, text-decoration-color .15s ease;
 }
 .desktop-nav > a:hover, .desktop-nav summary:hover,
-.desktop-nav > a.active { text-decoration-color: currentColor; }
+.desktop-nav > a.active { color: var(--paper); text-decoration-color: currentColor; }
 .nav-right { justify-content: flex-end; }
 
 .desktop-nav details { position: relative; }
@@ -129,7 +136,10 @@ img { display: block; max-width: 100%; height: auto; }
   letter-spacing: -0.045em;
   color: var(--paper);
 }
-.wordmark i { font-style: normal; color: rgba(6, 14, 27, .72); }
+/* "lab" was dark ink to read against the old coral bar; on navy it needs
+   the coral. Same treatment as the footer wordmark, so the mark is one
+   thing everywhere. */
+.wordmark i { font-style: normal; color: var(--coral); }
 
 /* Hamburger ------------------------------------------------------------ */
 .mobile-menu { display: none; position: relative; }
@@ -157,22 +167,30 @@ img { display: block; max-width: 100%; height: auto; }
 
 /* ---- Shared bits the archive pages still use ------------------------- */
 
+.sec-structure { --sec: var(--sec-structure-ink); --sec-sky: var(--sec-structure-sky); }
+.sec-make      { --sec: var(--sec-make-ink);      --sec-sky: var(--sec-make-sky); }
+.sec-apps      { --sec: var(--sec-apps-ink);      --sec-sky: var(--sec-apps-sky); }
+.sec-resources { --sec: var(--sec-resources-ink); --sec-sky: var(--sec-resources-sky); }
+.sec-lab       { --sec: var(--sec-lab-ink);       --sec-sky: var(--sec-lab-sky); }
+
 .eyebrow {
   margin: 0 0 var(--space-5);
   font-family: var(--font-display); font-size: var(--text-xs);
   font-weight: var(--weight-black); letter-spacing: var(--track-label);
-  text-transform: uppercase; position: relative; color: var(--muted);
+  text-transform: uppercase; position: relative;
+  color: var(--sec, var(--muted));
 }
 .eyebrow::after {
   content: ""; position: absolute; left: 0; bottom: calc(var(--space-3) * -1);
   width: 21px; height: 2px; background: currentColor;
 }
-.blue::after { background: var(--cobalt); }
-.purple::after { background: var(--violet); }
 
+/* Was a decorative lime swoosh on every page title; now it carries the
+   page's section colour, so the flourish does a job. */
 .lime-stroke {
   width: 210px; height: 12px; margin: var(--space-3) 0 var(--space-3) 3px;
-  border-top: 6px solid var(--lime); border-radius: 50%; transform: rotate(-4deg);
+  border-top: 6px solid var(--sec, var(--lime)); border-radius: 50%;
+  transform: rotate(-4deg);
 }
 
 .button, .small-button {
@@ -190,7 +208,6 @@ img { display: block; max-width: 100%; height: auto; }
 .button-primary:hover, .small-button:hover { background: var(--coral); }
 .button-outline { border-color: rgba(6, 20, 40, .30); background: transparent; color: var(--ink); }
 .button-outline:hover { background: rgba(6, 20, 40, .07); }
-.purple-button { background: var(--violet); }
 
 /* ---- Footer ----------------------------------------------------------
    Sits on the ink, outside the paper slab, and signs off with the same
