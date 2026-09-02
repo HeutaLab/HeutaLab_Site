@@ -3,7 +3,21 @@
 <channel>
   <title>HeutaLab blog</title>
   <link>https://heutalab.com/blog/</link>
-  <description>EdTech for curious minds — including the EdTech Lounge archive (2009–2024).</description>
+  <description>EdTech for curious minds. Practical tools, ideas and training for teachers, leaders and parents.</description>
+  <item>
+    <title>The Search I Couldn’t Have Run Last Year</title>
+    <link>https://heutalab.com/blog/the-search-i-couldnt-have-run-last-year/</link>
+    <guid isPermaLink="true">https://heutalab.com/blog/the-search-i-couldnt-have-run-last-year/</guid>
+    <pubDate>Tue, 01 Sep 2026 09:00:00 +0000</pubDate>
+    <description>I gave GrokBot a scout persona and one narrow question: what are primary teachers actually doing with iPads and images right now? It found around fifteen documented lessons across five countries, including a freelance illustrator’s write-up of a Year 6 workshop in Cheshire that nothing else would have surfaced. Extraordinary at finding, unreliable at describing.</description>
+  </item>
+  <item>
+    <title>The Citations Are the Tell</title>
+    <link>https://heutalab.com/blog/the-citations-are-the-tell/</link>
+    <guid isPermaLink="true">https://heutalab.com/blog/the-citations-are-the-tell/</guid>
+    <pubDate>Tue, 25 Aug 2026 09:00:00 +0000</pubDate>
+    <description>An expert witness in a $61 million lawsuit had ChatGPT write most of his report. The prose was fine; the citations gave him away. A Lancet audit found fake references in published medical papers have risen twelve-fold since 2023. A Northwestern study found one in six sources cited by AI search tools was itself written by AI. The common thread: the writing passes, the sources don’t.</description>
+  </item>
   <item>
     <title>Your Partner For Ideas: A Framework</title>
     <link>https://heutalab.com/blog/a-partner-for-ideas-how-can-ai-help-me-achieve-this/</link>
@@ -129,20 +143,6 @@
     <guid isPermaLink="true">https://heutalab.com/blog/oculus-quest-room-scale-vr-for-schools-a-full-review/</guid>
     <pubDate>Fri, 06 Sep 2019 03:20:33 +0000</pubDate>
     <description>The pared down version of roomscale VR comes at a cost to the user, I feel. Namely the appliance-like nature of the device so that the mass-produced all-in-one case can provide a three-click platform: turn on, choose game, hit go. The appliance also pares down what the ‘user’ should be able to do.…</description>
-  </item>
-  <item>
-    <title>Coding Music with Sonic Pi - A 6-8 Part Scheme</title>
-    <link>https://heutalab.com/blog/coding-music-with-sonic-pi-a-6-8-part-scheme/</link>
-    <guid isPermaLink="true">https://heutalab.com/blog/coding-music-with-sonic-pi-a-6-8-part-scheme/</guid>
-    <pubDate>Sun, 21 Jul 2019 05:53:16 +0000</pubDate>
-    <description>Sonic Pi A lot of children may never have known that you can code anything other than Scratch, in a paid for platform or the ‘stuff’ websites and apps are made of. So to say we are going to code music is quite a unique concept and experience. To introduce this I like to use Xavier Riley’s…</description>
-  </item>
-  <item>
-    <title>3D Printing in Year 4 - Pinewood Derby Style Racecars</title>
-    <link>https://heutalab.com/blog/3d-printing-in-year-4-pinewood-derby-style-racecars/</link>
-    <guid isPermaLink="true">https://heutalab.com/blog/3d-printing-in-year-4-pinewood-derby-style-racecars/</guid>
-    <pubDate>Mon, 23 Oct 2017 04:45:27 +0000</pubDate>
-    <description>Leading the technology curriculum has afforded me a lot of leeway and creatve space to build bigger and bigger projects. In our team we have two fantastic teachers who offer a lovely balance between video, photography and, what I term as &#x27;Manufacturing&#x27;. The old D+T curriculum of old is now given…</description>
   </item>
 </channel>
 </rss>
