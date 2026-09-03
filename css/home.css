@@ -274,20 +274,6 @@ body { color: var(--paper); }
 .shotcard figcaption { color: rgba(6,14,27,.60); font-size: 13.5px; line-height: 1.5; }
 .shotcard img { width: 100%; }
 
-/* A shot card whose picture has not been taken yet. Deliberately visible --
-   an empty white figure would read as a broken image, and the point of the
-   box is that someone should notice it and replace it. */
-.shot-missing {
-  display: grid; place-items: center;
-  aspect-ratio: 16 / 10;
-  padding: 24px;
-  background: repeating-linear-gradient(
-    -45deg, #f4f2ec, #f4f2ec 10px, #eceadf 10px, #eceadf 20px);
-  color: rgba(6, 14, 27, .55);
-  font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
-  text-align: center;
-}
-
 /* ---- Four claims ----------------------------------------------------- */
 
 .claims { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); margin-top: var(--gutter); }
