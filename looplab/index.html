@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="LoopLab — a browser game that teaches 9–13s to write real Sonic Pi code by making dance music, and to debug it by ear." />
+    <meta property="og:title" content="LoopLab — HeutaLab" />
+    <meta property="og:description" content="Learn to code music, then DJ the club. Six levels of Sonic Pi, six dance tracks to fix by ear, and code that pastes straight into the real thing." />
+    <meta property="og:image" content="https://heutalab.com/assets/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://heutalab.com/looplab/" />
+    <link rel="alternate" type="application/rss+xml" title="HeutaLab blog" href="/blog/feed.xml" />
+    <title>LoopLab — HeutaLab</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/brand/apple-touch-180.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Poppins:wght@700;800&display=swap"
+    />
+    <link rel="stylesheet" href="/css/tokens.css?v=9" />
+    <link rel="stylesheet" href="/css/styles.css?v=9" />
+    <link rel="stylesheet" href="/css/legacy.css?v=9" />
+    <script src="/js/main.js" defer></script>
+  </head>
+  <body>
+    <div id="top">
+      <header class="site-header shell">
+        <nav class="desktop-nav nav-left" aria-label="Primary">
+          <details>
+            <summary>Apps</summary>
+            <div class="nav-menu">
+              <a href="/#apps">All three apps</a>
+              <a href="https://trycreance.app">Creance</a>
+              <a href="https://sagestage.app">Sage on the Stage</a>
+              <a href="/looplab/">LoopLab</a>
+            </div>
+          </details>
+          <details>
+            <summary>Library</summary>
+            <div class="nav-menu">
+              <a href="/media/">Media literacy</a>
+              <a href="/coding/">Coding</a>
+              <a href="/game-based-learning/">Game-based learning</a>
+              <a href="/professional-development/">Professional development</a>
+              <a href="/resources/">Free downloads</a>
+              <a href="/site-index/">Everything (site index)</a>
+            </div>
+          </details>
+          <a href="/blog/">Blog</a>
+        </nav>
+
+        <a class="wordmark" href="/" aria-label="HeutaLab home">heuta<i>lab</i></a>
+
+        <nav class="desktop-nav nav-right" aria-label="Secondary">
+          <a href="/about/">About</a>
+          <a href="/#newsletter">Subscribe</a>
+        </nav>
+
+        <details class="mobile-menu">
+          <summary aria-label="Open navigation"><span></span><span></span><span></span></summary>
+          <nav aria-label="Mobile navigation">
+            <a href="/">Home</a>
+            <a href="/blog/">Blog</a>
+            <a href="/resources/">Resources</a>
+            <a href="/site-index/">Site index</a>
+            <a href="/about/">About</a>
+          </nav>
+        </details>
+      </header>
+
+      <main class="page-wrap shell sec-apps">
+        <div class="page-hero">
+          <p class="eyebrow">Apps &middot; LoopLab</p>
+          <h1>LoopLab<span>.</span></h1>
+          <div class="lime-stroke" aria-hidden="true"></div>
+          <p class="hero-sub">Learn to code music &mdash; then DJ the club. A browser game that takes
+          9&ndash;13s from their first note to real Sonic Pi, and teaches them to find a bug by ear.</p>
+        </div>
+
+        <div class="prose">
+          <p>Children write code that makes a noise, and the noise tells them whether the code is
+          right. That is the whole idea. LoopLab starts at <code>play 60</code> and ends with a live
+          set the child performs themselves &mdash; and the code they wrote to get there pastes
+          straight into free Sonic Pi and runs.</p>
+
+          <p>It opens in a browser tab. No install, no admin ticket, no account. Names and stars stay
+          on the device they were typed into.</p>
+
+          <p class="about-actions">
+            <a class="button button-primary" href="https://looplab.heutalab.com">Open LoopLab</a>
+            <a class="button button-outline" href="#curriculum">Where it sits in computing</a>
+          </p>
+
+          <!-- PLACEHOLDER — hero screenshot. Replace this whole <div> with:
+               <figure class="fig"><img src="/assets/apps/looplab-studio.png" width="1400" height="…"
+               loading="lazy" decoding="async" alt="…"><figcaption>…</figcaption></figure> -->
+          <div class="img-missing">Screenshot to come &mdash; a Studio level mid-build, with the code
+          on the left and the notes flying on the right.</div>
+
+          <h2>How a session runs</h2>
+
+          <p>Two halves, and the door between them is locked until the child has earned it.</p>
+
+          <figure class="fig">
+            <div class="loop">
+              <div class="loop-band loop-band--glass">
+                <p class="loop-where">The Studio &mdash; six levels</p>
+                <div class="loop-steps">
+                  <div class="loop-step">
+                    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="4" y="9" width="40" height="26" rx="3"/>
+                      <path d="M20 16.5l9 5.5-9 5.5z" fill="var(--sec, #0757d7)" stroke="none"/>
+                      <path d="M24 35v5M16 40h16"/>
+                    </svg>
+                    <div>
+                      <h4><span>1</span> I do, we do</h4>
+                      <p>DJ Loop writes a few lines and you hear every one of them fly. Then you finish
+                      a half-written track together &mdash; count the repeats, find the missing note.</p>
+                    </div>
+                  </div>
+                  <div class="loop-step">
+                    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="6" y="7" width="36" height="34" rx="3"/>
+                      <path d="M18 19l-5 5 5 5M30 19l5 5-5 5"/>
+                      <path d="M27 16.5l-6 15"/>
+                    </svg>
+                    <div>
+                      <h4><span>2</span> You do</h4>
+                      <p>Build it alone, stage by stage. Blocks to start with, blocks and typing next,
+                      then typed from scratch. Each stage checks itself and pays out up to three stars.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <p class="loop-cross">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v15M6 13.5l6 6 6-6"/></svg>
+                Finish Loop Magic and the bouncer lets you in
+              </p>
+
+              <div class="loop-band loop-band--paper">
+                <p class="loop-where">The Club &mdash; six tracks</p>
+                <div class="loop-steps">
+                  <div class="loop-step">
+                    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="4" y="11" width="40" height="26" rx="3"/>
+                      <path d="M12 20v8M18 17v14M30 16v16M36 20v8"/>
+                      <path d="M24 15v18" stroke="var(--coral-deep, #c9302f)" stroke-width="2.6"/>
+                    </svg>
+                    <div>
+                      <h4><span>3</span> Soundcheck</h4>
+                      <p>The track came back from the studio with bugs &mdash; a rushed kick, an
+                      off-key chord, a sleep that limps. Solo each loop and repair it by listening.</p>
+                    </div>
+                  </div>
+                  <div class="loop-step">
+                    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="5" y="7" width="38" height="19" rx="2.5"/>
+                      <path d="M14 11v11M24 11v11M34 11v11"/>
+                      <circle cx="14" cy="14.5" r="2.1" fill="var(--sec, #0757d7)" stroke="none"/>
+                      <circle cx="24" cy="19" r="2.1" fill="currentColor" stroke="none"/>
+                      <circle cx="34" cy="13" r="2.1" fill="currentColor" stroke="none"/>
+                      <path d="M8 40c2-4.5 5.5-4.5 7.5 0M20.5 40c2-5.5 5.5-5.5 7.5 0M33 40c2-4.5 5.5-4.5 7.5 0"/>
+                    </svg>
+                    <div>
+                      <h4><span>4</span> Play the set</h4>
+                      <p>Now perform it. Drop loops in and out, answer what the crowd shouts for, and
+                      squash a glitch live while the floor is still moving.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <figcaption>Step 3 is the one that makes LoopLab different from every other block-music
+            toy: the test is the child&rsquo;s own ear, not a green tick.</figcaption>
+          </figure>
+
+          <h2>The six Studio levels</h2>
+
+          <p>Each one adds a single idea, and every keyword is the real Sonic Pi keyword &mdash;
+          nothing has been simplified into a dialect the child then has to unlearn.</p>
+
+          <table>
+            <thead>
+              <tr><th>Level</th><th>What it adds</th><th>Code</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>First Notes</strong></td><td>Notes are numbers. 60 is middle C, bigger sounds higher.</td><td><code>play</code>, <code>sleep</code></td></tr>
+              <tr><td><strong>Loop Magic</strong></td><td>Repeat music instead of writing it out again.</td><td><code>3.times do … end</code></td></tr>
+              <tr><td><strong>Drum Machine</strong></td><td>Drums, with their real sample names.</td><td><code>sample :bd_haus</code></td></tr>
+              <tr><td><strong>Super Jam</strong></td><td>The instrument changes everything.</td><td><code>use_synth :saw</code></td></tr>
+              <tr><td><strong>Two Loops at Once</strong></td><td>Parts running side by side, locked together.</td><td><code>live_loop</code></td></tr>
+              <tr><td><strong>Never the Same Twice</strong></td><td>Code that composes &mdash; same program, different music.</td><td><code>choose</code>, <code>rrand</code>, <code>use_bpm</code></td></tr>
+            </tbody>
+          </table>
+
+          <p>The last one is worth a mention on its own. A child who writes
+          <code>play choose([60, 64, 67, 72])</code> and presses play twice hears two different
+          tunes from one program. That is generative music, and eleven-year-olds get it in about
+          four seconds.</p>
+
+          <h2>The six Club tracks</h2>
+
+          <p>Written as real live loops, each in a proper style and at a proper tempo. Two are open
+          the moment the bouncer lets you through; the rest unlock as the Studio levels fall.</p>
+
+          <table>
+            <thead>
+              <tr><th>Track</th><th>Style</th><th>BPM</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Warehouse 909</td><td>Classic House</td><td>128</td></tr>
+              <tr><td>Acid Alley</td><td>Acid</td><td>133</td></tr>
+              <tr><td>Piano Sunrise</td><td>Piano House</td><td>126</td></tr>
+              <tr><td>Rave Siren</td><td>Oldskool Rave</td><td>138</td></tr>
+              <tr><td>Deep Down</td><td>Deep House</td><td>125</td></tr>
+              <tr><td>Hardfloor Finale</td><td>Peak-Time Techno</td><td>140</td></tr>
+              <!-- NEW TRACK: copy a <tr> above, keep the order the app uses. -->
+            </tbody>
+          </table>
+
+          <p class="flash-note">The crate keeps growing &mdash; new tracks are written and added to
+          LoopLab regularly, so this list is the shortest it will ever be. Children with stars already
+          banked keep them; a new track simply appears in the club.</p>
+
+          <!-- PLACEHOLDER — the Club in play. Replace with a <figure class="fig"> as above. -->
+          <div class="img-missing">Screenshot to come &mdash; a Club track mid-set, loops lit up and a
+          crowd request on screen.</div>
+
+          <h2>It ends in the real thing</h2>
+
+          <p>Every level hands back the code the child actually wrote, formatted to paste into
+          <a href="https://sonic-pi.net">Sonic Pi</a> &mdash; free, on Mac, Windows, Linux and the
+          Raspberry Pi &mdash; where it runs unchanged. That is the point of the whole game: LoopLab is
+          the on-ramp, not the destination. A class can spend two lessons in the browser and arrive at
+          Sonic Pi already knowing what <code>live_loop</code> does and why <code>sleep</code> matters.</p>
+
+          <p>If you want somewhere to take them next, the
+          <a href="/coding/#coding-music-with-sonic-pi-a-6-8-part-scheme">six-to-eight part Sonic Pi
+          scheme of work</a> in the library picks up roughly where LoopLab leaves off &mdash; synths and
+          samples, threading loops, then deconstructing a real track.</p>
+
+        </div>
+
+        <section class="content-card" id="curriculum">
+          <p class="eyebrow">A suggestion, not a mapping</p>
+          <h2 class="card-title">Where it might sit in computing</h2>
+          <div class="prose card-prose">
+            <p>LoopLab was built as a game, not as a scheme of work, so treat this as a nudge for
+            your own planning rather than a coverage claim.</p>
+            <h3>Upper KS2 (Years 5&ndash;6)</h3>
+            <ul>
+              <li>Designing, writing and debugging a program that accomplishes a specific goal &mdash;
+              here the goal is audible, which is why children keep going.</li>
+              <li>Using sequence and repetition, and working with input and output.</li>
+              <li>Using logical reasoning to <strong>detect and correct errors</strong>. The Club is
+              the closest thing I have found to genuine debugging at this age: the error is real, and
+              the ear is the test.</li>
+            </ul>
+            <h3>KS3</h3>
+            <ul>
+              <li>Using two or more programming languages, <strong>at least one textual</strong>.
+              Sonic Pi is Ruby, and by the final levels the child is typing it unaided.</li>
+              <li>Creating, reusing, revising and repurposing digital artefacts for a given audience
+              &mdash; the audience being the dance floor.</li>
+            </ul>
+            <p>Cross-curricular with music, it lands on tempo, pulse, layering and structure without
+            anyone having to call it theory.</p>
+          </div>
+        </section>
+
+        <div class="prose">
+          <h2>Running it in a room of thirty</h2>
+
+          <p>The game is honest about the fact that it makes a noise. It asks for headphones before it
+          will start &mdash; <em>so you can hear your track, and so everyone else can hear theirs</em>
+          &mdash; and it carries a mute mode where the notes still fly across the screen, which is what
+          you want when you are demonstrating on the board.</p>
+
+          <ul>
+            <li><strong>Up to 40 players per device</strong>, so a shared trolley or a lab machine
+            works. A child taps their own name and carries on where they left off.</li>
+            <li><strong>A short code moves progress</strong> between devices, for the child who is on a
+            different laptop this week.</li>
+            <li><strong>A finished-work summary</strong> records the stars, and whether the child used
+            blocks or typed the code themselves &mdash; ready to paste into Google Classroom or drop in
+            a folder.</li>
+          </ul>
+
+          <p class="flash-note"><strong>Worth knowing before the lesson:</strong> progress is saved in
+          the browser on that device. A locked-down browser that blocks site storage, or a nightly wipe
+          of the machines, will take the stars with it &mdash; the game warns the child when it cannot
+          save. Try it on one of your own school machines before you book the ICT suite.</p>
+
+          <!-- PLACEHOLDER — example certificate. -->
+          <div class="img-missing">Example of the finished-work summary to come.</div>
+
+          <h2>What is on the device, and what is not</h2>
+
+          <p>First name only, stored on the device, never sent anywhere. No accounts, no email, no
+          class list to upload, nothing recorded. There is no server holding children's work because
+          there is no server: the whole game is the page you have open.</p>
+
+        </div>
+
+        <!-- PLACEHOLDER — live use / classrooms. Fill this in once it has been run somewhere,
+             and delete the card entirely if it is still empty when the page goes out. -->
+        <section class="content-card">
+          <p class="eyebrow">In classrooms</p>
+          <h2 class="card-title">Where LoopLab has been used</h2>
+          <div class="prose card-prose">
+            <div class="img-missing">To come &mdash; what happened when it was run with a real class:
+            the year group, how long it took, and what the children did with it afterwards.</div>
+          </div>
+        </section>
+
+        <div class="prose">
+          <h2>Try it</h2>
+
+          <p>It takes about a minute to see whether it is for you. Headphones on.</p>
+
+          <p class="about-actions">
+            <a class="button button-primary" href="https://looplab.heutalab.com">Open LoopLab</a>
+            <a class="button button-outline" href="/coding/#coding-music-with-sonic-pi-a-6-8-part-scheme">The Sonic Pi scheme</a>
+          </p>
+        </div>
+
+        <p class="backlink"><a href="/#apps">&larr; All three apps</a></p>
+      </main>
+
+      <footer class="site-footer shell">
+        <div class="foot-cols">
+          <div>
+            <span class="wordmark">heuta<i>lab</i></span>
+            <p class="foot-blurb">Practical EdTech tools, ideas and training for teachers, leaders and parents.</p>
+          </div>
+          <div>
+            <h6>Apps</h6>
+            <ul>
+              <li><a href="https://trycreance.app">Creance</a></li>
+              <li><a href="https://sagestage.app">Sage on the Stage</a></li>
+              <li><a href="/looplab/">LoopLab</a></li>
+              <li><a href="https://sagestage.co.uk">Widget reference</a></li>
+            </ul>
+          </div>
+          <div>
+            <h6>Library</h6>
+            <ul>
+              <li><a href="/resources/">Free downloads</a></li>
+              <li><a href="/media/">Media literacy</a></li>
+              <li><a href="/site-index/">Legacy archive</a></li>
+            </ul>
+          </div>
+          <div>
+            <h6>HeutaLab</h6>
+            <ul>
+              <li><a href="/about/">About</a></li>
+              <li><a href="/blog/">Blog</a></li>
+              <li><a href="/blog/feed.xml">RSS</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot-base">
+          <span>&copy; 2026 HeutaLab</span>
+          <span>Formerly EdTech Lounge &middot; Every old link still works</span>
+        </div>
+        <div class="signoff" aria-hidden="true"><span>heuta<i>lab</i></span></div>
+      </footer>
+    </div>
+  </body>
+</html>
