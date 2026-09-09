@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="What we are building for the primary school library: an owl called Ollie that teaches five-to-eleven-year-olds how to ask, runs entirely on the iPad, and forgets everything at the bell. A development update, with the screens as they stand." />
+    <meta property="og:title" content="Ollie Is Not a Search Box &mdash; HeutaLab" />
+    <meta property="og:description" content="What we are building for the primary school library: an owl called Ollie that teaches five-to-eleven-year-olds how to ask, runs entirely on the iPad, and forgets everything at the bell. A development update, with the screens as they stand." />
+    <meta property="og:image" content="https://heutalab.com/assets/og.png" />
+    <link rel="canonical" href="https://heutalab.com/blog/ollie-is-not-a-search-box/" />
+    <link rel="alternate" type="application/rss+xml" title="HeutaLab blog" href="/blog/feed.xml" />
+    <title>Ollie Is Not a Search Box &mdash; HeutaLab</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Poppins:wght@700;800&display=swap"
+    />
+    <link rel="stylesheet" href="/css/tokens.css?v=9" />
+    <link rel="stylesheet" href="/css/styles.css?v=9" />
+    <link rel="stylesheet" href="/css/legacy.css?v=9" />
+    <script src="/js/main.js" defer></script>
+  </head>
+  <body>
+    <div id="top">
+      <header class="site-header shell">
+        <nav class="desktop-nav nav-left" aria-label="Primary">
+          <details>
+            <summary>Apps</summary>
+            <div class="nav-menu">
+              <a href="/#apps">All three apps</a>
+              <a href="https://trycreance.app">Creance</a>
+              <a href="https://sagestage.app">Sage on the Stage</a>
+              <a href="/looplab/">LoopLab</a>
+            </div>
+          </details>
+          <details>
+            <summary>Library</summary>
+            <div class="nav-menu">
+              <a href="/media/">Media literacy</a>
+              <a href="/coding/">Coding</a>
+              <a href="/game-based-learning/">Game-based learning</a>
+              <a href="/professional-development/">Professional development</a>
+              <a href="/resources/">Free downloads</a>
+              <a href="/site-index/">Everything (site index)</a>
+            </div>
+          </details>
+          <a class="active" href="/blog/">Blog</a>
+        </nav>
+
+        <a class="wordmark" href="/" aria-label="HeutaLab home">heuta<i>lab</i></a>
+
+        <nav class="desktop-nav nav-right" aria-label="Secondary">
+          <a href="/about/">About</a>
+          <a href="/#newsletter">Subscribe</a>
+        </nav>
+
+        <details class="mobile-menu">
+          <summary aria-label="Open navigation"><span></span><span></span><span></span></summary>
+          <nav aria-label="Mobile navigation">
+            <a href="/">Home</a>
+            <a href="/blog/">Blog</a>
+            <a href="/resources/">Resources</a>
+            <a href="/site-index/">Site index</a>
+            <a href="/about/">About</a>
+          </nav>
+        </details>
+      </header>
+
+      <main class="page-wrap shell sec-structure">
+        <div class="page-hero">
+          <p class="eyebrow">Blog &middot; In development</p>
+          <h1>Ollie Is Not a Search Box<span>.</span></h1>
+          <div class="lime-stroke" aria-hidden="true"></div>
+          <p class="post-meta"><time datetime="2026-09-09">9 September 2026</time></p>
+          <p class="hero-sub">What we are building for the primary school library: an owl that teaches children how to ask, runs on the iPad itself, and forgets everything at the bell.</p>
+        </div>
+        <div class="prose">
+          <p class="flash-note">This is a development update, not a launch. Ollie is being built with one primary school and is not yet available anywhere. The screenshots are captures of the real screens from the design rig, with sample answers written in the product&rsquo;s voice; on the iPad the same screens are answered by a model running on the device.</p>
+
+          <p><strong>The short version.</strong> Ollie is a learning assistant for the primary school library, for children aged five to eleven. It is not a search box. It is a way of teaching children <em>how to ask</em> &mdash; prompting as a taught skill, in the way library skills used to be taught &mdash; and a thinking partner that hands the turn back to the child rather than closing the subject. The language model runs on the iPad, so nothing a child says or types is sent to a cloud service. There is no login, no account and nothing stored per child. Four screens, one for each age band, and the same owl grows up across them.</p>
+
+          <p>I have spent the summer on this, and it is far enough along to show. What follows is where it stands today, one question all the way through &mdash; <em>why do some volcanoes explode and others don&rsquo;t</em> &mdash; so you can see how the same idea is treated at five, at seven and at ten.</p>
+
+          <h2>Why not a search box</h2>
+
+          <p>The easy thing to build is a friendly answer machine: a child asks, it answers, everyone moves on. Children already have those at home. What they do not have is anyone teaching them that the quality of what comes back depends on the quality of what went in, that a confident voice is not the same as a right one, and that a book on the shelf three metres away might settle it.</p>
+
+          <p>So every design decision in Ollie runs through one rule: when better answers and better asking pull against each other, the asking wins. The answering model is deliberately no cleverer than the ask. It is told not to guess what a vague prompt really meant, so the thinking stays with the child. And at every age the answer ends by passing the turn back &mdash; something to go and look at, try, or ask about.</p>
+
+          <h2>Ages 5&ndash;7: Owl Buddy</h2>
+
+          <p>For the youngest children the tool advances play and talk rather than delivering facts. There is no keyboard for the child and nothing they must read. They press one big yellow button, say what they are wondering, and Ollie talks back &mdash; three short sentences by rule, pitched at the reading age the school sets, ending with an &ldquo;I wonder&hellip;&rdquo; the child could really go and do. The words appear in the speech bubble at speaking pace as the voice reads them, so a child who cannot read yet still sees that Ollie is talking.</p>
+
+          <figure class="fig">
+            <img src="/assets/blog/ollie-owl-buddy-at-rest.jpg" alt="The Owl Buddy screen at rest: a cartoon owl on a branch asks &ldquo;What would you like to learn about?&rdquo;, beside a large yellow &ldquo;Press and talk to me&rdquo; button, a smaller typing box for a grown-up, six wonder cards such as &ldquo;Why do some volcanoes explode and some do not?&rdquo;, and an &ldquo;Offline &amp; Private&rdquo; badge in the corner." width="1400" height="1172" loading="lazy">
+            <figcaption>Owl Buddy, as a child finds it. One button to press and talk; six wonder cards that read themselves aloud on the first tap and ask on the second; a typing box for the grown-up sitting alongside. The &ldquo;Offline &amp; Private&rdquo; badge never leaves the screen.</figcaption>
+          </figure>
+
+          <p>Three things about this screen took the most thought. The two to five seconds the on-device model needs are not hidden behind a spinner: Ollie closes his eyes and has a think, because turn-taking is itself a skill this age is learning. The transcript of what the child said is never tidied up or corrected &mdash; speech recognition of five-year-olds is far worse than of adults, so Ollie responds to the gist and asks again rather than requiring an accurate transcript. And every turn follows the plan-do-review rhythm of early-years practice: <em>I wonder</em>, <em>let&rsquo;s find out</em>, <em>I can tell someone</em>. That last step sends the child off to tell a person what they found, which is the review.</p>
+
+          <p>For EYFS itself there is no answer step at all. A text-free screen runs a loop of its own where Ollie&rsquo;s one job is to help the child think and talk about their own ideas. A big why-question is met first with &ldquo;What do you think?&rdquo;, a &ldquo;what should I do?&rdquo; with &ldquo;Hmm, what could you try?&rdquo;, and a muddled word is said back properly but never called wrong.</p>
+
+          <h2>Ages 7&ndash;9: Ollie&rsquo;s Library</h2>
+
+          <p>Year 2 is the crossover. Below it the tool advances play and talk; above it the tool supports finding things out. Ollie&rsquo;s Library is the same owl in daylight: the child now reads and types, the library&rsquo;s own shelves come into the picture, and the habit this band takes away is the third beat &mdash; <em>check it before you use it</em>.</p>
+
+          <figure class="fig">
+            <img src="/assets/blog/ollie-library-check-before-you-use-it.jpg" alt="Ollie&rsquo;s Library after a question about volcanoes: a three-paragraph answer written for a seven-year-old, a green badge reading &ldquo;A book on our shelves backs this up&rdquo;, buttons for Read it to me, Say it simpler and Tell me more, three follow-up questions, a panel of three matching books with shelf numbers, and a Check box saying &ldquo;Go and see if the book agrees with Ollie&rdquo; with How sure are you?, I checked it in the book and Keep this buttons." width="1400" height="1303" loading="lazy">
+            <figcaption>The second half of one turn in Ollie&rsquo;s Library. The green badge is computed, not claimed: it appears only when the answer actually names one of the books pulled from the shelf. The Check box at the bottom names the book to go and compare against.</figcaption>
+          </figure>
+
+          <p>The mechanism underneath is retrieval before generation. The question is scored against the school&rsquo;s own catalogue export and the top three books are written into the model&rsquo;s instructions, so the answer can point at a real shelf with a real call number. Then the badge checks whether it really did. Green &mdash; &ldquo;A book on our shelves backs this up&rdquo; &mdash; only if the answer names one of the retrieved titles. Otherwise an amber flag: &ldquo;Ollie&rsquo;s own words, check before you trust it.&rdquo; A child can press <em>How sure are you?</em> and Ollie has to say how sure, where it came from, and one thing to check in a real book. At seven, thinking with Ollie means not taking his word for it.</p>
+
+          <h2>Ages 9&ndash;11: Nexus, and Prompt Lab</h2>
+
+          <p>By upper Key Stage 2 the owl has gone. <strong>Nexus Library Desk</strong> treats the child as a researcher: a query console, the response with its sources, the matching shelf, and a running count of how the session is going &mdash; questions asked, books surfaced, follow-ups taken, answers with a source. Switch on <em>Ask me first</em> and the model is told not to answer but to ask one good question back. Press <em>Inspect prompt</em> and the exact instructions the model was given open up, books and all. At this age the mechanism is part of what is being taught, so nothing is hidden from a child who wants to see how it works.</p>
+
+          <p><strong>Prompt Lab</strong> is the core of the whole product. A child brings one real question of their own &mdash; for a poster, a talk, a project &mdash; and works it through six rounds, each practising one prompting skill: <em>Be specific &middot; Say who it&rsquo;s for &middot; Ask for a shape &middot; Set a limit &middot; Follow up &middot; Check it</em>. Every round they write a prompt, see what the model gives back, and get coached. The coach marks the prompt, never the answer.</p>
+
+          <figure class="fig">
+            <img src="/assets/blog/ollie-prompt-lab-coached-round.jpg" alt="Prompt Lab, round one: the child&rsquo;s prompt in a box with a strength meter reading &ldquo;That&rsquo;s a strong prompt&rdquo;, the model&rsquo;s answer labelled &ldquo;What the model gave you&rdquo;, and a Coach panel with green ticks for Task, Topic and Limit, one tip &mdash; &ldquo;Next round, tell it who is going to read this&rdquo; &mdash; and a stronger version of the child&rsquo;s prompt in their own words." width="1400" height="1150" loading="lazy">
+            <figcaption>Round one, sent and coached. The coach says which ingredients it found, gives one warm and specific tip, and hands back a stronger rewrite that keeps the child&rsquo;s own words. The round clears only when the required ingredients are there.</figcaption>
+          </figure>
+
+          <p>Two separate model calls run each round. One answers the child&rsquo;s prompt as the school librarian would. The second is the coach: it is told the real question, the audience, the reading age and the skill being practised, and it must reply in a strict form &mdash; which ingredients the prompt has, whether it passes, one tip, one rewrite under thirty-five words. Passing is a rule, not an opinion. Round one requires a task and a topic; a child cannot skip a skill by writing something charming. The last round, <em>Catch it being wrong</em>, teaches that the model will say wrong things in a confident voice, so make it show its working.</p>
+
+          <p>What a child leaves with is a research sheet: their question, their best prompt, the answers they chose to keep, and two boxes only they can fill &mdash; &ldquo;in my own words&rdquo; and &ldquo;still don&rsquo;t know&rdquo;. It can be copied or printed. It never goes anywhere by itself.</p>
+        </div>
+
+        <section class="content-card">
+          <p class="eyebrow">True on every screen</p>
+          <h2 class="card-title">The four promises the whole thing rests on</h2>
+          <div class="prose card-prose">
+            <ul>
+              <li><strong>On the iPad, not the cloud.</strong> A small open language model runs on the device itself. No analytics, no telemetry, no crash reporter that could capture a transcript. The one declared exception is a printed take-home sheet where a school has switched printing on &mdash; and the privacy badge turns amber at that moment, so the exception is stated, not smuggled.</li>
+              <li><strong>Zero teacher setup.</strong> No login, no settings screen, no model picker. Configuration arrives centrally through the school&rsquo;s device management. The one cog on screen is a PIN-gated panel for a practitioner to change the voice or language for the next group.</li>
+              <li><strong>Forgets at the bell.</strong> Library iPads are shared roughly one between two. Nothing is stored per child; a session clears when the app closes, and the screen says so to the child in plain words rather than in a policy.</li>
+              <li><strong>Two update rhythms.</strong> Screens, prompts, content and the book index can change any day. The model and the voice ship termly with the school&rsquo;s app list, so nothing changes underneath a class mid-term.</li>
+            </ul>
+          </div>
+        </section>
+
+        <div class="prose">
+          <h2>Where it is, and what is next</h2>
+
+          <p>The four screens are designed and running in a browser rig at iPad width, which is where the screenshots above come from. Inside the iPad app the same screens call the on-device model through a bridge; the HTML does not change. The pieces still being built are the ones that make it honest in a real library rather than a demonstration:</p>
+
+          <ul>
+            <li><strong>The reviewed canon.</strong> The common why-questions have teacher-reviewed answers that are matched before the model is asked at all; the model is the honest fallback for the long tail. A hundred-concept early-years corpus is being written to widen that canon, and unanswered questions are logged on the device as a coverage signal for the teacher.</li>
+            <li><strong>The school&rsquo;s own shelves.</strong> The books in the rig are sample catalogue entries. In a school they come from the library&rsquo;s catalogue export, and getting that import boring and reliable is most of the remaining work on the library screens.</li>
+            <li><strong>Voice.</strong> Speech in is Apple&rsquo;s on-device recogniser; speech out is a neural voice rendered on the device, split at sentence boundaries with real pauses and a longer breath before any sentence beginning &ldquo;I wonder&rdquo;. Playback always stops before the microphone opens, so the iPad never transcribes Ollie instead of the child. Tuning that for a noisy library is ongoing.</li>
+          </ul>
+
+          <h2>What I&rsquo;d love from you</h2>
+
+          <p>If you run a primary library, or teach in one of these year groups, two things would help enormously. First, the questions your children actually ask &mdash; the real ones, misspelt and half-formed &mdash; because those are what the reviewed canon should be built from. Second, the moment you would want Ollie to refuse, or to hand a child back to you. The design gets better every time someone tells me where the line should be.</p>
+
+          <p>I will post again when there is something to put in your hands.</p>
+        </div>
+
+        <nav class="post-nav" aria-label="More posts"><a class="pn prev" href="/blog/a-classroom-screen-built-for-our-boards/"><small>&larr; Older</small><span>A Classroom Screen Built for Our Boards</span></a></nav>
+        <p class="backlink"><a href="/blog/">&larr; All posts</a></p>
+      </main>
+
+      <footer class="site-footer shell">
+        <div class="foot-cols">
+          <div>
+            <span class="wordmark">heuta<i>lab</i></span>
+            <p class="foot-blurb">Practical EdTech tools, ideas and training for teachers, leaders and parents.</p>
+          </div>
+          <div>
+            <h6>Apps</h6>
+            <ul>
+              <li><a href="https://trycreance.app">Creance</a></li>
+              <li><a href="https://sagestage.app">Sage on the Stage</a></li>
+              <li><a href="/looplab/">LoopLab</a></li>
+              <li><a href="https://sagestage.co.uk">Widget reference</a></li>
+            </ul>
+          </div>
+          <div>
+            <h6>Library</h6>
+            <ul>
+              <li><a href="/resources/">Free downloads</a></li>
+              <li><a href="/media/">Media literacy</a></li>
+              <li><a href="/site-index/">Legacy archive</a></li>
+            </ul>
+          </div>
+          <div>
+            <h6>HeutaLab</h6>
+            <ul>
+              <li><a href="/about/">About</a></li>
+              <li><a href="/blog/">Blog</a></li>
+              <li><a href="/blog/feed.xml">RSS</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot-base">
+          <span>&copy; 2026 HeutaLab</span>
+          <span>Formerly EdTech Lounge &middot; Every old link still works</span>
+        </div>
+        <div class="signoff" aria-hidden="true"><span>heuta<i>lab</i></span></div>
+      </footer>
+    </div>
+  </body>
+</html>

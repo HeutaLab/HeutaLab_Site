@@ -5,6 +5,20 @@
   <link>https://heutalab.com/blog/</link>
   <description>EdTech for curious minds. Practical tools, ideas and training for teachers, leaders and parents.</description>
   <item>
+    <title>Ollie Is Not a Search Box</title>
+    <link>https://heutalab.com/blog/ollie-is-not-a-search-box/</link>
+    <guid isPermaLink="true">https://heutalab.com/blog/ollie-is-not-a-search-box/</guid>
+    <pubDate>Wed, 09 Sep 2026 09:00:00 +0000</pubDate>
+    <description>A development update on Ollie, a learning assistant for the primary school library, ages five to eleven. Not a search box: it teaches children how to ask, hands the turn back rather than closing the subject, and tells them when a book on the shelf backs an answer up. The model runs on the iPad, nothing is stored per child, and a session clears at the bell. Four screens, one question all the way through.</description>
+  </item>
+  <item>
+    <title>A Classroom Screen Built for Our Boards</title>
+    <link>https://heutalab.com/blog/a-classroom-screen-built-for-our-boards/</link>
+    <guid isPermaLink="true">https://heutalab.com/blog/a-classroom-screen-built-for-our-boards/</guid>
+    <pubDate>Tue, 08 Sep 2026 09:00:00 +0000</pubDate>
+    <description>One screen for the front of the classroom: a timer, a name picker, a rekenrek, a bar model, a phoneme mat, modelled writing paper — dragged onto the board where you want them, and they stay there all year. Fifty-five widgets, no login, nothing leaves your machine. Built to sit alongside White Rose Maths, Big Write, sentence writing, phonics and spelling — and it prints to the wall.</description>
+  </item>
+  <item>
     <title>The Search I Couldn’t Have Run Last Year</title>
     <link>https://heutalab.com/blog/the-search-i-couldnt-have-run-last-year/</link>
     <guid isPermaLink="true">https://heutalab.com/blog/the-search-i-couldnt-have-run-last-year/</guid>
@@ -129,20 +143,6 @@
     <guid isPermaLink="true">https://heutalab.com/blog/julian-opie-2020-remake-adobe-illustrator/</guid>
     <pubDate>Wed, 01 Apr 2020 05:02:54 +0000</pubDate>
     <description>Year 5 had recently begun using Photoshop on one of their projects (a remix of Paint.Net) and the next logical step would be to add a little bit of creativity to a ‘Cultures and Migration’ topic. So I set about looking at ways Adobe CC can be injected into the project. Julian Opie was on my mind…</description>
-  </item>
-  <item>
-    <title>How Much Do Your Students Know About Search Manipulation?</title>
-    <link>https://heutalab.com/blog/convenience-is-killing-impartiality/</link>
-    <guid isPermaLink="true">https://heutalab.com/blog/convenience-is-killing-impartiality/</guid>
-    <pubDate>Tue, 31 Mar 2020 07:05:38 +0000</pubDate>
-    <description>Convenience is killing impartiality. Search engines are your second gatekeepers to the internet right after your Internet service providers. This is specially true for Google, which enjoys 70-90% market share across the globe. If Google tweaks what and how results appear on the first page they…</description>
-  </item>
-  <item>
-    <title>Oculus Quest - Room-Scale VR For Schools - A Full Review</title>
-    <link>https://heutalab.com/blog/oculus-quest-room-scale-vr-for-schools-a-full-review/</link>
-    <guid isPermaLink="true">https://heutalab.com/blog/oculus-quest-room-scale-vr-for-schools-a-full-review/</guid>
-    <pubDate>Fri, 06 Sep 2019 03:20:33 +0000</pubDate>
-    <description>The pared down version of roomscale VR comes at a cost to the user, I feel. Namely the appliance-like nature of the device so that the mass-produced all-in-one case can provide a three-click platform: turn on, choose game, hit go. The appliance also pares down what the ‘user’ should be able to do.…</description>
   </item>
 </channel>
 </rss>
