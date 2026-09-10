@@ -513,3 +513,28 @@ body { color: var(--paper); }
   .marquee-track { animation: none; }
   * { transition-duration: .01ms !important; }
 }
+
+/* ---- In development note ----------------------------------------------
+   One row under the four claims for whatever is being built but has not
+   shipped. Lime is the lab colour; the front page otherwise never uses it. */
+
+.dev-note {
+  margin-top: var(--gutter);
+  padding: 26px 30px;
+  border: 1px solid var(--hairline);
+  border-left: 6px solid var(--sec-lab-sky);
+  border-radius: var(--r-md);
+  background: var(--ground-lift);
+  display: grid; grid-template-columns: auto 1fr auto; gap: 30px; align-items: center;
+}
+.dev-note .dev-label {
+  margin: 0; font-size: 14px; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--sec-lab-sky);
+}
+.dev-note .dev-text { margin: 0; font-size: 15.5px; line-height: 1.5; color: var(--paper-dim); max-width: 66ch; }
+.dev-note .dev-text b { color: var(--paper); font-weight: 700; }
+.dev-note .pill { justify-self: end; white-space: nowrap; }
+@media (max-width: 900px) {
+  .dev-note { grid-template-columns: 1fr; gap: 14px; }
+  .dev-note .pill { justify-self: start; }
+}
