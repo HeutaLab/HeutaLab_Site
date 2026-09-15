@@ -5,6 +5,13 @@
   <link>https://heutalab.com/blog/</link>
   <description>EdTech for curious minds. Practical tools, ideas and training for teachers, leaders and parents.</description>
   <item>
+    <title>Nothing on the Slide Is Text</title>
+    <link>https://heutalab.com/blog/nothing-on-the-slide-is-text/</link>
+    <guid isPermaLink="true">https://heutalab.com/blog/nothing-on-the-slide-is-text/</guid>
+    <pubDate>Tue, 15 Sep 2026 09:00:00 +0000</pubDate>
+    <description>NotebookLM will re-render an existing lesson deck in any visual style you describe to it. The export comes back as flat images with no editable text, so Canva’s Magic Layers has to do the repair. About fifteen minutes per lesson. Worth it for the decks students actually sit with, not for all of them.</description>
+  </item>
+  <item>
     <title>Ollie Is Not a Search Box</title>
     <link>https://heutalab.com/blog/ollie-is-not-a-search-box/</link>
     <guid isPermaLink="true">https://heutalab.com/blog/ollie-is-not-a-search-box/</guid>
@@ -136,13 +143,6 @@
     <guid isPermaLink="true">https://heutalab.com/blog/how-much-do-you-know-about-how-the-web-is-built-and-where-it-travels/</guid>
     <pubDate>Fri, 10 Apr 2020 04:45:43 +0000</pubDate>
     <description>What is compartmentalism in terms of web use? It’s where the user, for example, may have a Facebook account and they are heavy users too. This would mean she would now only be allowed to use Facebook in one tab in a single browser and only use it for that purpose. Line in another browser in single…</description>
-  </item>
-  <item>
-    <title>Julian Opie  2020 remake - Adobe Illustrator</title>
-    <link>https://heutalab.com/blog/julian-opie-2020-remake-adobe-illustrator/</link>
-    <guid isPermaLink="true">https://heutalab.com/blog/julian-opie-2020-remake-adobe-illustrator/</guid>
-    <pubDate>Wed, 01 Apr 2020 05:02:54 +0000</pubDate>
-    <description>Year 5 had recently begun using Photoshop on one of their projects (a remix of Paint.Net) and the next logical step would be to add a little bit of creativity to a ‘Cultures and Migration’ topic. So I set about looking at ways Adobe CC can be injected into the project. Julian Opie was on my mind…</description>
   </item>
 </channel>
 </rss>
