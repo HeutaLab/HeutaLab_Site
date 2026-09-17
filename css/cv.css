@@ -1,0 +1,521 @@
+/* ===================================================================
+   HeutaLab CV page
+   -------------------------------------------------------------------
+   Loaded after tokens.css and styles.css, and only by /cv/. Defines no
+   tokens of its own.
+
+   The CV is a scrolling document, not a page of prose: a cover slab, a
+   sticky rail that tracks where you are, and eight sections that arrive
+   as you reach them. Same two grounds as everywhere else -- ink table,
+   paper for the things you actually sit and read (the profile and the
+   closing contact card).
+
+   Print rules live at the foot of this file: Cmd-P gives a plain,
+   one-column CV with the chrome and the animation stripped out.
+   =================================================================== */
+
+/* This page's sections sit on the ink ground, so its default text is
+   paper. Every light-ground block below sets its own colour back. */
+body { color: var(--paper); }
+
+/* ---- Reading progress -------------------------------------------------
+   The only fixed element on the page. Three pixels of coral, because the
+   whole point of the format is that it is read by scrolling. */
+
+.reading-progress {
+  position: fixed; inset: 0 0 auto; height: 3px; z-index: 80;
+  background: transparent; pointer-events: none;
+}
+.reading-progress b {
+  display: block; height: 100%; width: 0;
+  background: var(--coral);
+  transition: width .08s linear;
+}
+
+/* ---- Cover ------------------------------------------------------------
+   The page's hero. Portrait left, name right, the surname cropped huge
+   across the foot in the same near-invisible paper the footer signs off
+   with. */
+
+.cv-cover {
+  margin-top: var(--gutter);
+  padding: clamp(28px, 3.6vw, 56px) clamp(24px, 3.6vw, 56px) 0;
+  background: var(--ground-lift);
+  border: 1px solid var(--edge-navy);
+}
+.cv-cover-grid {
+  position: relative; z-index: 3;
+  display: grid;
+  grid-template-columns: clamp(170px, 17vw, 236px) minmax(0, 1fr);
+  gap: clamp(24px, 3.4vw, 54px);
+  align-items: center;
+}
+
+.cv-portrait {
+  border-radius: var(--r-card);
+  overflow: hidden;
+  border: 1px solid var(--edge-navy);
+  background: var(--ground);
+}
+.cv-portrait img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; }
+
+.cv-cover .label { color: var(--paper-faint); }
+.cv-cover h1 {
+  margin: 14px 0 0;
+  font-size: clamp(2.4rem, 5.6vw, 4.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.038em;
+  font-weight: var(--weight-black);
+  color: var(--paper);
+  text-wrap: balance;
+}
+.cv-cover h1 em { font-style: normal; color: var(--coral); }
+.cv-role {
+  margin: 16px 0 0;
+  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  font-weight: var(--weight-semibold);
+  line-height: 1.35;
+  color: var(--paper-dim);
+  max-width: 34ch;
+}
+
+.cv-facts {
+  margin: 22px 0 0; padding: 0; list-style: none;
+  display: flex; flex-wrap: wrap; gap: 10px 26px;
+  font-size: 14.5px; color: var(--paper-dim);
+}
+.cv-facts li { display: flex; align-items: center; gap: 9px; }
+.cv-facts svg { width: 15px; height: 15px; flex: none; opacity: .72; }
+.cv-facts a { text-decoration: 1.5px solid transparent underline; text-underline-offset: 4px; }
+.cv-facts a:hover { color: var(--paper); text-decoration-color: currentColor; }
+
+.cv-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+
+/* Cropped surname, flush to the foot of the slab. Same device as the
+   footer sign-off, so the page opens and closes on the same note. */
+.cv-word {
+  position: relative; z-index: 2;
+  margin: clamp(18px, 2.4vw, 34px) 0 0;
+  overflow: hidden;
+  height: clamp(32px, 5.4vw, 80px);
+}
+.cv-word span {
+  display: block;
+  font-family: var(--font-word);
+  font-weight: var(--weight-black);
+  font-size: clamp(3rem, 11.8vw, 10.5rem);
+  line-height: 0.78;
+  letter-spacing: -0.052em;
+  color: rgba(242, 239, 231, 0.065);
+  white-space: nowrap; user-select: none;
+}
+.cv-word i { font-style: normal; color: rgba(255, 75, 77, 0.13); }
+
+/* ---- Counted facts ---------------------------------------------------- */
+
+.cv-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: var(--gutter); margin-top: var(--gutter);
+}
+.cv-stat {
+  padding: 26px 28px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-card);
+  background: var(--ground-lift);
+}
+.cv-stat b {
+  display: block;
+  font-size: clamp(2.2rem, 3.6vw, 3.2rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-weight: var(--weight-black);
+  font-variant-numeric: tabular-nums;
+  color: var(--paper);
+}
+.cv-stat b i { font-style: normal; color: var(--coral); }
+.cv-stat span {
+  display: block; margin-top: 12px;
+  font-size: 12px; font-weight: var(--weight-bold);
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--paper-faint); line-height: 1.5;
+}
+
+/* ---- Two-column body --------------------------------------------------
+   Sticky rail on the left, the document on the right. The rail is the
+   thing that makes this a scrolling CV rather than a long page: it says
+   how much there is and where you are in it. */
+
+.cv-body {
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr);
+  gap: clamp(26px, 3vw, 56px);
+  align-items: start;
+  margin-top: clamp(44px, 5.4vw, 86px);
+}
+
+.cv-rail { position: sticky; top: calc(62px + var(--gutter) * 2); }
+.cv-rail-card {
+  padding: 20px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-card);
+  background: var(--ground-lift);
+}
+.cv-rail .label { color: var(--paper-faint); margin-bottom: 14px; }
+
+.cv-nav { display: grid; gap: 2px; }
+.cv-nav a {
+  display: grid; grid-template-columns: 7px 1fr; align-items: center; gap: 13px;
+  padding: 9px 11px; border-radius: var(--r-inset);
+  font-size: 14px; font-weight: var(--weight-semibold);
+  color: var(--paper-faint);
+  transition: color .18s ease, background-color .18s ease;
+}
+.cv-nav a::before {
+  content: ""; width: 7px; height: 7px; border-radius: var(--r-pill);
+  background: currentColor; opacity: .5;
+  transition: background-color .18s ease, box-shadow .18s ease, opacity .18s ease;
+}
+.cv-nav a:hover { color: var(--paper); background: rgba(242, 239, 231, .07); }
+.cv-nav a[aria-current="true"] { color: var(--paper); background: rgba(242, 239, 231, .09); }
+.cv-nav a[aria-current="true"]::before {
+  background: var(--coral); opacity: 1;
+  box-shadow: 0 0 0 4px rgba(255, 75, 77, .18);
+}
+
+.cv-rail-foot {
+  margin-top: 18px; padding-top: 18px;
+  border-top: 1px solid var(--hairline);
+  display: grid; gap: 10px;
+}
+.cv-rail-foot .pill { width: 100%; justify-content: center; }
+.cv-rail-note { margin: 4px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--paper-faint); }
+
+/* ---- Sections ---------------------------------------------------------- */
+
+.cv-section + .cv-section { margin-top: clamp(50px, 6vw, 92px); }
+.cv-section > .label { color: var(--sec-sky, var(--paper-dim)); }
+.cv-section > h2 {
+  margin: 14px 0 0;
+  font-size: clamp(1.85rem, 3.1vw, 2.75rem);
+  line-height: 1.04; letter-spacing: -0.035em;
+  font-weight: var(--weight-black);
+  text-wrap: balance;
+}
+.cv-section > .sec-intro {
+  margin: 14px 0 0; max-width: 60ch;
+  font-size: 17px; color: var(--paper-dim);
+}
+.cv-section .sec-rule {
+  width: 62px; height: 3px; margin-top: 18px; border-radius: var(--r-pill);
+  background: var(--sec-sky, var(--paper-dim));
+}
+
+/* ---- Profile, on paper -------------------------------------------------
+   The one block on the page that is a person talking, so it gets the
+   reading surface. */
+
+.cv-profile {
+  margin-top: 26px;
+  padding: clamp(28px, 3.2vw, 48px);
+  background: var(--paper); color: var(--ink);
+}
+.cv-profile p {
+  margin: 0;
+  font-size: clamp(1.05rem, 1.55vw, 1.3rem);
+  line-height: 1.55;
+  max-width: 54ch;
+}
+.cv-profile p + p { margin-top: 18px; }
+.cv-profile .cv-sig {
+  margin-top: 26px; padding-top: 22px;
+  border-top: 1px solid var(--line);
+  font-size: 14px; color: var(--muted); max-width: none;
+}
+
+/* ---- Timeline ----------------------------------------------------------
+   One rail down the left, a card per post. The dot fills in when the post
+   reaches the viewport, so the spine draws itself as you read down it. */
+
+.timeline { position: relative; margin-top: 30px; padding-left: 36px; }
+.timeline::before {
+  content: ""; position: absolute; left: 11px; top: 14px; bottom: 14px;
+  width: 2px; background: var(--hairline);
+}
+
+.tl-item {
+  position: relative;
+  padding: clamp(24px, 2.4vw, 34px) clamp(24px, 2.6vw, 38px);
+  border: 1px solid var(--edge-navy);
+  border-radius: var(--r-card);
+  background: var(--ground-lift);
+}
+.tl-item + .tl-item { margin-top: var(--gutter); }
+.tl-item::before {
+  content: ""; position: absolute; left: -31px; top: clamp(28px, 2.6vw, 38px);
+  width: 12px; height: 12px; border-radius: var(--r-pill);
+  background: var(--ground);
+  border: 2px solid var(--paper-faint);
+  transition: background-color .4s ease, border-color .4s ease, box-shadow .4s ease;
+}
+.tl-item.is-here::before {
+  background: var(--sec-sky, var(--paper));
+  border-color: var(--sec-sky, var(--paper));
+  box-shadow: 0 0 0 5px rgba(242, 239, 231, .10);
+}
+/* The current post is marked, not just dated. */
+.tl-item.tl-now { border-color: rgba(255, 75, 77, .38); }
+.tl-item.tl-now::before { background: var(--coral); border-color: var(--coral); }
+
+.tl-when {
+  margin: 0; font-size: 12px; font-weight: var(--weight-black);
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--paper-faint); font-variant-numeric: tabular-nums;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.tl-now-tag {
+  padding: 3px 10px; border-radius: var(--r-pill);
+  background: rgba(255, 75, 77, .16); color: var(--coral);
+  letter-spacing: 0.1em;
+}
+.tl-item h3 {
+  margin: 12px 0 0;
+  font-size: clamp(1.3rem, 2vw, 1.7rem);
+  line-height: 1.14; letter-spacing: -0.028em;
+  font-weight: var(--weight-black); color: var(--paper);
+}
+.tl-role {
+  margin: 8px 0 0; font-size: 16px; font-weight: var(--weight-semibold);
+  color: var(--paper-dim);
+}
+.tl-role .tl-ages {
+  display: inline-block; margin-left: 10px; padding: 2px 10px;
+  border: 1px solid var(--hairline); border-radius: var(--r-pill);
+  font-size: 12px; font-weight: var(--weight-bold);
+  letter-spacing: 0.06em; color: var(--paper-faint);
+  vertical-align: 2px;
+}
+
+/* Shared bullet list -- the homepage marker, but positioned rather than
+   laid out as a grid column. The homepage can use two grid tracks because
+   its bullets are plain text; these carry <b> inside, and a grid li would
+   promote every inline child to a grid item of its own and stack the
+   emphasised words one per row. */
+.cv-pts {
+  list-style: none; margin: 22px 0 0; padding: 0;
+  display: grid; gap: 11px; max-width: 74ch;
+  font-size: 15.5px; line-height: 1.5; color: var(--paper-dim);
+}
+.cv-pts li { position: relative; padding-left: 23px; }
+.cv-pts li::before {
+  content: ""; position: absolute; left: 0; top: 7px;
+  width: 9px; height: 9px;
+  border-radius: 2px; background: var(--sec-sky, var(--paper-faint));
+  opacity: .9;
+}
+.cv-pts b { color: var(--paper); font-weight: var(--weight-semibold); }
+
+/* ---- Card grids -------------------------------------------------------- */
+
+.cv-grid { display: grid; gap: var(--gutter); margin-top: 28px; }
+.cv-grid-2 { grid-template-columns: repeat(2, 1fr); }
+.cv-grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+.cv-card {
+  padding: 26px 28px;
+  border: 1px solid var(--edge-navy);
+  border-radius: var(--r-card);
+  background: var(--ground-lift);
+  display: flex; flex-direction: column;
+}
+.cv-card .when {
+  margin: 0; font-size: 12px; font-weight: var(--weight-black);
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--sec-sky, var(--paper-faint)); font-variant-numeric: tabular-nums;
+}
+.cv-card h3 {
+  margin: 12px 0 0; font-size: 19px; line-height: 1.2;
+  letter-spacing: -0.02em; font-weight: var(--weight-bold); color: var(--paper);
+}
+.cv-card h4 {
+  margin: 12px 0 0; font-size: 17px; line-height: 1.25;
+  letter-spacing: -0.02em; font-weight: var(--weight-bold); color: var(--paper);
+}
+.cv-card p { margin: 10px 0 0; font-size: 15px; line-height: 1.5; color: var(--paper-dim); }
+.cv-card .cv-pts { margin-top: 16px; font-size: 15px; }
+
+/* Anything that links out gets the lift-and-tint the homepage cards have. */
+a.cv-card { transition: background-color .18s ease, border-color .18s ease, transform .18s ease; }
+a.cv-card:hover { background: #14213c; border-color: var(--sec-sky, var(--paper-faint)); transform: translateY(-2px); }
+a.cv-card .more { margin-top: auto; padding-top: 18px; font-size: 14px; font-weight: var(--weight-bold); color: var(--paper-dim); }
+a.cv-card:hover .more { color: var(--sec-sky, var(--paper)); }
+
+/* ---- Education list ---------------------------------------------------- */
+
+.cv-rows { margin-top: 28px; display: grid; }
+.cv-row {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) auto;
+  gap: 18px 30px; align-items: baseline;
+  padding: 22px 4px;
+  border-top: 1px solid var(--hairline);
+}
+.cv-row:last-child { border-bottom: 1px solid var(--hairline); }
+.cv-row .where {
+  margin: 0; font-size: 17px; font-weight: var(--weight-bold);
+  letter-spacing: -0.02em; color: var(--paper);
+}
+.cv-row .what { margin: 0; font-size: 15.5px; line-height: 1.45; color: var(--paper-dim); }
+.cv-row .when {
+  margin: 0; font-size: 12px; font-weight: var(--weight-bold);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--paper-faint); font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+
+/* ---- Skill chips ------------------------------------------------------- */
+
+.cv-skills { margin-top: 28px; display: grid; gap: 26px; }
+.cv-skillset h3 {
+  margin: 0 0 14px; font-size: 13px; font-weight: var(--weight-black);
+  letter-spacing: 0.13em; text-transform: uppercase; color: var(--sec-sky, var(--paper-dim));
+}
+.chips { display: flex; flex-wrap: wrap; gap: 9px; margin: 0; padding: 0; list-style: none; }
+.chips li {
+  padding: 8px 16px; border-radius: var(--r-pill);
+  border: 1px solid var(--hairline); background: var(--ground-lift);
+  font-size: 14px; font-weight: var(--weight-semibold); color: var(--paper-dim);
+}
+
+/* ---- Closing card ------------------------------------------------------ */
+
+.cv-close {
+  margin-top: clamp(50px, 6vw, 92px);
+  padding: clamp(32px, 4vw, 60px);
+  background: var(--paper); color: var(--ground);
+}
+.cv-close .label { color: var(--sec-make-ink); }
+.cv-close h2 {
+  margin: 16px 0 0; max-width: 18ch;
+  font-size: clamp(1.9rem, 3.2vw, 2.9rem);
+  line-height: 1.02; letter-spacing: -0.035em; font-weight: var(--weight-black);
+  text-wrap: balance;
+}
+.cv-close p { margin: 16px 0 0; font-size: 17px; line-height: 1.55; color: rgba(6, 20, 40, .72); max-width: 48ch; }
+.cv-close .cv-cta { margin-top: 28px; }
+.cv-close .cv-refs {
+  margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--line);
+  font-size: 14px; color: var(--muted); max-width: 60ch;
+}
+
+/* ---- Reveal on scroll --------------------------------------------------
+   Scoped to .cv-js so the page reads perfectly with the script blocked --
+   nothing here hides content until JavaScript has said it can un-hide it. */
+
+.cv-js [data-reveal] {
+  opacity: 0; transform: translateY(20px);
+  transition: opacity .62s ease, transform .62s cubic-bezier(.2, .7, .3, 1);
+  transition-delay: var(--d, 0ms);
+}
+.cv-js [data-reveal].is-in { opacity: 1; transform: none; }
+
+/* ---- Responsive -------------------------------------------------------- */
+
+@media (max-width: 1080px) {
+  .cv-body { grid-template-columns: 1fr; }
+  .cv-rail { position: static; }
+  .cv-rail-card { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 22px 30px; align-items: start; }
+  .cv-rail .label { grid-column: 1 / -1; margin-bottom: 0; }
+  .cv-nav { grid-auto-flow: column; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(4, auto); }
+  .cv-rail-foot { margin-top: 0; padding-top: 0; border-top: 0; align-content: start; }
+  .cv-stats { grid-template-columns: repeat(2, 1fr); }
+  .cv-grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .cv-cover-grid { grid-template-columns: 1fr; gap: 24px; }
+  .cv-portrait { width: min(190px, 46%); }
+  .cv-row { grid-template-columns: minmax(0, 1fr) auto; }
+  .cv-row .what { grid-column: 1 / -1; }
+}
+
+@media (max-width: 620px) {
+  .cv-stats, .cv-grid-2, .cv-grid-3 { grid-template-columns: 1fr; }
+  .cv-rail-card { grid-template-columns: 1fr; }
+  /* The nav stays two columns even here -- eight full-width rows push the
+     first section most of a screen down the page. */
+  .timeline { padding-left: 26px; }
+  .timeline::before { left: 6px; }
+  .tl-item::before { left: -26px; }
+  .cv-facts { gap: 8px 18px; }
+  .cv-word span { font-size: 19vw; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cv-js [data-reveal] { opacity: 1 !important; transform: none !important; }
+  .reading-progress b { transition: none; }
+}
+
+/* ---- Print -------------------------------------------------------------
+   The page IS the CV, so it has to survive Cmd-P. Everything on screen
+   draws its colour from a token, so print re-points the tokens rather
+   than chasing individual selectors: paper-on-ink becomes ink-on-paper
+   in one move, and inline <b>, the age chips and the section accents come
+   with it. (Enumerating them was how the first version of this block let
+   every bold phrase print white on white.) The rules after that are the
+   ones tokens cannot express: chrome off, fills off, one column. */
+
+@media print {
+  :root {
+    /* Text that was paper on the ink ground is now ink on paper. */
+    --paper: #000;
+    --paper-dim: #1f1f1f;
+    --paper-faint: #444;
+    /* Accents keep their job but lose their hue -- a CV prints mono. */
+    --coral: #000;
+    --coral-deep: #000;
+    --sec-structure-sky: #000;
+    --sec-make-sky: #000;
+    --sec-apps-sky: #000;
+    --sec-resources-sky: #000;
+    --sec-lab-sky: #000;
+    /* Separation by rule, not by fill. */
+    --hairline: #c9c9c9;
+    --edge-navy: #c9c9c9;
+  }
+
+  @page { margin: 14mm; }
+  body { background: #fff; color: #000; font-size: 10.5pt; }
+
+  .site-header, .site-footer, .reading-progress, .cv-rail, .cv-word,
+  .cv-cta, .cv-close .cv-cta { display: none !important; }
+
+  .bleed, .shell { width: auto; padding: 0; margin: 0; }
+  .cv-js [data-reveal] { opacity: 1 !important; transform: none !important; }
+
+  /* No card fills, no rounding, no padding -- the page is the card. */
+  .cv-cover, .cv-stat, .cv-card, .tl-item, .cv-profile, .cv-close, .chips li {
+    background: #fff !important; color: #000 !important;
+    border: 0; border-radius: 0; padding: 0;
+  }
+  .chips li { border-bottom: 1px solid #c9c9c9; padding: 0 8px 2px 0; }
+  .tl-ages { border-color: #c9c9c9; }
+  .tl-now-tag { background: none !important; border: 1px solid #999; }
+
+  .cv-cover { border-bottom: 2px solid #000; padding-bottom: 10pt; margin: 0; }
+  .cv-portrait { width: 30mm; border: 0; }
+  .cv-body { display: block; margin-top: 14pt; }
+  .cv-stats { grid-template-columns: repeat(4, 1fr); gap: 10pt; margin-top: 10pt; }
+
+  .cv-section + .cv-section { margin-top: 16pt; }
+  .cv-section, .tl-item, .cv-card, .cv-row { break-inside: avoid; }
+  .cv-section > h2 { font-size: 15pt; }
+  .cv-profile p { font-size: 11pt; }
+
+  .timeline { padding-left: 0; }
+  .timeline::before, .tl-item::before { display: none; }
+  .tl-item + .tl-item { margin-top: 12pt; }
+
+  /* The closing card holds the contact line once the pills are gone. */
+  .cv-close { border-top: 2px solid #000; padding-top: 10pt; }
+  /* The address is already set as the link text in the cover, so there is
+     nothing to expand into parentheses here. */
+  a { color: #000; }
+}

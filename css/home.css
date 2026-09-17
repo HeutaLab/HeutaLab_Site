@@ -7,47 +7,9 @@
    own sections and nothing else.
    =================================================================== */
 
-.label {
-  margin: 0;
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.slab {
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  position: relative;
-}
-
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 46px;
-  padding: 0 24px;
-  border-radius: var(--r-pill);
-  border: 1.5px solid transparent;
-  font-family: var(--font-text);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  cursor: pointer;
-  transition: transform .18s ease, background-color .18s ease, color .18s ease;
-}
-.pill:hover { transform: translateY(-2px); }
-.pill .arw { font-weight: 500; font-size: 17px; line-height: 1; }
-
-.pill-coral { background: var(--coral-deep); color: var(--paper); }
-.pill-coral:hover { background: var(--coral); }
-.pill-ink    { background: var(--ground); color: var(--paper); }
-.pill-ink:hover { background: var(--ground-lift); }
-.pill-paper  { background: var(--paper); color: var(--ground); }
-.pill-ghost-light { border-color: rgba(242,239,231,.80); color: var(--paper); background: transparent; }  /* was .45 = 2.2:1 */
-.pill-ghost-light:hover { background: rgba(242,239,231,.12); }
-.pill-ghost-dark { border-color: rgba(6,14,27,.30); color: var(--ground); background: transparent; }
-.pill-ghost-dark:hover { background: rgba(6,14,27,.08); }
+/* .label, .slab and the .pill family used to live here. Two pages use them
+   now (this one and /cv/), so they moved to styles.css with the rest of the
+   shared chrome. Everything below is the homepage and nothing else. */
 
 /* The homepage's sections sit on the ink ground, so its default text is
    paper. Every light-ground component below (.marquee, .field-apps,

@@ -43,6 +43,34 @@
     newsletterForm.reset();
   });
 
+  /* ---- Contact links ---------------------------------------------------
+     The address is assembled here rather than written into any page, so no
+     page ever ships it in its HTML for a harvester to regex out. The two
+     halves are encoded separately -- neither decodes to something an
+     address pattern matches on its own.
+
+     To publish a different address (an alias, say), change these two lines
+     and nothing else: btoa("hello") and btoa("heutalab.com") in any browser
+     console give you the replacements.
+
+     Links opt in with class="mailme". A .mail-text span inside one means
+     show the address as the link text too; without it only the href is
+     rewritten and the label is left alone. With JavaScript off, the links
+     fall back to the href the markup carries -- which is why none of them
+     is a mailto: in the source. */
+
+  const MAIL_USER = "Z2xlbm4ubWFsY29sbQ==";
+  const MAIL_HOST = "dHV0YW5vdGEuY29t";
+
+  const address = atob(MAIL_USER) + String.fromCharCode(64) + atob(MAIL_HOST);
+
+  document.querySelectorAll("a.mailme").forEach((link) => {
+    link.href = "mailto:" + address;
+    const slot = link.querySelector(".mail-text");
+    if (slot) slot.textContent = address;
+  });
+
+
   document.querySelectorAll('.socials a[href="#"]').forEach((link) => {
     link.addEventListener("click", (event) => event.preventDefault());
   });

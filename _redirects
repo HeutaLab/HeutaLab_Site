@@ -9,7 +9,7 @@
 /programming /blog/ 301
 /video /spreadsheet-videos/ 301
 /welcome / 301
-/work / 301
+/work /about/cv/ 301
 /blog/2009/5/31/adding-the-videos /blog/adding-the-videos/ 301
 /blog/2009/5/31/adding-the-videos.html /blog/adding-the-videos/ 301
 /blog/2009/6/2/scratch /blog/scratch/ 301
@@ -272,3 +272,7 @@
 # Short links
 /nothing-on-the-slide-is-text /blog/nothing-on-the-slide-is-text/ 301
 /nothing-on-the-slide-is-text/ /blog/nothing-on-the-slide-is-text/ 301
+
+# /cv is the short link to the PDF itself; the CV as a page lives at /about/cv/
+/cv /assets/files/GLENN-MALCOLM-CV-EDUCATIONAL-TECHNOLOGY.pdf 301
+/cv/ /assets/files/GLENN-MALCOLM-CV-EDUCATIONAL-TECHNOLOGY.pdf 301

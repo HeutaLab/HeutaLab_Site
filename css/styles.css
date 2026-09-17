@@ -208,6 +208,54 @@ img { display: block; max-width: 100%; height: auto; }
 .button-outline { border-color: rgba(6, 20, 40, .30); background: transparent; color: var(--ink); }
 .button-outline:hover { background: rgba(6, 20, 40, .07); }
 
+/* ---- Slabs, labels and pills -----------------------------------------
+   The three components both the homepage and /cv/ are built out of: a
+   rounded section box, the small uppercase section label, and the pill
+   button in its five grounds. They were in home.css until /cv/ needed
+   them too. */
+
+.label {
+  margin: 0;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.slab {
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  position: relative;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 24px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid transparent;
+  font-family: var(--font-text);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: transform .18s ease, background-color .18s ease, color .18s ease;
+}
+.pill:hover { transform: translateY(-2px); }
+.pill .arw { font-weight: 500; font-size: 17px; line-height: 1; }
+
+.pill-coral { background: var(--coral-deep); color: var(--paper); }
+.pill-coral:hover { background: var(--coral); }
+.pill-ink    { background: var(--ground); color: var(--paper); }
+.pill-ink:hover { background: var(--ground-lift); }
+.pill-paper  { background: var(--paper); color: var(--ground); }
+.pill-ghost-light { border-color: rgba(242,239,231,.80); color: var(--paper); background: transparent; }  /* was .45 = 2.2:1 */
+.pill-ghost-light:hover { background: rgba(242,239,231,.12); }
+.pill-ghost-dark { border-color: rgba(6,14,27,.30); color: var(--ground); background: transparent; }
+.pill-ghost-dark:hover { background: rgba(6,14,27,.08); }
+
 /* ---- Footer ----------------------------------------------------------
    Sits on the ink, outside the paper slab, and signs off with the same
    cropped wordmark the homepage opens with. */
