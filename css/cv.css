@@ -133,7 +133,7 @@ body { color: var(--paper); }
   color: var(--paper);
 }
 .cv-stat b i { font-style: normal; color: var(--coral); }
-.cv-stat span {
+.cv-stat > span {
   display: block; margin-top: 12px;
   font-size: 12px; font-weight: var(--weight-bold);
   letter-spacing: 0.13em; text-transform: uppercase;
@@ -313,6 +313,12 @@ body { color: var(--paper); }
   opacity: .9;
 }
 .cv-pts b { color: var(--paper); font-weight: var(--weight-semibold); }
+.cv-pts a {
+  color: var(--paper); font-weight: var(--weight-semibold);
+  text-decoration: underline; text-underline-offset: 3px;
+  text-decoration-color: rgba(242, 239, 231, .45);
+}
+.cv-pts a:hover { text-decoration-color: currentColor; }
 
 /* ---- Card grids -------------------------------------------------------- */
 
