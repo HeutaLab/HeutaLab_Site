@@ -384,6 +384,19 @@ a.cv-card:hover .more { color: var(--sec-sky, var(--paper)); }
   font-size: 14px; font-weight: var(--weight-semibold); color: var(--paper-dim);
 }
 
+/* One chip in the set is a link -- the RAG explainer -- and a chip that does
+   something has to look like it does something. The padding moves onto the
+   anchor so the whole chip is the hit area rather than just its text. */
+.chips li.chip-link { padding: 0; }
+.chips li.chip-link a {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 16px; border-radius: inherit;
+  transition: background-color .18s ease, color .18s ease;
+}
+.chips li.chip-link a:hover { background: rgba(242, 239, 231, .10); color: var(--paper); }
+.chip-ext { font-size: 11px; line-height: 1; opacity: .65; }
+.chips li.chip-link a:hover .chip-ext { opacity: 1; }
+
 /* ---- Closing card ------------------------------------------------------ */
 
 .cv-close {
@@ -496,6 +509,8 @@ a.cv-card:hover .more { color: var(--sec-sky, var(--paper)); }
     border: 0; border-radius: 0; padding: 0;
   }
   .chips li { border-bottom: 1px solid #c9c9c9; padding: 0 8px 2px 0; }
+  .chips li.chip-link a { padding: 0; }
+  .chip-ext { display: none; }
   .tl-ages { border-color: #c9c9c9; }
   .tl-now-tag { background: none !important; border: 1px solid #999; }
 
