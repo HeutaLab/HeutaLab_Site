@@ -26,9 +26,9 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Poppins:wght@700;800&display=swap"
     />
-    <link rel="stylesheet" href="/css/tokens.css?v=9" />
-    <link rel="stylesheet" href="/css/styles.css?v=9" />
-    <link rel="stylesheet" href="/css/home.css?v=9" />
+    <link rel="stylesheet" href="/css/tokens.css?v=10" />
+    <link rel="stylesheet" href="/css/styles.css?v=10" />
+    <link rel="stylesheet" href="/css/home.css?v=10" />
     <script src="/js/main.js" defer></script>
   </head>
   <body>
@@ -40,11 +40,13 @@
               <details>
                 <summary>Apps</summary>
                 <div class="nav-menu">
-                  <a href="#apps">All four apps</a>
+                  <a href="/apps/">All the apps</a>
                   <a href="https://trycreance.app">Creance</a>
                   <a href="https://sagestage.app">Sage on the Stage</a>
                   <a href="/looplab/">LoopLab</a>
                   <a href="/planbench/">PlanBench</a>
+                  <a href="/perkush/">Perkush</a>
+                  <a href="/flect/">Flect</a>
                   <a href="/in-development/">In development</a>
                 </div>
               </details>
@@ -72,7 +74,7 @@
             <details class="mobile-menu">
               <summary aria-label="Open navigation"><span></span><span></span><span></span></summary>
               <nav aria-label="Mobile navigation">
-                <a href="#apps">Apps</a>
+                <a href="/apps/">Apps</a>
                 <a href="/blog/">Blog</a>
                 <a href="/resources/">Resources</a>
                 <a href="/site-index/">Site index</a>
@@ -118,175 +120,75 @@
         <section class="section sec-apps" id="apps">
           <div class="section-head">
             <p class="label">Our apps</p>
-            <h2>Four apps, built while teaching.</h2>
+            <h2>Five apps, built while teaching.</h2>
             <p>
-              All four run in the browser and keep their data on the device they are opened on. Two
+              Every one runs in the browser and keeps its data on the device it is opened on. Three
               were written for the jobs that eat a teacher's week &mdash; recording what children can
-              actually do, and running the screen at the front of the room. The third is for the
-              children themselves. The fourth is a school's own planning format turned into an app
-              by the teacher who had to fill it in &mdash; and the case that you could do the same.
+              actually do, running the screen at the front of the room, and filling in the planning
+              format. Two are handed to the children instead. All of them open on something already
+              working, so there is something to look at before you commit a class to one.
             </p>
           </div>
 
-          <div class="pair">
-            <div class="field field-apps slab">
+          <div class="appgrid">
+
+            <a class="appcard slab" href="https://trycreance.app" style="--tint:#ff5451">
               <p class="app-tag"><b>C</b> Creance</p>
               <h3>Assessment recorded while you teach, not after.</h3>
-              <p>
-                Paste in a class list, add your own success criteria, and mark against them as
-                you move around the room. Every child's picture builds up criterion by criterion,
-                so the gaps show themselves before the end of the unit rather than after it.
-              </p>
-              <ul class="pts">
-                <li>Mark as Not started, Developing, Secure or Mastered &mdash; in Grid, Focus or Tap mode.</li>
-                <li>High achiever and encouragement flags appear on their own, next to the children they apply to.</li>
-                <li>Class breakdown and analytics show how the whole group is doing at a glance.</li>
-                <li>Export the lot as a spreadsheet when reports are due.</li>
-              </ul>
-              <div class="field-foot">
-                <a class="pill pill-paper" href="https://trycreance.app">Open the example <span class="arw" aria-hidden="true">&rarr;</span></a>
-                <a class="pill pill-ghost-light" href="https://creance.heutalab.com">Start an empty copy</a>
-              </div>
-              <p class="field-note">
-                Opens on two invented classes and a term of marks, so there is something to look at.
-                Your school's own copy at <a href="https://creance.heutalab.com">creance.heutalab.com</a>
-                starts empty and keeps its data separate.
-              </p>
-            </div>
+              <p>Paste in a class list, add your own success criteria, and mark against them as you move around the room.</p>
+              <span class="appcard-foot">
+                <span class="appcard-who">For the teacher</span>
+                <span class="appcard-go">Open the example <span class="arw" aria-hidden="true">&rarr;</span></span>
+              </span>
+            </a>
 
-            <div class="shotcard slab">
-              <figure>
-                <img src="/assets/apps/creance-assess.png" width="1400" height="774" loading="lazy" decoding="async" alt="The Creance Assess grid mid-topic: a class list down the left, five success criteria across the top, a coloured progress bar in every cell, and confidence stars and teacher notes on the right." />
-              </figure>
-              <figcaption>The Assess grid, mid-topic &mdash; and exactly what opens when you tap through. The banner across the top is the app's, not ours.</figcaption>
-              <dl class="spec">
-                <div><dt>Marking modes</dt><dd>Grid &middot; Focus &middot; Tap</dd></div>
-                <div><dt>Levels per criterion</dt><dd>4</dd></div>
-                <div><dt>Accounts needed</dt><dd>0</dd></div>
-                <div><dt>Reports export</dt><dd>Spreadsheet</dd></div>
-              </dl>
-            </div>
-          </div>
-
-          <div class="pair flip">
-            <div class="field field-apps slab">
+            <a class="appcard slab" href="https://sagestage.app" style="--tint:#7aa942">
               <p class="app-tag"><b>S</b> Sage on the Stage</p>
               <h3>The screen at the front of the room.</h3>
-              <p>
-                Around fifty widgets &mdash; timers, name picker, group maker, traffic light, draw pad,
-                teaching clock, noise meter &mdash; that you drop onto a screen and arrange however the
-                lesson needs. Build a deck ahead of time, or add a tool the moment you need it.
-              </p>
-              <ul class="pts">
-                <li>Screens you can prepare as a deck, so a lesson's tools are one tap apart.</li>
-                <li>Paste a class register once and every name tool uses it.</li>
-                <li>Nothing is recorded or sent anywhere &mdash; the noise meter and webcam included.</li>
-                <li>Every widget is documented, with a shareable link straight to any one of them.</li>
-              </ul>
-              <div class="field-foot">
-                <a class="pill pill-paper" href="https://sagestage.app">Try it in your browser <span class="arw" aria-hidden="true">&rarr;</span></a>
-                <a class="pill pill-ghost-light" href="https://sagestage.co.uk">Every widget, explained</a>
-              </div>
-              <p class="field-note">
-                Opens on a demonstration class, so the name tools have something to pick from.
-                The reference at <a href="https://sagestage.co.uk">sagestage.co.uk</a> documents
-                every widget and links straight to any one of them.
-              </p>
-            </div>
+              <p>Around fifty widgets &mdash; timers, name picker, group maker, traffic light, draw pad &mdash; arranged however the lesson needs.</p>
+              <span class="appcard-foot">
+                <span class="appcard-who">For the teacher</span>
+                <span class="appcard-go">Try it <span class="arw" aria-hidden="true">&rarr;</span></span>
+              </span>
+            </a>
 
-            <div class="shotcard slab">
-              <figure>
-                <img src="/assets/apps/sagestage-board.jpg" width="1400" height="872" loading="lazy" decoding="async" alt="A Sage on the Stage screen holding five widgets: a five-minute timer, a name picker, a traffic light on green, the morning's agenda and a clock, with the widget dock along the bottom." />
-              </figure>
-              <figcaption>One screen of a lesson deck, with the widget dock along the bottom. Demonstration class list.</figcaption>
-              <dl class="spec">
-                <div><dt>Widgets</dt><dd>About 50</dd></div>
-                <div><dt>Class register</dt><dd>Paste once</dd></div>
-                <div><dt>Recorded or sent</dt><dd>Nothing</dd></div>
-                <div><dt>Sign-in</dt><dd>None</dd></div>
-              </dl>
-            </div>
-          </div>
-
-          <div class="pair">
-            <div class="field field-apps slab">
-              <p class="app-tag"><b>L</b> LoopLab</p>
-              <h3>Children write real code, and hear whether it works.</h3>
-              <p>
-                The one they open themselves. Six levels take a class from their first note to two
-                loops running at once &mdash; then the club opens, and the tracks in there came back
-                from the studio with bugs to be found by ear and fixed live. Ages 9&ndash;13.
-              </p>
-              <ul class="pts">
-                <li>Every keyword is the real Sonic Pi keyword, and the finished code pastes into the free desktop app and runs.</li>
-                <li>Blocks to begin with, typing by the end &mdash; each stage marks itself and pays out up to three stars.</li>
-                <li>Debugging you can hear: the test is the child&rsquo;s own ear, not a green tick.</li>
-                <li>Up to 40 named players per device, and a summary of the work to paste into Google Classroom.</li>
-              </ul>
-              <div class="field-foot">
-                <a class="pill pill-paper" href="https://looplab.heutalab.com">Open LoopLab <span class="arw" aria-hidden="true">&rarr;</span></a>
-                <a class="pill pill-ghost-light" href="/looplab/">What it teaches</a>
-              </div>
-              <p class="field-note">
-                It makes a noise, so it asks for headphones before it will start &mdash; and carries a
-                mute mode for demonstrating on the board. Nothing a child types leaves the device.
-              </p>
-            </div>
-
-            <div class="shotcard slab">
-              <figure>
-                <img src="/assets/apps/looplab-club.png" width="1400" height="866" loading="lazy" decoding="async" alt="A LoopLab club track in progress. Four lanes labelled :drums, :claps, :bass and :siren run down the left with code chips falling through them; the bass lane is flagged YOUR LANE. A combo counter and a crowd meter sit in the middle. On the right, a live_loop :bass block with one sleep value left blank to type in." />
-              </figure>
-              <figcaption>A club track mid-rebuild at 140 BPM. One lane is the child&rsquo;s; the other three keep playing while they write it.</figcaption>
-              <dl class="spec">
-                <div><dt>Studio levels</dt><dd>6</dd></div>
-                <div><dt>Club tracks</dt><dd>6 and growing</dd></div>
-                <div><dt>Ages</dt><dd>9&ndash;13</dd></div>
-                <div><dt>Exports to</dt><dd>Sonic Pi</dd></div>
-              </dl>
-            </div>
-          </div>
-
-          <div class="pair flip">
-            <div class="field field-apps slab">
+            <a class="appcard slab" href="https://planbench.heutalab.com" style="--tint:#4e9ee6">
               <p class="app-tag"><b>P</b> PlanBench</p>
               <h3>Your school&rsquo;s planning format, as an app.</h3>
-              <p>
-                The nine headings you already fill in each term, with the resources clipped to the week
-                they are used, the success criteria written once in your words and once in the
-                child&rsquo;s, and the finished plan out the other end as the Word or PDF the school
-                asked for. Built by a teacher for the format their own school uses.
-              </p>
-              <ul class="pts">
-                <li>One job ticket per week, stamped guided, fading or flying &mdash; change the unit length and the spiral re-cuts itself.</li>
-                <li>Criteria become a class checklist, a rubric sheet, or a marking grid sent straight to Creance.</li>
-                <li>Draft any section with AI that has read your own policies and scheme of work first &mdash; on your own key, stored on the device.</li>
-                <li>Exports to Word and PDF, imports from Word, and saves to a real folder in OneDrive or Drive.</li>
-              </ul>
-              <div class="field-foot">
-                <a class="pill pill-paper" href="https://planbench.heutalab.com">Open PlanBench <span class="arw" aria-hidden="true">&rarr;</span></a>
-                <a class="pill pill-ghost-light" href="/planbench/">Why a teacher built it</a>
-              </div>
-              <p class="field-note">
-                Opens on an empty desk with a button that adds a complete sample unit, so there is a
-                finished plan to look at. It is also the argument for this whole section: the tool your
-                job needs is now something you can build yourself.
-              </p>
-            </div>
+              <p>The nine headings you already fill in each term, with the resources clipped to the week and the finished plan out the other end as Word.</p>
+              <span class="appcard-foot">
+                <span class="appcard-who">For the teacher</span>
+                <span class="appcard-go">Open PlanBench <span class="arw" aria-hidden="true">&rarr;</span></span>
+              </span>
+            </a>
 
-            <div class="shotcard slab">
-              <figure>
-                <img src="/assets/apps/planbench-spiral.png" width="1400" height="866" loading="lazy" decoding="async" alt="The Lesson Spiral section of a Year 5 digital citizenship plan in PlanBench. A dark sidebar lists nine sections with Lesson Spiral selected and a completion bar at 89 per cent. Week 01 is stamped Guided and holds fields for prior knowledge, new learning focus, activities, evidence of learning and notes, with a resources folder clipped underneath." />
-              </figure>
-              <figcaption>Week one of the sample unit, stamped Guided. By week eight the stamp says Fly, and the children are on their own.</figcaption>
-              <dl class="spec">
-                <div><dt>Sections</dt><dd>9</dd></div>
-                <div><dt>Unit length</dt><dd>1&ndash;14 weeks</dd></div>
-                <div><dt>Exports</dt><dd>Word &middot; PDF</dd></div>
-                <div><dt>Accounts needed</dt><dd>0</dd></div>
-              </dl>
-            </div>
+            <a class="appcard slab" href="https://looplab.heutalab.com" style="--tint:#b56fff">
+              <p class="app-tag"><b>L</b> LoopLab</p>
+              <h3>Children write real code, and hear whether it works.</h3>
+              <p>Six levels from a first note to two loops running at once &mdash; then a club where the tracks come back with bugs to be found by ear.</p>
+              <span class="appcard-foot">
+                <span class="appcard-who">For the children &middot; 9&ndash;13</span>
+                <span class="appcard-go">Open LoopLab <span class="arw" aria-hidden="true">&rarr;</span></span>
+              </span>
+            </a>
+
+            <a class="appcard slab" href="https://perkush.heutalab.com" style="--tint:#ca8902">
+              <p class="app-tag"><b>P</b> Perkush</p>
+              <h3>A drum kit made out of whatever is in the room.</h3>
+              <p>Record a clap, a stomp or a silly noise with the camera, drop it on a pad, and play your own band.</p>
+              <span class="appcard-foot">
+                <span class="appcard-who">For the children</span>
+                <span class="appcard-go">Open Perkush <span class="arw" aria-hidden="true">&rarr;</span></span>
+              </span>
+            </a>
+
           </div>
+
+          <div class="appgrid-foot">
+            <a class="pill pill-paper" href="/apps/">Every app, in detail <span class="arw" aria-hidden="true">&rarr;</span></a>
+            <a class="pill pill-ghost-light" href="/in-development/">What is being built next</a>
+          </div>
+
 
           <div class="claims">
             <div class="claim">
@@ -487,10 +389,13 @@
             <div>
               <h6>Apps</h6>
               <ul>
+                <li><a href="/apps/">All the apps</a></li>
                 <li><a href="https://trycreance.app">Creance</a></li>
                 <li><a href="https://sagestage.app">Sage on the Stage</a></li>
                 <li><a href="/looplab/">LoopLab</a></li>
                 <li><a href="/planbench/">PlanBench</a></li>
+                <li><a href="/perkush/">Perkush</a></li>
+                <li><a href="/flect/">Flect</a></li>
                 <li><a href="/in-development/">In development</a></li>
                 <li><a href="https://sagestage.co.uk">Widget reference</a></li>
               </ul>

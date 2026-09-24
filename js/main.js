@@ -74,4 +74,43 @@
   document.querySelectorAll('.socials a[href="#"]').forEach((link) => {
     link.addEventListener("click", (event) => event.preventDefault());
   });
+
+  /* ---- The one moving picture ------------------------------------------
+     A silent screen recording standing in for a screenshot. It repeats, so
+     it has to be stoppable, and it only starts once it is actually on
+     screen -- the file is two megabytes and most visitors never scroll to
+     it. Anyone who has asked their machine for less motion keeps the poster
+     frame until they press Play, and with JavaScript off, so does everyone:
+     the markup carries no autoplay. */
+
+  document.querySelectorAll("[data-motion]").forEach((holder) => {
+    const video = holder.querySelector("video");
+    const toggle = holder.querySelector("[data-motion-toggle]");
+    if (!video || !toggle) return;
+
+    const relabel = () => {
+      const playing = !video.paused;
+      toggle.textContent = playing ? "Pause" : "Play";
+      toggle.setAttribute("aria-label", playing ? "Pause the loop" : "Play the loop");
+    };
+
+    toggle.addEventListener("click", () => {
+      if (video.paused) video.play().catch(relabel);
+      else video.pause();
+    });
+    video.addEventListener("play", relabel);
+    video.addEventListener("pause", relabel);
+    relabel();
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const watcher = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        watcher.disconnect();
+        video.play().catch(relabel);
+      });
+    }, { threshold: 0.4 });
+    watcher.observe(video);
+  });
 })();

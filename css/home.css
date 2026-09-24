@@ -1,10 +1,12 @@
 /* ===================================================================
    HeutaLab homepage sections
    -------------------------------------------------------------------
-   Loaded after tokens.css and styles.css, and only by index.html.
+   Loaded after tokens.css and styles.css, by index.html and /apps/ --
+   both sit sections straight on the ink ground, which is what this file
+   assumes. Prose pages use legacy.css and its paper .page-wrap instead.
    Tokens come from tokens.css; the reset, the pill nav, the buttons
-   and the footer come from styles.css -- this file is the homepage's
-   own sections and nothing else.
+   and the footer come from styles.css -- this file is those two pages'
+   sections and nothing else.
    =================================================================== */
 
 /* .label, .slab and the .pill family used to live here. Two pages use them
@@ -154,6 +156,7 @@ body { color: var(--paper); }
 .section { margin-top: clamp(56px, 7vw, 104px); }
 .section-head { max-width: 62ch; margin-bottom: 30px; }
 .section-head .label { color: var(--sec-sky, var(--paper-dim)); }
+.section-head h1,
 .section-head h2 {
   margin: 16px 0 0;
   font-size: clamp(2.1rem, 3.6vw, 3.4rem);
@@ -235,6 +238,86 @@ body { color: var(--paper); }
 }
 .shotcard figcaption { color: rgba(6,14,27,.60); font-size: 13.5px; line-height: 1.5; }
 .shotcard img { width: 100%; }
+
+/* ---- App cards --------------------------------------------------------
+   The front page used to carry every app as a full .pair -- a blue field
+   and a 1400px screenshot each. That reads beautifully at three and falls
+   over at six: the section became most of the page, and the newest app
+   pushed the oldest one two screens down. The depth moved to /apps/, which
+   still uses .pair, and the front page keeps a card apiece.
+
+   A card is a whole link, so the tap target is the card and not a word
+   inside it, and it goes to the live app rather than to more reading --
+   the section's one pill underneath is the route to detail. Each card
+   carries its app's colour on the letter chip only: six coloured slabs
+   would fight, six coloured chips read as a set. The tints are the tile
+   grid's normalised family -- all at one OKLab lightness -- so no chip
+   rings louder than another. Measured on --ground-lift: the tint carries
+   the card's one action at 5.5-6.3:1, and the chip's ink letter sits on
+   its own tint at 6.1-7.0:1.
+   ---------------------------------------------------------------------- */
+
+.appgrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gutter);
+  margin-top: var(--gutter);
+}
+
+.appcard {
+  display: flex;
+  flex-direction: column;
+  padding: 30px 28px 26px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  background: var(--ground-lift);
+  color: var(--paper);
+  text-decoration: none;
+  transition: border-color .2s ease, transform .2s ease;
+}
+.appcard:hover,
+.appcard:focus-visible {
+  border-color: var(--tint, var(--sec-apps-sky));
+  transform: translateY(-2px);
+}
+
+/* The chip is the only tinted thing on the card, so it has to carry its own
+   contrast rather than inherit the field's paper-on-blue. */
+.appcard .app-tag b { background: var(--tint, var(--paper)); color: var(--chip-ink, var(--ground)); }
+
+.appcard h3 {
+  margin: 22px 0 0;
+  font-size: clamp(1.3rem, 1.5vw, 1.55rem);
+  line-height: 1.12;
+  letter-spacing: -0.028em;
+  font-weight: 800;
+  text-wrap: balance;
+}
+.appcard p {
+  margin: 12px 0 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--paper-dim);
+}
+
+.appcard-foot {
+  margin-top: auto;
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.appcard-who { color: var(--paper-dim); }
+.appcard-go { color: var(--tint, var(--sec-apps-sky)); white-space: nowrap; }
+.appcard:hover .appcard-go .arw { transform: translateX(3px); }
+.appcard-go .arw { display: inline-block; transition: transform .2s ease; }
+
+.appgrid-foot { margin-top: var(--gutter); display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 
 /* ---- Four claims ----------------------------------------------------- */
 
@@ -428,6 +511,7 @@ body { color: var(--paper); }
 
 @media (max-width: 1080px) {
   .claims, .stops { grid-template-columns: repeat(2, 1fr); }
+  .appgrid { grid-template-columns: repeat(2, 1fr); }
   .tiles { grid-template-columns: repeat(4, 1fr); gap: 10px; }
   .posts { grid-template-columns: 1fr; }
   .pair, .pair.flip { grid-template-columns: 1fr; }
@@ -460,7 +544,7 @@ body { color: var(--paper); }
 
 @media (max-width: 620px) {
   body { font-size: 16px; }
-  .claims, .stops { grid-template-columns: 1fr; }
+  .claims, .stops, .appgrid { grid-template-columns: 1fr; }
   .tiles { grid-template-columns: repeat(2, 1fr); }
   .hero { min-height: clamp(420px, 62vh, 540px); }
   .hero-body { padding-top: 26px; }

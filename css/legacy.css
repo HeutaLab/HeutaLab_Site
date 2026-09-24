@@ -91,6 +91,35 @@ a.chip:hover { background: #ded8c9; }
 }
 .prose figure.fig { margin: var(--space-5) 0; }
 .prose figure.fig img { margin: 0; }
+
+/* A silent loop in place of a still. Anything that moves by itself has to be
+   stoppable, so the picture carries its own button, and anyone who has asked
+   for less motion keeps the poster frame until they press it. */
+.motion { position: relative; }
+.prose figure.fig video {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-1);
+}
+.motion-toggle {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  padding: 7px 15px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(6, 14, 27, .74);
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.motion-toggle:hover { background: rgba(6, 14, 27, .88); }
+.motion-toggle:focus-visible { outline: 3px solid var(--lime); outline-offset: 3px; }
 .prose figcaption { margin-top: var(--space-2); color: var(--muted); font-size: var(--text-sm); line-height: 1.5; }
 .prose blockquote {
   margin: 1.4em 0;
