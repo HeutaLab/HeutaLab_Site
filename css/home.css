@@ -587,6 +587,12 @@ body { color: var(--paper); }
   .appgrid::-webkit-scrollbar { display: none; }
   .appcard { scroll-snap-align: start; }
 
+  /* At 82% of a phone the foot no longer fits on one line. "For the
+     teacher" broke over two lines against a one-line action and "For the
+     children -- 9-13" over three, so the feet ended at five different
+     heights down the row. Stacked, every card gets the same two. */
+  .appcard-foot { flex-direction: column; align-items: flex-start; gap: 10px; }
+
   /* Lifting on hover shifts a card inside a scroller and fights the snap. */
   .appcard:hover, .appcard:focus-visible { transform: none; }
 }
