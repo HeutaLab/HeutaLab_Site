@@ -544,7 +544,7 @@ body { color: var(--paper); }
 
 @media (max-width: 620px) {
   body { font-size: 16px; }
-  .claims, .stops, .appgrid { grid-template-columns: 1fr; }
+  .claims, .stops { grid-template-columns: 1fr; }
   .tiles { grid-template-columns: repeat(2, 1fr); }
   .hero { min-height: clamp(420px, 62vh, 540px); }
   .hero-body { padding-top: 26px; }
@@ -553,6 +553,42 @@ body { color: var(--paper); }
   .field h3 { max-width: none; }
   .field .pts { margin-top: 26px; }
   .field .field-foot { margin-top: 30px; }
+}
+
+/* ---- The app cards on a phone -----------------------------------------
+   Six cards stacked in one column is six screens of scrolling before the
+   page moves on, and the last two are never reached. Sideways they are one
+   flick apart: the row snaps card to card and bleeds to both screen edges,
+   so the next card is always visibly waiting and no arrow has to promise
+   it. Native scrolling does all of it -- no JavaScript, no timer, nothing
+   moving on its own, and the cards stay in the source order a screen
+   reader and a search engine read.
+
+   The grid stays on anything wider, where all six fit at once. Hiding half
+   of them behind a next button would cost a reader a click to see an app
+   they can currently take in at a glance, which is the whole job of this
+   section. A carousel is the right shape only where the screen is the
+   constraint.
+   ---------------------------------------------------------------------- */
+
+@media (max-width: 620px) {
+  .appgrid {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 82%;          /* the 18% left over is the next card */
+    overflow-x: auto;
+    overscroll-behavior-x: contain;  /* a flick past the end stays on the page */
+    scroll-snap-type: x mandatory;
+    margin-inline: calc(var(--gutter) * -1);   /* .shell insets by one gutter */
+    padding-inline: var(--gutter);             /* so card one still lines up */
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+  .appgrid::-webkit-scrollbar { display: none; }
+  .appcard { scroll-snap-align: start; }
+
+  /* Lifting on hover shifts a card inside a scroller and fights the snap. */
+  .appcard:hover, .appcard:focus-visible { transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
