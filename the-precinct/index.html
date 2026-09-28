@@ -3,180 +3,444 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0d0f12">
+<meta name="theme-color" content="#0b0f0f">
 <title>The Precinct — AIFE Prompt Briefing Desk</title>
+<meta name="description" content="Create your own film noir comic with AI. Pick a platform, a subject and a tier, and get a ready-to-paste image prompt.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Knewave&family=Oswald:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&display=swap">
 <style>
   :root{
-    --bg:#0d0f12;
-    --panel:#15181d;
-    --panel-2:#1b1f26;
-    --line:#2a2f38;
-    --ink:#e8e6df;
-    --ink-dim:#a3a8b0;
+    --bg:#0b0f0f;
+    --panel:#111616;
+    --panel-2:#172020;
+    --frame:#34403e;
+    --ink:#ece6d6;
+    --ink-dim:#a4aaa3;
     --yellow:#f2c744;
-    --yellow-dim:#8a7326;
+    --yellow-deep:#d9a92a;
+    --teal:#1d3e3f;
+    --red:#c2452d;
     --danger:#e2574c;
-    --radius:10px;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    --brush:"Knewave","Impact",sans-serif;
+    --label:"Oswald","Arial Narrow",sans-serif;
+    --serif:"Libre Baskerville",Georgia,serif;
+    --script:"Caveat","Bradley Hand",cursive;
   }
   *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ink)}
-  body{padding-bottom:4rem}
-  .wrap{max-width:760px;margin:0 auto;padding:0 1.25rem}
+  body{font-family:var(--serif);font-size:15px;line-height:1.55;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(242,199,68,.05), transparent 50%),
+      radial-gradient(ellipse at 100% 100%, rgba(29,62,63,.35), transparent 60%),
+      var(--bg);}
+  a{color:var(--yellow)}
+  img{display:block;max-width:100%}
+  .noir{filter:url(#noir)}
+  .noir-red{filter:url(#noir-red)}
 
-  header.top{border-bottom:1px solid var(--line);padding:2.25rem 0 1.5rem;background:
-    radial-gradient(ellipse at top left, rgba(242,199,68,0.06), transparent 60%);}
-  header.top h1{
-    font-family:Georgia,"Times New Roman",serif;
-    font-weight:700;letter-spacing:.06em;text-transform:uppercase;
-    font-size:2rem;margin:0 0 .25rem;color:var(--ink);
-  }
-  header.top h1 span{color:var(--yellow)}
-  header.top p{margin:0;color:var(--ink-dim);font-size:.95rem}
+  .page{max-width:1280px;margin:0 auto;padding:16px}
+  .frame{border:1px solid var(--frame);background:var(--panel);position:relative;overflow:hidden}
 
-  .lock{margin-top:1.5rem;display:flex;gap:.5rem;align-items:center}
-  .lock input{
-    flex:1;background:var(--panel);border:1px solid var(--line);border-radius:8px;
-    padding:.6rem .8rem;color:var(--ink);font-size:.95rem;
-  }
-  .lock input:focus{outline:2px solid var(--yellow-dim)}
-  .lock .status{font-size:.8rem;color:var(--ink-dim);white-space:nowrap}
-  .lock .status.ok{color:#7fbf6a}
+  /* ---------- hero ---------- */
+  .hero{display:grid;grid-template-columns:minmax(0,42%) 1fr;min-height:300px}
+  .hero .copy{padding:34px 36px 30px;position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center}
+  .hero h1{font-family:var(--brush);font-weight:400;text-transform:uppercase;color:var(--yellow);margin:0;line-height:.82;
+    transform:rotate(-4deg);transform-origin:left bottom;text-shadow:3px 3px 0 #000}
+  .hero h1 .the{display:block;font-size:clamp(34px,4.4vw,58px);margin-left:.1em}
+  .hero h1 .name{display:block;font-size:clamp(64px,8.6vw,118px);letter-spacing:-.01em}
+  .hero .verbs{font-family:var(--label);letter-spacing:.32em;font-size:13px;margin:26px 0 12px;color:var(--ink)}
+  .hero .verbs span{color:var(--yellow);margin:0 .5em}
+  .hero .tag{margin:0;font-size:14.5px;color:var(--ink)}
+  .hero .art{position:relative;min-height:260px}
+  .hero .art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:40% 30%}
+  .hero .art::before{content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(90deg,var(--panel) 0%,rgba(17,22,22,.6) 16%,transparent 38%)}
+  .hero .script{position:absolute;right:26px;top:18px;z-index:2;font-family:var(--script);color:var(--yellow);
+    font-size:27px;line-height:1.05;text-align:right;transform:rotate(-8deg);text-shadow:0 0 10px #000,0 0 4px #000,2px 2px 0 #000;padding:6px 10px;background:radial-gradient(ellipse at center,rgba(0,0,0,.55),transparent 70%)}
+  .hero .script span{display:block}
+  .hero .script span:nth-child(2){margin-right:.8em}
+  .hero .script span:nth-child(3){margin-right:1.6em}
+
+  /* ---------- layout ---------- */
+  .layout{display:grid;grid-template-columns:196px minmax(0,1fr);gap:22px;margin-top:22px;align-items:start}
+
+  /* sidebar */
+  .side{position:sticky;top:16px;display:flex;flex-direction:column}
+  .side nav{border:1px solid var(--frame);background:var(--panel)}
+  .side nav a{display:flex;align-items:center;gap:14px;padding:14px 16px;color:var(--ink);text-decoration:none;
+    font-family:var(--label);font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;border-bottom:1px solid rgba(52,64,62,.45)}
+  .side nav a:last-child{border-bottom:0}
+  .side nav a svg{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.6}
+  .side nav a:hover{color:var(--yellow)}
+  .side nav a.on{background:var(--yellow);color:#15120a;font-weight:600}
+  .side .city{border:1px solid var(--frame);border-top:0;background:var(--panel);position:relative}
+  .side .city img{width:100%;height:150px;object-fit:cover;opacity:.75}
+  .side .city::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,var(--panel) 0%,transparent 60%)}
+  .side blockquote{margin:0;padding:18px 20px 22px;border:1px solid var(--frame);border-top:0;background:var(--panel);
+    font-style:italic;font-size:17px;line-height:1.45}
+  .side blockquote cite{display:block;margin-top:10px;font-style:normal;font-family:var(--label);font-size:11px;letter-spacing:.2em;color:var(--ink-dim)}
+
+  main{min-width:0}
+
+  /* feature row */
+  .features{display:grid;grid-template-columns:1.75fr 1fr;gap:18px}
+  .feature{display:grid;grid-template-columns:minmax(0,1fr);min-height:232px}
+  .feature img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .feature .txt{position:relative;z-index:2;padding:26px 28px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+  .feature h2{font-family:var(--brush);font-weight:400;text-transform:uppercase;color:var(--yellow);margin:0 0 12px;line-height:1.02;
+    transform:rotate(-3deg);transform-origin:left;text-shadow:2px 2px 0 #000}
+  .feature p{margin:0 0 18px;font-size:14.5px}
+  .learn{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr)}
+  .learn .pic{position:relative;min-height:220px}
+  .learn .pic::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 55%,var(--panel) 100%)}
+  .learn h2{font-size:clamp(28px,3vw,38px)}
+  .scene{background:var(--red)}
+  .scene img{object-position:30% 20%;opacity:.95}
+  .scene::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(0,0,0,0) 20%,rgba(10,6,5,.86) 58%)}
+  .scene .txt{margin-left:auto;width:62%;padding-left:8px}
+  .scene h2{font-size:clamp(24px,2.4vw,31px)}
+  .scene p{font-size:13.5px}
+
+  .btn{display:inline-flex;align-items:center;gap:14px;background:var(--yellow);color:#15120a;text-decoration:none;
+    font-family:var(--label);font-weight:500;font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+    padding:9px 16px;border:0;cursor:pointer;box-shadow:3px 3px 0 #000}
+  .btn:hover{background:#ffd658}
+  .btn .arr{font-family:system-ui,sans-serif;letter-spacing:0}
+
+  /* section heading with rule */
+  .rule{display:flex;align-items:center;gap:16px;margin:30px 0 16px;font-family:var(--label);font-weight:500;
+    font-size:19px;letter-spacing:.14em;text-transform:uppercase}
+  .rule::after{content:"";flex:1;height:1px;background:var(--frame)}
+
+  /* get started cards */
+  .cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+  .card{display:flex;flex-direction:column}
+  .card img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-bottom:1px solid var(--frame)}
+  .card .body{padding:14px 14px 16px;display:flex;flex-direction:column;flex:1}
+  .card h3{font-family:var(--label);font-weight:500;font-size:15px;letter-spacing:.1em;text-transform:uppercase;margin:0 0 8px}
+  .card p{margin:0 0 14px;font-size:13px;line-height:1.5;color:var(--ink);flex:1}
+  .card .btn{justify-content:space-between;font-size:11.5px;padding:7px 12px}
+
+  /* tier sections */
+  .tiers{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .tier-panel{padding:22px 24px 12px}
+  .tier-panel h3{font-family:var(--brush);font-weight:400;text-transform:uppercase;color:var(--yellow);font-size:28px;margin:0 0 14px;transform:rotate(-2deg);transform-origin:left}
+  .tier{display:grid;grid-template-columns:92px 1fr;gap:12px;padding:12px 0;border-top:1px solid rgba(52,64,62,.6)}
+  .tier b{font-family:var(--label);font-weight:500;letter-spacing:.14em;text-transform:uppercase;font-size:12.5px;color:var(--yellow);padding-top:2px}
+  .tier p{margin:0;font-size:13.5px}
+  .tier p em{color:var(--ink-dim)}
+  .lesson{margin:0 0 14px;padding:12px 14px;background:var(--panel-2);border-left:3px solid var(--yellow);font-size:13.5px}
+  .lesson strong{font-family:var(--label);font-weight:500;letter-spacing:.12em;text-transform:uppercase;font-size:11.5px;color:var(--yellow);display:block;margin-bottom:3px}
+
+  /* briefing desk */
+  .desk{padding:26px 28px 30px}
+  .desk-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:6px}
+  .desk h2{font-family:var(--brush);font-weight:400;text-transform:uppercase;color:var(--yellow);font-size:clamp(30px,3.2vw,42px);margin:0;line-height:1;transform:rotate(-2deg);transform-origin:left;text-shadow:2px 2px 0 #000}
+  .desk .intro{margin:10px 0 0;font-size:14px;max-width:60ch}
+  .lock{display:flex;gap:10px;align-items:center}
+  .lock input{width:190px;background:var(--bg);border:1px solid var(--frame);padding:10px 12px;color:var(--ink);
+    font-family:var(--label);letter-spacing:.1em;font-size:14px}
+  .lock input:focus{outline:2px solid var(--yellow)}
+  .lock .status{font-family:var(--label);font-size:12px;letter-spacing:.08em;color:var(--ink-dim);white-space:nowrap}
+  .lock .status.ok{color:#8fc27a}
   .lock .status.bad{color:var(--danger)}
 
-  section.step{padding:1.75rem 0;border-bottom:1px solid var(--line)}
-  section.step h2{
-    font-size:.75rem;text-transform:uppercase;letter-spacing:.12em;
-    color:var(--yellow);margin:0 0 1rem;font-weight:700;
-  }
-
-  .pillrow{display:flex;flex-wrap:wrap;gap:.5rem}
-  .pill{
-    background:var(--panel);border:1px solid var(--line);color:var(--ink-dim);
-    padding:.55rem 1rem;border-radius:999px;font-size:.9rem;cursor:pointer;
-    transition:border-color .15s, color .15s, background .15s;
-  }
-  .pill:hover{border-color:var(--yellow-dim)}
-  .pill.active{background:var(--yellow);border-color:var(--yellow);color:#1a1500;font-weight:600}
-  .pill:disabled{opacity:.4;cursor:not-allowed}
-
-  textarea{
-    width:100%;min-height:5.5rem;resize:vertical;background:var(--panel);
-    border:1px solid var(--line);border-radius:var(--radius);color:var(--ink);
-    padding:.85rem 1rem;font-size:1rem;font-family:inherit;line-height:1.4;
-  }
-  textarea:focus{outline:2px solid var(--yellow-dim)}
-  .count{text-align:right;font-size:.75rem;color:var(--ink-dim);margin-top:.35rem}
-
-  button.go{
-    margin-top:1.5rem;width:100%;padding:.9rem;border-radius:var(--radius);
-    border:1px solid var(--yellow);background:var(--yellow);color:#1a1500;
-    font-size:1rem;font-weight:700;letter-spacing:.03em;cursor:pointer;
-    text-transform:uppercase;
-  }
-  button.go:disabled{background:var(--panel-2);border-color:var(--line);color:var(--ink-dim);cursor:not-allowed}
-  button.go:not(:disabled):hover{filter:brightness(1.08)}
-
-  .error{
-    margin-top:1rem;padding:.75rem 1rem;border-radius:8px;
-    background:rgba(226,87,76,0.1);border:1px solid var(--danger);color:#f2a49d;font-size:.9rem;
-  }
-
-  .result{display:none;padding-top:1.75rem}
-  .result.show{display:block}
-  .result h2{
-    font-family:Georgia,serif;font-size:1.15rem;color:var(--yellow);
-    margin:0 0 1rem;text-transform:uppercase;letter-spacing:.05em;
-  }
-  .block{
-    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
-    padding:1rem 1.1rem;margin-bottom:.9rem;position:relative;
-  }
-  .block .label{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-dim);margin-bottom:.5rem}
-  .block pre{
-    white-space:pre-wrap;word-break:break-word;margin:0;font-family:Georgia,serif;
-    font-size:.98rem;line-height:1.55;color:var(--ink);
-  }
-  .copybtn{
-    position:absolute;top:.8rem;right:.8rem;background:var(--panel-2);border:1px solid var(--line);
-    color:var(--ink-dim);font-size:.72rem;padding:.3rem .6rem;border-radius:6px;cursor:pointer;
-  }
-  .copybtn:hover{color:var(--yellow);border-color:var(--yellow-dim)}
-  .note{font-size:.9rem;line-height:1.5;color:var(--ink-dim);margin:0 0 .9rem}
-  .note strong{color:var(--ink)}
-
-  footer{margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--line);
-    font-size:.78rem;color:var(--ink-dim);line-height:1.6}
-  footer a{color:var(--yellow-dim)}
-
-  .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,.25);
-    border-top-color:#1a1500;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:.4rem}
+  .step{padding:18px 0 4px}
+  .step h4{font-family:var(--label);font-weight:500;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--yellow);margin:0 0 10px}
+  .pillrow{display:flex;flex-wrap:wrap;gap:8px}
+  .pill{background:var(--bg);border:1px solid var(--frame);color:var(--ink);padding:9px 16px;cursor:pointer;
+    font-family:var(--label);font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;transition:border-color .15s,background .15s}
+  .pill:hover{border-color:var(--yellow)}
+  .pill.active{background:var(--yellow);border-color:var(--yellow);color:#15120a;font-weight:600;box-shadow:3px 3px 0 #000}
+  textarea{width:100%;min-height:6rem;resize:vertical;background:var(--bg);border:1px solid var(--frame);color:var(--ink);
+    padding:12px 14px;font-size:15px;font-family:var(--serif);line-height:1.5}
+  textarea:focus{outline:2px solid var(--yellow)}
+  .count{text-align:right;font-family:var(--label);font-size:12px;color:var(--ink-dim);margin-top:4px}
+  button.go{margin-top:16px;width:100%;padding:14px;border:0;background:var(--yellow);color:#15120a;box-shadow:4px 4px 0 #000;
+    font-family:var(--label);font-size:16px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;cursor:pointer}
+  button.go:disabled{background:var(--panel-2);color:var(--ink-dim);box-shadow:none;cursor:not-allowed}
+  button.go:not(:disabled):hover{background:#ffd658}
+  .error{margin-top:14px;padding:12px 14px;background:rgba(226,87,76,.1);border:1px solid var(--danger);color:#f2a49d;font-size:14px}
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,.25);border-top-color:#15120a;border-radius:50%;
+    animation:spin .7s linear infinite;vertical-align:-2px;margin-right:.5rem}
   @keyframes spin{to{transform:rotate(360deg)}}
+
+  .result{display:none;margin-top:26px;padding-top:22px;border-top:1px dashed var(--frame)}
+  .result.show{display:block}
+  .result h3{font-family:var(--brush);font-weight:400;text-transform:uppercase;color:var(--yellow);font-size:30px;margin:0 0 14px;transform:rotate(-2deg);transform-origin:left}
+  .block{background:var(--bg);border:1px solid var(--frame);padding:14px 16px;margin-bottom:12px;position:relative}
+  .block .label{font-family:var(--label);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px;padding-right:70px}
+  .block pre{white-space:pre-wrap;word-break:break-word;margin:0;font-family:var(--serif);font-size:14.5px;line-height:1.6;color:var(--ink)}
+  .copybtn{position:absolute;top:10px;right:10px;background:var(--yellow);border:0;color:#15120a;font-family:var(--label);
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:5px 10px;cursor:pointer}
+  .note{font-size:14px;line-height:1.55;margin:0 0 10px}
+  .note strong{font-family:var(--label);font-weight:500;letter-spacing:.1em;text-transform:uppercase;font-size:12px;color:var(--yellow);margin-right:6px}
+
+  /* compare steps */
+  .compare{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+  .compare div{padding:14px 14px 16px}
+  .compare b{display:block;font-family:var(--brush);font-weight:400;color:var(--yellow);font-size:26px;line-height:1;margin-bottom:6px}
+  .compare h4{font-family:var(--label);font-weight:500;letter-spacing:.14em;text-transform:uppercase;font-size:13px;margin:0 0 6px}
+  .compare p{margin:0;font-size:12.5px;line-height:1.5}
+
+  /* bottom strip */
+  .strip{display:grid;grid-template-columns:1fr 148px;gap:14px;margin-top:22px}
+  .strip .frame{min-height:150px}
+  .strip img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 60%}
+  .strip .frame::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(11,15,15,.92) 0%,rgba(11,15,15,.5) 38%,transparent 62%)}
+  .strip blockquote{position:relative;z-index:2;margin:0;padding:34px 30px;font-style:italic;font-size:19px;line-height:1.4;max-width:380px}
+  .strip cite{display:block;margin-top:8px;font-style:normal;font-family:var(--label);font-size:11px;letter-spacing:.2em;color:var(--ink-dim)}
+  .stamp{display:flex;align-items:center;justify-content:center;padding:14px;font-family:var(--label);font-size:19px;letter-spacing:.14em;line-height:1.25;text-transform:uppercase;border:1px solid var(--frame)}
+
+  footer{margin-top:22px;padding:18px 4px 8px;border-top:1px solid var(--frame);font-size:12.5px;color:var(--ink-dim);line-height:1.7}
+  footer a{color:var(--yellow)}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1100px){
+    .cards{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .compare{grid-template-columns:repeat(3,minmax(0,1fr))}
+  }
+  @media (max-width:880px){
+    .hero{grid-template-columns:1fr}
+    .hero .copy{padding:28px 22px 22px}
+    .hero .art{min-height:210px;order:-1}
+    .hero .art::before{background:linear-gradient(0deg,var(--panel) 0%,transparent 45%)}
+    .layout{grid-template-columns:minmax(0,1fr);gap:16px}
+    .side{position:sticky;top:0;z-index:5;margin:0 -16px;background:var(--bg);padding:8px 16px}
+    .side nav{display:flex;overflow-x:auto;scrollbar-width:none}
+    .side nav::-webkit-scrollbar{display:none}
+    .side nav a{flex:none;border-bottom:0;border-right:1px solid rgba(52,64,62,.45);padding:11px 14px;font-size:12.5px;gap:8px}
+    .side nav a svg{width:16px;height:16px}
+    .side .city,.side blockquote{display:none}
+    .features,.tiers{grid-template-columns:minmax(0,1fr)}
+    .strip{grid-template-columns:minmax(0,1fr)}
+    .stamp{padding:12px}
+  }
+  @media (max-width:600px){
+    .page{padding:12px 16px}
+    .learn{grid-template-columns:minmax(0,1fr)}
+    .learn .pic{min-height:200px}
+    .learn .pic::after{background:linear-gradient(0deg,var(--panel) 0%,transparent 45%)}
+    .scene .txt{width:100%;padding:24px 22px}
+    .scene::before{background:linear-gradient(0deg,rgba(10,6,5,.92) 30%,rgba(10,6,5,.35) 100%)}
+    .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .card:first-child{grid-column:1 / -1}
+    .card:first-child img{aspect-ratio:16/9}
+    .compare{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .desk{padding:22px 18px 24px}
+    .lock{width:100%}
+    .lock input{flex:1;width:auto}
+    .tier{grid-template-columns:1fr;gap:4px}
+    .hero .script{font-size:22px;right:14px;top:12px}
+  }
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
-<body>
-<div class="wrap">
+<body id="top">
 
-  <header class="top">
-    <h1>The <span>Precinct</span></h1>
-    <p>Prompt briefing desk &middot; AIFE Workshop &middot; Human Creativity, AI Precision</p>
-    <div class="lock">
-      <input id="code" type="password" placeholder="Workshop code" autocomplete="off">
-      <span class="status" id="codeStatus">not checked yet</span>
+<!-- Tritone filters: pull the mixed green, blue and yellow source panels
+     into one palette, teal shadows to yellow highlights (red for the scene card). -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="noir" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values=".33 .5 .17 0 0  .33 .5 .17 0 0  .33 .5 .17 0 0  0 0 0 1 0"/>
+    <feComponentTransfer>
+      <feFuncR type="table" tableValues="0.03 0.09 0.30 0.95 0.98"/>
+      <feFuncG type="table" tableValues="0.05 0.21 0.45 0.78 0.92"/>
+      <feFuncB type="table" tableValues="0.055 0.22 0.42 0.27 0.70"/>
+    </feComponentTransfer>
+  </filter>
+  <filter id="noir-red" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values=".33 .5 .17 0 0  .33 .5 .17 0 0  .33 .5 .17 0 0  0 0 0 1 0"/>
+    <feComponentTransfer>
+      <feFuncR type="table" tableValues="0.04 0.40 0.78 0.96"/>
+      <feFuncG type="table" tableValues="0.03 0.09 0.27 0.80"/>
+      <feFuncB type="table" tableValues="0.03 0.06 0.16 0.32"/>
+    </feComponentTransfer>
+  </filter>
+</svg>
+
+<div class="page">
+
+  <header class="hero frame">
+    <div class="copy">
+      <h1><span class="the">The</span><span class="name">Precinct</span></h1>
+      <div class="verbs">MAKE<span>&middot;</span>PLAN<span>&middot;</span>DRAW<span>&middot;</span>TELL</div>
+      <p class="tag">Create your own film noir comic.<br>Step into the shadows. Build your story.</p>
+    </div>
+    <div class="art">
+      <img class="noir" src="img/hero.jpg" alt="A detective in a fedora glances back down a rainy 1940s street at a parked sedan" width="950" height="364">
+      <div class="script" aria-hidden="true"><span>Same city.</span><span>New case.</span><span>Your story.</span></div>
     </div>
   </header>
 
-  <section class="step">
-    <h2>1 &middot; Platform</h2>
-    <div class="pillrow" id="platformRow">
-      <button class="pill" data-val="gemini">Gemini</button>
-      <button class="pill" data-val="chatgpt">ChatGPT</button>
-      <button class="pill" data-val="copilot">Copilot</button>
-      <button class="pill" data-val="nanobanana">Nano Banana</button>
-      <button class="pill" data-val="midjourney">Midjourney</button>
-    </div>
-  </section>
+  <div class="layout">
 
-  <section class="step">
-    <h2>2 &middot; Subject</h2>
-    <div class="pillrow" id="subjectRow">
-      <button class="pill" data-val="character">Character</button>
-      <button class="pill" data-val="setting">Setting</button>
-    </div>
-  </section>
+    <aside class="side">
+      <nav aria-label="The Precinct">
+        <a href="#top" class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+        <a href="#brief"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>Get a brief</a>
+        <a href="#characters"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.3-7 8-7s7 2.5 8 7"/></svg>Characters</a>
+        <a href="#settings"><svg viewBox="0 0 24 24"><path d="M3 21V9l5-3v15M8 21V4l8 3v14M16 21V11l5 2v8M2 21h20"/></svg>Settings</a>
+        <a href="#compare"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="16"/><rect x="13" y="4" width="8" height="16"/></svg>Compare</a>
+        <a href="#resources"><svg viewBox="0 0 24 24"><path d="M3 5c3-1 6-1 9 1 3-2 6-2 9-1v14c-3-1-6-1-9 1-3-2-6-2-9-1z"/><path d="M12 6v14"/></svg>Resources</a>
+      </nav>
+      <div class="city"><img class="noir" src="img/skyline.jpg" alt="" width="466" height="335" loading="lazy"></div>
+      <blockquote>&ldquo;The truth is always in the last panel.&rdquo;<cite>&mdash; THE PRECINCT</cite></blockquote>
+    </aside>
 
-  <section class="step">
-    <h2>3 &middot; Tier</h2>
-    <div class="pillrow" id="tierRow">
-      <button class="pill" data-val="basic">Basic</button>
-      <button class="pill" data-val="medium">Medium</button>
-      <button class="pill" data-val="advanced">Advanced</button>
-    </div>
-  </section>
+    <main>
 
-  <section class="step">
-    <h2>4 &middot; Your idea</h2>
-    <textarea id="idea" maxlength="500" placeholder="Describe what you're picturing, in your own words. e.g. &ldquo;the detective waiting in a doorway across the street from the police station, watching&rdquo;"></textarea>
-    <div class="count"><span id="ideaCount">0</span>/500</div>
-    <button class="go" id="goBtn" disabled>Get briefing</button>
-    <div class="error" id="errorBox" style="display:none"></div>
-  </section>
+      <section class="features">
+        <article class="feature learn frame">
+          <div class="pic"><img class="noir" src="img/femme.jpg" alt="A blonde femme fatale, eyes lowered, in heavy ink shadow" width="575" height="355"></div>
+          <div class="txt">
+            <h2>Learn the<br>language of noir</h2>
+            <p>Era, medium, a named artist: three phrases that turn an AI's bright superhero default into 1940s ink. Each tier below adds one more kind of control.</p>
+            <a class="btn" href="#characters">Start with the tiers <span class="arr">&rarr;</span></a>
+          </div>
+        </article>
+        <article class="feature scene frame">
+          <img class="noir-red" src="img/hat.jpg" alt="A man in a fedora under neon signs" width="489" height="335">
+          <div class="txt">
+            <h2>Get your<br>brief</h2>
+            <p>Describe your idea in plain English. The desk writes a prompt tuned for Gemini, ChatGPT, Copilot or Midjourney.</p>
+            <a class="btn" href="#brief">Open the desk <span class="arr">&rarr;</span></a>
+          </div>
+        </article>
+      </section>
 
-  <div class="result" id="result">
-    <h2>Briefing</h2>
-    <div id="anchorBlock" style="display:none"></div>
-    <div id="promptBlocks"></div>
-    <p class="note"><strong>Why this works:</strong> <span id="whyText"></span></p>
-    <p class="note"><strong>On another platform:</strong> <span id="platformText"></span></p>
-    <p class="note"><strong>Watch for:</strong> <span id="watchText"></span></p>
+      <h2 class="rule">Get started</h2>
+      <section class="cards">
+        <article class="card frame">
+          <img class="noir" src="img/card-brief.jpg" alt="A man in a fedora at a night window" width="310" height="335" loading="lazy">
+          <div class="body"><h3>1. The brief</h3><p>Pick a platform, a subject and a tier, then say what you're picturing.</p>
+            <a class="btn" href="#brief">Get a brief <span class="arr">&rarr;</span></a></div>
+        </article>
+        <article class="card frame">
+          <img class="noir" src="img/card-characters.jpg" alt="A woman with long waved hair looking over her shoulder" width="307" height="335" loading="lazy">
+          <div class="body"><h3>2. Build characters</h3><p>A commissioner, a detective, a corrupt cop and a femme fatale.</p>
+            <a class="btn" href="#characters">Characters <span class="arr">&rarr;</span></a></div>
+        </article>
+        <article class="card frame">
+          <img class="noir" src="img/card-scene.jpg" alt="Lit apartment windows above a parked sedan at night" width="311" height="335" loading="lazy">
+          <div class="body"><h3>3. Set the scene</h3><p>One empty room, then two that read as one building, then a whole street.</p>
+            <a class="btn" href="#settings">Settings <span class="arr">&rarr;</span></a></div>
+        </article>
+        <article class="card frame">
+          <img class="noir" src="img/card-story.jpg" alt="A finished comic page of noir panels with a speech balloon" width="640" height="465" loading="lazy">
+          <div class="body"><h3>4. Tell your story</h3><p>Three or more panels, with an AI as co-writer on the shot list.</p>
+            <a class="btn" href="#characters">Advanced <span class="arr">&rarr;</span></a></div>
+        </article>
+        <article class="card frame">
+          <img class="noir" src="img/card-compare.jpg" alt="A man and a woman close together under a streetlit building" width="479" height="269" loading="lazy">
+          <div class="body"><h3>5. Compare &amp; fix</h3><p>Put your result next to the reference. What drifted, and which word fixes it?</p>
+            <a class="btn" href="#compare">Compare <span class="arr">&rarr;</span></a></div>
+        </article>
+      </section>
+
+      <h2 class="rule">Three tiers, two subjects</h2>
+      <section class="tiers">
+        <article class="tier-panel frame" id="characters">
+          <h3>Characters</h3>
+          <p class="lesson"><strong>Tested on Gemini</strong>&ldquo;A police chief character for a comic book&rdquo; came back as a modern colour superhero. Adding era, medium and a named artist (1940s film noir, black and white ink, Al Williamson) flipped the whole style in one step.</p>
+          <div class="tier"><b>Basic</b><p>One character portrait. Plain background, one pose, one expression, framed as a character reference sheet.</p></div>
+          <div class="tier"><b>Medium</b><p>The same character in a setting. A shared anchor paragraph describes them, and you reuse it word for word.</p></div>
+          <div class="tier"><b>Advanced</b><p>A story of three or more panels. Plan the shot list with an AI as co-writer <em>before</em> you generate anything.</p></div>
+        </article>
+        <article class="tier-panel frame" id="settings">
+          <h3>Settings</h3>
+          <p class="lesson"><strong>Tested on Gemini</strong>Ask for &ldquo;an old police station office&rdquo; and Gemini fills it with named cops, speech balloons and an arrest in progress. For an empty room, say so: no characters, no text, no dialogue, no captions.</p>
+          <div class="tier"><b>Basic</b><p>One empty room, as a wide establishing shot.</p></div>
+          <div class="tier"><b>Medium</b><p>Two rooms that must read as one building. Repeat the anchor exactly, and give each room its own concrete layout line. The anchor alone isn't enough.</p></div>
+          <div class="tier"><b>Advanced</b><p>A location sheet: several exterior shots holding one palette and one time of day.</p></div>
+        </article>
+      </section>
+
+      <h2 class="rule" id="brief">The briefing desk</h2>
+      <section class="desk frame">
+        <div class="desk-head">
+          <div>
+            <h2>Get your brief</h2>
+            <p class="intro">Your facilitator will give you the workshop code. You type it once; this browser remembers it.</p>
+          </div>
+          <div class="lock">
+            <input id="code" type="password" placeholder="Workshop code" autocomplete="off" aria-label="Workshop code">
+            <span class="status" id="codeStatus">not checked yet</span>
+          </div>
+        </div>
+
+        <div class="step">
+          <h4>1 &middot; Platform</h4>
+          <div class="pillrow" id="platformRow">
+            <button class="pill" data-val="gemini">Gemini</button>
+            <button class="pill" data-val="chatgpt">ChatGPT</button>
+            <button class="pill" data-val="copilot">Copilot</button>
+            <button class="pill" data-val="nanobanana">Nano Banana</button>
+            <button class="pill" data-val="midjourney">Midjourney</button>
+          </div>
+        </div>
+        <div class="step">
+          <h4>2 &middot; Subject</h4>
+          <div class="pillrow" id="subjectRow">
+            <button class="pill" data-val="character">Character</button>
+            <button class="pill" data-val="setting">Setting</button>
+          </div>
+        </div>
+        <div class="step">
+          <h4>3 &middot; Tier</h4>
+          <div class="pillrow" id="tierRow">
+            <button class="pill" data-val="basic">Basic</button>
+            <button class="pill" data-val="medium">Medium</button>
+            <button class="pill" data-val="advanced">Advanced</button>
+          </div>
+        </div>
+        <div class="step">
+          <h4>4 &middot; Your idea</h4>
+          <textarea id="idea" maxlength="500" placeholder="Describe what you're picturing, in your own words. e.g. &ldquo;the detective waiting in a doorway across the street from the police station, watching&rdquo;"></textarea>
+          <div class="count"><span id="ideaCount">0</span>/500</div>
+          <button class="go" id="goBtn" disabled>Get briefing</button>
+          <div class="error" id="errorBox" style="display:none"></div>
+        </div>
+
+        <div class="result" id="result">
+          <h3>Your briefing</h3>
+          <div id="anchorBlock" style="display:none"></div>
+          <div id="promptBlocks"></div>
+          <p class="note"><strong>Why this works</strong><span id="whyText"></span></p>
+          <p class="note"><strong>On another platform</strong><span id="platformText"></span></p>
+          <p class="note"><strong>Watch for</strong><span id="watchText"></span></p>
+        </div>
+      </section>
+
+      <h2 class="rule" id="compare">Compare &amp; fix</h2>
+      <section class="compare">
+        <div class="frame"><b>1</b><h4>Reference</h4><p>Pick the image you're aiming for.</p></div>
+        <div class="frame"><b>2</b><h4>Prompt</h4><p>Paste the exact words you used.</p></div>
+        <div class="frame"><b>3</b><h4>Result</h4><p>Keep what came back, even the misses.</p></div>
+        <div class="frame"><b>4</b><h4>Compare</h4><p>Style, era, people, text, light: what drifted?</p></div>
+        <div class="frame"><b>5</b><h4>Why</h4><p>Which word was missing, or pulling the wrong way?</p></div>
+        <div class="frame"><b>6</b><h4>Change</h4><p>Change one thing. Run it again.</p></div>
+      </section>
+
+      <section class="strip" id="resources">
+        <div class="frame">
+          <img class="noir" src="img/street.jpg" alt="A sedan's headlights on a rain-soaked street at night" width="922" height="266" loading="lazy">
+          <blockquote>&ldquo;It&rsquo;s not just a comic.<br>It&rsquo;s a case.&rdquo;<cite>&mdash; THE PRECINCT</cite></blockquote>
+        </div>
+        <div class="stamp">Real stories.<br>Your panels.</div>
+      </section>
+
+      <footer>
+        The artwork here comes from Glenn Malcolm&rsquo;s own 2023 Midjourney noir comic.
+        <a href="/blog/21cl-bkk-ai-is-not-taking-our-jobs-quite-the-opposite-midjourney-generative-art/">Read how it was made</a>.
+        Your idea and workshop code go to a Cloudflare Worker for this site, which asks Anthropic&rsquo;s API for a suggestion. Nothing you type is stored or shown to anyone else.
+        Part of the <a href="/">HeutaLab</a> AIFE workshop materials: &ldquo;Human Creativity, AI Precision&rdquo;.
+      </footer>
+
+    </main>
   </div>
-
-  <footer>
-    Your idea and workshop code are sent to a Cloudflare Worker for this site, which calls
-    Anthropic's API to generate a suggestion. Nothing you type is stored or shown to anyone else.
-    Part of the <a href="/blog/" target="_blank" rel="noopener">HeutaLab</a> AIFE workshop materials.
-  </footer>
-
 </div>
 
 <script>
@@ -186,10 +450,11 @@
 
   const codeInput = document.getElementById('code');
   const codeStatus = document.getElementById('codeStatus');
-  const savedCode = localStorage.getItem('precinct_code');
+  let savedCode = null;
+  try { savedCode = localStorage.getItem('precinct_code'); } catch (e) {}
   if (savedCode) { codeInput.value = savedCode; codeStatus.textContent = 'saved'; codeStatus.classList.add('ok'); }
   codeInput.addEventListener('input', () => {
-    localStorage.setItem('precinct_code', codeInput.value);
+    try { localStorage.setItem('precinct_code', codeInput.value); } catch (e) {}
     codeStatus.textContent = codeInput.value ? 'saved' : 'not checked yet';
     codeStatus.classList.toggle('ok', !!codeInput.value);
     codeStatus.classList.remove('bad');
@@ -232,7 +497,7 @@
   }
 
   function blockHTML(label, text){
-    const safe = text.replace(/</g,'&lt;');
+    const safe = text.replace(/&/g,'&amp;').replace(/</g,'&lt;');
     return '<div class="block"><div class="label">'+label+'</div><pre>'+safe+'</pre>'
       + '<button class="copybtn" data-copy="'+encodeURIComponent(text)+'">Copy</button></div>';
   }
@@ -297,6 +562,17 @@
       checkReady();
     }
   });
+
+  // Sidebar: highlight the section in view.
+  const links = [...document.querySelectorAll('.side nav a')];
+  const targets = links.map(a => document.querySelector(a.getAttribute('href')));
+  function markNav(){
+    let current = 0;
+    targets.forEach((t, i) => { if (t && t.getBoundingClientRect().top < 140) current = i; });
+    links.forEach((a, i) => a.classList.toggle('on', i === current));
+  }
+  addEventListener('scroll', markNav, { passive:true });
+  markNav();
 })();
 </script>
 </body>
