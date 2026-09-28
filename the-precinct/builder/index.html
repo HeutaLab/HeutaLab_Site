@@ -50,17 +50,28 @@
     font-size:2.2cqw;line-height:1.15;text-align:center;word-wrap:break-word;user-select:text;-webkit-user-select:text;cursor:text;min-height:1.15em}
   .it-text:empty::before{content:attr(data-ph);color:#999}
   .it-speech .it-text,.it-thought .it-text{background:#fff;border:.3cqw solid #111;border-radius:50%;padding:1.6cqw 2.4cqw;position:relative;z-index:1}
+  /* A speech balloon's outline and tail are one SVG path, drawn by drawBalloon() to fit the words. */
+  .it-speech .it-text{background:transparent;border-color:transparent}
+  .bal{position:absolute;left:0;top:0;overflow:visible;z-index:0;pointer-events:none}
+  .bal path{fill:#fff;stroke:#111;stroke-linejoin:round}
   .it-thought .it-text{border-radius:48% 52% 46% 54% / 55% 50% 50% 45%}
   .it-caption .it-text{background:#f2c744;border:.3cqw solid #111;padding:.8cqw 1.1cqw;text-align:left}
   .it-sfx .it-text{font-family:var(--brush);font-weight:400;font-size:7cqw;color:#f2c744;-webkit-text-stroke:.35cqw #111;paint-order:stroke fill;transform:rotate(-8deg);line-height:1;white-space:nowrap}
-  .tail{position:absolute;z-index:2;width:22%;height:auto;pointer-events:none}
-  .tail.bl{left:18%;top:calc(100% - .6cqw)}
-  .tail.br{right:18%;top:calc(100% - .6cqw);transform:scaleX(-1)}
   .bub{position:absolute;border:.3cqw solid #111;background:#fff;border-radius:50%;pointer-events:none}
-  .it-ctl{position:absolute;top:-3.4cqw;right:-1cqw;display:none;gap:.6cqw;z-index:6}
+  .it-ctl{position:absolute;bottom:calc(100% + .4cqw);right:-1cqw;display:none;gap:.6cqw;z-index:6}
   .it.sel .it-ctl{display:flex}
   .it-ctl button{width:3.2cqw;height:3.2cqw;min-width:22px;min-height:22px;border-radius:50%;border:0;background:#111;color:#f2c744;
     font-size:max(11px,1.8cqw);line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .it-ctl button[data-act=size]{font-family:var(--label);font-weight:600}
+  .tip-h,.rs-h{position:absolute;display:none;z-index:7;background:#f2c744;border:2px solid #111;touch-action:none}
+  .it.sel .tip-h,.it.sel .rs-h{display:block}
+  .tip-h{width:2.4cqw;height:2.4cqw;min-width:16px;min-height:16px;border-radius:50%;transform:translate(-50%,-50%);cursor:move}
+  .rs-h{right:-.9cqw;top:50%;width:1.5cqw;height:4cqw;min-width:10px;min-height:24px;border-radius:3px;transform:translateY(-50%);cursor:ew-resize}
+  .pnl.drop .pnl-inner,.pframe.drop .pnl-inner{outline:.6cqw dashed var(--yellow);outline-offset:.2cqw}
+  .pnl-empty .picks{display:flex;gap:1cqw;flex-wrap:wrap;justify-content:center}
+  .pnl-empty .picks button{font-family:var(--label);font-size:max(11px,1.9cqw);letter-spacing:.1em;text-transform:uppercase;
+    padding:.8cqw 1.6cqw;background:#f2c744;color:#111;border:0;cursor:pointer}
+  .pnl-empty small{font-size:max(10px,1.6cqw);letter-spacing:.08em;text-transform:none;font-family:var(--serif);font-style:italic}
 
   /* prose mode */
   .prose-page{width:min(100%,720px);background:#f3eee0;color:#111;padding:5% 6% 6%;box-shadow:0 10px 40px rgba(0,0,0,.6);container-type:inline-size}
@@ -92,7 +103,7 @@
 
   @media print{
     body{background:#fff}
-    .hero,.side,.tools,.notice,footer,.rule,.sub-intro,.it-ctl,.rm,.addframe{display:none !important}
+    .hero,.side,.tools,.notice,footer,.rule,.sub-intro,.it-ctl,.tip-h,.rs-h,.rm,.addframe{display:none !important}
     .layout{display:block}.page{padding:0;max-width:none}
     .workbench{padding:0;background:none;margin:0}
     .sheet,.prose-page{box-shadow:none;width:100%}
@@ -182,6 +193,7 @@
           <button class="pill" id="clearImgBtn">Remove</button>
           <span id="zoomWrap"><label class="hint" for="zoom">Zoom</label> <input type="range" id="zoom" min="1" max="3" step="0.05" value="1"></span>
           <span class="hint" id="panelHint">Tap a panel to choose it.</span>
+          <p class="lvl-note">You can also paste a picture you&rsquo;ve copied from ChatGPT, Gemini or Copilot (Ctrl/&#8984;+V), or drop a picture file onto a panel. Drag a picture to frame it.</p>
         </div>
         <div class="grp" id="addGrp">
           <h4>Add</h4>
@@ -189,9 +201,12 @@
           <button class="pill" data-add="speech">Speech balloon</button>
           <button class="pill" data-add="thought">Thought bubble</button>
           <button class="pill" data-add="sfx">Sound effect</button>
+          <p class="lvl-note">Drag the yellow dot to point a tail at whoever is talking, and the yellow bar to make a box wider or narrower. <b>A</b> changes the text size. With a box chosen: Delete removes it, the arrow keys nudge it, Esc lets go.</p>
         </div>
         <div class="grp">
           <h4>Page</h4>
+          <button class="btn ghost small" id="undoBtn" title="Undo (Ctrl/&#8984;+Z)" disabled>Undo</button>
+          <button class="btn ghost small" id="redoBtn" title="Redo (Shift+Ctrl/&#8984;+Z)" disabled>Redo</button>
           <button class="btn small" id="pngBtn">Download PNG <span class="arr">&darr;</span></button>
           <button class="btn ghost small" id="printBtn">Print or save as PDF</button>
           <button class="btn ghost small" id="resetBtn">Start again</button>
@@ -225,7 +240,7 @@ import THEME from '/the-precinct/theme.js';
   // ---------- data ----------
   const LEVEL_NOTES = {
     prose: 'Prose: write it like a storybook. One picture, a paragraph underneath. Get the story straight before you think about panels.',
-    medium: 'Medium: four panels. Give each one a caption box for the narrator and a speech balloon for a character.',
+    medium: 'Medium: four panels. Give each one a caption box for the narrator and a speech balloon for a character, and point the balloon at whoever is talking.',
     advanced: 'Advanced: choose a layout, place captions, speech, thoughts and sound effects anywhere, and frame each picture with drag and zoom.',
   };
   // Panel rectangles as [left, top, width, height] in % of the panel area.
@@ -239,10 +254,13 @@ import THEME from '/the-precinct/theme.js';
   const LIB = THEME.library.map(THEME.refPath);
   const DEFAULTS = {
     caption: { x: 3, y: 3, w: 58, text: '' },
-    speech: { x: 40, y: 50, w: 46, text: '', tail: 'bl' },
-    thought: { x: 8, y: 8, w: 42, text: '' },
+    speech: { x: 40, y: 50, w: 46, text: '', tip: { x: -8, y: 5.5 } },
+    thought: { x: 8, y: 8, w: 42, text: '', tip: { x: -8, y: 7 } },
     sfx: { x: 28, y: 34, w: 60, text: 'BLAM!' },
   };
+  // Item fields: x, y, w in % of the panel; w is a cap on the width unless fw (fixed width) is set;
+  // s scales the text; tip is the tail's point in cqw from the balloon's bottom centre; tail:'none' hides it.
+  const SIZES = [0.8, 1, 1.3, 1.7];
   const PH = { caption: 'Meanwhile, at the precinct...', speech: 'Type what they say', thought: 'What are they thinking?', sfx: '' };
   const blank = () => ({ img: null, fit: { x: 50, y: 50, z: 1 }, items: [] });
   const fresh = () => ({
@@ -253,6 +271,30 @@ import THEME from '/the-precinct/theme.js';
 
   let S = fresh();
   let sel = { p: null, it: null };   // selected panel (or prose frame) and item
+
+  // Pages saved before tails could be dragged had tail: 'bl' | 'br' | 'none'.
+  function migrate(){
+    S.panels.forEach(p => p.items.forEach(it => {
+      if ((it.type === 'speech' || it.type === 'thought') && !it.tip) {
+        it.tip = { x: it.tail === 'br' ? 8 : -8, y: it.type === 'speech' ? 5.5 : 7 };
+        if (it.tail !== 'none') delete it.tail;
+      }
+    }));
+  }
+
+  // ---------- undo: snapshots of S taken before each change ----------
+  let past = [], future = [];
+  function checkpoint(){
+    past.push(JSON.stringify(S)); if (past.length > 100) past.shift();
+    future = []; syncUndo();
+  }
+  function travel(from, to){
+    if (!from.length) return;
+    to.push(JSON.stringify(S)); S = JSON.parse(from.pop());
+    save(); render(); syncUndo();   // render() lets go of a selection that no longer exists
+  }
+  const undo = () => travel(past, future), redo = () => travel(future, past);
+  function syncUndo(){ $('undoBtn').disabled = !past.length; $('redoBtn').disabled = !future.length; }
 
   // ---------- storage: IndexedDB keeps the page and uploaded pictures ----------
   let db = null;
@@ -310,26 +352,76 @@ import THEME from '/the-precinct/theme.js';
   // ---------- rendering ----------
   const bench = $('bench');
   const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
-  const TAIL = '<svg class="tail {c}" viewBox="0 0 40 34" aria-hidden="true"><path d="M10 0 L1 33 L31 0" fill="#fff"/><path d="M10 2 L1 33 L31 2" fill="none" stroke="#111" stroke-width="2.4" stroke-linejoin="round"/></svg>';
-
   function panelList(){
     return S.level === 'prose' ? S.prose : S.panels.slice(0, LAYOUTS[S.level === 'medium' ? 'grid4' : S.layout].length);
   }
+  const hasTail = it => it.type === 'speech' || it.type === 'thought';
 
   function itemHTML(it, j, on){
     let extra = '';
-    if (it.type === 'speech' && it.tail !== 'none') extra = TAIL.replace('{c}', it.tail);
-    if (it.type === 'thought') extra = '<i class="bub" style="left:18%;top:calc(100% + .6cqw);width:3.2cqw;height:3.2cqw"></i><i class="bub" style="left:12%;top:calc(100% + 4.4cqw);width:1.8cqw;height:1.8cqw"></i>';
-    const ctl = '<span class="it-ctl">' + (it.type === 'speech' ? '<button type="button" data-act="tail" title="Move the tail" aria-label="Move the tail">&#x21c4;</button>' : '')
+    if (it.type === 'speech') extra = '<svg class="bal" aria-hidden="true"><path/></svg>';
+    if (it.type === 'thought') extra = '<i class="bub"></i><i class="bub"></i><i class="bub"></i>';
+    if (hasTail(it) && it.tail !== 'none') extra += '<span class="tip-h" title="Drag to point the tail"></span>';
+    if (it.type !== 'sfx') extra += '<span class="rs-h" title="Drag to make it wider or narrower"></span>';
+    const ctl = '<span class="it-ctl">'
+      + (hasTail(it) ? '<button type="button" data-act="tail" title="Tail on or off" aria-label="Tail on or off">&#x2198;</button>' : '')
+      + '<button type="button" data-act="size" title="Text size" aria-label="Text size">A</button>'
+      + '<button type="button" data-act="dup" title="Duplicate" aria-label="Duplicate">&#x2750;</button>'
       + '<button type="button" data-act="del" title="Delete" aria-label="Delete">&times;</button></span>';
-    return '<div class="it it-' + it.type + (on ? ' sel' : '') + '" data-j="' + j + '" style="left:' + it.x + '%;top:' + it.y + '%;max-width:' + it.w + '%">'
-      + '<div class="it-text" contenteditable="true" spellcheck="false" data-ph="' + esc(PH[it.type]) + '">' + esc(it.text) + '</div>' + extra + ctl + '</div>';
+    const fs = (it.type === 'sfx' ? 7 : 2.2) * (it.s || 1);
+    return '<div class="it it-' + it.type + (on ? ' sel' : '') + '" data-j="' + j + '" style="left:' + it.x + '%;top:' + it.y + '%;' + (it.fw ? 'width:' : 'max-width:') + it.w + '%">'
+      + '<div class="it-text" contenteditable="true" spellcheck="false" data-ph="' + esc(PH[it.type]) + '" style="font-size:' + fs + 'cqw">' + esc(it.text) + '</div>' + extra + ctl + '</div>';
   }
+
+  // Balloon geometry, shared by the page (drawBalloon) and the PNG export (drawItem).
+  // w, h: the text box in px; cq: 1% of the page width in px. The ellipse sits just inside the box.
+  const SPREAD = 0.3;                                   // half-width of the tail's base, in radians of the ellipse
+  const DOTS = [[0.25, 3.2], [0.6, 2.1], [0.92, 1.2]];  // thought trail: [share of the way to the tip, diameter in cqw]
+  function geom(w, h, it, cq){
+    const bw = 0.3 * cq, cx = w / 2, cy = h / 2, g = { bw, cx, cy, rx: cx - bw / 2, ry: cy - bw / 2, tip: null };
+    if (it.tail !== 'none' && it.tip) {
+      g.tip = [cx + it.tip.x * cq, h + it.tip.y * cq];
+      const nx = (g.tip[0] - cx) / g.rx, ny = (g.tip[1] - cy) / g.ry;
+      g.t = Math.atan2(ny, nx);
+      if (Math.hypot(nx, ny) < 1.08) g.tip = null;      // tip tucked inside the balloon: no tail
+    }
+    return g;
+  }
+  const ePt = (g, a) => [g.cx + g.rx * Math.cos(a), g.cy + g.ry * Math.sin(a)];
+
+  function drawBalloon(itEl){
+    const sheet = itEl && itEl.closest('.sheet'); if (!sheet) return;
+    const it = S.panels[+itEl.closest('.pnl').dataset.i].items[+itEl.dataset.j]; if (!it) return;
+    const cq = sheet.clientWidth / 100, tx = itEl.querySelector('.it-text'), w = tx.offsetWidth, h = tx.offsetHeight;
+    const g = geom(w, h, it, cq), hd = itEl.querySelector('.tip-h');
+    if (hd && it.tip) { hd.style.left = (w / 2 + it.tip.x * cq) + 'px'; hd.style.top = (h + it.tip.y * cq) + 'px'; }
+    if (it.type === 'speech') {
+      const svg = itEl.querySelector('.bal'), path = svg.firstChild, E = g.rx + ' ' + g.ry + ' 0 1 1 ';
+      svg.setAttribute('width', w); svg.setAttribute('height', h);
+      path.setAttribute('stroke-width', g.bw);
+      path.setAttribute('d', g.tip
+        ? 'M' + g.tip + 'L' + ePt(g, g.t + SPREAD) + 'A' + E + ePt(g, g.t - SPREAD) + 'Z'
+        : 'M' + (g.cx - g.rx) + ',' + g.cy + 'A' + E + (g.cx + g.rx) + ',' + g.cy + 'A' + E + (g.cx - g.rx) + ',' + g.cy + 'Z');
+    }
+    if (it.type === 'thought') {
+      const e = g.tip && ePt(g, g.t);
+      itEl.querySelectorAll('.bub').forEach((b, k) => {
+        b.hidden = !g.tip; if (!g.tip) return;
+        const [f, d] = DOTS[k], r = d * cq / 2;
+        b.style.cssText = 'left:' + (e[0] + (g.tip[0] - e[0]) * f - r) + 'px;top:' + (e[1] + (g.tip[1] - e[1]) * f - r) + 'px;width:' + 2 * r + 'px;height:' + 2 * r + 'px';
+      });
+    }
+  }
+  // Balloons redraw whenever their words (or the page) change size.
+  const ro = new ResizeObserver(es => es.forEach(en => drawBalloon(en.target.closest('.it'))));
 
   function imgStyle(fit){
     return 'object-position:' + fit.x + '% ' + fit.y + '%;transform:scale(' + fit.z + ');transform-origin:' + fit.x + '% ' + fit.y + '%';
   }
-  const EMPTY = '<div class="pnl-empty"><b>+</b>Tap, then add a picture</div>';
+  const imgEl = i => bench.querySelector('[data-i="' + i + '"] > .pnl-inner > img');
+  const empty = on => on
+    ? '<div class="pnl-empty"><span class="picks"><button type="button" data-pick="up">Upload</button><button type="button" data-pick="lib">Library</button></span><small>or paste or drop a picture here</small></div>'
+    : '<div class="pnl-empty"><b>+</b>Tap to add a picture</div>';
 
   async function render(){
     document.querySelectorAll('#levelRow .pill').forEach(b => b.classList.toggle('active', b.dataset.val === S.level));
@@ -338,13 +430,12 @@ import THEME from '/the-precinct/theme.js';
     $('layoutGrp').hidden = S.level !== 'advanced';
     $('addGrp').hidden = S.level === 'prose';
     document.querySelectorAll('[data-add=thought],[data-add=sfx]').forEach(b => b.hidden = S.level !== 'advanced');
-    $('zoomWrap').hidden = S.level !== 'advanced';
-
     const list = panelList();
     if (sel.p != null && sel.p >= list.length) sel = { p: null, it: null };
+    if (sel.it != null && (S.level === 'prose' || !S.panels[sel.p].items[sel.it])) sel.it = null;
     const has = sel.p != null;
     ['uploadBtn','libBtn'].forEach(id => $(id).disabled = !has);
-    $('clearImgBtn').disabled = !(has && list[sel.p].img);
+    $('clearImgBtn').disabled = $('zoom').disabled = !(has && list[sel.p].img);
     document.querySelectorAll('[data-add]').forEach(b => b.disabled = !has);
     $('panelHint').textContent = has ? (S.level === 'prose' ? 'Frame ' : 'Panel ') + (sel.p + 1) + ' chosen.' : 'Tap a panel to choose it.';
     if (has) $('zoom').value = list[sel.p].fit.z;
@@ -354,7 +445,7 @@ import THEME from '/the-precinct/theme.js';
     if (S.level === 'prose') {
       bench.innerHTML = '<div class="prose-page"><div class="prose-title" contenteditable="true" spellcheck="false" data-ph="Your title" id="titleEl">' + esc(S.title) + '</div>'
         + list.map((f, i) => '<div class="pframe' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '">'
-          + '<div class="pnl-inner">' + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + imgStyle(f.fit) + '">' : EMPTY) + '</div>'
+          + '<div class="pnl-inner">' + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + imgStyle(f.fit) + '">' : empty(sel.p === i)) + '</div>'
           + '<textarea data-i="' + i + '" placeholder="Write this part of the story. Who is here? What just happened? What happens next?">' + esc(f.text) + '</textarea>'
           + (list.length > 1 ? '<button type="button" class="rm" data-rm="' + i + '" aria-label="Remove this frame">&times;</button>' : '') + '</div>').join('')
         + (list.length < 6 ? '<button type="button" class="addframe" id="addFrame">+ Add another picture</button>' : '') + '</div>';
@@ -366,18 +457,27 @@ import THEME from '/the-precinct/theme.js';
       + rects.map((r, i) => {
         const p = S.panels[i];
         return '<div class="pnl' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '" style="left:' + r[0] + '%;top:' + r[1] + '%;width:' + r[2] + '%;height:' + r[3] + '%"><div class="pnl-inner">'
-          + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + imgStyle(p.fit) + '">' : EMPTY)
+          + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + imgStyle(p.fit) + '">' : empty(sel.p === i))
           + p.items.map((it, j) => itemHTML(it, j, sel.p === i && sel.it === j)).join('')
           + '</div></div>';
       }).join('') + '</div></div>';
+    ro.disconnect();
+    bench.querySelectorAll('.it-speech, .it-thought').forEach(el => { drawBalloon(el); ro.observe(el.querySelector('.it-text')); });
   }
 
   function note(msg){ const n = $('notice'); n.textContent = msg; n.hidden = !msg; }
 
   // ---------- interaction ----------
-  document.querySelectorAll('#levelRow .pill').forEach(b => b.addEventListener('click', () => { S.level = b.dataset.val; sel = { p: null, it: null }; save(); render(); }));
-  document.querySelectorAll('#layoutRow .pill').forEach(b => b.addEventListener('click', () => { S.layout = b.dataset.val; sel = { p: null, it: null }; save(); render(); }));
+  const NONE = () => ({ p: null, it: null });
+  document.querySelectorAll('#levelRow .pill').forEach(b => b.addEventListener('click', () => { if (S.level === b.dataset.val) return; checkpoint(); S.level = b.dataset.val; sel = NONE(); save(); render(); }));
+  document.querySelectorAll('#layoutRow .pill').forEach(b => b.addEventListener('click', () => { if (S.layout === b.dataset.val) return; checkpoint(); S.layout = b.dataset.val; sel = NONE(); save(); render(); }));
+  $('undoBtn').addEventListener('click', undo);
+  $('redoBtn').addEventListener('click', redo);
 
+  // Typing: one undo step per visit to a text box (the browser's own undo works while you're in it).
+  let typing = false;
+  bench.addEventListener('beforeinput', () => { if (!typing) { checkpoint(); typing = true; } });
+  bench.addEventListener('focusout', () => { typing = false; });
   bench.addEventListener('input', e => {
     if (e.target.id === 'titleEl') { S.title = e.target.textContent; save(); return; }
     if (e.target.matches('.pframe textarea')) { S.prose[+e.target.dataset.i].text = e.target.value; save(); return; }
@@ -391,29 +491,56 @@ import THEME from '/the-precinct/theme.js';
   // Titles stay on one line.
   bench.addEventListener('keydown', e => { if (e.target.id === 'titleEl' && e.key === 'Enter') { e.preventDefault(); e.target.blur(); } });
 
+  function duplicate(p, j){
+    checkpoint();
+    const items = S.panels[p].items, c = JSON.parse(JSON.stringify(items[j]));
+    c.x = Math.min(90, c.x + 4); c.y = Math.min(90, c.y + 4);
+    items.push(c); sel = { p, it: items.length - 1 };
+    save(); render();
+  }
+
   bench.addEventListener('click', e => {
-    if (e.target.id === 'addFrame') { S.prose.push({ img: null, fit: { x: 50, y: 50, z: 1 }, text: '' }); sel = { p: S.prose.length - 1, it: null }; save(); render(); return; }
+    const pk = e.target.closest('[data-pick]');
+    if (pk) { $(pk.dataset.pick === 'up' ? 'uploadBtn' : 'libBtn').click(); return; }
+    if (e.target.id === 'addFrame') { checkpoint(); S.prose.push({ img: null, fit: { x: 50, y: 50, z: 1 }, text: '' }); sel = { p: S.prose.length - 1, it: null }; save(); render(); return; }
     const rm = e.target.closest('[data-rm]');
-    if (rm) { S.prose.splice(+rm.dataset.rm, 1); sel = { p: null, it: null }; save(); render(); return; }
+    if (rm) { checkpoint(); S.prose.splice(+rm.dataset.rm, 1); sel = NONE(); save(); render(); return; }
     const act = e.target.closest('[data-act]');
     if (act) {
       const itEl = act.closest('.it'), p = +itEl.closest('.pnl').dataset.i, j = +itEl.dataset.j, it = S.panels[p].items[j];
+      if (act.dataset.act === 'dup') return duplicate(p, j);
+      checkpoint();
       if (act.dataset.act === 'del') { S.panels[p].items.splice(j, 1); sel.it = null; }
-      if (act.dataset.act === 'tail') it.tail = ({ bl: 'br', br: 'none', none: 'bl' })[it.tail || 'bl'];
+      if (act.dataset.act === 'tail') {
+        if (it.tail === 'none') { delete it.tail; if (!it.tip) it.tip = Object.assign({}, DEFAULTS[it.type].tip); }
+        else it.tail = 'none';
+      }
+      if (act.dataset.act === 'size') it.s = SIZES[(SIZES.indexOf(it.s || 1) + 1) % SIZES.length];
       save(); render(); return;
     }
     if (e.target.closest('.pframe textarea')) { const i = +e.target.dataset.i; if (sel.p !== i) { sel = { p: i, it: null }; render().then(() => bench.querySelector('textarea[data-i="' + i + '"]').focus()); } return; }
     const fr = e.target.closest('.pframe');
-    if (fr) { sel = { p: +fr.dataset.i, it: null }; render(); }
+    if (fr && sel.p !== +fr.dataset.i) { sel = { p: +fr.dataset.i, it: null }; render(); }
   });
 
-  // Dragging: items move; the picture pans (advanced) inside a chosen panel.
+  // Dragging: items move, their handles aim the tail or set the width, and the picture pans inside a chosen panel.
   let drag = null;
   bench.addEventListener('pointerdown', e => {
-    if (S.level === 'prose' || e.target.closest('[data-act]')) return;
-    const pnl = e.target.closest('.pnl');
-    if (!pnl) { if (!e.target.closest('#titleEl')) { sel = { p: null, it: null }; render(); } return; }
-    const i = +pnl.dataset.i, box = pnl.querySelector('.pnl-inner').getBoundingClientRect();
+    if (e.button > 0 || e.target.closest('[data-act],[data-pick],textarea')) return;
+    const pnl = e.target.closest('.pnl, .pframe');
+    if (!pnl) { if (S.level !== 'prose' && !e.target.closest('#titleEl')) { sel = NONE(); render(); } return; }
+    const i = +pnl.dataset.i, inner = pnl.querySelector('.pnl-inner'), box = inner.getBoundingClientRect();
+    if (pnl.classList.contains('pframe')) {
+      // Prose frames: the click handler chooses the frame; once chosen, its picture can be panned.
+      if (sel.p === i && S.prose[i].img && inner.contains(e.target)) startDrag(e, { kind: 'pan', i, box });
+      return;
+    }
+    const hd = e.target.closest('.tip-h, .rs-h');
+    if (hd) {
+      e.preventDefault();
+      const itEl = hd.closest('.it');
+      return startDrag(e, { kind: hd.classList.contains('tip-h') ? 'tip' : 'width', i, j: +itEl.dataset.j, box, el: itEl });
+    }
     const itEl = e.target.closest('.it');
     if (itEl) {
       const j = +itEl.dataset.j;
@@ -430,79 +557,171 @@ import THEME from '/the-precinct/theme.js';
       return startDrag(e, { kind: 'item', i, j, box, el: itEl, editOnTap: false });
     }
     if (sel.p !== i || sel.it != null) { sel = { p: i, it: null }; render(); return; }
-    if (S.level === 'advanced' && S.panels[i].img) startDrag(e, { kind: 'pan', i, box });
+    if (S.panels[i].img) startDrag(e, { kind: 'pan', i, box });
   });
 
   function startDrag(e, d){
     d.x0 = e.clientX; d.y0 = e.clientY; d.moved = false; d.pid = e.pointerId;
-    if (d.kind === 'item') { const it = S.panels[d.i].items[d.j]; d.ix = it.x; d.iy = it.y; }
-    else { const f = S.panels[d.i].fit; d.fx = f.x; d.fy = f.y; }
+    if (d.kind === 'pan') { const f = panelList()[d.i].fit; d.fx = f.x; d.fy = f.y; }
+    else {
+      const it = S.panels[d.i].items[d.j];
+      d.ix = it.x; d.iy = it.y; d.tip = Object.assign({}, it.tip);
+      d.w0 = it.fw ? it.w : d.el.offsetWidth / d.box.width * 100;
+      d.cq = bench.querySelector('.sheet').clientWidth / 100;
+    }
     drag = d;
   }
   addEventListener('pointermove', e => {
     if (!drag || e.pointerId !== drag.pid) return;
     const dx = e.clientX - drag.x0, dy = e.clientY - drag.y0;
     if (!drag.moved && Math.hypot(dx, dy) < 5) return;
-    if (!drag.moved) { drag.moved = true; if (document.activeElement) document.activeElement.blur(); }
+    if (!drag.moved) { drag.moved = true; checkpoint(); if (document.activeElement) document.activeElement.blur(); }
     e.preventDefault();
     const px = dx / drag.box.width * 100, py = dy / drag.box.height * 100;
+    if (drag.kind === 'pan') {
+      const f = panelList()[drag.i].fit;
+      f.x = Math.max(0, Math.min(100, drag.fx - px * 1.4));
+      f.y = Math.max(0, Math.min(100, drag.fy - py * 1.4));
+      const im = imgEl(drag.i);
+      if (im) im.setAttribute('style', imgStyle(f));
+      return;
+    }
+    const it = S.panels[drag.i].items[drag.j];
     if (drag.kind === 'item') {
-      const it = S.panels[drag.i].items[drag.j];
       it.x = Math.max(-10, Math.min(95, drag.ix + px));
       it.y = Math.max(-10, Math.min(95, drag.iy + py));
       drag.el.style.left = it.x + '%'; drag.el.style.top = it.y + '%';
+    } else if (drag.kind === 'tip') {
+      it.tip = { x: drag.tip.x + dx / drag.cq, y: drag.tip.y + dy / drag.cq };
+      drawBalloon(drag.el);
     } else {
-      const f = S.panels[drag.i].fit;
-      f.x = Math.max(0, Math.min(100, drag.fx - px * 1.4));
-      f.y = Math.max(0, Math.min(100, drag.fy - py * 1.4));
-      const im = bench.querySelector('.pnl[data-i="' + drag.i + '"] .pnl-inner > img');
-      if (im) im.setAttribute('style', imgStyle(f));
+      it.fw = true; it.w = Math.max(10, Math.min(100, drag.w0 + px));
+      drag.el.style.maxWidth = ''; drag.el.style.width = it.w + '%';   // the ResizeObserver redraws the balloon
     }
   }, { passive: false });
   addEventListener('pointerup', e => {
     if (!drag || e.pointerId !== drag.pid) return;
     const d = drag; drag = null;
     if (d.moved) { save(); return; }
-    if (d.kind === 'item' && d.editOnTap) {
-      const t = d.el.querySelector('.it-text'); t.focus();
-      const r = document.createRange(); r.selectNodeContents(t); r.collapse(false);
-      const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    if (d.kind === 'item' && d.editOnTap) editItem(d.el);
+  });
+  function editItem(el){
+    const t = el.querySelector('.it-text'); t.focus();
+    const r = document.createRange(); r.selectNodeContents(t); r.collapse(false);
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+  }
+
+  // Keys: undo and redo anywhere outside a text box; delete, nudge, duplicate and let go of the chosen item.
+  document.addEventListener('keydown', e => {
+    if ($('libDlg').open) return;
+    const ed = e.target.closest && e.target.closest('[contenteditable=true], textarea, input');
+    const mod = e.metaKey || e.ctrlKey, k = e.key.toLowerCase();
+    if (mod && !ed && (k === 'z' || k === 'y')) { e.preventDefault(); (k === 'y' || e.shiftKey) ? redo() : undo(); return; }
+    if (e.key === 'Escape') {
+      if (ed) { ed.blur(); return; }
+      if (sel.p != null) { sel = sel.it != null ? { p: sel.p, it: null } : NONE(); render(); }
+      return;
     }
+    if (ed || sel.p == null || sel.it == null || S.level === 'prose') return;
+    const items = S.panels[sel.p].items, it = items[sel.it];
+    if (!it) return;
+    if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); checkpoint(); items.splice(sel.it, 1); sel.it = null; save(); render(); }
+    else if (e.key.startsWith('Arrow')) {
+      e.preventDefault(); checkpoint();
+      const st = e.shiftKey ? 3 : 0.5, ax = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+      it.x = Math.max(-10, Math.min(95, it.x + ax[0] * st)); it.y = Math.max(-10, Math.min(95, it.y + ax[1] * st));
+      save(); render();
+    }
+    else if (mod && k === 'd') { e.preventDefault(); duplicate(sel.p, sel.it); }
+    else if (e.key === 'Enter') { e.preventDefault(); const el = bench.querySelector('.it.sel'); if (el) editItem(el); }
   });
 
   // Picture tools
+  async function setPicture(i, file){
+    const blob = await shrink(file);
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    if (db) await put('img:' + id, blob);
+    urls[id] = URL.createObjectURL(blob);
+    checkpoint();
+    const p = panelList()[i];
+    p.img = { id }; p.fit = { x: 50, y: 50, z: 1 };
+    save(); render();
+  }
+  // Pictures stay stored while undo might bring them back; tidyImages() clears the unused ones on the next visit.
+  async function tidyImages(){
+    const keys = await idb('readonly', st => st.getAllKeys()) || [];
+    const used = new Set(S.panels.concat(S.prose).filter(p => p.img && p.img.id).map(p => 'img:' + p.img.id));
+    keys.filter(k => String(k).startsWith('img:') && !used.has(k)).forEach(del);
+  }
+
   let pendingFor = null;
   $('uploadBtn').addEventListener('click', () => { if (sel.p == null) return; pendingFor = sel.p; $('fileIn').click(); });
-  $('fileIn').addEventListener('change', async () => {
+  $('fileIn').addEventListener('change', () => {
     const f = $('fileIn').files[0]; $('fileIn').value = '';
-    if (!f || pendingFor == null) return;
-    const blob = await shrink(f);
-    const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-    const list = panelList(), old = list[pendingFor].img;
-    if (db) { await put('img:' + id, blob); } else { urls[id] = URL.createObjectURL(blob); }
-    list[pendingFor].img = { id }; list[pendingFor].fit = { x: 50, y: 50, z: 1 };
-    if (old && old.id) releaseImg(old.id);
-    save(); render();
+    if (f && pendingFor != null) setPicture(pendingFor, f);
   });
-  function releaseImg(id){
-    // Keep a picture only while some panel or frame still uses it.
-    const used = S.panels.concat(S.prose).some(p => p.img && p.img.id === id);
-    if (used) return;
-    del('img:' + id);
-    if (urls[id]) { URL.revokeObjectURL(urls[id]); delete urls[id]; }
-  }
   $('clearImgBtn').addEventListener('click', () => {
     if (sel.p == null) return;
-    const p = panelList()[sel.p], old = p.img; p.img = null;
-    if (old && old.id) releaseImg(old.id);
+    checkpoint(); panelList()[sel.p].img = null;
     save(); render();
   });
-  $('zoom').addEventListener('input', () => {
-    if (sel.p == null) return;
-    const f = panelList()[sel.p].fit; f.z = +$('zoom').value;
-    const im = bench.querySelector('.pnl[data-i="' + sel.p + '"] .pnl-inner > img');
+  let zooming = false;
+  function zoomTo(i, z){
+    const f = panelList()[i].fit; f.z = Math.max(1, Math.min(3, z));
+    $('zoom').value = f.z;
+    const im = imgEl(i);
     if (im) im.setAttribute('style', imgStyle(f));
     save();
+  }
+  $('zoom').addEventListener('input', () => {
+    if (sel.p == null) return;
+    if (!zooming) { checkpoint(); zooming = true; }
+    zoomTo(sel.p, +$('zoom').value);
+  });
+  $('zoom').addEventListener('change', () => { zooming = false; });
+  // Pinch on a trackpad (or Ctrl + scroll) zooms the chosen picture.
+  let wheelT = null;
+  bench.addEventListener('wheel', e => {
+    const pnl = e.target.closest('.pnl, .pframe');
+    if (!e.ctrlKey || !pnl || +pnl.dataset.i !== sel.p || !panelList()[sel.p].img) return;
+    e.preventDefault();
+    if (!zooming) { checkpoint(); zooming = true; }
+    clearTimeout(wheelT); wheelT = setTimeout(() => { zooming = false; }, 500);
+    zoomTo(sel.p, panelList()[sel.p].fit.z * Math.exp(-e.deltaY * 0.01));
+  }, { passive: false });
+
+  // Paste a picture into the chosen panel (or the first empty one); paste words as plain text.
+  document.addEventListener('paste', e => {
+    const cd = e.clipboardData; if (!cd) return;
+    const file = [...cd.items].filter(x => x.kind === 'file' && x.type.startsWith('image/')).map(x => x.getAsFile())[0];
+    const ed = e.target.closest && e.target.closest('[contenteditable=true]');
+    if (file) {
+      e.preventDefault();
+      const i = sel.p != null ? sel.p : panelList().findIndex(p => !p.img);
+      if (i < 0) { note('Tap the panel you want the picture in, then paste again.'); return; }
+      note(''); sel = { p: i, it: null }; setPicture(i, file);
+      return;
+    }
+    if (ed) {
+      e.preventDefault();
+      let t = cd.getData('text/plain');
+      if (ed.id === 'titleEl') t = t.replace(/\s*\n\s*/g, ' ');
+      document.execCommand('insertText', false, t);
+    }
+  });
+
+  // Drop a picture file onto a panel.
+  const hasFiles = e => e.dataTransfer && [...e.dataTransfer.types].includes('Files');
+  function markDrop(t){ bench.querySelectorAll('.drop').forEach(x => { if (x !== t) x.classList.remove('drop'); }); if (t) t.classList.add('drop'); }
+  addEventListener('dragover', e => { if (!hasFiles(e)) return; e.preventDefault(); markDrop(e.target.closest && e.target.closest('.pnl, .pframe')); });
+  addEventListener('dragleave', e => { if (!e.relatedTarget) markDrop(null); });
+  addEventListener('drop', e => {
+    if (!hasFiles(e)) return;
+    e.preventDefault(); markDrop(null);
+    const t = e.target.closest && e.target.closest('.pnl, .pframe');
+    const f = [...e.dataTransfer.files].find(f => f.type.startsWith('image/'));
+    if (!t || !f) { if (f) note('Drop the picture onto a panel.'); return; }
+    note(''); sel = { p: +t.dataset.i, it: null }; setPicture(+t.dataset.i, f);
   });
 
   // Library
@@ -511,15 +730,16 @@ import THEME from '/the-precinct/theme.js';
   $('libClose').addEventListener('click', () => $('libDlg').close());
   $('libGrid').addEventListener('click', e => {
     const b = e.target.closest('[data-src]'); if (!b) return;
-    const p = panelList()[pendingFor], old = p.img;
+    checkpoint();
+    const p = panelList()[pendingFor];
     p.img = { lib: b.dataset.src }; p.fit = { x: 50, y: 50, z: 1 };
-    if (old && old.id) releaseImg(old.id);
     $('libDlg').close(); save(); render();
   });
 
   // Text items
   document.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => {
     if (sel.p == null || S.level === 'prose') return;
+    checkpoint();
     const type = b.dataset.add, items = S.panels[sel.p].items;
     const it = Object.assign({ type }, JSON.parse(JSON.stringify(DEFAULTS[type])));
     it.y = Math.min(80, it.y + (items.length % 3) * 6);
@@ -534,10 +754,8 @@ import THEME from '/the-precinct/theme.js';
 
   $('resetBtn').addEventListener('click', async () => {
     if (!confirm('Clear this page and start again? Your pictures will be removed from this browser.')) return;
-    const ids = S.panels.concat(S.prose).filter(p => p.img && p.img.id).map(p => p.img.id);
-    S = fresh(); sel = { p: null, it: null };
-    ids.forEach(releaseImg);
-    save(); render();
+    S = fresh(); sel = NONE(); past = []; future = []; syncUndo();
+    save(); tidyImages(); render();
   });
   $('printBtn').addEventListener('click', () => { sel = { p: null, it: null }; render().then(() => print()); });
 
@@ -570,42 +788,42 @@ import THEME from '/the-precinct/theme.js';
   function drawItem(ctx, it, px, py, pw, ph){
     const cq = W / 100, x = px + pw * it.x / 100, y = py + ph * it.y / 100;
     let w = pw * it.w / 100;
-    const text = (it.text || '').trim();
+    const text = (it.text || '').trim(), sc = it.s || 1;
     if (!text) return;
     ctx.save();
     if (it.type === 'sfx') {
-      ctx.font = (7 * cq) + 'px Knewave'; ctx.textBaseline = 'top';
+      ctx.font = (7 * cq * sc) + 'px Knewave'; ctx.textBaseline = 'top';
       ctx.translate(x, y); ctx.rotate(-8 * Math.PI / 180);
       ctx.lineJoin = 'round'; ctx.lineWidth = 0.7 * cq; ctx.strokeStyle = '#111'; ctx.strokeText(text.toUpperCase(), 0, 0);
       ctx.fillStyle = '#f2c744'; ctx.fillText(text.toUpperCase(), 0, 0);
       ctx.restore(); return;
     }
-    const fs = 2.2 * cq, lh = fs * 1.15;
+    const fs = 2.2 * cq * sc, lh = fs * 1.15;
     ctx.font = '700 ' + fs + 'px "Comic Neue"';
     const padX = (it.type === 'caption' ? 1.1 : 2.4) * cq, padY = (it.type === 'caption' ? 0.8 : 1.6) * cq, bw = 0.3 * cq;
     const lines = wrap(ctx, text.toUpperCase(), w - 2 * padX - 2 * bw);
-    // Balloons shrink to their words, as on screen (width: max-content, capped at w).
-    w = Math.min(w, Math.max(...lines.map(l => ctx.measureText(l).width)) + 2 * padX + 2 * bw + 2);
+    // Boxes shrink to their words, as on screen (width: max-content, capped at w), unless their width was set by hand.
+    if (!it.fw) w = Math.min(w, Math.max(...lines.map(l => ctx.measureText(l).width)) + 2 * padX + 2 * bw + 2);
     const h = lines.length * lh + 2 * padY + 2 * bw;
-    ctx.lineWidth = bw; ctx.strokeStyle = '#111';
+    ctx.lineWidth = bw; ctx.strokeStyle = '#111'; ctx.lineJoin = 'round';
     if (it.type === 'caption') {
       ctx.fillStyle = '#f2c744'; ctx.fillRect(x, y, w, h); ctx.strokeRect(x + bw / 2, y + bw / 2, w - bw, h - bw);
     } else {
-      ctx.fillStyle = '#fff';
-      ctx.beginPath(); ctx.ellipse(x + w / 2, y + h / 2, w / 2 - bw / 2, h / 2 - bw / 2, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-      if (it.type === 'speech' && it.tail !== 'none') {
-        const tw = w * 0.22, flip = it.tail === 'br', bx = flip ? x + w - w * 0.18 - tw : x + w * 0.18, by = y + h - 0.6 * cq, k = tw / 40;
-        const P = (a, b) => [flip ? bx + tw - a * k : bx + a * k, by + b * k];
-        const t0 = P(10, 0), t1 = P(1, 33), t2 = P(31, 0);
-        ctx.beginPath(); ctx.moveTo(...t0); ctx.lineTo(...t1); ctx.lineTo(...t2); ctx.closePath(); ctx.fill();
-        ctx.beginPath(); ctx.moveTo(...P(10, 2)); ctx.lineTo(...t1); ctx.lineTo(...P(31, 2)); ctx.lineWidth = 2.4 * k; ctx.lineJoin = 'round'; ctx.stroke();
-      }
-      if (it.type === 'thought') {
-        [[0.18, 0.6, 3.2], [0.12, 4.4, 1.8]].forEach(([fx, dy, d]) => {
-          ctx.beginPath(); ctx.ellipse(x + w * fx + d * cq / 2, y + h + dy * cq + d * cq / 2, d * cq / 2, d * cq / 2, 0, 0, Math.PI * 2);
-          ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = bw; ctx.stroke();
+      const g = geom(w, h, it, cq), T = Math.PI * 2;
+      ctx.save(); ctx.translate(x, y); ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      if (it.type === 'speech' && g.tip) { ctx.moveTo(...g.tip); ctx.lineTo(...ePt(g, g.t + SPREAD)); ctx.ellipse(g.cx, g.cy, g.rx, g.ry, 0, g.t + SPREAD, g.t - SPREAD + T); ctx.closePath(); }
+      else ctx.ellipse(g.cx, g.cy, g.rx, g.ry, 0, 0, T);
+      ctx.fill(); ctx.stroke();
+      if (it.type === 'thought' && g.tip) {
+        const e = ePt(g, g.t);
+        DOTS.forEach(([f, d]) => {
+          const r = d * cq / 2;
+          ctx.beginPath(); ctx.arc(e[0] + (g.tip[0] - e[0]) * f, e[1] + (g.tip[1] - e[1]) * f, r - bw / 2, 0, T);
+          ctx.fill(); ctx.stroke();
         });
       }
+      ctx.restore();
     }
     ctx.fillStyle = '#111'; ctx.textBaseline = 'top'; ctx.textAlign = it.type === 'caption' ? 'left' : 'center';
     lines.forEach((ln, k) => ctx.fillText(ln, it.type === 'caption' ? x + bw + padX : x + w / 2, y + bw + padY + k * lh + fs * 0.05));
@@ -669,7 +887,9 @@ import THEME from '/the-precinct/theme.js';
     if (!db) note('This browser won’t let the page save, so download your page before you close it.');
     const saved = await get('state');
     if (saved && saved.panels) S = Object.assign(fresh(), saved);
+    migrate();
     render();
+    tidyImages();
   })();
 })();
 </script>
