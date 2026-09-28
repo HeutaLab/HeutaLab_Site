@@ -38,7 +38,7 @@ export default {
     {
       id: 'femme', name: 'Vera Sinclair', short: 'Vera Sinclair', role: 'The Femme Fatale', tag: 'The one who knows',
       story: 'She admires Frank Rourke, but it is Edward Novak she wants.',
-      look: 'a woman in her thirties, platinum-blonde hair in chin-length 1940s waves, a beauty mark on her cheek, dark lipstick and arched brows, pearl drop earrings, a long black sleeveless evening gown, long pale evening gloves, a black fur stole over one arm, black heels, a cool sideways glance',
+      look: 'a woman in her thirties, shoulder-length platinum-blonde hair in soft 1940s waves, a beauty mark on her cheek, dark lipstick and arched brows, pearl drop earrings, a long black sleeveless evening gown, long pale evening gloves, a black fur stole over one arm, black heels, a cool sideways glance',
       img: IMG + 'ref/vera-card.jpg',
     },
   ],
@@ -102,7 +102,7 @@ export default {
     'fedora':        ['A stern man in a fedora and trench coat, close-up', 'character', 'commissioner'],
     'boss':          ['A heavy-set man with slicked-back hair in a suit, glaring', 'character'],
     'vance-card':    ['A heavy-set older man in a fedora and belted trench coat over a three-piece suit, hands in his pockets, staring coldly out of the dark', 'character', 'commissioner'],
-    'vera-card':     ['A woman with platinum-blonde waves, pearl earrings and a black evening gown, looking back over her shoulder with a knowing smile', 'character', 'femme'],
+    'vera-card':     ['A woman with shoulder-length platinum-blonde waves, pearl earrings and a black evening gown, looking back over her shoulder with a knowing smile', 'character', 'femme'],
     'rourke-card':   ['A huge muscular man in shirtsleeves, braces and a loosened tie, teeth bared around a matchstick, glaring out of the dark', 'character', 'disillusioned'],
     'rourke-front':  ['A huge muscular man in shirtsleeves and braces, a holster at his side and a jacket over his shoulder, scowling', 'character', 'disillusioned'],
     'rourke-snarl':  ['Close-up of a dark-haired man baring his teeth around a cigarette, face half in shadow', 'character', 'disillusioned'],
