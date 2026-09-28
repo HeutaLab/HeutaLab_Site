@@ -208,4 +208,14 @@ export default {
   library: ['chief','hat-woman','cop','bar','blonde-green','blonde-yellow','rain-street','office','sunset-street','fedora','boss',
     'cop-badge','lamp-man','blue-man','houses','green-city','walking-woman','teal-woman','detective-car','sunset-man',
     'walking-rain','hat-green','novak-card','vance-card','rourke-card','vera-card','rourke-front','rourke-snarl','rourke-rage','rourke-sheet'],
+
+  // Sound effects offered in the comic builder, grouped by what makes the noise.
+  sfx: [
+    ['Gunfire', ['BLAM!', 'BANG!', 'RAT-A-TAT!', 'KA-BLAM!', 'PING!']],
+    ['Fists', ['POW!', 'WHAM!', 'THUD!', 'CRACK!', 'OOF!']],
+    ['Doors', ['SLAM!', 'KNOCK KNOCK', 'CREAK…', 'CLICK', 'CRASH!']],
+    ['The street', ['SCREECH!', 'VROOM!', 'HONK!', 'SPLASH', 'WHEEE-OOO']],
+    ['The office', ['RING RING!', 'CLACK CLACK', 'TICK TOCK', 'SHHH…', 'DING!']],
+    ['Night', ['DRIP… DRIP…', 'PITTER PAT', 'BOOM!', 'HOOT', 'ZZZ']],
+  ],
 };

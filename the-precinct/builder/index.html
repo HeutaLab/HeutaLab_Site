@@ -20,6 +20,16 @@
   .tools .pill:disabled{opacity:.35;cursor:not-allowed}
   .tools .pill:disabled:hover{border-color:var(--frame)}
   .tools input[type=range]{accent-color:var(--yellow);width:140px}
+  .sfx-bank{flex-basis:100%;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px 18px;
+    padding:12px 14px;background:var(--bg);border:1px solid var(--frame)}
+  .sfx-bank[hidden]{display:none}
+  .sfx-bank p{margin:0 0 6px;font-family:var(--label);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim)}
+  .sfx-bank .w{display:flex;flex-wrap:wrap;gap:6px}
+  .sfx-bank button{font-family:var(--brush);font-size:17px;line-height:1;padding:6px 9px 4px;background:transparent;color:var(--yellow);
+    border:1px solid var(--frame);cursor:pointer}
+  .sfx-bank button:hover{border-color:var(--yellow)}
+  .sfx-bank .own{grid-column:1/-1;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--ink-dim)}
+  .sfx-bank .own button{font-family:var(--label);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
   .tools .hint{font-size:12.5px;color:var(--ink-dim);font-style:italic}
   .btn.ghost{background:transparent;color:var(--ink);box-shadow:none;border:1px solid var(--frame)}
   .btn.ghost:hover{border-color:var(--yellow);color:var(--yellow);background:transparent}
@@ -200,7 +210,8 @@
           <button class="pill" data-add="caption">Caption box</button>
           <button class="pill" data-add="speech">Speech balloon</button>
           <button class="pill" data-add="thought">Thought bubble</button>
-          <button class="pill" data-add="sfx">Sound effect</button>
+          <button class="pill" data-add="sfx" aria-expanded="false" aria-controls="sfxBank">Sound effect</button>
+          <div class="sfx-bank" id="sfxBank" hidden></div>
           <p class="lvl-note">Drag the yellow dot to point a tail at whoever is talking, and the yellow bar to make a box wider or narrower. <b>A</b> changes the text size. With a box chosen: Delete removes it, the arrow keys nudge it, Esc lets go.</p>
         </div>
         <div class="grp">
@@ -261,7 +272,7 @@ import THEME from '/the-precinct/theme.js';
   // Item fields: x, y, w in % of the panel; w is a cap on the width unless fw (fixed width) is set;
   // s scales the text; tip is the tail's point in cqw from the balloon's bottom centre; tail:'none' hides it.
   const SIZES = [0.8, 1, 1.3, 1.7];
-  const PH = { caption: 'Meanwhile, at the precinct...', speech: 'Type what they say', thought: 'What are they thinking?', sfx: '' };
+  const PH = { caption: 'Meanwhile, at the precinct...', speech: 'Type what they say', thought: 'What are they thinking?', sfx: 'Type a sound' };
   const blank = () => ({ img: null, fit: { x: 50, y: 50, z: 1 }, items: [] });
   const fresh = () => ({
     level: 'medium', layout: 'grid6', title: '',
@@ -393,6 +404,7 @@ import THEME from '/the-precinct/theme.js';
     const sheet = itEl && itEl.closest('.sheet'); if (!sheet) return;
     const it = S.panels[+itEl.closest('.pnl').dataset.i].items[+itEl.dataset.j]; if (!it) return;
     const cq = sheet.clientWidth / 100, tx = itEl.querySelector('.it-text'), w = tx.offsetWidth, h = tx.offsetHeight;
+    if (!cq || !w) return;   // not laid out yet (e.g. mid-reload); the ResizeObserver calls again once it is
     const g = geom(w, h, it, cq), hd = itEl.querySelector('.tip-h');
     if (hd && it.tip) { hd.style.left = (w / 2 + it.tip.x * cq) + 'px'; hd.style.top = (h + it.tip.y * cq) + 'px'; }
     if (it.type === 'speech') {
@@ -437,6 +449,11 @@ import THEME from '/the-precinct/theme.js';
     ['uploadBtn','libBtn'].forEach(id => $(id).disabled = !has);
     $('clearImgBtn').disabled = $('zoom').disabled = !(has && list[sel.p].img);
     document.querySelectorAll('[data-add]').forEach(b => b.disabled = !has);
+    const chosen = sel.it != null && S.panels[sel.p].items[sel.it];
+    if (chosen && chosen.type === 'sfx') sfxOpen = true;   // so the words are there to swap
+    const bankOn = sfxOpen && has && S.level === 'advanced', sfxBtn = document.querySelector('[data-add=sfx]');
+    $('sfxBank').hidden = !bankOn;
+    sfxBtn.classList.toggle('active', bankOn); sfxBtn.setAttribute('aria-expanded', bankOn);
     $('panelHint').textContent = has ? (S.level === 'prose' ? 'Frame ' : 'Panel ') + (sel.p + 1) + ' chosen.' : 'Tap a panel to choose it.';
     if (has) $('zoom').value = list[sel.p].fit.z;
 
@@ -737,20 +754,38 @@ import THEME from '/the-precinct/theme.js';
   });
 
   // Text items
-  document.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => {
+  function addItem(type, text, edit){
     if (sel.p == null || S.level === 'prose') return;
     checkpoint();
-    const type = b.dataset.add, items = S.panels[sel.p].items;
+    const items = S.panels[sel.p].items;
     const it = Object.assign({ type }, JSON.parse(JSON.stringify(DEFAULTS[type])));
+    if (text != null) it.text = text;
     it.y = Math.min(80, it.y + (items.length % 3) * 6);
     items.push(it);
     sel.it = items.length - 1;
     save();
     render().then(() => {
-      const t = bench.querySelector('.pnl[data-i="' + sel.p + '"] .it[data-j="' + sel.it + '"] .it-text');
-      if (t) { t.focus(); if (type === 'sfx') getSelection().selectAllChildren(t); }
+      const el = bench.querySelector('.pnl[data-i="' + sel.p + '"] .it[data-j="' + sel.it + '"]');
+      if (el && edit) editItem(el);
     });
+  }
+  document.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.add === 'sfx') { sfxOpen = !sfxOpen; render(); return; }
+    addItem(b.dataset.add, null, true);
   }));
+
+  // Sound effects: a bank of words. A word goes into the chosen panel, or replaces the chosen sound effect.
+  let sfxOpen = false;
+  $('sfxBank').innerHTML = THEME.sfx.map(([group, words]) => '<div><p>' + esc(group) + '</p><div class="w">'
+      + words.map(w => '<button type="button" data-sfx="' + esc(w) + '">' + esc(w) + '</button>').join('') + '</div></div>').join('')
+    + '<div class="own"><button type="button" data-sfx="">Type your own</button>'
+    + '<span>Pick a word to add it to the chosen panel. With a sound effect chosen, a word swaps it.</span></div>';
+  $('sfxBank').addEventListener('click', e => {
+    const b = e.target.closest('[data-sfx]'); if (!b || sel.p == null) return;
+    const w = b.dataset.sfx, cur = sel.it != null && S.panels[sel.p].items[sel.it];
+    if (w && cur && cur.type === 'sfx') { checkpoint(); cur.text = w; save(); render(); return; }
+    addItem('sfx', w, !w);
+  });
 
   $('resetBtn').addEventListener('click', async () => {
     if (!confirm('Clear this page and start again? Your pictures will be removed from this browser.')) return;
