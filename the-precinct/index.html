@@ -103,7 +103,7 @@
         </article>
         <article class="card frame">
           <img class="noir" src="img/card-characters.jpg" alt="A woman with long waved hair looking over her shoulder" width="307" height="335" loading="lazy">
-          <div class="body"><h3>2. Meet the cast</h3><p>The Commissioner, the Detective, the Disillusioned Detective and the Femme Fatale.</p>
+          <div class="body"><h3>2. Meet the cast</h3><p>Commissioner Harlan Vance, Edward Novak, Sergeant Frank Rourke and Vera Sinclair.</p>
             <a class="btn" href="#cast">The cast <span class="arr">&rarr;</span></a></div>
         </article>
         <article class="card frame">
@@ -204,7 +204,7 @@
         <div class="step">
           <h4>Your idea</h4>
           <p class="handoff" id="handoffNote" hidden>Brought over from References. Read it through, then pick a platform.</p>
-          <textarea id="idea" maxlength="800" placeholder="Describe what you're picturing, in your own words. e.g. &ldquo;the detective waiting in a doorway across the street from the police station, watching&rdquo;"></textarea>
+          <textarea id="idea" maxlength="800" placeholder="Describe what you're picturing, in your own words. e.g. &ldquo;Edward Novak waiting in a doorway across the street from the precinct, watching&rdquo;"></textarea>
           <div class="count"><span id="ideaCount">0</span>/800</div>
           <button class="go" id="goBtn" disabled>Get briefing</button>
           <div class="error" id="errorBox" style="display:none"></div>
@@ -273,15 +273,15 @@ import THEME from '/the-precinct/theme.js';
   // ---- built from theme.js: the cast, the palettes, and their pills at the desk ----
   document.getElementById('castGrid').innerHTML = THEME.cast.map(c =>
     '<article class="case frame" id="cast-' + c.id + '"><img class="noir" src="' + c.img + '" alt="" loading="lazy">'
-    + '<div class="case-body"><span class="case-tag">' + esc(c.tag) + '</span><h3>' + esc(c.name) + '</h3>' + (c.alias ? '<span class="case-alias">' + esc(c.alias) + '</span>' : '') + '<p>' + esc(c.story) + '</p>'
+    + '<div class="case-body"><span class="case-tag">' + esc(c.role) + ' · ' + esc(c.tag.toLowerCase()) + '</span><h3>' + esc(c.name) + '</h3><p>' + esc(c.story) + '</p>'
     + (c.arc ? '<p class="arc"><b>His arc</b>' + c.arc.map(esc).join(' &rarr; ') + '</p>' : '')
     + '<div class="look"><b>Their look, every time</b><span>' + esc(c.look) + '</span></div>'
     + '<div class="case-btns"><button type="button" class="btn small" data-brief="' + c.id + '">Brief this character <span class="arr">&rarr;</span></button>'
     + '<button type="button" class="btn ghost small" data-copylook="' + c.id + '">Copy look</button></div></div></article>').join('');
   document.getElementById('relations').innerHTML = '<b>Who wants what</b>' + THEME.relations.map(([a, verb, b]) =>
-    '<span class="rel"><em>' + esc(castName(a)) + '</em> ' + esc(verb) + ' <em>' + esc(castName(b).replace(/^The /, 'the ')) + '</em></span>').join('');
+    '<span class="rel"><em>' + esc(castName(a)) + '</em> ' + esc(verb) + ' <em>' + esc(castName(b)) + '</em></span>').join('');
   document.getElementById('castRow').innerHTML = THEME.cast.map(c =>
-    '<button class="pill" data-val="' + c.id + '">' + esc(c.name.replace(/^The /, '')) + '</button>').join('');
+    '<button class="pill" data-val="' + c.id + '">' + esc(c.short) + '<small>' + esc(c.role.replace(/^The /, '').toLowerCase()) + '</small></button>').join('');
   document.getElementById('palGrid').innerHTML = Object.entries(THEME.palettes).map(([id, p]) =>
     '<figure data-pal="' + id + '"><img src="' + p.sample + '" alt="" loading="lazy"><figcaption><b style="color:' + p.ink + '">'
     + esc(p.label) + '</b>' + esc(p.note) + '</figcaption></figure>').join('');

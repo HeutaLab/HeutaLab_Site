@@ -191,7 +191,7 @@ import THEME from '/the-precinct/theme.js';
   $('howRow').innerHTML = MODE_IDS.map(m => '<button type="button" data-mode="' + m + '"><b>' + esc(MODES[m].label) + '</b>' + esc(MODES[m].card) + '</button>').join('');
   $('modeRow').innerHTML = MODE_IDS.map(m => '<button class="pill" data-val="' + m + '">' + esc(MODES[m].label) + '<small>' + esc(MODES[m].sub.toLowerCase()) + '</small></button>').join('');
   $('levelRow').innerHTML = Object.entries(LEVELS).map(([id, L]) => '<button class="pill" data-val="' + id + '">' + esc(L.name) + '<small>' + esc(L.short) + '</small></button>').join('');
-  $('castPickRow').innerHTML = THEME.cast.map(c => '<button class="pill" data-val="' + c.id + '">' + esc(c.name.replace(/^The /, '')) + '</button>').join('');
+  $('castPickRow').innerHTML = THEME.cast.map(c => '<button class="pill" data-val="' + c.id + '">' + esc(c.short) + '<small>' + esc(c.role.replace(/^The /, '').toLowerCase()) + '</small></button>').join('');
 
   function currentRef(){
     const L = LEVELS[state.level];
@@ -242,7 +242,7 @@ import THEME from '/the-precinct/theme.js';
     img.alt = REFS[ref][0];
     const who = pickedCast();
     cap.innerHTML = esc(L.name + ' · ' + MODES[state.mode].label)
-      + (REFS[ref][2] ? ' · <span class="castag">could be ' + esc(castById(REFS[ref][2]).name.replace(/^The /, 'the ')) + '</span>' : '');
+      + (REFS[ref][2] ? ' · <span class="castag">could be ' + esc(castById(REFS[ref][2]).name) + '</span>' : '');
     $('shuffleBtn').hidden = state.mode !== 'explore';
     $('lensTitle').textContent = L.lens;
     $('lensBlurb').textContent = L.blurb;

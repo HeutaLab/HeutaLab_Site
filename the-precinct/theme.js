@@ -10,32 +10,34 @@ export default {
   name: 'The Precinct',
   houseStyle: 'Al Williamson, 1940s film noir comic book, black and white ink illustration',
 
-  // The four characters. `look` is the fixed description attendees repeat in
-  // every prompt: it is what keeps a character recognisable picture to picture.
+  // The four characters. `name` is what the site calls them everywhere; `short`
+  // fits a button; `role` is the part they play. `look` is the fixed description
+  // attendees repeat in every prompt: it keeps a character recognisable picture
+  // to picture.
   cast: [
     {
-      id: 'commissioner', name: 'The Commissioner', tag: 'The villain',
-      story: 'The bad guy. He runs the precinct and uses the Disillusioned Detective as his muscle.',
+      id: 'commissioner', name: 'Commissioner Harlan Vance', short: 'Harlan Vance', role: 'The Commissioner', tag: 'The villain',
+      story: 'The bad guy. He runs the precinct and uses Sergeant Frank Rourke as his muscle.',
       look: 'a heavy-set man in his sixties, jowly face and a permanent scowl, a three-piece suit under a long belted trench coat, a grey fedora with a dark band, hands deep in his coat pockets',
       img: IMG + 'ref/chief.jpg',
     },
     {
-      id: 'detective', name: 'The Detective', tag: 'The good guy',
-      story: 'The hero. Straight, stubborn and still sure the truth matters. He is the one the Femme Fatale really wants.',
+      id: 'detective', name: 'Edward Novak', short: 'Edward Novak', role: 'The Detective', tag: 'The good guy',
+      story: 'The hero. Straight, stubborn and still sure the truth matters. He is the one Vera Sinclair really wants.',
       look: 'a lean square-jawed man in his late twenties, clean-shaven with a steady clear-eyed gaze, a neat dark suit with a detective badge on the coat, pale shirt and tie done up tight, a fedora worn straight',
       img: IMG + 'ref/cop-badge.jpg',
     },
     {
-      id: 'disillusioned', name: 'The Disillusioned Detective', tag: 'The bad cop', alias: 'Frank Rourke',
-      story: 'A brute with a short fuse, always one word from exploding. He is the Commissioner’s pawn, though he doesn’t know it yet, and he is in love with the Femme Fatale.',
+      id: 'disillusioned', name: 'Sergeant Frank Rourke', short: 'Frank Rourke', role: 'The Disillusioned Detective', tag: 'The bad cop',
+      story: 'A brute with a short fuse, always one word from exploding. He is Vance’s pawn, though he doesn’t know it yet, and he is in love with Vera Sinclair.',
       look: 'a big, heavy-set, muscular man in his forties, square stubbled jaw and dark hair swept back, a white shirt open at the collar with the sleeves rolled up over thick forearms, braces, a loosened dark tie, dark pleated trousers, a shoulder holster, his jacket slung over one shoulder, a matchstick clamped in the corner of his mouth, fists clenched, always on the verge of exploding with rage',
       // From Glenn's character sheet: how his face changes across the story.
       arc: ['lazy smirk', 'sullen glower', 'predatory grin', 'snarling rage', 'flicker of conscience'],
       img: IMG + 'ref/rourke-card.jpg',
     },
     {
-      id: 'femme', name: 'The Femme Fatale', tag: 'The one who knows', alias: 'Vera Sinclair',
-      story: 'She admires the Disillusioned Detective, but it is the Detective she wants.',
+      id: 'femme', name: 'Vera Sinclair', short: 'Vera Sinclair', role: 'The Femme Fatale', tag: 'The one who knows',
+      story: 'She admires Frank Rourke, but it is Edward Novak she wants.',
       look: 'a woman in her thirties, platinum-blonde hair in chin-length 1940s waves, a beauty mark on her cheek, dark lipstick and arched brows, pearl drop earrings, a long black sleeveless evening gown, long pale evening gloves, a black fur stole over one arm, black heels, a cool sideways glance',
       img: IMG + 'ref/bar.jpg',
     },
