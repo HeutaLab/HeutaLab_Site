@@ -97,7 +97,7 @@
   .ttl:hover .ttl-h,.ttl:focus-within .ttl-h,.ttl.turning .ttl-h,.ttl-prose:hover .ttl-h,.ttl-prose:focus-within .ttl-h,.ttl-prose.turning .ttl-h{display:flex}
   .sheet-title{position:relative;height:100%;display:flex;align-items:center;
     font-family:var(--brush);font-size:5.4cqw;line-height:1;color:#111;text-transform:uppercase;outline:none;
-    white-space:nowrap;overflow:hidden;user-select:text;-webkit-user-select:text}
+    white-space:nowrap;padding-right:.15em;user-select:text;-webkit-user-select:text}
   .sheet-title:empty::before{content:attr(data-ph);color:#b3ab98}
   /* Each panel sits on its polygon's bounding box and is clipped to the polygon; frames (.edge) are SVG strokes of the same
      polygon, twice as wide as they show, so the clip leaves only the inner half (the canvas export does the same). */
@@ -535,6 +535,14 @@ import THEME from '/the-precinct/theme.js';
   }
   // How far the title is turned, about its left end: the style's own tilt (Marvel's -3°) plus the user's.
   const titleTurn = () => (S.level === 'prose' ? 0 : look().title.rotate || 0) + (S.titleRot || 0);
+  const TITLE_ROOM = 0.94;
+  function fitTitle(){
+    const el = $('titleEl'), sheet = el && el.closest('.sheet'); if (!sheet) return;
+    const size = look().title.size;
+    el.style.fontSize = size + 'cqw';
+    const room = sheet.clientWidth * TITLE_ROOM, w = el.scrollWidth;
+    if (w > room) el.style.fontSize = (size * room / w) + 'cqw';
+  }
   const TTL_H = '<span class="ttl-h" title="Drag to tilt the title (double-click to straighten)">&#8635;</span>';
   // Give every box the lettering of a style, and make new boxes start that way too.
   function applyLetters(key){
@@ -722,6 +730,7 @@ import THEME from '/the-precinct/theme.js';
           + S.panels[i].items.map((it, j) => itemHTML(it, j, sel.p === i && sel.it === j)).join('')
           + (sel.p === i && sel.it == null && S.panels[i].img ? protHTML(poly, b) : '') + '</div></div>';
       }).join('') + '</div>';
+    fitTitle();
     ro.disconnect();
     bench.querySelectorAll('.it').forEach(el => { el.classList.contains('it-sfx') ? placeRot(el) : drawBox(el); ro.observe(el.querySelector('.it-text')); });
     showTip();
@@ -738,7 +747,7 @@ import THEME from '/the-precinct/theme.js';
   bench.addEventListener('beforeinput', () => { if (!typing) { checkpoint(); typing = true; } });
   bench.addEventListener('focusout', () => { typing = false; });
   bench.addEventListener('input', e => {
-    if (e.target.id === 'titleEl') { S.title = e.target.textContent; save(); return; }
+    if (e.target.id === 'titleEl') { S.title = e.target.textContent; fitTitle(); save(); return; }
     if (e.target.matches('.pframe textarea')) { S.prose[+e.target.dataset.i].text = e.target.value; save(); return; }
     const itEl = e.target.closest('.it');
     if (itEl) {
@@ -1382,8 +1391,14 @@ import THEME from '/the-precinct/theme.js';
   }
   function drawTitle(ctx, text, tt, cq, H){
     ctx.save();
-    ctx.font = tt.weight + ' ' + tt.size * cq + 'px ' + tt.family;
-    if (tt.spacing && 'letterSpacing' in ctx) ctx.letterSpacing = tt.spacing * tt.size * cq + 'px';
+    const setSize = s => {
+      ctx.font = tt.weight + ' ' + s * cq + 'px ' + tt.family;
+      if (tt.spacing && 'letterSpacing' in ctx) ctx.letterSpacing = tt.spacing * s * cq + 'px';
+    };
+    setSize(tt.size);
+    // too long for the page: shrink to fit, as fitTitle() does on screen (the page's box counts .15em of room for the lean)
+    const w = ctx.measureText(text).width + 0.15 * tt.size * cq, room = W * TITLE_ROOM;
+    if (w > room) setSize(tt.size * room / w);
     ctx.textBaseline = 'middle'; ctx.translate(W * 0.03, H * 0.046);
     if (tt.rotate) ctx.rotate(tt.rotate * Math.PI / 180);
     if (tt.stroke) { ctx.lineWidth = 2 * tt.stroke[0] * cq; ctx.strokeStyle = tt.stroke[1]; ctx.lineJoin = 'round'; ctx.strokeText(text, 0, 0); }
@@ -1496,6 +1511,7 @@ import THEME from '/the-precinct/theme.js';
     migrate();
     render();
     tidyImages();
+    if (document.fonts) document.fonts.ready.then(fitTitle);   // measure the title again once its lettering has loaded
   })();
 })();
 </script>
