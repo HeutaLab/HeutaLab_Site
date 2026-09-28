@@ -8,7 +8,7 @@
 <meta name="description" content="Build your own noir comic page: add your pictures, then captions, speech balloons and sound effects, at prose, medium or advanced level.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Knewave&family=Oswald:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&family=Comic+Neue:wght@700&family=Special+Elite&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Knewave&family=Oswald:wght@300;400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&family=Comic+Neue:wght@700&family=Special+Elite&display=swap">
 <link rel="stylesheet" href="/the-precinct/precinct.css">
 <style>
   .tools{margin-top:0;padding:14px 18px}
@@ -39,6 +39,23 @@
   .dock label.zoom{font-size:12.5px;font-style:italic;color:var(--ink-dim);display:flex;align-items:center;gap:6px}
   .dock input[type=range]{accent-color:var(--yellow);width:120px}
   .dock .undo{margin-left:6px}
+  .stylebtn{display:inline-flex;align-items:center;gap:10px;background:var(--yellow);color:#15120a;border:0;padding:7px 12px 7px 14px;cursor:pointer;position:relative;
+    font-family:var(--label);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;box-shadow:3px 3px 0 #000}
+  .stylebtn .n{font-size:10px;background:#15120a;color:var(--yellow);border-radius:9px;padding:2px 7px;letter-spacing:.08em}
+
+  /* the note about a page style, shown when the style changes */
+  .scard{position:fixed;z-index:45;left:50%;transform:translateX(-50%);width:min(460px,calc(100vw - 24px));background:var(--panel);border:1px solid var(--yellow);
+    box-shadow:6px 6px 0 #000;padding:14px 16px 12px;animation:pop .3s ease-out}
+  .scard[hidden]{display:none}
+  .scard .era{font-family:var(--label);letter-spacing:.2em;text-transform:uppercase;color:var(--yellow);font-size:11px}
+  .scard h3{font-family:var(--brush);font-weight:400;color:var(--ink);font-size:24px;line-height:1.05;margin:2px 0 8px;text-transform:uppercase}
+  .scard p{margin:0 0 10px;font-size:14px;color:var(--ink)}
+  .scard h4{font-family:var(--label);font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--yellow);font-size:11px;margin:10px 0 6px}
+  .scard .prompt{background:var(--bg);border:1px solid var(--frame);padding:8px 10px;font-style:italic;font-size:13.5px;color:var(--ink)}
+  .scard .row{display:flex;gap:8px;align-items:center;margin-top:10px}
+  .scard small{font-size:12px;color:var(--ink-dim)}
+  .scard .x{position:absolute;top:8px;right:10px;background:none;border:0;color:var(--ink-dim);font-size:22px;line-height:1;cursor:pointer}
+  @media (max-width:600px){.scard{max-height:55vh;overflow:auto}}
   .new{position:absolute;top:-9px;right:-9px;background:var(--danger);color:#fff;font-family:var(--label);font-style:normal;font-size:9px;letter-spacing:.12em;
     padding:2px 5px;border-radius:8px;line-height:1.2;pointer-events:none;animation:pop .5s ease-out}
   .arrive{animation:arrive .4s ease-out both}
@@ -70,16 +87,22 @@
   @media (prefers-reduced-motion:reduce){.arrive,.new,.tip{animation:none}}
 
   /* the comic page */
-  .sheet{position:relative;width:min(100%,720px);aspect-ratio:2/3;background:#f3eee0;container-type:inline-size;
+  .sheet{position:relative;isolation:isolate;width:min(100%,720px);aspect-ratio:2/3;background:#f3eee0;container-type:inline-size;
     box-shadow:0 10px 40px rgba(0,0,0,.6);color:#111;user-select:none;-webkit-user-select:none}
-  .sheet-title{position:absolute;left:3%;right:3%;top:1.6%;height:6%;display:flex;align-items:center;
+  .sheet-title{position:absolute;z-index:8;left:3%;right:3%;top:1.6%;height:6%;display:flex;align-items:center;
     font-family:var(--brush);font-size:5.4cqw;line-height:1;color:#111;text-transform:uppercase;outline:none;
     white-space:nowrap;overflow:hidden;user-select:text;-webkit-user-select:text}
   .sheet-title:empty::before{content:attr(data-ph);color:#b3ab98}
-  .panels{position:absolute;left:3%;right:3%;top:9%;bottom:2.5%}
-  .pnl{position:absolute;padding:.7cqw}
-  .pnl-inner{position:relative;width:100%;height:100%;overflow:hidden;border:.45cqw solid #111;background:#222;touch-action:none}
-  .pnl.sel .pnl-inner{outline:.6cqw solid var(--yellow);outline-offset:.2cqw}
+  /* Each panel sits on its polygon's bounding box and is clipped to the polygon; frames (.edge) are SVG strokes of the same
+     polygon, twice as wide as they show, so the clip leaves only the inner half (the canvas export does the same). */
+  .pnl{position:absolute}
+  .sheet .pnl{pointer-events:none}          /* only the clipped shape takes taps, so a slanted panel's box */
+  .sheet .pnl-inner{pointer-events:auto}    /* can't steal them from the neighbour it overlaps */
+  .pnl-inner{position:relative;width:100%;height:100%;overflow:hidden;background:#222;touch-action:none}
+  .edge{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:4}
+  .edge .hl{fill:none;stroke:none;stroke-width:1.4}
+  .pnl.sel .edge .hl{stroke:var(--yellow)}
+  .pnl.drop .edge .hl{stroke:var(--yellow);stroke-dasharray:2 1.4}
   .pnl-inner > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
   .pnl-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1cqw;
     color:#9aa09a;font-family:var(--label);font-size:2.2cqw;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:4%}
@@ -102,7 +125,7 @@
   .it.sel .tip-h,.it.sel .rs-h{display:block}
   .tip-h{width:2.4cqw;height:2.4cqw;min-width:16px;min-height:16px;border-radius:50%;transform:translate(-50%,-50%);cursor:move}
   .rs-h{right:-.9cqw;top:50%;width:1.5cqw;height:4cqw;min-width:10px;min-height:24px;border-radius:3px;transform:translateY(-50%);cursor:ew-resize}
-  .pnl.drop .pnl-inner,.pframe.drop .pnl-inner{outline:.6cqw dashed var(--yellow);outline-offset:.2cqw}
+  .pframe.drop .pnl-inner{outline:.6cqw dashed var(--yellow);outline-offset:.2cqw}
   .pnl-empty .picks{display:flex;gap:1cqw;flex-wrap:wrap;justify-content:center}
   .pnl-empty .picks button{font-family:var(--label);font-size:max(11px,1.9cqw);letter-spacing:.1em;text-transform:uppercase;
     padding:.8cqw 1.6cqw;background:#f2c744;color:#111;border:0;cursor:pointer}
@@ -113,7 +136,7 @@
   .prose-title{font-family:var(--brush);font-size:6cqw;text-transform:uppercase;outline:none;margin-bottom:3cqw;line-height:1.05}
   .prose-title:empty::before{content:attr(data-ph);color:#b3ab98}
   .pframe{margin-bottom:4cqw;position:relative}
-  .pframe .pnl-inner{aspect-ratio:16/9;height:auto;border-width:.5cqw}
+  .pframe .pnl-inner{aspect-ratio:16/9;height:auto;border:.5cqw solid #111}
   .pframe.sel .pnl-inner{outline:.7cqw solid var(--yellow);outline-offset:.3cqw}
   .pframe textarea{margin-top:2cqw;width:100%;min-height:9cqw;background:transparent;border:0;border-bottom:1px dashed #b9b19c;color:#111;
     font-family:var(--serif);font-size:max(14px,2.5cqw);line-height:1.6;resize:vertical;padding:0 0 1cqw}
@@ -142,14 +165,15 @@
   @media print{
     html,body{background:#fff !important}
     body{padding:0 !important}
-    .hero,.side,.tools,.notice,footer,.rule,.sub-intro,.it-ctl,.tip-h,.rs-h,.rm,.addframe,.dock,.tray,.tip{display:none !important}
+    .hero,.side,.tools,.notice,footer,.rule,.sub-intro,.it-ctl,.tip-h,.rs-h,.rm,.addframe,.dock,.tray,.tip,.scard{display:none !important}
     .layout{display:block;margin:0}.page{padding:0;margin:0;max-width:none}
     .workbench,#bench{padding:0;background:none;margin:0}
     .sheet{box-shadow:none;width:auto;height:calc(100vh - 1mm);max-width:100%;margin:0 auto;break-inside:avoid;
       -webkit-print-color-adjust:exact;print-color-adjust:exact}
     .prose-page{box-shadow:none;width:100%;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .pframe{break-inside:avoid}
-    .pnl.sel .pnl-inner,.pframe.sel .pnl-inner{outline:none}
+    .pframe.sel .pnl-inner{outline:none}
+    .edge .hl{stroke:none !important}
     .pnl-empty{visibility:hidden}
     .pnl-inner{background:#fff}   /* an empty panel prints as a white frame to draw in, not a block of ink */
     .sheet-title:empty::before,.prose-title:empty::before,.it-text:empty::before{content:none}   /* placeholders stay on screen */
@@ -254,6 +278,7 @@
 <div class="tray" id="sfxBank" hidden aria-label="Sound effects"></div>
 <div class="dock" id="dock" role="toolbar" aria-label="Builder tools"></div>
 <div class="tip" id="tip" hidden role="status"></div>
+<div class="scard" id="styleCard" hidden role="dialog" aria-label="About this page style"></div>
 
 <script type="module">
 import THEME from '/the-precinct/theme.js';
@@ -265,15 +290,7 @@ import THEME from '/the-precinct/theme.js';
   const LEVEL_NOTES = {
     prose: 'Prose: write it like a storybook. One picture, a paragraph underneath. Get the story straight before you think about panels.',
     medium: 'Medium: four panels. Give each one a caption box for the narrator and a speech balloon for a character, and point the balloon at whoever is talking.',
-    advanced: 'Advanced: choose a layout, place captions, speech, thoughts and sound effects anywhere, give every box its own shape, colour and lettering, and frame each picture with drag and zoom.',
-  };
-  // Panel rectangles as [left, top, width, height] in % of the panel area.
-  const LAYOUTS = {
-    grid4: [[0,0,50,50],[50,0,50,50],[0,50,50,50],[50,50,50,50]],
-    grid6: [[0,0,50,33.33],[50,0,50,33.33],[0,33.33,50,33.34],[50,33.33,50,33.34],[0,66.67,50,33.33],[50,66.67,50,33.33]],
-    splash: [[0,0,100,58],[0,58,33.33,42],[33.33,58,33.34,42],[66.67,58,33.33,42]],
-    wide: [[0,0,100,33.33],[0,33.33,50,33.34],[50,33.33,50,33.34],[0,66.67,100,33.33]],
-    tiers: [[0,0,100,33.33],[0,33.33,100,33.34],[0,66.67,100,33.33]],
+    advanced: 'Advanced: press Style to give the whole page the look of a comics era, place captions, speech, thoughts and sound effects anywhere, give every box its own shape, colour and lettering, and frame each picture with drag and zoom.',
   };
   const LIB = THEME.library.map(THEME.refPath);
   const DEFAULTS = {
@@ -288,7 +305,7 @@ import THEME from '/the-precinct/theme.js';
   const PH = { caption: 'Meanwhile, at the precinct...', speech: 'Type what they say', thought: 'What are they thinking?', sfx: 'Type a sound' };
   const blank = () => ({ img: null, fit: { x: 50, y: 50, z: 1 }, items: [] });
   const fresh = () => ({
-    level: 'medium', layout: 'grid6', title: '',
+    level: 'medium', style: 'williamson', title: '',
     panels: Array.from({ length: 6 }, blank),
     prose: Array.from({ length: 3 }, () => ({ img: null, fit: { x: 50, y: 50, z: 1 }, text: '' })),
   });
@@ -298,6 +315,8 @@ import THEME from '/the-precinct/theme.js';
 
   // Pages saved before tails could be dragged had tail: 'bl' | 'br' | 'none'.
   function migrate(){
+    // Pages from before styles had a layout (grid6, splash...); styles bring their own panels now.
+    if (!STYLE_KEYS_ORDER.includes(S.style)) S.style = 'williamson';
     S.panels.forEach(p => p.items.forEach(it => {
       if ((it.type === 'speech' || it.type === 'thought') && !it.tip) {
         it.tip = { x: it.tail === 'br' ? 8 : -8, y: it.type === 'speech' ? 5.5 : 7 };
@@ -377,7 +396,7 @@ import THEME from '/the-precinct/theme.js';
   const bench = $('bench');
   const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
   function panelList(){
-    return S.level === 'prose' ? S.prose : S.panels.slice(0, LAYOUTS[S.level === 'medium' ? 'grid4' : S.layout].length);
+    return S.level === 'prose' ? S.prose : S.panels.slice(0, look().panels.length);
   }
   const hasTail = it => it.type === 'speech' || it.type === 'thought';
 
@@ -417,6 +436,92 @@ import THEME from '/the-precinct/theme.js';
   const fontOf = it => FONTS[st(it, 'font')] || FONTS.comic;
   const padOf = it => PAD[st(it, 'shape')] || PAD.oval;
   const textSize = it => (it.type === 'sfx' ? 7 : 2.2 * fontOf(it).k) * st(it, 's');   // in cqw
+
+  // ---------- page styles: panel shapes, frames, page colour, title and lettering ----------
+  // The page is measured in cq, 1% of its width: 100 across and 150 down. Every panel is a polygon in those units,
+  // drawn by render() with clip-path and by exportPNG() with a canvas clip, so the page, the PNG and the print agree.
+  const PAGE_H = 150, AREA = [3, 13.5, 97, 146.25];   // left, top, right, bottom of the panel area, under the title
+  const Hl = (a, b = 0) => ({ a, b }), Vl = (c, e = 0) => ({ c, e });   // lines y = a + b·x and x = c + e·y
+  function quad(top, bottom, left, right){
+    const X = (h, v) => { const x = (v.c + v.e * h.a) / (1 - v.e * h.b); return [x, h.a + h.b * x]; };
+    return [X(top, left), X(top, right), X(bottom, right), X(bottom, left)];
+  }
+  // Rectangles as [x, y, w, h] in % of the panel area, with a gutter of g cq between them.
+  function grid(list, g){
+    const [x0, y0, x1, y1] = AREA, aw = x1 - x0, ah = y1 - y0;
+    return list.map(([x, y, w, h]) => {
+      const L = x0 + aw * x / 100, T = y0 + ah * y / 100, R = x0 + aw * (x + w) / 100, B = y0 + ah * (y + h) / 100;
+      return quad(Hl(T + (y > 0 ? g / 2 : 0)), Hl(B - (y + h < 99.9 ? g / 2 : 0)), Vl(L + (x > 0 ? g / 2 : 0)), Vl(R - (x + w < 99.9 ? g / 2 : 0)));
+    });
+  }
+  function tilted(cx, cy, w, h, deg){
+    const r = deg * Math.PI / 180, c = Math.cos(r), s = Math.sin(r);
+    return [[-w / 2, -h / 2], [w / 2, -h / 2], [w / 2, h / 2], [-w / 2, h / 2]].map(([x, y]) => [cx + x * c - y * s, cy + x * s + y * c]);
+  }
+  const bbox = poly => { const xs = poly.map(p => p[0]), ys = poly.map(p => p[1]), x = Math.min(...xs), y = Math.min(...ys);
+    return { x, y, w: Math.max(...xs) - x, h: Math.max(...ys) - y }; };
+  // Kirby: an opening splash, three panels between slanted cuts, and a wide close. The slant is fixed at 10°:
+  // steeper, the cuts cross and squeeze the middle panels to slivers.
+  const KIRBY = (() => {
+    const t = Math.tan(10 * Math.PI / 180), g = 2.4, [x0, y0, x1, y1] = AREA, ah = y1 - y0;
+    const m1 = y0 + ah * 0.44, m2 = y0 + ah * 0.74, mid = (m1 + m2) / 2;
+    const L1 = Hl(m1 - t * 50, t), L2 = Hl(m2 + t * 50, -t);
+    const C1 = Vl(x0 + (x1 - x0) * 0.36 - t * mid, t), C2 = Vl(x0 + (x1 - x0) * 0.66 + t * mid, -t);
+    const dy = (l, d) => Hl(l.a + d, l.b), dx = (l, d) => Vl(l.c + d, l.e), T = Hl(y0), B = Hl(y1), Lf = Vl(x0), R = Vl(x1);
+    return [
+      quad(T, dy(L1, -g / 2), Lf, R),
+      quad(dy(L1, g / 2), dy(L2, -g / 2), Lf, dx(C1, -g / 2)),
+      quad(dy(L1, g / 2), dy(L2, -g / 2), dx(C1, g / 2), dx(C2, -g / 2)),
+      quad(dy(L1, g / 2), dy(L2, -g / 2), dx(C2, g / 2), R),
+      quad(dy(L2, g / 2), B, Lf, R),
+    ];
+  })();
+  // frames: [width shown, colour], outermost first. letters: the lettering every box takes on in this style.
+  const LOOKS = {
+    williamson: { page: '#f3eee0', frames: [[0.45, '#111']],
+      panels: grid([[0,0,50,33.33],[50,0,50,33.33],[0,33.33,50,33.34],[50,33.33,50,33.34],[0,66.67,50,33.33],[50,66.67,50,33.33]], 1.5),
+      title: { family: 'Knewave', weight: 400, size: 5.4, color: '#111' },
+      letters: { caption: { shape: 'rect', color: 'yellow', font: 'comic' }, speech: { shape: 'oval', color: 'white', font: 'comic' },
+        thought: { shape: 'cloud', color: 'white', font: 'comic' }, sfx: { color: 'yellow', tilt: -8, s: 1 } } },
+    ronin: { page: '#faf8f2', frames: [[0.3, '#111']],
+      panels: grid([0, 1, 2, 3, 4, 5].map(i => [0, i * 100 / 6, 100, 100 / 6]), 1.3),
+      title: { family: 'Oswald', weight: 300, size: 3.6, color: '#111', spacing: 0.5 },
+      letters: { caption: { shape: 'rect', color: 'paper', font: 'type' }, speech: { shape: 'oval', color: 'white', font: 'comic' },
+        thought: { shape: 'oval', color: 'white', font: 'type' }, sfx: { color: 'red', tilt: 0, s: 0.8 } } },
+    sincity: { page: '#0b0b0b', frames: [], ink: 'grayscale(1) contrast(2.1) brightness(.95)',
+      panels: grid([[0,0,58,64],[58,0,42,30],[58,30,42,34],[0,64,40,36],[40,64,60,36]], 3),
+      title: { family: 'Knewave', weight: 400, size: 6.4, color: '#fff', spacing: 0.04 },
+      letters: { caption: { shape: 'rect', color: 'white', font: 'hand' }, speech: { shape: 'oval', color: 'white', font: 'hand' },
+        thought: { shape: 'cloud', color: 'white', font: 'hand' }, sfx: { color: 'white', tilt: 0, s: 1.3 } } },
+    marvel: { page: '#f5ecd6', frames: [[0.7, '#111']], panels: KIRBY,
+      title: { family: 'Knewave', weight: 400, size: 7, color: '#c2452d', stroke: [0.35, '#111'], rotate: -3 },
+      letters: { caption: { shape: 'rect', color: 'yellow', font: 'bold' }, speech: { shape: 'oval', color: 'white', font: 'comic' },
+        thought: { shape: 'cloud', color: 'white', font: 'comic' }, sfx: { color: 'yellow', tilt: -8, s: 1.3 } } },
+    image: { page: '#111', frames: [[0.9, '#fff'], [0.3, '#111']], layered: true, clearTitle: 9,   // panel 0 fills the page, unframed; its words start below the title
+      panels: [[[0, 0], [100, 0], [100, PAGE_H], [0, PAGE_H]], tilted(30, 75, 50, 27, -4), tilted(68, 45, 50, 30, 3), tilted(62, 114, 66, 25.5, -2), tilted(26, 132, 40, 21, 4)],
+      title: { family: 'Oswald', weight: 700, size: 8, color: '#fff', stroke: [0.3, '#111'] },
+      letters: { caption: { shape: 'round', color: 'blue', font: 'bold' }, speech: { shape: 'round', color: 'white', font: 'bold' },
+        thought: { shape: 'cloud', color: 'white', font: 'bold' }, sfx: { color: 'red', tilt: 8, s: 1.3 } } },
+  };
+  // Medium is always the 1940s look, in four panels.
+  const MEDIUM = Object.assign({}, LOOKS.williamson, { panels: grid([[0,0,50,50],[50,0,50,50],[0,50,50,50],[50,50,50,50]], 1.5) });
+  const STYLE_KEYS_ORDER = THEME.pageStyles.map(s => s.key);
+  const look = () => S.level === 'medium' ? MEDIUM : (LOOKS[S.style] || LOOKS.williamson);
+  const framesOf = (lk, i) => lk.layered && i === 0 ? [] : lk.frames;
+  function titleCss(tt){
+    return 'font-family:' + tt.family + ';font-weight:' + tt.weight + ';font-size:' + tt.size + 'cqw;color:' + tt.color
+      + (tt.spacing ? ';letter-spacing:' + tt.spacing + 'em' : '')
+      + (tt.stroke ? ';-webkit-text-stroke:' + 2 * tt.stroke[0] + 'cqw ' + tt.stroke[1] + ';paint-order:stroke fill' : '')
+      + (tt.rotate ? ';transform:rotate(' + tt.rotate + 'deg);transform-origin:left center' : '');
+  }
+  // Give every box the lettering of a style, and make new boxes start that way too.
+  function applyLetters(key){
+    const L = LOOKS[key].letters;
+    S.panels.forEach(p => p.items.forEach(it => Object.assign(it, L[it.type])));
+    const ct = LOOKS[key].clearTitle;
+    if (ct) S.panels[0].items.forEach(it => { it.y = Math.max(it.y, ct); });
+    S.last = JSON.parse(JSON.stringify(L));
+  }
 
   function itemHTML(it, j, on){
     const c = colourOf(it);
@@ -546,15 +651,22 @@ import THEME from '/the-precinct/theme.js';
       return;
     }
 
-    const rects = LAYOUTS[S.level === 'medium' ? 'grid4' : S.layout];
-    bench.innerHTML = '<div class="sheet" id="sheet"><div class="sheet-title" contenteditable="true" spellcheck="false" data-ph="Your title" id="titleEl">' + esc(S.title) + '</div><div class="panels">'
-      + rects.map((r, i) => {
-        const p = S.panels[i];
-        return '<div class="pnl' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '" style="left:' + r[0] + '%;top:' + r[1] + '%;width:' + r[2] + '%;height:' + r[3] + '%"><div class="pnl-inner">'
-          + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + imgStyle(p.fit) + '">' : empty(sel.p === i))
+    const lk = look();
+    bench.innerHTML = '<div class="sheet" id="sheet" style="background:' + lk.page + '"><div class="sheet-title" contenteditable="true" spellcheck="false" data-ph="Your title" id="titleEl" style="'
+      + titleCss(lk.title) + '">' + esc(S.title) + '</div>'
+      + lk.panels.map((poly, i) => {
+        const p = S.panels[i], b = bbox(poly), local = poly.map(([x, y]) => [x - b.x, y - b.y]);
+        const clip = local.map(([x, y]) => (x / b.w * 100) + '% ' + (y / b.h * 100) + '%').join(',');
+        const pts = local.map(q => q.join(',')).join(' ');
+        return '<div class="pnl' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '" style="left:' + b.x + '%;top:' + (b.y / PAGE_H * 100) + '%;width:' + b.w + '%;height:' + (b.h / PAGE_H * 100) + '%">'
+          + '<div class="pnl-inner" style="clip-path:polygon(' + clip + ')">'
+          + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + imgStyle(p.fit) + (lk.ink ? ';filter:' + lk.ink : '') + '">' : empty(sel.p === i))
           + p.items.map((it, j) => itemHTML(it, j, sel.p === i && sel.it === j)).join('')
+          + '<svg class="edge" viewBox="0 0 ' + b.w + ' ' + b.h + '" preserveAspectRatio="none" aria-hidden="true">'
+          + framesOf(lk, i).map(([w, c]) => '<polygon points="' + pts + '" fill="none" stroke="' + c + '" stroke-width="' + 2 * w + '"/>').join('')
+          + '<polygon class="hl" points="' + pts + '"/></svg>'
           + '</div></div>';
-      }).join('') + '</div></div>';
+      }).join('') + '</div>';
     ro.disconnect();
     bench.querySelectorAll('.it:not(.it-sfx)').forEach(el => { drawBox(el); ro.observe(el.querySelector('.it-text')); });
     showTip();
@@ -623,6 +735,7 @@ import THEME from '/the-precinct/theme.js';
   let drag = null;
   bench.addEventListener('pointerdown', e => {
     if (e.button > 0 || e.target.closest('[data-act],[data-pick],textarea')) return;
+    cardOpen = false;
     const pnl = e.target.closest('.pnl, .pframe');
     if (!pnl) { if (S.level !== 'prose' && !e.target.closest('#titleEl')) { sel = NONE(); render(); } return; }
     const i = +pnl.dataset.i, inner = pnl.querySelector('.pnl-inner'), box = inner.getBoundingClientRect();
@@ -679,7 +792,7 @@ import THEME from '/the-precinct/theme.js';
       f.x = Math.max(0, Math.min(100, drag.fx - px * 1.4 * (f.flip ? -1 : 1)));   // a flipped picture still follows the finger
       f.y = Math.max(0, Math.min(100, drag.fy - py * 1.4 * (f.flipY ? -1 : 1)));
       const im = imgEl(drag.i);
-      if (im) im.setAttribute('style', imgStyle(f));
+      if (im) im.setAttribute('style', imgStyle(f) + (look().ink && S.level !== 'prose' ? ';filter:' + look().ink : ''));
       return;
     }
     const it = S.panels[drag.i].items[drag.j];
@@ -767,7 +880,7 @@ import THEME from '/the-precinct/theme.js';
     const f = panelList()[i].fit; f.z = Math.max(1, Math.min(3, z));
     if ($('zoom')) $('zoom').value = f.z;
     const im = imgEl(i);
-    if (im) im.setAttribute('style', imgStyle(f));
+    if (im) im.setAttribute('style', imgStyle(f) + (look().ink && S.level !== 'prose' ? ';filter:' + look().ink : ''));
     save();
   }
   // Pinch on a trackpad (or Ctrl + scroll) zooms the chosen picture.
@@ -836,7 +949,12 @@ import THEME from '/the-precinct/theme.js';
     const it = Object.assign({ type }, JSON.parse(JSON.stringify(DEFAULTS[type])));
     Object.assign(it, S.last && S.last[type]);   // new boxes start in the style used last for their kind
     if (text != null) it.text = text;
+    // Positions are % of the panel's bounding box; start from the panel's own top-left corner, which on a
+    // slanted or tilted panel sits inside that box.
+    const poly = look().panels[sel.p], bb = bbox(poly);
+    if (type === 'caption' || type === 'thought') { it.x += (poly[0][0] - bb.x) / bb.w * 100; it.y += (poly[0][1] - bb.y) / bb.h * 100; }
     it.y = Math.min(80, it.y + (items.length % 3) * 6);
+    if (sel.p === 0 && look().clearTitle) it.y = Math.max(it.y, look().clearTitle);
     items.push(it);
     sel.it = items.length - 1;
     save();
@@ -872,7 +990,6 @@ import THEME from '/the-precinct/theme.js';
   }
 
   // ---------- the dock: page tools, then panel tools, then box styles, as each is chosen ----------
-  const LAYOUT_NAMES = [['grid6', 'Six panels'], ['splash', 'Splash + 3'], ['wide', 'Wide + 2 + wide'], ['tiers', 'Three tiers'], ['grid4', 'Four panels']];
   const ADD_NAMES = { caption: 'Caption box', speech: 'Speech balloon', thought: 'Thought bubble', sfx: 'Sound effect' };
   const NEW = '<i class="new">NEW</i>';
   let exporting = false, shownGroups = [];
@@ -901,8 +1018,10 @@ import THEME from '/the-precinct/theme.js';
       done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this panel (Esc)&#10;&#10;Keyboard, with a panel chosen:&#10;Ctrl/&#8984;+V: paste a picture you have copied&#10;Ctrl + scroll, or pinch on a trackpad: zoom the picture&#10;Ctrl/&#8984;+Z: undo, Shift+Ctrl/&#8984;+Z: redo' });
     } else {
       h = '<span class="what">Page</span>'
-        + (S.level === 'advanced' ? g('layout', '<b>Layout' + (seen('n:layout') ? '' : NEW) + '</b>'
-          + LAYOUT_NAMES.map(([k, l]) => b('layout', l, { v: k, on: S.layout === k })).join('')) : '')
+        + (S.level === 'advanced' ? g('style', '<b>Style' + (seen('n:style') ? '' : NEW) + '</b>'
+          + b('style', esc(styleInfo().name) + ' <span class="n">' + (STYLE_KEYS_ORDER.indexOf(S.style) + 1) + ' / ' + STYLE_KEYS_ORDER.length + '</span> &#9656;',
+            { cls: 'stylebtn', title: 'Give the whole page the look of the next comics era' })
+          + b('about', 'About this style', { cls: 'btn ghost small', on: cardOpen })) : '')
         + g('page', b('png', 'Download PNG <span class="arr">&darr;</span>', { cls: 'btn small', id: 'pngBtn', off: exporting })
           + b('print', 'Print or save as PDF', { cls: 'btn ghost small' }) + b('reset', 'Start again', { cls: 'btn ghost small' }));
     }
@@ -918,7 +1037,30 @@ import THEME from '/the-precinct/theme.js';
     tray.hidden = !bankOpen();
     tray.style.bottom = dock.offsetHeight + 'px';
     document.body.style.paddingBottom = (dock.offsetHeight + (tray.hidden ? 0 : tray.offsetHeight) + 24) + 'px';
+    renderCard(dock.offsetHeight);
   }
+
+  // ---------- the style card: what the style is, and a line to ask the AI for pictures that match ----------
+  let cardOpen = false;
+  const styleInfo = () => THEME.pageStyles.find(s => s.key === S.style) || THEME.pageStyles[0];
+  function renderCard(dockH){
+    const el = $('styleCard'), on = cardOpen && S.level === 'advanced' && sel.p == null;
+    el.hidden = !on;
+    if (!on) return;
+    const s = styleInfo();
+    el.innerHTML = '<button type="button" class="x" data-card="close" aria-label="Close">&times;</button>'
+      + '<div class="era">' + esc(s.era) + '</div><h3>' + esc(s.title) + '</h3><p>' + esc(s.about) + '</p>'
+      + '<h4>Pictures to match: add this to your prompt</h4><div class="prompt">' + esc(s.prompt) + '</div>'
+      + '<div class="row"><button type="button" class="btn small" data-card="copy">Copy the prompt line</button>'
+      + '<small>It describes the look instead of naming the artist.</small></div>';
+    el.style.bottom = (dockH + 12) + 'px';
+  }
+  $('styleCard').addEventListener('click', e => {
+    const b = e.target.closest('[data-card]'); if (!b) return;
+    if (b.dataset.card === 'close') { cardOpen = false; return render(); }
+    const done = ok => { b.textContent = ok ? 'Copied' : 'Select the text above to copy it'; };
+    try { navigator.clipboard.writeText(styleInfo().prompt).then(() => done(true), () => done(false)); } catch (err) { done(false); }
+  });
 
   $('dock').addEventListener('click', e => {
     const sb = e.target.closest('[data-style]'), it = chosenItem();
@@ -944,10 +1086,15 @@ import THEME from '/the-precinct/theme.js';
         markSeen('n:' + v); markSeen('add');
         if (v === 'sfx') { sfxOpen = !sfxOpen; return render(); }
         return addItem(v, null, true);
-      case 'layout':
-        markSeen('n:layout');
-        if (S.layout !== v) { checkpoint(); S.layout = v; sel = NONE(); save(); }
+      case 'style': {
+        markSeen('n:style');
+        checkpoint();
+        S.style = STYLE_KEYS_ORDER[(STYLE_KEYS_ORDER.indexOf(S.style) + 1) % STYLE_KEYS_ORDER.length];
+        applyLetters(S.style);
+        sel = NONE(); cardOpen = true; save();
         return render();
+      }
+      case 'about': cardOpen = !cardOpen; return render();
       case 'png': sel = NONE(); render(); return exportPNG();
       case 'print': sel = NONE(); return render().then(() => print());
       case 'reset':
@@ -990,7 +1137,7 @@ import THEME from '/the-precinct/theme.js';
   // In order: the first one that applies and hasn't been seen is shown.
   const TIPS = [
     { id: 'advanced', at: 'dock', when: () => S.level === 'advanced' && sel.p == null,
-      title: 'Advanced unlocked', text: 'Page layouts are down here. Choose a panel for thought bubbles and sound effects; choose a box for every shape, colour and lettering.' },
+      title: 'Advanced unlocked', text: 'Press Style down here to give the whole page the look of a comics era, from 1940s noir to 1990s Image. Choose a panel for thought bubbles and sound effects.' },
     { id: 'picture', at: 'dock', when: () => sel.p != null && !chosenItem() && !panelList()[sel.p].img,
       title: 'Bring a picture in', text: 'Upload one, pick from our library, or copy a picture in ChatGPT, Gemini or Copilot and paste it here with Ctrl/⌘+V.' },
     { id: 'add', at: 'dock', when: addReady,
@@ -1004,7 +1151,7 @@ import THEME from '/the-precinct/theme.js';
   ];
   let tipNow = null;
   function showTip(){
-    const t = TIPS.find(x => !seen(x.id) && x.when());
+    const t = $('styleCard').hidden ? TIPS.find(x => !seen(x.id) && x.when()) : null;
     tipNow = t || null;
     const el = $('tip');
     if (!t) { el.hidden = true; return; }
@@ -1060,9 +1207,16 @@ import THEME from '/the-precinct/theme.js';
     });
     return out;
   }
-  function drawCover(ctx, im, fit, x, y, w, h){
+  function drawCover(ctx, im, fit, x, y, w, h, ink){
     ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
     ctx.fillStyle = '#222'; ctx.fillRect(x, y, w, h);
+    if (im && ink) {   // draw the picture on its own canvas and ink it there, so every browser gets the same result
+      const oc = document.createElement('canvas');
+      oc.width = Math.ceil(w); oc.height = Math.ceil(h);
+      drawCover(oc.getContext('2d'), im, fit, 0, 0, w, h);
+      inkBW(oc);
+      ctx.drawImage(oc, x, y); ctx.restore(); return;
+    }
     if (fit.flip) { ctx.translate(2 * x + w, 0); ctx.scale(-1, 1); }    // mirror about the panel's centre lines
     if (fit.flipY) { ctx.translate(0, 2 * y + h); ctx.scale(1, -1); }
     if (im) {
@@ -1071,6 +1225,25 @@ import THEME from '/the-precinct/theme.js';
       const ox = w * fit.x / 100, oy = h * fit.y / 100;
       ctx.drawImage(im, x + ox + (offX - ox) * fit.z, y + oy + (offY - oy) * fit.z, rw * fit.z, rh * fit.z);
     }
+    ctx.restore();
+  }
+  // The Sin City inking, pixel by pixel, as the page's CSS filter grayscale(1) contrast(2.1) brightness(.95) does it.
+  function inkBW(cv){
+    const cx = cv.getContext('2d'), d = cx.getImageData(0, 0, cv.width, cv.height), a = d.data;
+    for (let k = 0; k < a.length; k += 4) {
+      const g = (0.2126 * a[k] + 0.7152 * a[k + 1] + 0.0722 * a[k + 2]) / 255;
+      a[k] = a[k + 1] = a[k + 2] = Math.max(0, Math.min(1, (g - 0.5) * 2.1 + 0.5)) * 0.95 * 255;
+    }
+    cx.putImageData(d, 0, 0);
+  }
+  function drawTitle(ctx, text, tt, cq, H){
+    ctx.save();
+    ctx.font = tt.weight + ' ' + tt.size * cq + 'px ' + tt.family;
+    if (tt.spacing && 'letterSpacing' in ctx) ctx.letterSpacing = tt.spacing * tt.size * cq + 'px';
+    ctx.textBaseline = 'middle'; ctx.translate(W * 0.03, H * 0.046);
+    if (tt.rotate) ctx.rotate(tt.rotate * Math.PI / 180);
+    if (tt.stroke) { ctx.lineWidth = 2 * tt.stroke[0] * cq; ctx.strokeStyle = tt.stroke[1]; ctx.lineJoin = 'round'; ctx.strokeText(text, 0, 0); }
+    ctx.fillStyle = tt.color; ctx.fillText(text, 0, 0);
     ctx.restore();
   }
   function drawItem(ctx, it, px, py, pw, ph){
@@ -1108,7 +1281,7 @@ import THEME from '/the-precinct/theme.js';
   async function exportPNG(){
     exporting = true; renderDock();
     try {
-      await Promise.all(['40px Knewave', '40px "Libre Baskerville"'].concat(Object.values(FONTS).map(f => f.weight + ' 40px ' + f.family)).map(f => document.fonts.load(f).catch(() => {})));
+      await Promise.all(['40px Knewave', '40px "Libre Baskerville"', '300 40px Oswald', '700 40px Oswald'].concat(Object.values(FONTS).map(f => f.weight + ' 40px ' + f.family)).map(f => document.fonts.load(f).catch(() => {})));
       const list = panelList();
       const ims = await Promise.all(list.map(async p => loadImg(await urlFor(p.img))));
       const c = document.createElement('canvas'), ctx = c.getContext('2d'), cq = W / 100;
@@ -1130,19 +1303,20 @@ import THEME from '/the-precinct/theme.js';
           y += 4 * cq;
         });
       } else {
-        const H = W * 1.5; c.width = W; c.height = H;
-        ctx.fillStyle = '#f3eee0'; ctx.fillRect(0, 0, W, H);
-        if (S.title.trim()) { ctx.fillStyle = '#111'; ctx.font = (5.4 * cq) + 'px Knewave'; ctx.textBaseline = 'middle'; ctx.fillText(S.title.toUpperCase(), W * 0.03, H * 0.046); }
-        const ax = W * 0.03, ay = H * 0.09, aw = W * 0.94, ah = H * (1 - 0.09 - 0.025), pad = 0.7 * cq, bw = 0.45 * cq;
-        const rects = LAYOUTS[S.level === 'medium' ? 'grid4' : S.layout];
-        rects.forEach((r, i) => {
-          const x = ax + aw * r[0] / 100 + pad, y = ay + ah * r[1] / 100 + pad, w = aw * r[2] / 100 - 2 * pad, h = ah * r[3] / 100 - 2 * pad;
-          drawCover(ctx, ims[i], S.panels[i].fit, x, y, w, h);
-          ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
-          S.panels[i].items.forEach(it => drawItem(ctx, it, x + bw, y + bw, w - 2 * bw, h - 2 * bw));
+        const H = W * 1.5, lk = look(); c.width = W; c.height = H;
+        ctx.fillStyle = lk.page; ctx.fillRect(0, 0, W, H);
+        lk.panels.forEach((poly, i) => {
+          const P = poly.map(([x, y]) => [x * cq, y * cq]), b = bbox(P), path = new Path2D();
+          P.forEach(([x, y], k) => k ? path.lineTo(x, y) : path.moveTo(x, y)); path.closePath();
+          ctx.save(); ctx.clip(path);
+          drawCover(ctx, ims[i], S.panels[i].fit, b.x, b.y, b.w, b.h, lk.ink);
+          S.panels[i].items.forEach(it => drawItem(ctx, it, b.x, b.y, b.w, b.h));
+          // frames: twice the width, clipped to the panel, so only the inner half shows (as on the page)
+          framesOf(lk, i).forEach(([w, col]) => { ctx.lineWidth = 2 * w * cq; ctx.strokeStyle = col; ctx.lineJoin = 'miter'; ctx.stroke(path); });
           ctx.restore();
-          ctx.lineWidth = bw; ctx.strokeStyle = '#111'; ctx.strokeRect(x + bw / 2, y + bw / 2, w - bw, h - bw);
         });
+        // the title goes on last: in the Image style a picture fills the page underneath it
+        if (S.title.trim()) drawTitle(ctx, S.title.toUpperCase(), lk.title, cq, H);
       }
       const blob = await new Promise(r => c.toBlob(r, 'image/png'));
       const a = document.createElement('a');

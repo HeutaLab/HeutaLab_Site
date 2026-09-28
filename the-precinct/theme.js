@@ -221,6 +221,27 @@ export default {
     black:  { label: 'Black',       fill: '#111111', text: '#f3eee0', line: '#f3eee0' },
   },
 
+  // Page styles in the comic builder (Advanced). The builder holds each style's look (panel shapes, frames,
+  // page colour, lettering); these are the words about it. `prompt` describes the look rather than naming the
+  // artist: some AI tools refuse living artists' names, and putting a style into words is the skill being taught.
+  pageStyles: [
+    { key: 'williamson', name: '1940s · Williamson', era: '1940s–50s newspaper noir', title: 'Al Williamson',
+      about: 'Even panels, clean frames and plenty of room: the newspaper-strip noir that Al Williamson and his generation drew. Every panel gets the same weight, so the story reads at a steady walk.',
+      prompt: 'Black ink illustration with fine hatching, 1940s film-noir comic strip, clean lines, strong single light source.' },
+    { key: 'ronin', name: '1980s · Ronin', era: 'Frank Miller, Ronin (1983)', title: 'Ronin strips',
+      about: 'Frank Miller borrowed from Japanese manga and samurai films: thin, wide strips like a film screen. Time slows down, and a small movement across three strips feels huge.',
+      prompt: 'Wide cinematic frame, loose expressive ink, muted colour washes, influenced by 1970s Japanese manga.' },
+    { key: 'sincity', name: '1990s · Sin City', era: 'Frank Miller, Sin City (1991)', title: 'Sin City',
+      about: 'Black page, no frames, pure black and white: shapes are cut out of shadow. Panels bleed into the dark, so the gutters disappear and the page reads as one image. Your pictures are inked black and white to match.',
+      prompt: 'Stark black and white, no grey tones, heavy solid shadows, silhouettes, rain as white streaks, high contrast.' },
+    { key: 'marvel', name: '1960s · Marvel', era: 'Jack Kirby and the 1960s Marvel Bullpen', title: 'Kirby dynamics',
+      about: 'Jack Kirby made the page itself move: slanted cuts, a huge opening panel, bodies and sound effects bursting out. Stan Lee wrote and edited; the look is Kirby’s (with Ditko and Romita).',
+      prompt: 'Dynamic action pose, dramatic foreshortening, bold thick outlines, bright flat colours, energy lines.' },
+    { key: 'image', name: '1990s · Image', era: 'Image Comics and the 1990s', title: 'Image era',
+      about: 'Big and loud: one picture fills the whole page, with smaller panels stacked on top at angles, thick white frames, and colour everywhere. Posters as much as stories.',
+      prompt: 'Poster-style splash, extreme detail, glossy saturated colour, dramatic low camera angle, lens flare.' },
+  ],
+
   // Sound effects offered in the comic builder, grouped by what makes the noise.
   sfx: [
     ['Gunfire', ['BLAM!', 'BANG!', 'RAT-A-TAT!', 'KA-BLAM!', 'PING!']],
