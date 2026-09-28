@@ -683,7 +683,9 @@ import THEME from '/the-precinct/theme.js';
     if (S.level === 'prose') {
       bench.innerHTML = '<div class="prose-page"><div class="prose-title" contenteditable="true" spellcheck="false" data-ph="Your title" id="titleEl">' + esc(S.title) + '</div>'
         + list.map((f, i) => '<div class="pframe' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '">'
-          + '<div class="pnl-inner">' + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + picStyle(i) + '">' : empty(sel.p === i)) + '</div>'
+          + '<div class="pnl-inner">' + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + picStyle(i) + '">'
+            + (sel.p === i ? '<span class="prot-h" title="Drag to turn the picture (hold Shift for steps of 15°)" style="left:94%;top:13%">&#8635;</span>' : '')
+            : empty(sel.p === i)) + '</div>'
           + '<textarea data-i="' + i + '" placeholder="Write this part of the story. Who is here? What just happened? What happens next?">' + esc(f.text) + '</textarea>'
           + (list.length > 1 ? '<button type="button" class="rm" data-rm="' + i + '" aria-label="Remove this frame">&times;</button>' : '') + '</div>').join('')
         + (list.length < 6 ? '<button type="button" class="addframe" id="addFrame">+ Add another picture</button>' : '') + '</div>';
@@ -784,16 +786,19 @@ import THEME from '/the-precinct/theme.js';
     const pnl = e.target.closest('.pnl, .pframe');
     if (!pnl) { if (S.level !== 'prose' && !e.target.closest('#titleEl')) { sel = NONE(); render(); } return; }
     const i = +pnl.dataset.i, inner = pnl.querySelector('.pnl-inner'), box = inner.getBoundingClientRect();
+    // One way to start turning a picture, for panels and prose frames alike: about the centre of the picture's box.
+    const turnPic = box => {
+      e.preventDefault();
+      const cx = box.left + box.width / 2, cy = box.top + box.height / 2;
+      return startDrag(e, { kind: 'prot', i, box, cx, cy, r0: panelList()[i].fit.r || 0, a0: Math.atan2(e.clientY - cy, e.clientX - cx) * 180 / Math.PI });
+    };
     if (pnl.classList.contains('pframe')) {
+      if (e.target.closest('.prot-h')) return turnPic(box);
       // Prose frames: the click handler chooses the frame; once chosen, its picture can be panned.
       if (sel.p === i && S.prose[i].img && inner.contains(e.target)) startDrag(e, { kind: 'pan', i, box });
       return;
     }
-    if (e.target.closest('.prot-h')) {
-      e.preventDefault();
-      const r = bench.querySelector('.pnl:not(.wl)[data-i="' + i + '"] .pnl-inner').getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-      return startDrag(e, { kind: 'prot', i, box, cx, cy, r0: S.panels[i].fit.r || 0, a0: Math.atan2(e.clientY - cy, e.clientX - cx) * 180 / Math.PI });
-    }
+    if (e.target.closest('.prot-h')) return turnPic(bench.querySelector('.pnl:not(.wl)[data-i="' + i + '"] .pnl-inner').getBoundingClientRect());
     const hd = e.target.closest('.tip-h, .rs-h, .rot-h');
     if (hd) {
       e.preventDefault();
@@ -849,7 +854,7 @@ import THEME from '/the-precinct/theme.js';
       a = ((a + 540) % 360) - 180;
       const q = e.shiftKey ? 15 : 90;
       if (e.shiftKey || Math.abs(a - Math.round(a / q) * q) < 4) a = Math.round(a / q) * q;
-      S.panels[drag.i].fit.r = Math.round(a);
+      panelList()[drag.i].fit.r = Math.round(a);
       const im = imgEl(drag.i);
       if (im) im.setAttribute('style', picStyle(drag.i));
       return;
