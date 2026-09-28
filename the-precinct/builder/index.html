@@ -49,6 +49,7 @@
   .stylebar .sw{width:26px;height:26px;border-radius:50%;border:2px solid var(--frame);cursor:pointer;padding:0}
   .stylebar .sw.active{outline:2px solid var(--yellow);outline-offset:2px;border-color:#000}
   .stylebar .what{font-family:var(--brush);color:var(--ink);font-size:18px;text-transform:uppercase;margin-right:2px}
+  .stylebar .more{font-size:12.5px;font-style:italic;color:var(--ink-dim)}
 
   /* the comic page */
   .sheet{position:relative;width:min(100%,720px);aspect-ratio:2/3;background:#f3eee0;container-type:inline-size;
@@ -224,7 +225,7 @@
           <button class="pill" data-add="thought">Thought bubble</button>
           <button class="pill" data-add="sfx" aria-expanded="false" aria-controls="sfxBank">Sound effect</button>
           <div class="sfx-bank" id="sfxBank" hidden></div>
-          <p class="lvl-note">Drag the yellow dot to point a tail at whoever is talking, and the yellow bar to make a box wider or narrower. Choose any box to change its shape, colour, lettering and size in the bar along the bottom of the screen; new boxes start in the style you used last. With a box chosen: Delete removes it, the arrow keys nudge it, Esc lets go.</p>
+          <p class="lvl-note">Drag the yellow dot to point a tail at whoever is talking, and the yellow bar to make a box wider or narrower. Choose any box to change how it looks in the bar along the bottom of the screen (Advanced has the most choices); new boxes start in the style you used last. With a box chosen: Delete removes it, the arrow keys nudge it, Esc lets go.</p>
         </div>
         <div class="grp">
           <h4>Page</h4>
@@ -267,7 +268,7 @@ import THEME from '/the-precinct/theme.js';
   const LEVEL_NOTES = {
     prose: 'Prose: write it like a storybook. One picture, a paragraph underneath. Get the story straight before you think about panels.',
     medium: 'Medium: four panels. Give each one a caption box for the narrator and a speech balloon for a character, and point the balloon at whoever is talking.',
-    advanced: 'Advanced: choose a layout, place captions, speech, thoughts and sound effects anywhere, and frame each picture with drag and zoom.',
+    advanced: 'Advanced: choose a layout, place captions, speech, thoughts and sound effects anywhere, give every box its own shape, colour and lettering, and frame each picture with drag and zoom.',
   };
   // Panel rectangles as [left, top, width, height] in % of the panel area.
   const LAYOUTS = {
@@ -398,6 +399,12 @@ import THEME from '/the-precinct/theme.js';
     bold:  { label: 'Headline',    family: 'Oswald,"Arial Narrow",sans-serif',         weight: 600, upper: true,  k: 1.05 },
   };
   const SIZE_NAMES = ['S', 'M', 'L', 'XL'];   // one per SIZES
+  // What the style bar offers grows with the level, as people get used to building a page.
+  // Prose has no boxes, so no style bar. Medium gets a first taste; Advanced (no entry here) gets everything.
+  const TIERS = {
+    medium: { shapes: { speech: ['oval', 'shout'], caption: [] }, colours: ['white', 'yellow', 'black'], fonts: [], sizes: [0.8, 1, 1.3],
+              more: 'Whispers, thought bubbles, more colours and lettering come in Advanced.' },
+  };
   const TILTS = [[-8, 'Tilt left'], [0, 'Straight'], [8, 'Tilt right']];
   const STYLE0 = {
     speech:  { shape: 'oval',  color: 'white',  font: 'comic', s: 1 },
@@ -868,15 +875,22 @@ import THEME from '/the-precinct/theme.js';
     const grp = (label, key, opts, css) => '<div class="sg" role="group" aria-label="' + label + '"><b>' + label + '</b>'
       + opts.map(([v, l]) => '<button type="button" class="pill' + (st(it, key) === v ? ' active' : '') + '" data-style="' + key + '" data-v="' + v + '"'
         + (css ? ' style="' + css(v) + '"' : '') + '>' + l + '</button>').join('') + '</div>';
+    // A tier narrows each list; a list of one or none drops its group. Styles set in Advanced stay put in Medium.
+    const tier = TIERS[S.level] || {}, pick = (all, keep) => keep ? all.filter(o => keep.includes(o[0])) : all;
+    const shapes = pick(SHAPES[it.type] || [], tier.shapes && tier.shapes[it.type]);
+    const colours = pick(Object.entries(COLOURS), tier.colours);
+    const fonts = pick(Object.entries(FONTS).map(([k, f]) => [k, f.label]), tier.fonts);
+    const sizes = pick(SIZES.map((v, k) => [v, SIZE_NAMES[k]]), tier.sizes);
     let h = '<span class="what">' + KIND[it.type] + '</span>';
-    if (SHAPES[it.type]) h += grp('Shape', 'shape', SHAPES[it.type]);
-    h += '<div class="sg" role="group" aria-label="Colour"><b>Colour</b>' + Object.entries(COLOURS).map(([k, c]) =>
+    if (shapes.length > 1) h += grp('Shape', 'shape', shapes);
+    h += '<div class="sg" role="group" aria-label="Colour"><b>Colour</b>' + colours.map(([k, c]) =>
       '<button type="button" class="sw' + (st(it, 'color') === k ? ' active' : '') + '" data-style="color" data-v="' + k + '" title="' + c.label
       + '" aria-label="' + c.label + '" style="background:' + c.fill + '"></button>').join('') + '</div>';
-    h += it.type === 'sfx' ? grp('Tilt', 'tilt', TILTS)
-      : grp('Lettering', 'font', Object.entries(FONTS).map(([k, f]) => [k, f.label]),
-          k => 'font-family:' + FONTS[k].family.replace(/"/g, "'") + ';text-transform:none;letter-spacing:0;font-size:' + (13 * FONTS[k].k) + 'px');
-    h += grp('Size', 's', SIZES.map((v, k) => [v, SIZE_NAMES[k]]));
+    if (it.type === 'sfx') h += grp('Tilt', 'tilt', TILTS);
+    else if (fonts.length > 1) h += grp('Lettering', 'font', fonts,
+      k => 'font-family:' + FONTS[k].family.replace(/"/g, "'") + ';text-transform:none;letter-spacing:0;font-size:' + (13 * FONTS[k].k) + 'px');
+    h += grp('Size', 's', sizes);
+    if (tier.more) h += '<span class="more">' + tier.more + '</span>';
     bar.innerHTML = h;
   }
   $('styleBar').addEventListener('click', e => {
