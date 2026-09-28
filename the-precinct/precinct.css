@@ -252,9 +252,12 @@
   .case-tag{font-family:var(--label);letter-spacing:.16em;text-transform:uppercase;font-size:11px;color:var(--ink-dim)}
   .case h3{font-family:var(--brush);font-weight:400;color:var(--yellow);text-transform:uppercase;font-size:21px;line-height:1.05;margin:4px 0 8px}
   .case p{margin:0 0 12px;font-size:13px;line-height:1.5}
-  .look{margin-top:auto;padding:10px 12px;background:var(--bg);border-left:3px solid var(--yellow);font-size:12.5px;line-height:1.5}
+  .case-alias{font-family:var(--script);color:var(--ink);font-size:20px;line-height:1;margin:-4px 0 8px}
+  .case .arc{font-size:12px;color:var(--ink-dim)}
+  .case .arc b{display:block;font-family:var(--label);font-weight:500;letter-spacing:.12em;text-transform:uppercase;font-size:11px;color:var(--yellow);margin-bottom:2px}
+  .look{padding:10px 12px;background:var(--bg);border-left:3px solid var(--yellow);font-size:12.5px;line-height:1.5}
   .look b{display:block;font-family:var(--label);font-weight:500;letter-spacing:.12em;text-transform:uppercase;font-size:11px;color:var(--yellow);margin-bottom:3px}
-  .case-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .case-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:12px}
   .btn.small{font-size:11.5px;padding:7px 12px}
   .btn.ghost{background:transparent;color:var(--ink);box-shadow:none;border:1px solid var(--frame)}
   .btn.ghost:hover{border-color:var(--yellow);color:var(--yellow);background:transparent}

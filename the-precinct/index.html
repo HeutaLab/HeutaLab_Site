@@ -273,7 +273,8 @@ import THEME from '/the-precinct/theme.js';
   // ---- built from theme.js: the cast, the palettes, and their pills at the desk ----
   document.getElementById('castGrid').innerHTML = THEME.cast.map(c =>
     '<article class="case frame" id="cast-' + c.id + '"><img class="noir" src="' + c.img + '" alt="" loading="lazy">'
-    + '<div class="case-body"><span class="case-tag">' + esc(c.tag) + '</span><h3>' + esc(c.name) + '</h3><p>' + esc(c.story) + '</p>'
+    + '<div class="case-body"><span class="case-tag">' + esc(c.tag) + '</span><h3>' + esc(c.name) + '</h3>' + (c.alias ? '<span class="case-alias">' + esc(c.alias) + '</span>' : '') + '<p>' + esc(c.story) + '</p>'
+    + (c.arc ? '<p class="arc"><b>His arc</b>' + c.arc.map(esc).join(' &rarr; ') + '</p>' : '')
     + '<div class="look"><b>Their look, every time</b><span>' + esc(c.look) + '</span></div>'
     + '<div class="case-btns"><button type="button" class="btn small" data-brief="' + c.id + '">Brief this character <span class="arr">&rarr;</span></button>'
     + '<button type="button" class="btn ghost small" data-copylook="' + c.id + '">Copy look</button></div></div></article>').join('');

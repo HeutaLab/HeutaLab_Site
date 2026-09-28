@@ -129,7 +129,7 @@ function castLine(ids) {
   if (!ids.length) return "Cast: none picked (the attendee's own character, or a setting)";
   return "Cast in this picture:\n" + ids.map((id) => {
     const c = THEME.cast.find((x) => x.id === id);
-    return `- ${c.name} (${c.tag}). Fixed look: ${c.look}.`;
+    return `- ${c.name} (${c.tag}). Fixed look: ${c.look}.` + (c.arc ? ` His expression across a story: ${c.arc.join(", then ")}.` : "");
   }).join("\n");
 }
 
@@ -180,7 +180,7 @@ PALETTE RULES (the palette line in the request is the attendee's choice; honour 
 
 CAST RULES (when the request names cast members):
 - Each character has a fixed look. Put it into the prompt near word for word: it is the only thing keeping the character recognisable from one picture to the next. For medium and advanced tiers it belongs in the anchor.
-- Never swap looks between characters, and keep the two detectives visibly different: the Detective is young, clean-shaven and neat; the Disillusioned Detective is older, big and muscular, bare-headed, rumpled, and always on the edge of rage.
+- Never swap looks between characters, and keep the two detectives visibly different: the Detective is young, clean-shaven and neat; the Disillusioned Detective is older and hugely muscular, in shirtsleeves, braces and a shoulder holster, and always on the edge of rage.
 - With two characters in an advanced request, let their relationship drive the staging (who looks at whom, who stands in whose shadow), but show it; never write it as text in the image.
 - Keep everything suitable for a room of teachers: tension and menace, no gore.
 - If no cast is picked, work only from the attendee's idea.
