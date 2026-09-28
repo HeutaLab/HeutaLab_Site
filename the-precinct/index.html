@@ -56,7 +56,7 @@
         <a href="#brief"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>Get a brief</a>
         <a href="/the-precinct/references/"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>References</a>
         <a href="/the-precinct/builder/"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg>Comic builder</a>
-        <a href="#characters"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.3-7 8-7s7 2.5 8 7"/></svg>Characters</a>
+        <a href="#cast"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.3-7 8-7s7 2.5 8 7"/></svg>The cast</a>
         <a href="#settings"><svg viewBox="0 0 24 24"><path d="M3 21V9l5-3v15M8 21V4l8 3v14M16 21V11l5 2v8M2 21h20"/></svg>Settings</a>
         <a href="#palettes"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.3-1.2-1.6-1.2-2.8 0-1 .8-1.4 1.8-1.4H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg>Palettes</a>
         <a href="#compare"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="16"/><rect x="13" y="4" width="8" height="16"/></svg>Compare</a>
@@ -103,8 +103,8 @@
         </article>
         <article class="card frame">
           <img class="noir" src="img/card-characters.jpg" alt="A woman with long waved hair looking over her shoulder" width="307" height="335" loading="lazy">
-          <div class="body"><h3>2. Build characters</h3><p>A commissioner, a detective, a corrupt cop and a femme fatale.</p>
-            <a class="btn" href="#characters">Characters <span class="arr">&rarr;</span></a></div>
+          <div class="body"><h3>2. Meet the cast</h3><p>The Commissioner, the Detective, the Disillusioned Detective and the Femme Fatale.</p>
+            <a class="btn" href="#cast">The cast <span class="arr">&rarr;</span></a></div>
         </article>
         <article class="card frame">
           <img class="noir" src="img/card-scene.jpg" alt="Lit apartment windows above a parked sedan at night" width="311" height="335" loading="lazy">
@@ -121,6 +121,13 @@
           <div class="body"><h3>5. Compare &amp; fix</h3><p>Put your result next to the reference. What drifted, and which word fixes it?</p>
             <a class="btn" href="#compare">Compare <span class="arr">&rarr;</span></a></div>
         </article>
+      </section>
+
+      <h2 class="rule" id="cast">The cast</h2>
+      <section class="cast-sec">
+        <p class="cast-intro">Four characters, one story. Pick who you&rsquo;re drawing, then use their <strong>look</strong> word for word in every prompt. It&rsquo;s what keeps them recognisable from panel to panel.</p>
+        <div class="cast-grid" id="castGrid"></div>
+        <div class="relations frame" id="relations"></div>
       </section>
 
       <h2 class="rule">Three tiers, two subjects</h2>
@@ -144,18 +151,7 @@
       <h2 class="rule" id="palettes">Pick a palette</h2>
       <section class="palettes frame">
         <p class="pal-intro">Noir here is always monochrome, but the 2023 comic wasn&rsquo;t only yellow. It ran in five palettes. Choose one, put it in <em>every</em> prompt, and end the line with <q>no other colours</q>. When a palette isn&rsquo;t pinned down, Gemini drifted to sepia in testing.</p>
-        <div class="pal-grid">
-          <figure data-pal="bw"><img src="img/pal-bw.jpg" alt="Black and white ink panel: a woman and a man in a bar" width="360" height="358" loading="lazy">
-            <figcaption><b>Black &amp; white</b>Ink and grey wash. The easiest to hold across panels.</figcaption></figure>
-          <figure data-pal="yellow"><img src="img/pal-yellow.jpg" alt="Yellow sky and moon over a dark figure and parked car" width="360" height="190" loading="lazy">
-            <figcaption><b>Yellow accent</b>The house style. Say what glows: lamps, windows, a taxi.</figcaption></figure>
-          <figure data-pal="green"><img src="img/pal-green.jpg" alt="Green-tinted night street with two men beside a car" width="360" height="241" loading="lazy">
-            <figcaption><b>Green</b>A whole-image tint. Describe the shadows and highlights, not objects.</figcaption></figure>
-          <figure data-pal="blue"><img src="img/pal-blue.jpg" alt="Blue rainy night, a man walking along a wet pavement" width="303" height="379" loading="lazy">
-            <figcaption><b>Blue</b>Midnight rain. Cold highlights, blue-black shadows.</figcaption></figure>
-          <figure data-pal="red"><img src="img/pal-red.jpg" alt="A man in a fedora against a red-orange sunset" width="303" height="313" loading="lazy">
-            <figcaption><b>Red &amp; amber</b>Sunset, neon, fire. Keep it to one or two hot spots.</figcaption></figure>
-        </div>
+        <div class="pal-grid" id="palGrid"></div>
       </section>
 
       <h2 class="rule" id="brief">The briefing desk</h2>
@@ -172,7 +168,7 @@
         </div>
 
         <div class="step">
-          <h4>1 &middot; Platform</h4>
+          <h4>Platform</h4>
           <div class="pillrow" id="platformRow">
             <button class="pill" data-val="gemini">Gemini</button>
             <button class="pill" data-val="chatgpt">ChatGPT</button>
@@ -182,32 +178,31 @@
           </div>
         </div>
         <div class="step">
-          <h4>2 &middot; Subject</h4>
+          <h4>Subject</h4>
           <div class="pillrow" id="subjectRow">
             <button class="pill" data-val="character">Character</button>
             <button class="pill" data-val="setting">Setting</button>
           </div>
         </div>
         <div class="step">
-          <h4>3 &middot; Palette</h4>
-          <div class="pillrow" id="paletteRow">
-            <button class="pill" data-val="bw"><i class="dot" style="background:linear-gradient(90deg,#111 50%,#ddd 50%)"></i>Black &amp; white</button>
-            <button class="pill active" data-val="yellow"><i class="dot" style="background:#f2c744"></i>Yellow</button>
-            <button class="pill" data-val="green"><i class="dot" style="background:#4f8a62"></i>Green</button>
-            <button class="pill" data-val="blue"><i class="dot" style="background:#2d5a9a"></i>Blue</button>
-            <button class="pill" data-val="red"><i class="dot" style="background:#d4552c"></i>Red &amp; amber</button>
-          </div>
-        </div>
-        <div class="step">
-          <h4>4 &middot; Tier</h4>
+          <h4>Tier</h4>
           <div class="pillrow" id="tierRow">
             <button class="pill" data-val="basic">Basic</button>
             <button class="pill" data-val="medium">Medium</button>
             <button class="pill" data-val="advanced">Advanced</button>
           </div>
         </div>
+        <div class="step" id="whoStep" hidden>
+          <h4>Who?</h4>
+          <div class="pillrow" id="castRow"></div>
+          <p class="step-note" id="whoNote"></p>
+        </div>
         <div class="step">
-          <h4>5 &middot; Your idea</h4>
+          <h4>Palette</h4>
+          <div class="pillrow" id="paletteRow"></div>
+        </div>
+        <div class="step">
+          <h4>Your idea</h4>
           <p class="handoff" id="handoffNote" hidden>Brought over from References. Read it through, then pick a platform.</p>
           <textarea id="idea" maxlength="800" placeholder="Describe what you're picturing, in your own words. e.g. &ldquo;the detective waiting in a doorway across the street from the police station, watching&rdquo;"></textarea>
           <div class="count"><span id="ideaCount">0</span>/800</div>
@@ -266,10 +261,31 @@
   </div>
 </div>
 
-<script>
+<script type="module">
+import THEME from '/the-precinct/theme.js';
+
 (function(){
   const API = "/the-precinct/api/brief";
-  const state = { platform:null, subject:null, palette:"yellow", tier:null };
+  const state = { platform:null, subject:null, palette:THEME.defaultPalette, tier:null, cast:[] };
+  const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+  const castName = id => THEME.cast.find(c => c.id === id).name;
+
+  // ---- built from theme.js: the cast, the palettes, and their pills at the desk ----
+  document.getElementById('castGrid').innerHTML = THEME.cast.map(c =>
+    '<article class="case frame" id="cast-' + c.id + '"><img class="noir" src="' + c.img + '" alt="" loading="lazy">'
+    + '<div class="case-body"><span class="case-tag">' + esc(c.tag) + '</span><h3>' + esc(c.name) + '</h3><p>' + esc(c.story) + '</p>'
+    + '<div class="look"><b>Their look, every time</b><span>' + esc(c.look) + '</span></div>'
+    + '<div class="case-btns"><button type="button" class="btn small" data-brief="' + c.id + '">Brief this character <span class="arr">&rarr;</span></button>'
+    + '<button type="button" class="btn ghost small" data-copylook="' + c.id + '">Copy look</button></div></div></article>').join('');
+  document.getElementById('relations').innerHTML = '<b>Who wants what</b>' + THEME.relations.map(([a, verb, b]) =>
+    '<span class="rel"><em>' + esc(castName(a)) + '</em> ' + esc(verb) + ' <em>' + esc(castName(b).replace(/^The /, 'the ')) + '</em></span>').join('');
+  document.getElementById('castRow').innerHTML = THEME.cast.map(c =>
+    '<button class="pill" data-val="' + c.id + '">' + esc(c.name.replace(/^The /, '')) + '</button>').join('');
+  document.getElementById('palGrid').innerHTML = Object.entries(THEME.palettes).map(([id, p]) =>
+    '<figure data-pal="' + id + '"><img src="' + p.sample + '" alt="" loading="lazy"><figcaption><b style="color:' + p.ink + '">'
+    + esc(p.label) + '</b>' + esc(p.note) + '</figcaption></figure>').join('');
+  document.getElementById('paletteRow').innerHTML = Object.entries(THEME.palettes).map(([id, p]) =>
+    '<button class="pill' + (id === state.palette ? ' active' : '') + '" data-val="' + id + '"><i class="dot" style="background:' + p.dot + '"></i>' + esc(p.label) + '</button>').join('');
 
   const codeInput = document.getElementById('code');
   const codeStatus = document.getElementById('codeStatus');
@@ -297,6 +313,40 @@
   wireRow('subjectRow','subject');
   wireRow('paletteRow','palette');
   wireRow('tierRow','tier');
+
+  // Who? only matters for characters. Basic and Medium draw one person;
+  // Advanced (a short sequence) can bring two together.
+  const whoStep = document.getElementById('whoStep'), whoNote = document.getElementById('whoNote');
+  const maxCast = () => state.tier === 'advanced' ? 2 : 1;
+  function syncWho(){
+    whoStep.hidden = state.subject !== 'character';
+    state.cast = state.cast.slice(-maxCast());
+    document.querySelectorAll('#castRow .pill').forEach(b => b.classList.toggle('active', state.cast.includes(b.dataset.val)));
+    whoNote.textContent = (maxCast() === 2 ? 'Pick up to two for an Advanced sequence.' : 'Pick one.')
+      + ' Leave it blank to draw a character of your own.';
+  }
+  document.querySelectorAll('#castRow .pill').forEach(b => b.addEventListener('click', () => {
+    const id = b.dataset.val;
+    state.cast = state.cast.includes(id) ? state.cast.filter(x => x !== id) : state.cast.concat(id);
+    syncWho();
+  }));
+  document.querySelectorAll('#subjectRow .pill, #tierRow .pill').forEach(b => b.addEventListener('click', syncWho));
+  syncWho();
+
+  // From a case file straight to the desk, with the character already picked.
+  document.getElementById('castGrid').addEventListener('click', e => {
+    const brief = e.target.closest('[data-brief]'), copy = e.target.closest('[data-copylook]');
+    if (brief) {
+      document.querySelector('#subjectRow [data-val="character"]').click();
+      state.cast = [brief.dataset.brief]; syncWho();
+      document.getElementById('brief').scrollIntoView({behavior:'smooth'});
+    }
+    if (copy) {
+      navigator.clipboard.writeText(THEME.cast.find(c => c.id === copy.dataset.copylook).look).then(() => {
+        const old = copy.textContent; copy.textContent = 'Copied'; setTimeout(() => copy.textContent = old, 1200);
+      }).catch(() => {});
+    }
+  });
 
   // Clicking a palette sample picks it at the desk.
   document.querySelectorAll('.pal-grid figure').forEach(fig => {
@@ -378,6 +428,7 @@
           platform: state.platform,
           subject: state.subject,
           palette: state.palette,
+          cast: state.subject === 'character' ? state.cast : [],
           tier: state.tier,
           idea: idea.value.trim()
         })
@@ -409,6 +460,7 @@
       const b = document.querySelector('#' + k + 'Row [data-val="' + handoff[k] + '"]');
       if (b) b.click();
     });
+    if (Array.isArray(handoff.cast)) { state.cast = handoff.cast.filter(id => THEME.cast.some(c => c.id === id)); syncWho(); }
     document.getElementById('handoffNote').hidden = false;
     checkReady();
   }

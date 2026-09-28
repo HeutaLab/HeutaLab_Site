@@ -8,6 +8,8 @@
 //                        so a stranger who finds the URL can't burn your
 //                        API budget. Attendees type it once per browser.
 
+import THEME from "./the-precinct/theme.js";
+
 const API_PATH = "/the-precinct/api/brief";
 
 export default {
@@ -33,8 +35,9 @@ async function handleBrief(request, env) {
   }
 
   const { code, platform, tier, subject, idea } = body || {};
-  // Older copies of the page send no palette; the house style is yellow.
-  const palette = (body && body.palette) || "yellow";
+  // Older copies of the page send no palette or cast.
+  const palette = (body && body.palette) || THEME.defaultPalette;
+  const cast = Array.isArray(body && body.cast) ? body.cast : [];
 
   if (!env.WORKSHOP_CODE) return json({ error: "Server not configured (missing WORKSHOP_CODE)" }, 500);
   if (!code || code.trim() !== env.WORKSHOP_CODE) return json({ error: "Wrong workshop code" }, 401);
@@ -46,7 +49,9 @@ async function handleBrief(request, env) {
   if (!validPlatforms.includes(platform)) return json({ error: "Unknown platform" }, 400);
   if (!validTiers.includes(tier)) return json({ error: "Unknown tier" }, 400);
   if (!validSubjects.includes(subject)) return json({ error: "Unknown subject" }, 400);
-  if (!PALETTES[palette]) return json({ error: "Unknown palette" }, 400);
+  if (!THEME.palettes[palette]) return json({ error: "Unknown palette" }, 400);
+  const castIds = THEME.cast.map((c) => c.id);
+  if (cast.length > 2 || !cast.every((id) => castIds.includes(id))) return json({ error: "Unknown character" }, 400);
   if (!idea || typeof idea !== "string" || idea.trim().length < 3) {
     return json({ error: "Describe what you want first" }, 400);
   }
@@ -59,7 +64,8 @@ async function handleBrief(request, env) {
     `Platform: ${platform}`,
     `Tier: ${tier}`,
     `Subject type: ${subject}`,
-    `Palette: ${palette} (${PALETTES[palette]})`,
+    `Palette: ${palette} (${THEME.palettes[palette].phrase})`,
+    castLine(subject === "character" ? cast : []),
     `Attendee's idea, in their own words: ${idea.trim()}`,
   ].join("\n");
 
@@ -118,15 +124,18 @@ async function handleBrief(request, env) {
   return json(parsed, 200);
 }
 
-// The palettes in Glenn's 2023 comic. Each is monochrome plus at most one
-// accent family; the phrase is what the prompt should carry, near verbatim.
-const PALETTES = {
-  bw: "black and white ink only, grey wash tones, no colour",
-  yellow: "black ink and grey tones with a single yellow accent (lamplight, lit windows, a taxi), no other colours",
-  green: "deep green-black shadows, muted teal-green midtones and pale green highlights, no other colours",
-  blue: "midnight blue and blue-black shadows with pale cold highlights, no other colours",
-  red: "black and charcoal with red-orange and amber accents (sunset, neon, fire), no other colours",
-};
+// Which of the cast the attendee picked, with each one's fixed look.
+function castLine(ids) {
+  if (!ids.length) return "Cast: none picked (the attendee's own character, or a setting)";
+  return "Cast in this picture:\n" + ids.map((id) => {
+    const c = THEME.cast.find((x) => x.id === id);
+    return `- ${c.name} (${c.tag}). Fixed look: ${c.look}.`;
+  }).join("\n");
+}
+
+function castSummary() {
+  return THEME.cast.map((c) => `- ${c.name} (${c.tag}): ${c.story}`).join("\n");
+}
 
 // Structured outputs hold the reply to this shape, so no regex-extracting JSON from prose.
 const BRIEF_SCHEMA = {
@@ -143,7 +152,10 @@ const BRIEF_SCHEMA = {
 };
 
 function buildSystemPrompt() {
-  return `You are the briefing desk for a 1940s-noir comic-generation workshop for teachers ("Human Creativity, AI Precision"). Every comic is monochrome noir; the attendee picks the palette (see PALETTE RULES). House style reference: Al Williamson, 1940s film noir comic book, black and white ink illustration. Cast available: a police commissioner, a detective, a corrupt cop, and a femme fatale.
+  return `You are the briefing desk for a 1940s-noir comic-generation workshop for teachers ("Human Creativity, AI Precision"). Every comic is monochrome noir; the attendee picks the palette (see PALETTE RULES). House style reference: ${THEME.houseStyle}.
+
+THE CAST (who they are, and how they relate):
+${castSummary()}
 
 You write ONE ready-to-paste image-generation prompt (or a short set, for medium/advanced tiers) tailored to the platform and tier given, based on the attendee's own idea. You do not generate images yourself, only the text prompt and the teaching notes around it.
 
@@ -165,6 +177,13 @@ PALETTE RULES (the palette line in the request is the attendee's choice; honour 
 - bw is the easiest to hold. With a single accent (yellow, red), say what the accent touches (lamplight, windows, a car, the sky) so it lands on one or two things instead of washing the whole frame.
 - green and blue are whole-image tints rather than accents: describe the shadows and the highlights, not objects.
 - Only the Gemini sepia result above was tested. Treat the rest of this palette advice as reasoned, not proven, and don't present it to attendees as tested.
+
+CAST RULES (when the request names cast members):
+- Each character has a fixed look. Put it into the prompt near word for word: it is the only thing keeping the character recognisable from one picture to the next. For medium and advanced tiers it belongs in the anchor.
+- Never swap looks between characters, and keep the two detectives visibly different: the Detective is young, clean-shaven and neat; the Disillusioned Detective is older, heavy-set, bare-headed and rumpled.
+- With two characters in an advanced request, let their relationship drive the staging (who looks at whom, who stands in whose shadow), but show it; never write it as text in the image.
+- Keep everything suitable for a room of teachers: tension and menace, no gore.
+- If no cast is picked, work only from the attendee's idea.
 
 SUBJECT KNOWLEDGE:
 - character: emphasise plain/white background for basic, full body or bust, one clear expression and pose, character-reference-sheet framing.

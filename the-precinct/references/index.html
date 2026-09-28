@@ -18,7 +18,7 @@
   .how b{display:block;font-family:var(--brush);font-weight:400;color:var(--yellow);font-size:24px;line-height:1;margin-bottom:6px;text-transform:uppercase}
   .how button:focus-visible{outline:2px solid var(--yellow)}
 
-  .controls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px 28px;align-items:end;margin-top:18px}
+  .controls{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin-top:18px}
   .controls h4{font-family:var(--label);font-weight:500;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--yellow);margin:0 0 10px}
   .pill small{font-weight:400;letter-spacing:.06em;text-transform:none;font-family:var(--serif);font-style:italic;margin-left:6px;opacity:.8}
 
@@ -43,6 +43,10 @@
   .qs input{width:100%;background:var(--bg);border:1px solid var(--frame);color:var(--ink);padding:8px 10px;font-family:var(--serif);font-size:14px}
   .qs input:focus{outline:2px solid var(--yellow)}
   .revealall{margin-top:8px}
+  .castpick{margin-top:16px;padding-top:14px;border-top:1px solid rgba(52,64,62,.6)}
+  .castpick .q{display:block;font-family:var(--label);font-weight:500;letter-spacing:.12em;text-transform:uppercase;font-size:12.5px;color:var(--yellow);margin-bottom:8px}
+  .castpick .pill{padding:7px 12px;font-size:12.5px}
+  .castag{color:var(--yellow)}
 
   .box{margin-top:18px;padding-top:16px;border-top:1px dashed var(--frame)}
   .box label{display:block;font-family:var(--label);font-weight:500;letter-spacing:.16em;text-transform:uppercase;font-size:12.5px;color:var(--yellow);margin-bottom:8px}
@@ -97,7 +101,7 @@
         <a href="/the-precinct/#brief"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>Get a brief</a>
         <a href="/the-precinct/references/" class="on" aria-current="page"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>References</a>
         <a href="/the-precinct/builder/"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg>Comic builder</a>
-        <a href="/the-precinct/#characters"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.3-7 8-7s7 2.5 8 7"/></svg>Characters</a>
+        <a href="/the-precinct/#cast"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.3-7 8-7s7 2.5 8 7"/></svg>The cast</a>
         <a href="/the-precinct/#settings"><svg viewBox="0 0 24 24"><path d="M3 21V9l5-3v15M8 21V4l8 3v14M16 21V11l5 2v8M2 21h20"/></svg>Settings</a>
         <a href="/the-precinct/#palettes"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.3-1.2-1.6-1.2-2.8 0-1 .8-1.4 1.8-1.4H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg>Palettes</a>
         <a href="/the-precinct/#compare"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="16"/><rect x="13" y="4" width="8" height="16"/></svg>Compare</a>
@@ -114,30 +118,16 @@
 
     <main>
 
-      <section class="how" aria-label="How this works">
-        <button type="button" data-mode="ido"><b>I do</b>Watch a worked example. Every answer is filled in and read aloud.</button>
-        <button type="button" data-mode="wedo"><b>We do</b>Talk it through as a room, then reveal each answer and compare.</button>
-        <button type="button" data-mode="youdo"><b>You do</b>Your turn. Answer in your own words and send it to the desk.</button>
-        <button type="button" data-mode="free"><b>Free play</b>Any picture, any level. Shuffle until one grabs you.</button>
-      </section>
+      <section class="how" aria-label="How this works" id="howRow"></section>
 
       <section class="controls frame panel">
         <div>
           <h4>Level</h4>
-          <div class="pillrow" id="levelRow">
-            <button class="pill" data-val="basic">Basic<small>what do you see?</small></button>
-            <button class="pill" data-val="medium">Medium<small>the details</small></button>
-            <button class="pill" data-val="advanced">Advanced<small>the world</small></button>
-          </div>
+          <div class="pillrow" id="levelRow"></div>
         </div>
         <div>
           <h4>Mode</h4>
-          <div class="pillrow" id="modeRow">
-            <button class="pill" data-val="ido">I do</button>
-            <button class="pill" data-val="wedo">We do</button>
-            <button class="pill" data-val="youdo">You do</button>
-            <button class="pill" data-val="free">Free play</button>
-          </div>
+          <div class="pillrow" id="modeRow"></div>
         </div>
       </section>
 
@@ -152,6 +142,11 @@
           <p class="modehint" id="modeHint"></p>
           <ol class="qs" id="qs"></ol>
           <button type="button" class="btn ghost revealall" id="revealAll" hidden>Reveal all</button>
+
+          <div class="castpick" id="castPick" hidden>
+            <span class="q">Could this be one of the cast?</span>
+            <div class="pillrow" id="castPickRow"></div>
+          </div>
 
           <div class="box">
             <label for="desc" id="descLabel">Your description</label>
@@ -176,159 +171,64 @@
   </div>
 </div>
 
-<script>
+<script type="module">
+import THEME from '/the-precinct/theme.js';
+
 (function(){
-  const IMG = '/the-precinct/img/ref/';
+  const { levels: LEVELS, modes: MODES, refs: REFS } = THEME;
+  const MODE_IDS = Object.keys(MODES);          // demo, guide, create, explore
+  const castById = id => THEME.cast.find(c => c.id === id);
 
-  // Every reference picture, with what it shows (alt text) and whether it
-  // reads as a character or a setting when it goes to the desk.
-  const REFS = {
-    'chief':         ['A heavy-set police chief in a fedora and long trench coat, hands in his pockets, scowling', 'character'],
-    'hat-woman':     ['A woman in a black wide-brimmed hat glancing over her shoulder against a yellow sky', 'character'],
-    'cop':           ['A uniformed police officer in a peaked cap with a badge and a star on his collar', 'character'],
-    'bar':           ['A woman with waved hair in a bar booth facing a man in a dark suit, two men watching behind', 'character'],
-    'blonde-green':  ['Close-up of a blonde woman with dark lipstick, eyes lowered, in green tones', 'character'],
-    'blonde-yellow': ['A blonde woman in a yellow jacket looking down, lit buildings behind her', 'character'],
-    'rain-street':   ['A rain-soaked town street at night: a parked car, a streetlamp and a figure in a doorway', 'setting'],
-    'office':        ['An empty office with desks, filing cabinets and a city skyline through the windows', 'setting'],
-    'sunset-street': ['A city street at sunset with lit windows, street lamps and a parked black car', 'setting'],
-    'fedora':        ['A stern man in a fedora and trench coat, close-up', 'character'],
-    'boss':          ['A heavy-set man with slicked-back hair in a suit, glaring', 'character'],
-    'cop-badge':     ['A man in a hat with a badge on his coat, light flaring behind him', 'character'],
-    'lamp-man':      ['A man in a suit under a street lamp against a yellow sky', 'character'],
-    'blue-man':      ['A man in a dark coat looking back down a blue night street', 'character'],
-    'houses':        ['A street of old houses under a yellow sky, a man walking and a parked car', 'setting'],
-    'green-city':    ['A man on a balcony with a green-tinted city skyline behind him', 'setting'],
-    'walking-woman': ['A woman in a yellow coat walking past parked cars at dusk', 'character'],
-    'teal-woman':    ['A woman with long wavy hair in teal and blue tones, looking sideways', 'character'],
-    'detective-car': ['A detective in a fedora glancing back at a sedan on a rainy street', 'character'],
-    'sunset-man':    ['A man in a hat and coat against a red-orange sunset', 'character'],
-    'walking-rain':  ['A man walking alone along a wet pavement in blue rain', 'setting'],
-    'hat-green':     ['A man in a fedora and tie under city lights, in green tones', 'character'],
-  };
-
-  const LEVELS = {
-    basic: {
-      name: 'Basic', lens: 'What do you see?',
-      blurb: 'Name what is there. No guessing and no story yet: only what you could point at.',
-      qs: [['see','What do you see?','What I see'], ['accessories','What accessories do you see?','Accessories'],
-           ['materials','What materials do you see?','Materials'], ['colours','What colours do you see?','Colours'],
-           ['emotions','What emotions do you see?','Emotion'], ['expressions','What expressions do you see?','Expression']],
-      ido: ['chief', {
-        see: 'A heavy-set police chief standing square to us, hands deep in his coat pockets.',
-        accessories: 'A fedora with a dark band, and a tie.',
-        materials: 'A long trench coat with wide lapels and epaulettes, a buttoned waistcoat, a felt hat.',
-        colours: 'Black, white and greys only. Ink shading, no colour at all.',
-        emotions: 'Displeasure. He has already made up his mind about you.',
-        expressions: 'A scowl: brows pulled down, eyes narrowed, mouth turned down at the corners.' }],
-      wedo: ['hat-woman', {
-        see: 'A woman looking back over her shoulder, with dark city buildings behind her.',
-        accessories: 'A black hat with a flat crown and a wide brim.',
-        materials: 'A soft sleeveless top; a stiff felt hat.',
-        colours: 'A flat bright yellow sky, black silhouettes, warm brown skin, an orange top.',
-        emotions: 'Wary and guarded, maybe challenging.',
-        expressions: 'A sideways glance, lips slightly parted, one brow a little raised.' }],
-      youdo: 'cop',
-    },
-    medium: {
-      name: 'Medium', lens: 'The details',
-      blurb: 'Zoom in. These are the details that decide whether the AI draws your character or a stranger.',
-      qs: [['hair','Hair style','Hair'], ['clothing','Clothing','Clothing'], ['makeup','Makeup','Makeup'],
-           ['accessories','Accessories','Accessories'], ['jewellery','Jewellery','Jewellery'],
-           ['angle','Camera angle','Camera angle'], ['lighting','Lighting','Lighting'], ['background','Background','Background']],
-      ido: ['bar', {
-        hair: 'Shoulder-length 1940s waves, swept back from the face, full at the sides.',
-        clothing: 'A pale jacket with wide lapels over a dark top and an open-collared blouse. He wears a dark suit.',
-        makeup: 'Dark lipstick, arched brows, lined eyes.',
-        accessories: 'Glasses of dark drink and a glass carafe of water on the table.',
-        jewellery: 'Small drop earrings.',
-        angle: 'Eye level, a medium shot over the man’s shoulder, so we sit in on the conversation.',
-        lighting: 'Pendant lamps overhead: soft light on her face, his half in shadow.',
-        background: 'A booth in a bar or diner, a window partition, two men in suits watching.' }],
-      wedo: ['blonde-green', {
-        hair: 'Long blonde waves falling past the shoulders, parted to one side.',
-        clothing: 'A green jacket with a wide lapel.',
-        makeup: 'Very dark lipstick, winged eyeliner, heavy lids.',
-        accessories: 'None visible, and that is worth saying in a prompt: “no hat, no props”.',
-        jewellery: 'None visible.',
-        angle: 'A close-up from slightly above, looking down at her.',
-        lighting: 'Hard light from the upper left; half her face falls into shadow.',
-        background: 'Dark teal with rough brush strokes. No setting at all.' }],
-      youdo: 'blonde-yellow',
-    },
-    advanced: {
-      name: 'Advanced', lens: 'The world',
-      blurb: 'Step back. Mood, place and time are what make separate panels feel like one story.',
-      qs: [['mood','Mood','Mood'], ['setting','Setting','Setting'], ['location','Location','Location'],
-           ['time','Time of day','Time of day'], ['season','Season','Season'], ['weather','Weather','Weather'],
-           ['genre','Genre','Genre'], ['style','Style','Style'], ['era','Era','Era']],
-      ido: ['rain-street', {
-        mood: 'Lonely and uneasy. Someone is waiting, and we don’t know for what.',
-        setting: 'An empty main street: a parked car, a streetlamp, one figure in a doorway.',
-        location: 'A small American town: low shopfronts on the left, a brick building on the right.',
-        time: 'Night.',
-        season: 'Late autumn or winter: the tree branches are bare.',
-        weather: 'Heavy rain, with the road shining under it.',
-        genre: 'Crime noir.',
-        style: 'Flat graphic comic art: hard black shapes and a limited blue palette.',
-        era: '1940s to 1950s, going by the car’s rounded shape.' }],
-      wedo: ['office', {
-        mood: 'Quiet and orderly, as if everyone has just stepped out.',
-        setting: 'An office: desks, swivel chairs, filing cabinets, shelves of box files.',
-        location: 'High up in a city building, with a skyline and a spired tower through the windows.',
-        time: 'Daytime. Light floods in and throws hard shadows across the floor.',
-        season: 'Nothing tells you. That is a gap to fill in your own prompt.',
-        weather: 'Hard to say: the sky is grey, but the light is strong.',
-        genre: 'Detective or police drama.',
-        style: 'Detailed ink illustration with heavy black shadows, in black and white.',
-        era: 'Hard to pin down: the furniture could be anywhere from the 1940s to the 1970s. Another gap to fill: name the era.' }],
-      youdo: 'sunset-street',
-    },
-  };
-
-  const HINTS = {
-    ido: 'I do: a worked example. Your facilitator reads each answer aloud. This is how a practised eye reads a picture.',
-    wedo: 'We do: agree an answer as a room first, then reveal the model one. Did you spot something it missed?',
-    youdo: 'You do: answer in your own words. Short phrases are fine. Your answers build the description below.',
-    free: 'Free play: any picture, any level. Shuffle, answer what you like, and send it to the desk.',
-  };
-
-  const state = { level: 'basic', mode: 'ido', freeRef: null, revealed: {} };
+  const state = { level: 'basic', mode: 'demo', exploreRef: null, revealed: {}, cast: {} };
   const answers = {};          // your own answers, kept per picture and level
   let manual = false;          // stop rebuilding the box once someone edits it by hand
 
   const $ = id => document.getElementById(id);
   const img = $('refImg'), cap = $('refCap'), qs = $('qs'), desc = $('desc');
+  const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+
+  // ---- controls built from the theme ----
+  $('howRow').innerHTML = MODE_IDS.map(m => '<button type="button" data-mode="' + m + '"><b>' + esc(MODES[m].label) + '</b>' + esc(MODES[m].card) + '</button>').join('');
+  $('modeRow').innerHTML = MODE_IDS.map(m => '<button class="pill" data-val="' + m + '">' + esc(MODES[m].label) + '<small>' + esc(MODES[m].sub.toLowerCase()) + '</small></button>').join('');
+  $('levelRow').innerHTML = Object.entries(LEVELS).map(([id, L]) => '<button class="pill" data-val="' + id + '">' + esc(L.name) + '<small>' + esc(L.short) + '</small></button>').join('');
+  $('castPickRow').innerHTML = THEME.cast.map(c => '<button class="pill" data-val="' + c.id + '">' + esc(c.name.replace(/^The /, '')) + '</button>').join('');
 
   function currentRef(){
     const L = LEVELS[state.level];
-    if (state.mode === 'ido') return L.ido[0];
-    if (state.mode === 'wedo') return L.wedo[0];
-    if (state.mode === 'youdo') return L.youdo;
-    return state.freeRef;
+    if (state.mode === 'demo') return L.demo[0];
+    if (state.mode === 'guide') return L.guide[0];
+    if (state.mode === 'create') return L.create;
+    return state.exploreRef;
   }
   function modelAnswers(){
     const L = LEVELS[state.level];
-    return state.mode === 'ido' ? L.ido[1] : state.mode === 'wedo' ? L.wedo[1] : null;
+    return state.mode === 'demo' ? L.demo[1] : state.mode === 'guide' ? L.guide[1] : null;
   }
-  function key(){ return currentRef() + '|' + state.level; }
-
-  function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+  const key = () => currentRef() + '|' + state.level;
+  const isCharacter = () => REFS[currentRef()][1] === 'character';
+  // The cast member this picture is being read as: your pick, or the picture's own suggestion.
+  function pickedCast(){
+    const k = currentRef();
+    if (!isCharacter()) return null;
+    return k in state.cast ? state.cast[k] : (REFS[k][2] || null);
+  }
 
   function assemble(){
-    const L = LEVELS[state.level], ref = currentRef(), model = modelAnswers();
+    const L = LEVELS[state.level], model = modelAnswers();
     const mine = answers[key()] || {};
     const lines = [];
     L.qs.forEach(([id, , short]) => {
       let a = '';
-      if (state.mode === 'ido') a = model[id];
-      else if (state.mode === 'wedo') a = state.revealed[id] ? model[id] : '';
+      if (state.mode === 'demo') a = model[id];
+      else if (state.mode === 'guide') a = state.revealed[id] ? model[id] : '';
       else a = (mine[id] || '').trim();
       if (a) lines.push(short + ': ' + a);
     });
     if (!lines.length) return '';
-    const kind = REFS[ref][1] === 'setting' ? 'A setting' : 'A character';
-    return (kind + ' based on a reference picture.\n' + lines.join('\n')).slice(0, 800);
+    const who = pickedCast();
+    const head = who ? castById(who).name + ', based on a reference picture.'
+      : (isCharacter() ? 'A character' : 'A setting') + ' based on a reference picture.';
+    return (head + '\n' + lines.join('\n')).slice(0, 800);
   }
 
   function setDesc(text){
@@ -338,28 +238,34 @@
 
   function render(){
     const L = LEVELS[state.level], ref = currentRef(), model = modelAnswers();
-    img.src = IMG + ref + '.jpg';
+    img.src = THEME.refPath(ref);
     img.alt = REFS[ref][0];
-    cap.textContent = L.name + ' · ' + ({ido:'I do', wedo:'We do', youdo:'You do', free:'Free play'})[state.mode];
-    $('shuffleBtn').hidden = state.mode !== 'free';
+    const who = pickedCast();
+    cap.innerHTML = esc(L.name + ' · ' + MODES[state.mode].label)
+      + (REFS[ref][2] ? ' · <span class="castag">could be ' + esc(castById(REFS[ref][2]).name.replace(/^The /, 'the ')) + '</span>' : '');
+    $('shuffleBtn').hidden = state.mode !== 'explore';
     $('lensTitle').textContent = L.lens;
     $('lensBlurb').textContent = L.blurb;
-    $('modeHint').textContent = HINTS[state.mode];
-    $('revealAll').hidden = state.mode !== 'wedo';
+    $('modeHint').textContent = MODES[state.mode].hint;
+    $('revealAll').hidden = state.mode !== 'guide';
 
     const mine = answers[key()] || (answers[key()] = {});
     qs.innerHTML = L.qs.map(([id, q]) => {
       let body;
-      if (state.mode === 'ido') body = '<p class="a">' + esc(model[id]) + '</p>';
-      else if (state.mode === 'wedo') body = state.revealed[id]
+      if (state.mode === 'demo') body = '<p class="a">' + esc(model[id]) + '</p>';
+      else if (state.mode === 'guide') body = state.revealed[id]
         ? '<p class="a">' + esc(model[id]) + '</p>'
         : '<button type="button" class="reveal" data-id="' + id + '">Reveal</button>';
       else body = '<input type="text" data-id="' + id + '" value="' + esc(mine[id] || '') + '" aria-label="' + esc(q) + '">';
       return '<li><span class="q">' + esc(q) + '</span>' + body + '</li>';
     }).join('');
 
-    $('descLabel').textContent = state.mode === 'ido' ? 'Put together, ready for the briefing desk'
-      : state.mode === 'wedo' ? 'What the room has revealed so far' : 'Your description, ready for the briefing desk';
+    // Only your own readings of a character picture ask which cast member it is.
+    $('castPick').hidden = !(isCharacter() && (state.mode === 'create' || state.mode === 'explore'));
+    document.querySelectorAll('#castPickRow .pill').forEach(b => b.classList.toggle('active', b.dataset.val === who));
+
+    $('descLabel').textContent = state.mode === 'demo' ? 'Put together, ready for the briefing desk'
+      : state.mode === 'guide' ? 'What the group has revealed so far' : 'Your description, ready for the briefing desk';
     manual = false;
     $('rebuildBtn').hidden = true;
     setDesc(assemble());
@@ -370,13 +276,13 @@
   }
 
   function shuffle(){
-    const all = Object.keys(REFS).filter(k => k !== state.freeRef);
-    state.freeRef = all[Math.floor(Math.random() * all.length)];
+    const all = Object.keys(REFS).filter(k => k !== state.exploreRef);
+    state.exploreRef = all[Math.floor(Math.random() * all.length)];
   }
 
   function setMode(m){
     state.mode = m; state.revealed = {};
-    if (m === 'free' && !state.freeRef) shuffle();
+    if (m === 'explore' && !state.exploreRef) shuffle();
     render();
   }
 
@@ -384,6 +290,13 @@
   document.querySelectorAll('#modeRow .pill').forEach(b => b.addEventListener('click', () => setMode(b.dataset.val)));
   document.querySelectorAll('.how button').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
   $('shuffleBtn').addEventListener('click', () => { shuffle(); render(); });
+
+  $('castPickRow').addEventListener('click', e => {
+    const b = e.target.closest('.pill'); if (!b) return;
+    const k = currentRef();
+    state.cast[k] = pickedCast() === b.dataset.val ? '' : b.dataset.val;   // tap again to clear
+    render();
+  });
 
   qs.addEventListener('click', e => {
     const b = e.target.closest('.reveal');
@@ -405,7 +318,7 @@
   desc.addEventListener('input', () => {
     $('descCount').textContent = desc.value.length;
     manual = true;
-    $('rebuildBtn').hidden = state.mode === 'ido' || state.mode === 'wedo';
+    $('rebuildBtn').hidden = state.mode === 'demo' || state.mode === 'guide';
   });
   $('rebuildBtn').addEventListener('click', () => { manual = false; $('rebuildBtn').hidden = true; setDesc(assemble()); });
 
@@ -420,9 +333,10 @@
   $('sendBtn').addEventListener('click', () => {
     const text = desc.value.trim();
     if (!text) { desc.focus(); desc.placeholder = 'Answer a question or two first.'; return; }
+    const who = pickedCast();
     try {
       localStorage.setItem('precinct_handoff', JSON.stringify({
-        idea: text, tier: state.level, subject: REFS[currentRef()][1], ts: Date.now(),
+        idea: text, tier: state.level, subject: REFS[currentRef()][1], cast: who ? [who] : [], ts: Date.now(),
       }));
     } catch (e) {}
     location.href = '/the-precinct/#brief';
