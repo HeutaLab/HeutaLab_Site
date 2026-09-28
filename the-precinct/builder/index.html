@@ -98,6 +98,12 @@
   .pnl{position:absolute}
   .sheet .pnl{pointer-events:none}          /* only the clipped shape takes taps, so a slanted panel's box */
   .sheet .pnl-inner{pointer-events:auto}    /* can't steal them from the neighbour it overlaps */
+  /* Words sit in a layer of their own over all the panels, unclipped, so a caption or a BLAM! can burst over a
+     frame into the next panel. Each layer covers its panel's box (same data-i) and lets taps through except on words. */
+  .sheet .pnl.wl{z-index:10}
+  .sheet .pnl.wl.sel{z-index:11}
+  .sheet .pnl.wl > .pnl-inner{overflow:visible;background:none;pointer-events:none}
+  .sheet .pnl.wl .it{pointer-events:auto}
   .pnl-inner{position:relative;width:100%;height:100%;overflow:hidden;background:#222;touch-action:none}
   .edge{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:4}
   .edge .hl{fill:none;stroke:none;stroke-width:1.4}
@@ -623,7 +629,7 @@ import THEME from '/the-precinct/theme.js';
       + ') translate(' + (fit.x - 50) * (sx < 0) + '%,' + (fit.y - 50) * (sy < 0) + '%) ' : '';
     return 'object-position:' + fit.x + '% ' + fit.y + '%;transform:' + flip + 'scale(' + fit.z + ');transform-origin:' + fit.x + '% ' + fit.y + '%';
   }
-  const imgEl = i => bench.querySelector('[data-i="' + i + '"] > .pnl-inner > img');
+  const imgEl = i => bench.querySelector('[data-i="' + i + '"]:not(.wl) > .pnl-inner > img');
   const empty = on => on
     ? '<div class="pnl-empty"><span class="picks"><button type="button" data-pick="up">Upload</button><button type="button" data-pick="lib">Library</button></span><small>or paste or drop a picture here</small></div>'
     : '<div class="pnl-empty"><b>+</b>Tap to add a picture</div>';
@@ -661,11 +667,15 @@ import THEME from '/the-precinct/theme.js';
         return '<div class="pnl' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '" style="left:' + b.x + '%;top:' + (b.y / PAGE_H * 100) + '%;width:' + b.w + '%;height:' + (b.h / PAGE_H * 100) + '%">'
           + '<div class="pnl-inner" style="clip-path:polygon(' + clip + ')">'
           + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + imgStyle(p.fit) + (lk.ink ? ';filter:' + lk.ink : '') + '">' : empty(sel.p === i))
-          + p.items.map((it, j) => itemHTML(it, j, sel.p === i && sel.it === j)).join('')
           + '<svg class="edge" viewBox="0 0 ' + b.w + ' ' + b.h + '" preserveAspectRatio="none" aria-hidden="true">'
           + framesOf(lk, i).map(([w, c]) => '<polygon points="' + pts + '" fill="none" stroke="' + c + '" stroke-width="' + 2 * w + '"/>').join('')
           + '<polygon class="hl" points="' + pts + '"/></svg>'
           + '</div></div>';
+      }).join('')
+      + lk.panels.map((poly, i) => {
+        const b = bbox(poly);
+        return '<div class="pnl wl' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '" style="left:' + b.x + '%;top:' + (b.y / PAGE_H * 100) + '%;width:' + b.w + '%;height:' + (b.h / PAGE_H * 100) + '%"><div class="pnl-inner">'
+          + S.panels[i].items.map((it, j) => itemHTML(it, j, sel.p === i && sel.it === j)).join('') + '</div></div>';
       }).join('') + '</div>';
     ro.disconnect();
     bench.querySelectorAll('.it:not(.it-sfx)').forEach(el => { drawBox(el); ro.observe(el.querySelector('.it-text')); });
@@ -916,7 +926,9 @@ import THEME from '/the-precinct/theme.js';
 
   // Drop a picture file onto a panel.
   const hasFiles = e => e.dataTransfer && [...e.dataTransfer.types].includes('Files');
-  function markDrop(t){ bench.querySelectorAll('.drop').forEach(x => { if (x !== t) x.classList.remove('drop'); }); if (t) t.classList.add('drop'); }
+  function markDrop(t){
+    if (t && t.classList.contains('wl')) t = bench.querySelector('.pnl:not(.wl)[data-i="' + t.dataset.i + '"]');   // over a word: light its panel
+    bench.querySelectorAll('.drop').forEach(x => { if (x !== t) x.classList.remove('drop'); }); if (t) t.classList.add('drop'); }
   addEventListener('dragover', e => { if (!hasFiles(e)) return; e.preventDefault(); markDrop(e.target.closest && e.target.closest('.pnl, .pframe')); });
   addEventListener('dragleave', e => { if (!e.relatedTarget) markDrop(null); });
   addEventListener('drop', e => {
@@ -1310,13 +1322,17 @@ import THEME from '/the-precinct/theme.js';
           P.forEach(([x, y], k) => k ? path.lineTo(x, y) : path.moveTo(x, y)); path.closePath();
           ctx.save(); ctx.clip(path);
           drawCover(ctx, ims[i], S.panels[i].fit, b.x, b.y, b.w, b.h, lk.ink);
-          S.panels[i].items.forEach(it => drawItem(ctx, it, b.x, b.y, b.w, b.h));
           // frames: twice the width, clipped to the panel, so only the inner half shows (as on the page)
           framesOf(lk, i).forEach(([w, col]) => { ctx.lineWidth = 2 * w * cq; ctx.strokeStyle = col; ctx.lineJoin = 'miter'; ctx.stroke(path); });
           ctx.restore();
         });
         // the title goes on last: in the Image style a picture fills the page underneath it
         if (S.title.trim()) drawTitle(ctx, S.title.toUpperCase(), lk.title, cq, H);
+        // words last and unclipped, as on the page, so they can burst out of their panels
+        lk.panels.forEach((poly, i) => {
+          const b = bbox(poly.map(([x, y]) => [x * cq, y * cq]));
+          S.panels[i].items.forEach(it => drawItem(ctx, it, b.x, b.y, b.w, b.h));
+        });
       }
       const blob = await new Promise(r => c.toBlob(r, 'image/png'));
       const a = document.createElement('a');
