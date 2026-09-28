@@ -19,7 +19,7 @@ export default {
       id: 'commissioner', name: 'Commissioner Harlan Vance', short: 'Harlan Vance', role: 'The Commissioner', tag: 'The villain',
       story: 'The bad guy. He runs the precinct and uses Sergeant Frank Rourke as his muscle.',
       look: 'a heavy-set man in his sixties, jowly face and a permanent scowl, a three-piece suit under a long belted trench coat, a grey fedora with a dark band, hands deep in his coat pockets',
-      img: IMG + 'ref/chief.jpg',
+      img: IMG + 'ref/vance-card.jpg',
     },
     {
       id: 'detective', name: 'Edward Novak', short: 'Edward Novak', role: 'The Detective', tag: 'The good guy',
@@ -101,6 +101,7 @@ export default {
     'sunset-street': ['A city street at sunset with lit windows, street lamps and a parked black car', 'setting'],
     'fedora':        ['A stern man in a fedora and trench coat, close-up', 'character', 'commissioner'],
     'boss':          ['A heavy-set man with slicked-back hair in a suit, glaring', 'character'],
+    'vance-card':    ['A heavy-set older man in a fedora and belted trench coat over a three-piece suit, hands in his pockets, staring coldly out of the dark', 'character', 'commissioner'],
     'rourke-card':   ['A huge muscular man in shirtsleeves, braces and a loosened tie, teeth bared around a matchstick, glaring out of the dark', 'character', 'disillusioned'],
     'rourke-front':  ['A huge muscular man in shirtsleeves and braces, a holster at his side and a jacket over his shoulder, scowling', 'character', 'disillusioned'],
     'rourke-snarl':  ['Close-up of a dark-haired man baring his teeth around a cigarette, face half in shadow', 'character', 'disillusioned'],
@@ -204,5 +205,5 @@ export default {
   // Pictures offered in the comic builder's library.
   library: ['chief','hat-woman','cop','bar','blonde-green','blonde-yellow','rain-street','office','sunset-street','fedora','boss',
     'cop-badge','lamp-man','blue-man','houses','green-city','walking-woman','teal-woman','detective-car','sunset-man',
-    'walking-rain','hat-green','rourke-card','rourke-front','rourke-snarl','rourke-rage','rourke-sheet'],
+    'walking-rain','hat-green','vance-card','rourke-card','rourke-front','rourke-snarl','rourke-rage','rourke-sheet'],
 };
