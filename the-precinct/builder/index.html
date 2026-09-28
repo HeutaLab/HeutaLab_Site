@@ -8,7 +8,7 @@
 <meta name="description" content="Build your own noir comic page: add your pictures, then captions, speech balloons and sound effects, at prose, medium or advanced level.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Knewave&family=Oswald:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&family=Comic+Neue:wght@700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Knewave&family=Oswald:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&family=Comic+Neue:wght@700&family=Special+Elite&display=swap">
 <link rel="stylesheet" href="/the-precinct/precinct.css">
 <style>
   .tools{margin-top:0}
@@ -35,8 +35,20 @@
   .btn.ghost:hover{border-color:var(--yellow);color:var(--yellow);background:transparent}
   .btn.small{font-size:11.5px;padding:7px 12px}
 
-  .workbench{margin-top:18px;display:flex;justify-content:center;padding:22px 16px;background:
+  .workbench{margin-top:18px;background:
     repeating-linear-gradient(45deg,rgba(255,255,255,.015) 0 10px,transparent 10px 20px),var(--panel)}
+  #bench{display:flex;justify-content:center;padding:22px 16px}
+
+  /* style bar: along the bottom of the screen while a box on the page is chosen (at the top it would shove the page down mid-tap) */
+  .stylebar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px 18px;
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(11,15,15,.97);border-top:1px solid var(--yellow);box-shadow:0 -8px 24px rgba(0,0,0,.5)}
+  .stylebar[hidden]{display:none}
+  .stylebar .sg{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+  .stylebar .sg > b{font-family:var(--label);font-weight:500;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--yellow);margin-right:4px}
+  .stylebar .pill{padding:6px 10px;font-size:12px}
+  .stylebar .sw{width:26px;height:26px;border-radius:50%;border:2px solid var(--frame);cursor:pointer;padding:0}
+  .stylebar .sw.active{outline:2px solid var(--yellow);outline-offset:2px;border-color:#000}
+  .stylebar .what{font-family:var(--brush);color:var(--ink);font-size:18px;text-transform:uppercase;margin-right:2px}
 
   /* the comic page */
   .sheet{position:relative;width:min(100%,720px);aspect-ratio:2/3;background:#f3eee0;container-type:inline-size;
@@ -56,23 +68,17 @@
 
   .it{position:absolute;touch-action:none;cursor:grab;width:max-content}
   .it.sel{z-index:5}
-  .it-text{outline:none;font-family:"Comic Neue","Comic Sans MS",cursive;font-weight:700;text-transform:uppercase;
-    font-size:2.2cqw;line-height:1.15;text-align:center;word-wrap:break-word;user-select:text;-webkit-user-select:text;cursor:text;min-height:1.15em}
-  .it-text:empty::before{content:attr(data-ph);color:#999}
-  .it-speech .it-text,.it-thought .it-text{background:#fff;border:.3cqw solid #111;border-radius:50%;padding:1.6cqw 2.4cqw;position:relative;z-index:1}
-  /* A speech balloon's outline and tail are one SVG path, drawn by drawBalloon() to fit the words. */
-  .it-speech .it-text{background:transparent;border-color:transparent}
+  /* Font, colour, padding and size come inline from itemHTML(); every box outline is SVG, drawn by drawBox(). */
+  .it-text{outline:none;position:relative;z-index:1;line-height:1.15;text-align:center;word-wrap:break-word;
+    user-select:text;-webkit-user-select:text;cursor:text;min-height:1.15em}
+  .it-text:empty::before{content:attr(data-ph);opacity:.45}
+  .it-caption .it-text{text-align:left}
+  .it-sfx .it-text{font-family:var(--brush);font-weight:400;paint-order:stroke fill;line-height:1;white-space:nowrap}
   .bal{position:absolute;left:0;top:0;overflow:visible;z-index:0;pointer-events:none}
-  .bal path{fill:#fff;stroke:#111;stroke-linejoin:round}
-  .it-thought .it-text{border-radius:48% 52% 46% 54% / 55% 50% 50% 45%}
-  .it-caption .it-text{background:#f2c744;border:.3cqw solid #111;padding:.8cqw 1.1cqw;text-align:left}
-  .it-sfx .it-text{font-family:var(--brush);font-weight:400;font-size:7cqw;color:#f2c744;-webkit-text-stroke:.35cqw #111;paint-order:stroke fill;transform:rotate(-8deg);line-height:1;white-space:nowrap}
-  .bub{position:absolute;border:.3cqw solid #111;background:#fff;border-radius:50%;pointer-events:none}
   .it-ctl{position:absolute;bottom:calc(100% + .4cqw);right:-1cqw;display:none;gap:.6cqw;z-index:6}
   .it.sel .it-ctl{display:flex}
   .it-ctl button{width:3.2cqw;height:3.2cqw;min-width:22px;min-height:22px;border-radius:50%;border:0;background:#111;color:#f2c744;
     font-size:max(11px,1.8cqw);line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
-  .it-ctl button[data-act=size]{font-family:var(--label);font-weight:600}
   .tip-h,.rs-h{position:absolute;display:none;z-index:7;background:#f2c744;border:2px solid #111;touch-action:none}
   .it.sel .tip-h,.it.sel .rs-h{display:block}
   .tip-h{width:2.4cqw;height:2.4cqw;min-width:16px;min-height:16px;border-radius:50%;transform:translate(-50%,-50%);cursor:move}
@@ -113,14 +119,20 @@
 
   @media print{
     body{background:#fff}
-    .hero,.side,.tools,.notice,footer,.rule,.sub-intro,.it-ctl,.tip-h,.rs-h,.rm,.addframe{display:none !important}
+    .hero,.side,.tools,.notice,footer,.rule,.sub-intro,.it-ctl,.tip-h,.rs-h,.rm,.addframe,.stylebar{display:none !important}
     .layout{display:block}.page{padding:0;max-width:none}
-    .workbench{padding:0;background:none;margin:0}
+    .workbench,#bench{padding:0;background:none;margin:0}
     .sheet,.prose-page{box-shadow:none;width:100%}
     .pnl.sel .pnl-inner,.pframe.sel .pnl-inner{outline:none}
     .pnl-empty{visibility:hidden}
   }
-  @media (max-width:600px){.tools h4{min-width:0;flex-basis:100%}.workbench{padding:12px 8px;margin-left:-16px;margin-right:-16px}}
+  @media (max-width:600px){.tools h4{min-width:0;flex-basis:100%}.workbench{margin-left:-16px;margin-right:-16px}#bench{padding:12px 8px}
+    .stylebar{flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:6px;padding:8px 10px calc(8px + env(safe-area-inset-bottom))}
+    .stylebar .what{display:none}
+    .stylebar .sg{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:2px 0}
+    .stylebar .sg > b{min-width:62px;flex:none}
+    .stylebar .pill{padding:5px 8px;font-size:11px;white-space:nowrap;flex:none}
+    .stylebar .sw{flex:none;width:24px;height:24px}}
 </style>
 </head>
 <body id="top">
@@ -212,7 +224,7 @@
           <button class="pill" data-add="thought">Thought bubble</button>
           <button class="pill" data-add="sfx" aria-expanded="false" aria-controls="sfxBank">Sound effect</button>
           <div class="sfx-bank" id="sfxBank" hidden></div>
-          <p class="lvl-note">Drag the yellow dot to point a tail at whoever is talking, and the yellow bar to make a box wider or narrower. <b>A</b> changes the text size. With a box chosen: Delete removes it, the arrow keys nudge it, Esc lets go.</p>
+          <p class="lvl-note">Drag the yellow dot to point a tail at whoever is talking, and the yellow bar to make a box wider or narrower. Choose any box to change its shape, colour, lettering and size in the bar along the bottom of the screen; new boxes start in the style you used last. With a box chosen: Delete removes it, the arrow keys nudge it, Esc lets go.</p>
         </div>
         <div class="grp">
           <h4>Page</h4>
@@ -225,7 +237,10 @@
       </section>
       <p class="notice" id="notice" hidden></p>
 
-      <section class="workbench" id="bench"></section>
+      <section class="workbench">
+        <div class="stylebar" id="styleBar" hidden aria-label="Style of the chosen box"></div>
+        <div id="bench"></div>
+      </section>
 
       <footer>
         Library pictures are panels from Glenn Malcolm&rsquo;s own 2023 Midjourney noir comic.
@@ -368,28 +383,65 @@ import THEME from '/the-precinct/theme.js';
   }
   const hasTail = it => it.type === 'speech' || it.type === 'thought';
 
+  // ---------- lettering styles: shape, colour, lettering and size for each kind of box ----------
+  const COLOURS = THEME.letterColours;
+  const SHAPES = {
+    speech:  [['oval', 'Oval'], ['round', 'Rounded box'], ['shout', 'Shout'], ['whisper', 'Whisper']],
+    thought: [['cloud', 'Cloud'], ['oval', 'Oval']],
+    caption: [['rect', 'Box'], ['round', 'Rounded'], ['cut', 'Ticket']],
+  };
+  // k evens out how big each typeface looks at the same size.
+  const FONTS = {
+    comic: { label: 'Comic',       family: '"Comic Neue","Comic Sans MS",cursive',     weight: 700, upper: true,  k: 1 },
+    type:  { label: 'Typewriter',  family: '"Special Elite","Courier New",monospace',  weight: 400, upper: false, k: 1.05 },
+    hand:  { label: 'Handwritten', family: 'Caveat,"Bradley Hand",cursive',            weight: 600, upper: false, k: 1.45 },
+    bold:  { label: 'Headline',    family: 'Oswald,"Arial Narrow",sans-serif',         weight: 600, upper: true,  k: 1.05 },
+  };
+  const SIZE_NAMES = ['S', 'M', 'L', 'XL'];   // one per SIZES
+  const TILTS = [[-8, 'Tilt left'], [0, 'Straight'], [8, 'Tilt right']];
+  const STYLE0 = {
+    speech:  { shape: 'oval',  color: 'white',  font: 'comic', s: 1 },
+    thought: { shape: 'cloud', color: 'white',  font: 'comic', s: 1 },
+    caption: { shape: 'rect',  color: 'yellow', font: 'comic', s: 1 },
+    sfx:     { color: 'yellow', tilt: -8, s: 1 },
+  };
+  const STYLE_KEYS = ['shape', 'color', 'font', 's', 'tilt'];
+  // Room inside each shape, in cqw [across, down], so the words clear the outline.
+  const PAD = { rect: [1.4, 1.1], round: [1.9, 1.3], cut: [2.3, 1.1], oval: [2.7, 1.9], whisper: [2.7, 1.9], shout: [4.6, 3.8], cloud: [3.8, 3] };
+  const st = (it, k) => it[k] != null ? it[k] : STYLE0[it.type][k];
+  const colourOf = it => COLOURS[st(it, 'color')] || COLOURS.white;
+  const fontOf = it => FONTS[st(it, 'font')] || FONTS.comic;
+  const padOf = it => PAD[st(it, 'shape')] || PAD.oval;
+  const textSize = it => (it.type === 'sfx' ? 7 : 2.2 * fontOf(it).k) * st(it, 's');   // in cqw
+
   function itemHTML(it, j, on){
-    let extra = '';
-    if (it.type === 'speech') extra = '<svg class="bal" aria-hidden="true"><path/></svg>';
-    if (it.type === 'thought') extra = '<i class="bub"></i><i class="bub"></i><i class="bub"></i>';
-    if (hasTail(it) && it.tail !== 'none') extra += '<span class="tip-h" title="Drag to point the tail"></span>';
-    if (it.type !== 'sfx') extra += '<span class="rs-h" title="Drag to make it wider or narrower"></span>';
+    const c = colourOf(it);
+    let css, extra = '';
+    if (it.type === 'sfx') {
+      css = 'color:' + c.fill + ';-webkit-text-stroke:.35cqw ' + c.line + ';transform:rotate(' + st(it, 'tilt') + 'deg)';
+    } else {
+      const f = fontOf(it), p = padOf(it);
+      css = 'font-family:' + f.family.replace(/"/g, "'") + ';font-weight:' + f.weight + ';text-transform:' + (f.upper ? 'uppercase' : 'none')
+        + ';color:' + c.text + ';padding:' + p[1] + 'cqw ' + p[0] + 'cqw';
+      extra = '<svg class="bal" aria-hidden="true"></svg>';
+      if (hasTail(it) && it.tail !== 'none') extra += '<span class="tip-h" title="Drag to point the tail"></span>';
+      extra += '<span class="rs-h" title="Drag to make it wider or narrower"></span>';
+    }
     const ctl = '<span class="it-ctl">'
       + (hasTail(it) ? '<button type="button" data-act="tail" title="Tail on or off" aria-label="Tail on or off">&#x2198;</button>' : '')
-      + '<button type="button" data-act="size" title="Text size" aria-label="Text size">A</button>'
       + '<button type="button" data-act="dup" title="Duplicate" aria-label="Duplicate">&#x2750;</button>'
       + '<button type="button" data-act="del" title="Delete" aria-label="Delete">&times;</button></span>';
-    const fs = (it.type === 'sfx' ? 7 : 2.2) * (it.s || 1);
     return '<div class="it it-' + it.type + (on ? ' sel' : '') + '" data-j="' + j + '" style="left:' + it.x + '%;top:' + it.y + '%;' + (it.fw ? 'width:' : 'max-width:') + it.w + '%">'
-      + '<div class="it-text" contenteditable="true" spellcheck="false" data-ph="' + esc(PH[it.type]) + '" style="font-size:' + fs + 'cqw">' + esc(it.text) + '</div>' + extra + ctl + '</div>';
+      + '<div class="it-text" contenteditable="true" spellcheck="false" data-ph="' + esc(PH[it.type]) + '" style="font-size:' + textSize(it) + 'cqw;' + css + '">' + esc(it.text) + '</div>' + extra + ctl + '</div>';
   }
 
-  // Balloon geometry, shared by the page (drawBalloon) and the PNG export (drawItem).
-  // w, h: the text box in px; cq: 1% of the page width in px. The ellipse sits just inside the box.
-  const SPREAD = 0.3;                                   // half-width of the tail's base, in radians of the ellipse
+  // Box geometry, shared by the page (drawBox) and the PNG export (drawItem): both draw the same SVG path strings.
+  // w, h: the text box in px; cq: 1% of the page width in px. The outline is stroked 2 × bw wide and then filled over,
+  // so only its outer half shows: that is what joins a tail to its balloon with no line across the join.
+  const SPREAD = 0.34;                                  // half-width of a tail's base, in radians of the ellipse
   const DOTS = [[0.25, 3.2], [0.6, 2.1], [0.92, 1.2]];  // thought trail: [share of the way to the tip, diameter in cqw]
   function geom(w, h, it, cq){
-    const bw = 0.3 * cq, cx = w / 2, cy = h / 2, g = { bw, cx, cy, rx: cx - bw / 2, ry: cy - bw / 2, tip: null };
+    const bw = 0.3 * cq, cx = w / 2, cy = h / 2, g = { bw, cx, cy, rx: cx - bw, ry: cy - bw, tip: null };
     if (it.tail !== 'none' && it.tip) {
       g.tip = [cx + it.tip.x * cq, h + it.tip.y * cq];
       const nx = (g.tip[0] - cx) / g.rx, ny = (g.tip[1] - cy) / g.ry;
@@ -398,34 +450,60 @@ import THEME from '/the-precinct/theme.js';
     }
     return g;
   }
-  const ePt = (g, a) => [g.cx + g.rx * Math.cos(a), g.cy + g.ry * Math.sin(a)];
+  const ePt = (g, a, k = 1) => [g.cx + g.rx * k * Math.cos(a), g.cy + g.ry * k * Math.sin(a)];
+  const P = p => Math.round(p[0] * 10) / 10 + ',' + Math.round(p[1] * 10) / 10;
+  const circleD = (x, y, r) => 'M' + (x - r) + ',' + y + 'a' + r + ',' + r + ' 0 1 0 ' + 2 * r + ',0a' + r + ',' + r + ' 0 1 0 ' + -2 * r + ',0Z';
 
-  function drawBalloon(itEl){
+  function shapeD(shape, g){
+    const { cx, cy, rx, ry } = g, x0 = cx - rx, y0 = cy - ry, x1 = cx + rx, y1 = cy + ry;
+    if (shape === 'rect') return 'M' + x0 + ',' + y0 + 'H' + x1 + 'V' + y1 + 'H' + x0 + 'Z';
+    if (shape === 'round' || shape === 'cut') {
+      const r = Math.min(rx, ry) * (shape === 'round' ? 0.6 : 0.45);
+      const turn = shape === 'round' ? (x, y) => 'A' + r + ',' + r + ' 0 0 1 ' + x + ',' + y : (x, y) => 'L' + x + ',' + y;
+      return 'M' + (x0 + r) + ',' + y0 + 'H' + (x1 - r) + turn(x1, y0 + r) + 'V' + (y1 - r) + turn(x1 - r, y1)
+        + 'H' + (x0 + r) + turn(x0, y1 - r) + 'V' + (y0 + r) + turn(x0 + r, y0) + 'Z';
+    }
+    if (shape === 'shout') {   // a burst: spikes of uneven length round the ellipse
+      const n = 11, pts = [];
+      for (let k = 0; k < 2 * n; k++) pts.push(P(ePt(g, -Math.PI / 2 + k * Math.PI / n, k % 2 ? 0.78 : 1 - 0.07 * (k * 7 % 3))));
+      return 'M' + pts.join('L') + 'Z';
+    }
+    if (shape === 'cloud') {   // scallops bulging out to the edge of the box
+      const n = 10, s = 2 * Math.PI / n;
+      let d = 'M' + P(ePt(g, 0, 0.84));
+      for (let k = 0; k < n; k++) d += 'Q' + P(ePt(g, k * s + s / 2, 1.16)) + ' ' + P(ePt(g, (k + 1) * s, 0.84));
+      return d + 'Z';
+    }
+    const E = 'A' + rx + ',' + ry + ' 0 1 1 ';   // oval and whisper
+    return 'M' + x0 + ',' + cy + E + x1 + ',' + cy + E + x0 + ',' + cy + 'Z';
+  }
+  // Every filled piece of a box: its shape, a speech tail, a thought trail.
+  function pieces(it, g, cq){
+    const out = [shapeD(st(it, 'shape'), g)];
+    if (it.type === 'speech' && g.tip) out.push('M' + P(ePt(g, g.t - SPREAD, 0.7)) + 'L' + P(g.tip) + 'L' + P(ePt(g, g.t + SPREAD, 0.7)) + 'Z');
+    if (it.type === 'thought' && g.tip) {
+      const e = ePt(g, g.t);
+      DOTS.forEach(([f, d]) => out.push(circleD(e[0] + (g.tip[0] - e[0]) * f, e[1] + (g.tip[1] - e[1]) * f, d * cq / 2 - g.bw)));
+    }
+    return out;
+  }
+  const dashOf = (it, g) => st(it, 'shape') === 'whisper' ? [6 * g.bw, 4.5 * g.bw] : null;
+
+  function drawBox(itEl){
     const sheet = itEl && itEl.closest('.sheet'); if (!sheet) return;
-    const it = S.panels[+itEl.closest('.pnl').dataset.i].items[+itEl.dataset.j]; if (!it) return;
+    const it = S.panels[+itEl.closest('.pnl').dataset.i].items[+itEl.dataset.j]; if (!it || it.type === 'sfx') return;
     const cq = sheet.clientWidth / 100, tx = itEl.querySelector('.it-text'), w = tx.offsetWidth, h = tx.offsetHeight;
     if (!cq || !w) return;   // not laid out yet (e.g. mid-reload); the ResizeObserver calls again once it is
-    const g = geom(w, h, it, cq), hd = itEl.querySelector('.tip-h');
+    const g = geom(w, h, it, cq), c = colourOf(it), parts = pieces(it, g, cq), dash = dashOf(it, g), hd = itEl.querySelector('.tip-h');
     if (hd && it.tip) { hd.style.left = (w / 2 + it.tip.x * cq) + 'px'; hd.style.top = (h + it.tip.y * cq) + 'px'; }
-    if (it.type === 'speech') {
-      const svg = itEl.querySelector('.bal'), path = svg.firstChild, E = g.rx + ' ' + g.ry + ' 0 1 1 ';
-      svg.setAttribute('width', w); svg.setAttribute('height', h);
-      path.setAttribute('stroke-width', g.bw);
-      path.setAttribute('d', g.tip
-        ? 'M' + g.tip + 'L' + ePt(g, g.t + SPREAD) + 'A' + E + ePt(g, g.t - SPREAD) + 'Z'
-        : 'M' + (g.cx - g.rx) + ',' + g.cy + 'A' + E + (g.cx + g.rx) + ',' + g.cy + 'A' + E + (g.cx - g.rx) + ',' + g.cy + 'Z');
-    }
-    if (it.type === 'thought') {
-      const e = g.tip && ePt(g, g.t);
-      itEl.querySelectorAll('.bub').forEach((b, k) => {
-        b.hidden = !g.tip; if (!g.tip) return;
-        const [f, d] = DOTS[k], r = d * cq / 2;
-        b.style.cssText = 'left:' + (e[0] + (g.tip[0] - e[0]) * f - r) + 'px;top:' + (e[1] + (g.tip[1] - e[1]) * f - r) + 'px;width:' + 2 * r + 'px;height:' + 2 * r + 'px';
-      });
-    }
+    const svg = itEl.querySelector('.bal');
+    svg.setAttribute('width', w); svg.setAttribute('height', h);
+    svg.innerHTML = '<path d="' + parts.join('') + '" fill="none" stroke="' + c.line + '" stroke-width="' + 2 * g.bw + '" stroke-linejoin="round"'
+      + (dash ? ' stroke-dasharray="' + dash.join(' ') + '"' : '') + '/>'
+      + parts.map(d => '<path d="' + d + '" fill="' + c.fill + '"/>').join('');
   }
-  // Balloons redraw whenever their words (or the page) change size.
-  const ro = new ResizeObserver(es => es.forEach(en => drawBalloon(en.target.closest('.it'))));
+  // Boxes redraw whenever their words (or the page) change size.
+  const ro = new ResizeObserver(es => es.forEach(en => drawBox(en.target.closest('.it'))));
 
   function imgStyle(fit){
     return 'object-position:' + fit.x + '% ' + fit.y + '%;transform:scale(' + fit.z + ');transform-origin:' + fit.x + '% ' + fit.y + '%';
@@ -449,6 +527,7 @@ import THEME from '/the-precinct/theme.js';
     ['uploadBtn','libBtn'].forEach(id => $(id).disabled = !has);
     $('clearImgBtn').disabled = $('zoom').disabled = !(has && list[sel.p].img);
     document.querySelectorAll('[data-add]').forEach(b => b.disabled = !has);
+    renderStyleBar();
     const chosen = sel.it != null && S.panels[sel.p].items[sel.it];
     if (chosen && chosen.type === 'sfx') sfxOpen = true;   // so the words are there to swap
     const bankOn = sfxOpen && has && S.level === 'advanced', sfxBtn = document.querySelector('[data-add=sfx]');
@@ -479,7 +558,7 @@ import THEME from '/the-precinct/theme.js';
           + '</div></div>';
       }).join('') + '</div></div>';
     ro.disconnect();
-    bench.querySelectorAll('.it-speech, .it-thought').forEach(el => { drawBalloon(el); ro.observe(el.querySelector('.it-text')); });
+    bench.querySelectorAll('.it:not(.it-sfx)').forEach(el => { drawBox(el); ro.observe(el.querySelector('.it-text')); });
   }
 
   function note(msg){ const n = $('notice'); n.textContent = msg; n.hidden = !msg; }
@@ -501,7 +580,12 @@ import THEME from '/the-precinct/theme.js';
     const itEl = e.target.closest('.it');
     if (itEl) {
       const p = +itEl.closest('.pnl').dataset.i, j = +itEl.dataset.j;
-      S.panels[p].items[j].text = e.target.innerText.replace(/\n+$/, '');
+      // innerText keeps line breaks but also applies text-transform, so switch capitals off while reading:
+      // the words are stored as typed, and lettering that isn't all-capitals shows them that way.
+      const tx = e.target, tt = tx.style.textTransform;
+      tx.style.textTransform = 'none';
+      S.panels[p].items[j].text = tx.innerText.replace(/\n+$/, '');
+      tx.style.textTransform = tt;
       save();
     }
   });
@@ -532,7 +616,6 @@ import THEME from '/the-precinct/theme.js';
         if (it.tail === 'none') { delete it.tail; if (!it.tip) it.tip = Object.assign({}, DEFAULTS[it.type].tip); }
         else it.tail = 'none';
       }
-      if (act.dataset.act === 'size') it.s = SIZES[(SIZES.indexOf(it.s || 1) + 1) % SIZES.length];
       save(); render(); return;
     }
     if (e.target.closest('.pframe textarea')) { const i = +e.target.dataset.i; if (sel.p !== i) { sel = { p: i, it: null }; render().then(() => bench.querySelector('textarea[data-i="' + i + '"]').focus()); } return; }
@@ -610,7 +693,7 @@ import THEME from '/the-precinct/theme.js';
       drag.el.style.left = it.x + '%'; drag.el.style.top = it.y + '%';
     } else if (drag.kind === 'tip') {
       it.tip = { x: drag.tip.x + dx / drag.cq, y: drag.tip.y + dy / drag.cq };
-      drawBalloon(drag.el);
+      drawBox(drag.el);
     } else {
       it.fw = true; it.w = Math.max(10, Math.min(100, drag.w0 + px));
       drag.el.style.maxWidth = ''; drag.el.style.width = it.w + '%';   // the ResizeObserver redraws the balloon
@@ -759,6 +842,7 @@ import THEME from '/the-precinct/theme.js';
     checkpoint();
     const items = S.panels[sel.p].items;
     const it = Object.assign({ type }, JSON.parse(JSON.stringify(DEFAULTS[type])));
+    Object.assign(it, S.last && S.last[type]);   // new boxes start in the style used last for their kind
     if (text != null) it.text = text;
     it.y = Math.min(80, it.y + (items.length % 3) * 6);
     items.push(it);
@@ -773,6 +857,37 @@ import THEME from '/the-precinct/theme.js';
     if (b.dataset.add === 'sfx') { sfxOpen = !sfxOpen; render(); return; }
     addItem(b.dataset.add, null, true);
   }));
+
+  // Style bar: shape, colour, lettering (or tilt) and size for the chosen box.
+  const KIND = { speech: 'Speech balloon', thought: 'Thought bubble', caption: 'Caption box', sfx: 'Sound effect' };
+  function renderStyleBar(){
+    const bar = $('styleBar'), it = sel.it != null && S.level !== 'prose' && S.panels[sel.p].items[sel.it];
+    bar.hidden = !it;
+    document.body.style.paddingBottom = it ? '160px' : '';   // room to scroll the page clear of the bar
+    if (!it) return;
+    const grp = (label, key, opts, css) => '<div class="sg" role="group" aria-label="' + label + '"><b>' + label + '</b>'
+      + opts.map(([v, l]) => '<button type="button" class="pill' + (st(it, key) === v ? ' active' : '') + '" data-style="' + key + '" data-v="' + v + '"'
+        + (css ? ' style="' + css(v) + '"' : '') + '>' + l + '</button>').join('') + '</div>';
+    let h = '<span class="what">' + KIND[it.type] + '</span>';
+    if (SHAPES[it.type]) h += grp('Shape', 'shape', SHAPES[it.type]);
+    h += '<div class="sg" role="group" aria-label="Colour"><b>Colour</b>' + Object.entries(COLOURS).map(([k, c]) =>
+      '<button type="button" class="sw' + (st(it, 'color') === k ? ' active' : '') + '" data-style="color" data-v="' + k + '" title="' + c.label
+      + '" aria-label="' + c.label + '" style="background:' + c.fill + '"></button>').join('') + '</div>';
+    h += it.type === 'sfx' ? grp('Tilt', 'tilt', TILTS)
+      : grp('Lettering', 'font', Object.entries(FONTS).map(([k, f]) => [k, f.label]),
+          k => 'font-family:' + FONTS[k].family.replace(/"/g, "'") + ';text-transform:none;letter-spacing:0;font-size:' + (13 * FONTS[k].k) + 'px');
+    h += grp('Size', 's', SIZES.map((v, k) => [v, SIZE_NAMES[k]]));
+    bar.innerHTML = h;
+  }
+  $('styleBar').addEventListener('click', e => {
+    const b = e.target.closest('[data-style]'), it = b && sel.it != null && S.panels[sel.p].items[sel.it];
+    if (!it) return;
+    const k = b.dataset.style, v = k === 's' || k === 'tilt' ? +b.dataset.v : b.dataset.v;
+    checkpoint();
+    it[k] = v;
+    S.last = S.last || {}; (S.last[it.type] = S.last[it.type] || {})[k] = v;
+    save(); render();
+  });
 
   // Sound effects: a bank of words. A word goes into the chosen panel, or replaces the chosen sound effect.
   let sfxOpen = false;
@@ -821,54 +936,41 @@ import THEME from '/the-precinct/theme.js';
     ctx.restore();
   }
   function drawItem(ctx, it, px, py, pw, ph){
-    const cq = W / 100, x = px + pw * it.x / 100, y = py + ph * it.y / 100;
+    const cq = W / 100, x = px + pw * it.x / 100, y = py + ph * it.y / 100, c = colourOf(it);
     let w = pw * it.w / 100;
-    const text = (it.text || '').trim(), sc = it.s || 1;
+    const text = (it.text || '').trim(), fs = textSize(it) * cq;
     if (!text) return;
     ctx.save();
     if (it.type === 'sfx') {
-      ctx.font = (7 * cq * sc) + 'px Knewave'; ctx.textBaseline = 'top';
-      ctx.translate(x, y); ctx.rotate(-8 * Math.PI / 180);
-      ctx.lineJoin = 'round'; ctx.lineWidth = 0.7 * cq; ctx.strokeStyle = '#111'; ctx.strokeText(text.toUpperCase(), 0, 0);
-      ctx.fillStyle = '#f2c744'; ctx.fillText(text.toUpperCase(), 0, 0);
+      ctx.font = fs + 'px Knewave'; ctx.textBaseline = 'top';
+      ctx.translate(x, y); ctx.rotate(st(it, 'tilt') * Math.PI / 180);
+      ctx.lineJoin = 'round'; ctx.lineWidth = 0.7 * cq; ctx.strokeStyle = c.line; ctx.strokeText(text.toUpperCase(), 0, 0);
+      ctx.fillStyle = c.fill; ctx.fillText(text.toUpperCase(), 0, 0);
       ctx.restore(); return;
     }
-    const fs = 2.2 * cq * sc, lh = fs * 1.15;
-    ctx.font = '700 ' + fs + 'px "Comic Neue"';
-    const padX = (it.type === 'caption' ? 1.1 : 2.4) * cq, padY = (it.type === 'caption' ? 0.8 : 1.6) * cq, bw = 0.3 * cq;
-    const lines = wrap(ctx, text.toUpperCase(), w - 2 * padX - 2 * bw);
+    const f = fontOf(it), lh = fs * 1.15, words = f.upper ? text.toUpperCase() : text;
+    ctx.font = f.weight + ' ' + fs + 'px ' + f.family;
+    const padX = padOf(it)[0] * cq, padY = padOf(it)[1] * cq;
+    const lines = wrap(ctx, words, w - 2 * padX);
     // Boxes shrink to their words, as on screen (width: max-content, capped at w), unless their width was set by hand.
-    if (!it.fw) w = Math.min(w, Math.max(...lines.map(l => ctx.measureText(l).width)) + 2 * padX + 2 * bw + 2);
-    const h = lines.length * lh + 2 * padY + 2 * bw;
-    ctx.lineWidth = bw; ctx.strokeStyle = '#111'; ctx.lineJoin = 'round';
-    if (it.type === 'caption') {
-      ctx.fillStyle = '#f2c744'; ctx.fillRect(x, y, w, h); ctx.strokeRect(x + bw / 2, y + bw / 2, w - bw, h - bw);
-    } else {
-      const g = geom(w, h, it, cq), T = Math.PI * 2;
-      ctx.save(); ctx.translate(x, y); ctx.fillStyle = '#fff';
-      ctx.beginPath();
-      if (it.type === 'speech' && g.tip) { ctx.moveTo(...g.tip); ctx.lineTo(...ePt(g, g.t + SPREAD)); ctx.ellipse(g.cx, g.cy, g.rx, g.ry, 0, g.t + SPREAD, g.t - SPREAD + T); ctx.closePath(); }
-      else ctx.ellipse(g.cx, g.cy, g.rx, g.ry, 0, 0, T);
-      ctx.fill(); ctx.stroke();
-      if (it.type === 'thought' && g.tip) {
-        const e = ePt(g, g.t);
-        DOTS.forEach(([f, d]) => {
-          const r = d * cq / 2;
-          ctx.beginPath(); ctx.arc(e[0] + (g.tip[0] - e[0]) * f, e[1] + (g.tip[1] - e[1]) * f, r - bw / 2, 0, T);
-          ctx.fill(); ctx.stroke();
-        });
-      }
-      ctx.restore();
-    }
-    ctx.fillStyle = '#111'; ctx.textBaseline = 'top'; ctx.textAlign = it.type === 'caption' ? 'left' : 'center';
-    lines.forEach((ln, k) => ctx.fillText(ln, it.type === 'caption' ? x + bw + padX : x + w / 2, y + bw + padY + k * lh + fs * 0.05));
+    if (!it.fw) w = Math.min(w, Math.max(...lines.map(l => ctx.measureText(l).width)) + 2 * padX + 2);
+    const h = lines.length * lh + 2 * padY;
+    const g = geom(w, h, it, cq), parts = pieces(it, g, cq), dash = dashOf(it, g);
+    ctx.save(); ctx.translate(x, y);
+    ctx.lineWidth = 2 * g.bw; ctx.strokeStyle = c.line; ctx.lineJoin = 'round';
+    if (dash) ctx.setLineDash(dash);
+    ctx.stroke(new Path2D(parts.join('')));
+    ctx.fillStyle = c.fill; parts.forEach(d => ctx.fill(new Path2D(d)));
+    ctx.restore();
+    ctx.fillStyle = c.text; ctx.textBaseline = 'top'; ctx.textAlign = it.type === 'caption' ? 'left' : 'center';
+    lines.forEach((ln, k) => ctx.fillText(ln, it.type === 'caption' ? x + padX : x + w / 2, y + padY + k * lh + fs * 0.05));
     ctx.restore();
   }
 
   async function exportPNG(){
     const btn = $('pngBtn'); btn.disabled = true;
     try {
-      await Promise.all(['40px Knewave', '700 40px "Comic Neue"', '40px "Libre Baskerville"'].map(f => document.fonts.load(f).catch(() => {})));
+      await Promise.all(['40px Knewave', '40px "Libre Baskerville"'].concat(Object.values(FONTS).map(f => f.weight + ' 40px ' + f.family)).map(f => document.fonts.load(f).catch(() => {})));
       const list = panelList();
       const ims = await Promise.all(list.map(async p => loadImg(await urlFor(p.img))));
       const c = document.createElement('canvas'), ctx = c.getContext('2d'), cq = W / 100;

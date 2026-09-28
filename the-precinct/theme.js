@@ -209,6 +209,18 @@ export default {
     'cop-badge','lamp-man','blue-man','houses','green-city','walking-woman','teal-woman','detective-car','sunset-man',
     'walking-rain','hat-green','novak-card','vance-card','rourke-card','vera-card','rourke-front','rourke-snarl','rourke-rage','rourke-sheet'],
 
+  // Colours for captions, balloons, thoughts and sound effects in the comic builder, taken from the palettes above.
+  // fill: the box (or a sound effect's letters); text: the words; line: the outline.
+  letterColours: {
+    white:  { label: 'White',       fill: '#ffffff', text: '#111111', line: '#111111' },
+    paper:  { label: 'Old paper',   fill: '#e9e0c8', text: '#111111', line: '#111111' },
+    yellow: { label: 'Yellow',      fill: '#f2c744', text: '#111111', line: '#111111' },
+    green:  { label: 'Green',       fill: '#7fc08e', text: '#111111', line: '#111111' },
+    blue:   { label: 'Blue',        fill: '#7fa6e0', text: '#111111', line: '#111111' },
+    red:    { label: 'Red & amber', fill: '#f07a4a', text: '#111111', line: '#111111' },
+    black:  { label: 'Black',       fill: '#111111', text: '#f3eee0', line: '#f3eee0' },
+  },
+
   // Sound effects offered in the comic builder, grouped by what makes the noise.
   sfx: [
     ['Gunfire', ['BLAM!', 'BANG!', 'RAT-A-TAT!', 'KA-BLAM!', 'PING!']],
