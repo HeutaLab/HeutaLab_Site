@@ -125,11 +125,15 @@
   .bal{position:absolute;left:0;top:0;overflow:visible;z-index:0;pointer-events:none}
   .it-ctl{position:absolute;bottom:calc(100% + .4cqw);right:-1cqw;display:none;gap:.6cqw;z-index:6}
   .it.sel .it-ctl{display:flex}
+  .it-sfx .it-ctl{bottom:auto;top:calc(100% + .6cqw)}   /* under a sound effect: its rotate handle has the space above */
   .it-ctl button{width:3.2cqw;height:3.2cqw;min-width:22px;min-height:22px;border-radius:50%;border:0;background:#111;color:#f2c744;
     font-size:max(11px,1.8cqw);line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
-  .tip-h,.rs-h{position:absolute;display:none;z-index:7;background:#f2c744;border:2px solid #111;touch-action:none}
+  .tip-h,.rs-h,.rot-h{position:absolute;display:none;z-index:7;background:#f2c744;border:2px solid #111;touch-action:none}
   .it.sel .tip-h,.it.sel .rs-h{display:block}
   .tip-h{width:2.4cqw;height:2.4cqw;min-width:16px;min-height:16px;border-radius:50%;transform:translate(-50%,-50%);cursor:move}
+  .rot-h{width:2.8cqw;height:2.8cqw;min-width:18px;min-height:18px;border-radius:50%;transform:translate(-50%,-50%);cursor:grab;
+    display:none;align-items:center;justify-content:center;color:#111;font:700 max(11px,1.7cqw)/1 sans-serif}
+  .it.sel .rot-h{display:flex}
   .rs-h{right:-.9cqw;top:50%;width:1.5cqw;height:4cqw;min-width:10px;min-height:24px;border-radius:3px;transform:translateY(-50%);cursor:ew-resize}
   .pframe.drop .pnl-inner{outline:.6cqw dashed var(--yellow);outline-offset:.2cqw}
   .pnl-empty .picks{display:flex;gap:1cqw;flex-wrap:wrap;justify-content:center}
@@ -171,7 +175,7 @@
   @media print{
     html,body{background:#fff !important}
     body{padding:0 !important}
-    .hero,.side,.tools,.notice,footer,.rule,.sub-intro,.it-ctl,.tip-h,.rs-h,.rm,.addframe,.dock,.tray,.tip,.scard{display:none !important}
+    .hero,.side,.tools,.notice,footer,.rule,.sub-intro,.it-ctl,.tip-h,.rs-h,.rot-h,.rm,.addframe,.dock,.tray,.tip,.scard{display:none !important}
     .layout{display:block;margin:0}.page{padding:0;margin:0;max-width:none}
     .workbench,#bench{padding:0;background:none;margin:0}
     .sheet{box-shadow:none;width:auto;height:calc(100vh - 1mm);max-width:100%;margin:0 auto;break-inside:avoid;
@@ -533,6 +537,7 @@ import THEME from '/the-precinct/theme.js';
     const c = colourOf(it);
     let css, extra = '';
     if (it.type === 'sfx') {
+      extra = '<span class="rot-h" title="Drag to tilt it (hold Shift for steps of 15°)">&#8635;</span>';
       css = 'color:' + c.fill + ';-webkit-text-stroke:.35cqw ' + c.line + ';transform:rotate(' + st(it, 'tilt') + 'deg)';
     } else {
       const f = fontOf(it), p = padOf(it);
@@ -617,8 +622,16 @@ import THEME from '/the-precinct/theme.js';
       + (dash ? ' stroke-dasharray="' + dash.join(' ') + '"' : '') + '/>'
       + parts.map(d => '<path d="' + d + '" fill="' + c.fill + '"/>').join('');
   }
-  // Boxes redraw whenever their words (or the page) change size.
-  const ro = new ResizeObserver(es => es.forEach(en => drawBox(en.target.closest('.it'))));
+  function placeRot(itEl){
+    const hd = itEl && itEl.querySelector('.rot-h'); if (!hd) return;
+    const it = S.panels[+itEl.closest('.pnl').dataset.i].items[+itEl.dataset.j]; if (!it) return;
+    const tx = itEl.querySelector('.it-text'), sheet = itEl.closest('.sheet'), r = st(it, 'tilt') * Math.PI / 180;
+    const d = tx.offsetHeight / 2 + Math.max(22, 4.5 * sheet.clientWidth / 100);
+    hd.style.left = (tx.offsetLeft + tx.offsetWidth / 2 + Math.sin(r) * d) + 'px';
+    hd.style.top = (tx.offsetTop + tx.offsetHeight / 2 - Math.cos(r) * d) + 'px';
+  }
+  // Boxes redraw (and rotate handles move) whenever their words, or the page, change size.
+  const ro = new ResizeObserver(es => es.forEach(en => { const el = en.target.closest('.it'); el && el.classList.contains('it-sfx') ? placeRot(el) : drawBox(el); }));
 
   // Zoom is about the framing point; a flip then mirrors the whole panel about its centre line,
   // which is (50 - x)% of the width (or 50 - y% of the height) away from that point. drawCover() does the same on the canvas.
@@ -678,7 +691,7 @@ import THEME from '/the-precinct/theme.js';
           + S.panels[i].items.map((it, j) => itemHTML(it, j, sel.p === i && sel.it === j)).join('') + '</div></div>';
       }).join('') + '</div>';
     ro.disconnect();
-    bench.querySelectorAll('.it:not(.it-sfx)').forEach(el => { drawBox(el); ro.observe(el.querySelector('.it-text')); });
+    bench.querySelectorAll('.it').forEach(el => { el.classList.contains('it-sfx') ? placeRot(el) : drawBox(el); ro.observe(el.querySelector('.it-text')); });
     showTip();
   }
 
@@ -754,11 +767,11 @@ import THEME from '/the-precinct/theme.js';
       if (sel.p === i && S.prose[i].img && inner.contains(e.target)) startDrag(e, { kind: 'pan', i, box });
       return;
     }
-    const hd = e.target.closest('.tip-h, .rs-h');
+    const hd = e.target.closest('.tip-h, .rs-h, .rot-h');
     if (hd) {
       e.preventDefault();
       const itEl = hd.closest('.it');
-      return startDrag(e, { kind: hd.classList.contains('tip-h') ? 'tip' : 'width', i, j: +itEl.dataset.j, box, el: itEl });
+      return startDrag(e, { kind: hd.classList.contains('tip-h') ? 'tip' : hd.classList.contains('rot-h') ? 'rot' : 'width', i, j: +itEl.dataset.j, box, el: itEl });
     }
     const itEl = e.target.closest('.it');
     if (itEl) {
@@ -787,6 +800,7 @@ import THEME from '/the-precinct/theme.js';
       d.ix = it.x; d.iy = it.y; d.tip = Object.assign({}, it.tip);
       d.w0 = it.fw ? it.w : d.el.offsetWidth / d.box.width * 100;
       d.cq = bench.querySelector('.sheet').clientWidth / 100;
+      if (d.kind === 'rot') { const r = d.el.querySelector('.it-text').getBoundingClientRect(); d.cx = r.left + r.width / 2; d.cy = r.top + r.height / 2; }
     }
     drag = d;
   }
@@ -810,6 +824,16 @@ import THEME from '/the-precinct/theme.js';
       it.x = Math.max(-10, Math.min(95, drag.ix + px));
       it.y = Math.max(-10, Math.min(95, drag.iy + py));
       drag.el.style.left = it.x + '%'; drag.el.style.top = it.y + '%';
+    } else if (drag.kind === 'rot') {
+      // The angle from the word's centre to the pointer, with "straight up" as 0°. It clicks to level and upright
+      // within 4°; Shift gives steps of 15°.
+      let a = Math.atan2(e.clientY - drag.cy, e.clientX - drag.cx) * 180 / Math.PI + 90;
+      if (a > 180) a -= 360;
+      const q = e.shiftKey ? 15 : 90;
+      if (e.shiftKey || Math.abs(a - Math.round(a / q) * q) < 4) a = Math.round(a / q) * q;
+      it.tilt = Math.round(a);
+      drag.el.querySelector('.it-text').style.transform = 'rotate(' + it.tilt + 'deg)';
+      placeRot(drag.el);
     } else if (drag.kind === 'tip') {
       it.tip = { x: drag.tip.x + dx / drag.cq, y: drag.tip.y + dy / drag.cq };
       drawBox(drag.el);
@@ -825,6 +849,7 @@ import THEME from '/the-precinct/theme.js';
     if (d.moved) {
       save();
       if (d.kind === 'tip' || d.kind === 'width') { markSeen('tail'); showTip(); }   // they found the handles
+      if (d.kind === 'rot') { markSeen('rotate'); render(); }                          // the style bar shows the new angle
       return;
     }
     if (d.kind === 'item' && d.editOnTap) editItem(d.el);
@@ -857,6 +882,11 @@ import THEME from '/the-precinct/theme.js';
       save(); render();
     }
     else if (mod && k === 'd') { e.preventDefault(); duplicate(sel.p, sel.it); }
+    else if ((e.key === '[' || e.key === ']') && it.type === 'sfx') {
+      e.preventDefault(); checkpoint();
+      it.tilt = ((st(it, 'tilt') + (e.key === ']' ? 5 : -5) + 540) % 360) - 180;
+      save(); render();
+    }
     else if (e.key === 'Enter') { e.preventDefault(); const el = bench.querySelector('.it.sel'); if (el) editItem(el); }
   });
 
@@ -993,7 +1023,7 @@ import THEME from '/the-precinct/theme.js';
     h += '<div class="sg" role="group" aria-label="Colour"><b>Colour</b>' + colours.map(([k, c]) =>
       '<button type="button" class="sw' + (st(it, 'color') === k ? ' active' : '') + '" data-style="color" data-v="' + k + '" title="' + c.label
       + '" aria-label="' + c.label + '" style="background:' + c.fill + '"></button>').join('') + '</div>';
-    if (it.type === 'sfx') h += grp('Tilt', 'tilt', TILTS);
+    if (it.type === 'sfx') h += grp('Tilt', 'tilt', TILTS).replace(/<\/div>$/, '<span class="note">' + st(it, 'tilt') + '° · or drag &#8635;</span></div>');
     else if (fonts.length > 1) h += grp('Lettering', 'font', fonts,
       k => 'font-family:' + FONTS[k].family.replace(/"/g, "'") + ';text-transform:none;letter-spacing:0;font-size:' + (13 * FONTS[k].k) + 'px');
     h += grp('Size', 's', sizes);
@@ -1017,7 +1047,7 @@ import THEME from '/the-precinct/theme.js';
     const it = chosenItem(), list = panelList(), p = sel.p != null && list[sel.p];
     let h;
     let done = '';
-    if (it) { h = styleHTML(it); done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this box (Esc)&#10;&#10;Keyboard, with a box chosen:&#10;Delete: remove it&#10;Arrow keys: nudge it (hold Shift for bigger steps)&#10;Ctrl/&#8984;+D: duplicate it&#10;Enter: edit the words&#10;Ctrl/&#8984;+Z: undo, Shift+Ctrl/&#8984;+Z: redo' }); }
+    if (it) { h = styleHTML(it); done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this box (Esc)&#10;&#10;Keyboard, with a box chosen:&#10;Delete: remove it&#10;Arrow keys: nudge it (hold Shift for bigger steps)&#10;Ctrl/&#8984;+D: duplicate it&#10;Enter: edit the words&#10;[ and ]: tilt a sound effect&#10;Ctrl/&#8984;+Z: undo, Shift+Ctrl/&#8984;+Z: redo' }); }
     else if (p) {
       h = '<span class="what">' + (S.level === 'prose' ? 'Frame ' : 'Panel ') + (sel.p + 1) + '</span>'
         + g('picture', '<b>Picture</b>' + (p.img
@@ -1156,6 +1186,8 @@ import THEME from '/the-precinct/theme.js';
       title: 'Now tell the story', text: 'Add a caption box for the narrator and a speech balloon for whoever is talking. Drag the picture to frame it.' },
     { id: 'tail', at: 'tail', when: () => { const it = chosenItem(); return it && hasTail(it) && it.tail !== 'none'; },
       title: 'Point the tail', text: 'Drag the yellow dot to whoever is talking. The yellow bar makes the box wider or narrower.' },
+    { id: 'rotate', at: 'rot', when: () => { const it = chosenItem(); return it && it.type === 'sfx'; },
+      title: 'Tilt it', text: 'Drag the round handle to tilt the sound effect any way you like. Hold Shift for steps of 15°.' },
     { id: 'style', at: 'dock', when: () => !!chosenItem(),
       title: 'Make it look right', text: 'Change the look down here. Delete removes the box, the arrow keys nudge it, and Esc lets go.' },
     { id: 'sfx', at: 'tray', when: bankOpen,
@@ -1176,7 +1208,7 @@ import THEME from '/the-precinct/theme.js';
     const el = $('tip'); if (!tipNow || el.hidden) return;
     el.className = 'tip'; el.style.top = el.style.bottom = '';
     const dockH = $('dock').offsetHeight, tray = $('sfxBank'), trayH = tray.hidden ? 0 : tray.offsetHeight;
-    const dot = tipNow.at === 'tail' && bench.querySelector('.it.sel .tip-h');
+    const dot = { tail: '.it.sel .tip-h', rot: '.it.sel .rot-h' }[tipNow.at] && bench.querySelector({ tail: '.it.sel .tip-h', rot: '.it.sel .rot-h' }[tipNow.at]);
     if (dot) {
       const r = dot.getBoundingClientRect(), w = el.offsetWidth;
       const left = Math.max(12, Math.min(r.left + r.width / 2 - 28, innerWidth - w - 12));
@@ -1265,10 +1297,14 @@ import THEME from '/the-precinct/theme.js';
     if (!text) return;
     ctx.save();
     if (it.type === 'sfx') {
-      ctx.font = fs + 'px Knewave'; ctx.textBaseline = 'top';
-      ctx.translate(x, y); ctx.rotate(st(it, 'tilt') * Math.PI / 180);
-      ctx.lineJoin = 'round'; ctx.lineWidth = 0.7 * cq; ctx.strokeStyle = c.line; ctx.strokeText(text.toUpperCase(), 0, 0);
-      ctx.fillStyle = c.fill; ctx.fillText(text.toUpperCase(), 0, 0);
+      // The page turns the word about its centre (its box is the word's width by one line of type), so do the same.
+      const word = text.toUpperCase();
+      ctx.font = fs + 'px Knewave';
+      const tw = ctx.measureText(word).width;
+      ctx.translate(x + tw / 2, y + fs / 2); ctx.rotate(st(it, 'tilt') * Math.PI / 180);
+      ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+      ctx.lineJoin = 'round'; ctx.lineWidth = 0.7 * cq; ctx.strokeStyle = c.line; ctx.strokeText(word, 0, 0);
+      ctx.fillStyle = c.fill; ctx.fillText(word, 0, 0);
       ctx.restore(); return;
     }
     const f = fontOf(it), lh = fs * 1.15, words = f.upper ? text.toUpperCase() : text;
