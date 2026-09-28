@@ -3,13 +3,13 @@
   // Usage: npx wrangler login (once), then: npx wrangler deploy
   //
   // Added for The Precinct (AIFE workshop tool): a "main" script now runs
-  // in front of the static assets so it can handle one API route
-  // (/the-precinct/api/brief) before falling back to serving files as before.
+  // in front of the static assets so it can handle the API routes under
+  // /the-precinct/api/ before falling back to serving files as before.
   //
-  // One-time setup after pulling this change, run by hand (never scripted,
-  // these are secrets):
+  // Secrets, set by hand (never scripted); see the top of worker.js:
   //   npx wrangler secret put ANTHROPIC_API_KEY
-  //   npx wrangler secret put WORKSHOP_CODE
+  //   npx wrangler secret put WORKSHOP_CODE    (master code: every level)
+  //   npx wrangler secret put LEVEL_CODES      (optional, JSON of code -> level)
   "name": "hidden-hall-06d6",
   "compatibility_date": "2026-07-01",
   "main": "worker.js",
@@ -20,5 +20,12 @@
     // path could get the 404 page instead of reaching worker.js.
     "run_worker_first": ["/the-precinct/api/*"],
     "not_found_handling": "404-page"
-  }
+  },
+  // The Precinct's rate limits (requests per 60 seconds). The whole room may
+  // share one venue IP, so the per-IP limit is a flood guard, not a per-person one.
+  "ratelimits": [
+    { "name": "PRECINCT_SESSION_LIMIT", "namespace_id": "4101", "simple": { "limit": 8, "period": 60 } },
+    { "name": "PRECINCT_IP_LIMIT", "namespace_id": "4102", "simple": { "limit": 200, "period": 60 } },
+    { "name": "PRECINCT_CODE_FAILS", "namespace_id": "4103", "simple": { "limit": 20, "period": 60 } }
+  ]
 }

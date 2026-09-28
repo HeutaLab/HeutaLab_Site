@@ -204,6 +204,85 @@ export default {
     },
   },
 
+  // The workshop as a game: each tier is a level, unlocked by a code the
+  // facilitator announces from the stage. worker.js checks the code on every
+  // request; the page only uses these for names and intros.
+  game: [
+    { level: 1, tier: 'basic', name: 'Rookie', task: 'One character portrait.',
+      intro: 'Rookie: one face, one case. A single portrait, lit like it matters.' },
+    { level: 2, tier: 'medium', name: 'Detective', task: 'The same face in a room.',
+      intro: 'Detective: same face, new room. The anchor paragraph goes in word for word, every time, or the face walks off the job.' },
+    { level: 3, tier: 'advanced', name: 'Commissioner', task: 'A three-panel shot list.',
+      intro: 'Commissioner: three panels, one story. Work out the shots with an AI as your partner before anything gets drawn. The pictures are optional; the plan is not.' },
+  ],
+
+  // What the desk hands out when the AI is busy or down: stock briefs from the
+  // files, one per tier and subject. {palette} becomes the palette phrase and
+  // {who} (or {Who}, capitalised) the picked character's look (or DEFAULT_WHO in worker.js).
+  stockBriefs: {
+    character: {
+      basic: {
+        anchor: '',
+        prompts: ['A character reference sheet of {who}, full body, standing square to the viewer, one clear guarded expression. 1940s film noir comic book, black and white ink illustration with fine hatching and one hard light from the upper left. Limited palette: {palette}. Plain pale background. No text, no captions, no speech balloons, no other people.'],
+        why_this_works: 'Era, medium and one named light source do most of the work: without them, image tools drift to a modern colour comic. The plain background keeps the tool from inventing a scene around your character.',
+        platform_notes: 'Gemini needs the "no text, no captions" line most; ChatGPT and Copilot follow it more readily but may need "flat ink illustration, not digital painting".',
+        watch_for: 'Check the colours first: any colour outside your palette means the palette line was ignored.',
+      },
+      medium: {
+        anchor: '1940s film noir comic book, black and white ink illustration with fine hatching. {Who}. Limited palette: {palette}. No text, no captions, no speech balloons.',
+        prompts: ['The character stands behind a wide wooden desk in a dim office at night, venetian blinds throwing striped shadows across the wall, a desk lamp the only light.',
+                  'The character waits in the doorway of a rain-soaked alley at night, a single streetlamp behind, a long shadow stretched across the wet cobbles.'],
+        why_this_works: 'The anchor carries the character and the style, so paste it word for word into both prompts. Each prompt adds only the room, which is the one thing that should change.',
+        platform_notes: 'On ChatGPT, upload the first picture back in before the second prompt; on Gemini, stay in the same chat so it can hold details.',
+        watch_for: 'Put the two pictures side by side: is it the same face and the same coat, or a stranger in similar clothes?',
+      },
+      advanced: {
+        anchor: '1940s film noir comic book, black and white ink illustration with fine hatching, strong single light source. {Who}. Limited palette: {palette}. No text, no captions, no speech balloons.',
+        prompts: ['Panel 1, wide establishing shot: a rain-soaked city street at night, the character stands small under a streetlamp outside the precinct steps.',
+                  'Panel 2, medium shot: the character climbs the precinct steps, looking back over one shoulder, a lit window above.',
+                  'Panel 3, close-up: the character\u2019s face half in shadow at the office door, one hand on the handle, eyes narrowed.'],
+        why_this_works: 'A shot list moves the camera closer each panel (wide, medium, close) while the anchor keeps the character and palette fixed. Plan the story first with an AI partner; these three shots are only a starting skeleton.',
+        platform_notes: 'Midjourney holds a character best with an image reference or --seed; the free chat tools need the anchor pasted in full every time.',
+        watch_for: 'Check the three panels read in order without words: can someone else tell you what happened?',
+      },
+    },
+    setting: {
+      basic: {
+        anchor: '',
+        prompts: ['A wide establishing shot of an empty 1940s police detective office at night, empty of people. Wooden desks with typewriters and telephones, filing cabinets, a coat stand, tall windows with venetian blinds and rain on the glass, a single desk lamp throwing hard shadows. 1940s film noir comic book, black and white ink illustration with fine hatching. Limited palette: {palette}. No characters, no text, no dialogue, no captions.'],
+        why_this_works: 'Saying "empty of people" and "no characters, no text" stops chat tools from filling the room with a whole scene. Concrete furniture and one light source give the tool something to draw instead.',
+        platform_notes: 'Gemini is the most likely to add people and captions anyway; ChatGPT and Copilot usually respect the negative line.',
+        watch_for: 'Look for people, speech balloons or captions: tested Gemini runs added all three when the prompt did not forbid them.',
+      },
+      medium: {
+        anchor: 'Inside the same 1940s city police precinct building at night, empty of people. Checkerboard ceiling tiles, tall multi-pane windows with venetian blinds, rain on the glass, green-shaded desk lamps. 1940s film noir comic book, black and white ink illustration with fine hatching. Limited palette: {palette}. No characters, no text, no dialogue, no captions.',
+        prompts: ['The detectives’ bullpen: rows of wooden desks with typewriters and telephones, filing cabinets along the back wall, a wide establishing shot.',
+                  'The chief’s private office: one large desk facing the door, a leather chair, a framed city map on the wall, a wide establishing shot.'],
+        why_this_works: 'The anchor repeats the details that make two rooms one building (ceiling, windows, lamps, weather). Each prompt adds a concrete layout line; in testing, the anchor alone was not enough.',
+        platform_notes: 'Gemini tends to invent a detail such as rain and then keep it; ChatGPT benefits from uploading the first room as a reference.',
+        watch_for: 'Check the windows and ceiling match across both rooms: those are the details that break first.',
+      },
+      advanced: {
+        anchor: 'The same 1940s American city block at night in heavy rain, wet streets shining under streetlamps, brick buildings with fire escapes, empty of people. 1940s film noir comic book, black and white ink illustration with fine hatching. Limited palette: {palette}. No characters, no text, no dialogue, no captions.',
+        prompts: ['Wide street shot from the corner: the whole block, a row of shopfronts with dark windows, streetlamps receding into the rain.',
+                  'The alley beside the corner building: bins, a fire escape, a single bulb over a side door.',
+                  'Low angle along the kerb: three parked 1940s sedans, rain bouncing off their roofs, the streetlamps reflected in puddles.'],
+        why_this_works: 'A location sheet holds one time of day, one weather and one palette in the anchor, so separate shots read as one place. Each shot changes only the camera.',
+        platform_notes: 'Midjourney keeps a location best with --seed or an image reference; Gemini may drift to daylight unless night is repeated in every prompt.',
+        watch_for: 'Check the time of day and the rain are in every shot: those are the first things to slip.',
+      },
+    },
+  },
+
+  // What the compare check falls back to when the AI can't answer in time.
+  compareChecklist: [
+    'Style: does it still look like 1940s ink, or has it gone modern, glossy or cartoon?',
+    'Era: are the clothes, cars and rooms from the right decade?',
+    'People: is anyone there you did not ask for?',
+    'Text: any lettering, captions or speech balloons?',
+    'Light: where does it come from, and is it the light you asked for?',
+  ],
+
   // Pictures offered in the comic builder's library.
   library: ['chief','hat-woman','cop','bar','blonde-green','blonde-yellow','rain-street','office','sunset-street','fedora','boss',
     'cop-badge','lamp-man','blue-man','houses','green-city','walking-woman','teal-woman','detective-car','sunset-man',

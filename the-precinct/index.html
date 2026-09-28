@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0b0f0f">
-<title>The Precinct — AIFE Prompt Briefing Desk</title>
+<title>The Precinct: AIFE Prompt Briefing Desk</title>
 <meta name="description" content="Create your own film noir comic with AI. Pick a platform, a subject and a tier, and get a ready-to-paste image prompt.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,7 +64,7 @@
         <a href="/" class="home-link"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg>HeutaLab</a>
       </nav>
       <div class="city"><img class="noir" src="img/skyline.jpg" alt="" width="466" height="335" loading="lazy"></div>
-      <blockquote>&ldquo;The truth is always in the last panel.&rdquo;<cite>&mdash; THE PRECINCT</cite></blockquote>
+      <blockquote>&ldquo;The truth is always in the last panel.&rdquo;<cite>THE PRECINCT</cite></blockquote>
       <a class="whois" href="/about/cv/">
         <b>Who&rsquo;s behind this?</b>
         Glenn Malcolm: technology &amp; learning curriculum designer, subject leader and international schools consultant. HeutaLab is his home for practical EdTech tools, ideas and training for teachers, leaders and parents.
@@ -159,13 +159,14 @@
         <div class="desk-head">
           <div>
             <h2>Get your brief</h2>
-            <p class="intro">Your facilitator will give you the workshop code. You type it once; this browser remembers it.</p>
+            <p class="intro">Three levels, one code each. Your facilitator announces the next code when the room is ready. Type it here; this browser remembers it.</p>
           </div>
           <div class="lock">
             <input id="code" type="password" placeholder="Workshop code" autocomplete="off" aria-label="Workshop code">
-            <span class="status" id="codeStatus">not checked yet</span>
+            <span class="status" id="codeStatus" aria-live="polite">not checked yet</span>
           </div>
         </div>
+        <ol class="levels" id="levelStrip" aria-label="Levels"></ol>
 
         <div class="step">
           <h4>Platform</h4>
@@ -187,10 +188,11 @@
         <div class="step">
           <h4>Tier</h4>
           <div class="pillrow" id="tierRow">
-            <button class="pill" data-val="basic">Basic</button>
-            <button class="pill" data-val="medium">Medium</button>
-            <button class="pill" data-val="advanced">Advanced</button>
+            <button class="pill" data-val="basic">Basic<small>Rookie</small></button>
+            <button class="pill" data-val="medium">Medium<small>Detective</small></button>
+            <button class="pill" data-val="advanced">Advanced<small>Commissioner</small></button>
           </div>
+          <p class="level-intro" id="levelIntro" hidden></p>
         </div>
         <div class="step" id="whoStep" hidden>
           <h4>Who?</h4>
@@ -202,18 +204,35 @@
           <div class="pillrow" id="paletteRow"></div>
         </div>
         <div class="step">
+          <h4>Your own description</h4>
+          <p class="handoff" id="handoffNote" hidden>Your description from References is in the box. Read it through, then say below what you want to make.</p>
+          <p class="step-note first">Look at your reference picture before you ask for anything. Write what you see, then the details, then the world around it. The desk reads this before it writes your brief.</p>
+          <textarea id="attempt" maxlength="1500" placeholder="e.g. &ldquo;A big man in a long belted coat and a fedora, hands in his pockets, scowling. A dark band on the hat, a tie, a waistcoat. Night, a wet street, one streetlamp, black and white ink.&rdquo;"></textarea>
+          <div class="count" id="attemptCount" aria-live="polite">0 words, 15 to go</div>
+        </div>
+        <div class="step">
           <h4>Your idea</h4>
-          <p class="handoff" id="handoffNote" hidden>Brought over from References. Read it through, then pick a platform.</p>
           <textarea id="idea" maxlength="800" placeholder="Describe what you're picturing, in your own words. e.g. &ldquo;Edward Novak waiting in a doorway across the street from the precinct, watching&rdquo;"></textarea>
           <div class="count"><span id="ideaCount">0</span>/800</div>
           <button class="go" id="goBtn" disabled>Get briefing</button>
           <div class="error" id="errorBox" style="display:none"></div>
+          <div class="gate" id="gateBox" hidden aria-live="polite">
+            <b>Before the brief: a question or two</b>
+            <ul id="gateQs"></ul>
+            <p>Add to your description if you like, then send it again. Or send it as it is: this time the desk writes your brief either way.</p>
+          </div>
         </div>
 
         <div class="result" id="result">
           <h3>Your briefing</h3>
-          <div id="anchorBlock" style="display:none"></div>
-          <div id="promptBlocks"></div>
+          <p class="stock" id="stockNote" hidden><b>From the files</b>The desk is swamped, so this is a stock brief, not one written for your idea. Make it yours: swap in your own words before you paste it.</p>
+          <div class="pair">
+            <div class="yours"><div class="label">Your description</div><p id="attemptEcho"></p></div>
+            <div class="theirs">
+              <div id="anchorBlock" style="display:none"></div>
+              <div id="promptBlocks"></div>
+            </div>
+          </div>
           <p class="note"><strong>Why this works</strong><span id="whyText"></span></p>
           <p class="note"><strong>On another platform</strong><span id="platformText"></span></p>
           <p class="note"><strong>Watch for</strong><span id="watchText"></span></p>
@@ -228,6 +247,39 @@
         <div class="frame"><b>4</b><h4>Compare</h4><p>Style, era, people, text, light: what drifted?</p></div>
         <div class="frame"><b>5</b><h4>Why</h4><p>Which word was missing, or pulling the wrong way?</p></div>
         <div class="frame"><b>6</b><h4>Change</h4><p>Change one thing. Run it again.</p></div>
+      </section>
+
+      <section class="desk frame check" id="check">
+        <div class="desk-head">
+          <div>
+            <h2>Compare check</h2>
+            <p class="intro">The desk can&rsquo;t see your picture, but your image tool can. Ask it what it sees, paste that here, and the desk puts it next to what you asked for.</p>
+          </div>
+        </div>
+        <div class="ask">
+          <b>Ask your tool</b>
+          <p>Give it the picture it made, and only the picture, and ask:</p>
+          <p class="ask-line"><q id="askText">Describe only what you see in this image, as a prompt that would recreate it.</q>
+            <button type="button" class="btn ghost small" id="askCopy">Copy</button></p>
+          <p class="step-note">Don&rsquo;t paste your prompt into that request, or it will just hand your own words back.</p>
+        </div>
+        <div class="step">
+          <h4>The prompt you used</h4>
+          <p class="step-note first" id="cmpPromptNote">Filled in from your last brief. Change it if you ran something else.</p>
+          <textarea id="cmpPrompt" maxlength="3000" placeholder="Paste the exact prompt you gave your image tool."></textarea>
+        </div>
+        <div class="step">
+          <h4>What your tool saw</h4>
+          <textarea id="cmpDesc" maxlength="3000" placeholder="Paste your tool's description of the picture it made."></textarea>
+        </div>
+        <div class="step" id="cmpRefStep" hidden>
+          <h4>What it saw in your reference <small>optional</small></h4>
+          <p class="step-note first">Commissioner level: ask the same question about the reference picture you were aiming for. The gap between the two descriptions is the gap you are closing.</p>
+          <textarea id="cmpRef" maxlength="3000" placeholder="Paste your tool's description of the reference picture."></textarea>
+        </div>
+        <button class="go" id="cmpBtn" disabled>Compare</button>
+        <div class="error" id="cmpError" style="display:none"></div>
+        <div class="result" id="cmpResult" aria-live="polite"></div>
       </section>
 
       <h2 class="rule" id="resources">Resources</h2>
@@ -255,7 +307,7 @@
       <section class="strip">
         <div class="frame">
           <img class="noir" src="img/street.jpg" alt="A sedan's headlights on a rain-soaked street at night" width="922" height="266" loading="lazy">
-          <blockquote>&ldquo;It&rsquo;s not just a comic.<br>It&rsquo;s a case.&rdquo;<cite>&mdash; THE PRECINCT</cite></blockquote>
+          <blockquote>&ldquo;It&rsquo;s not just a comic.<br>It&rsquo;s a case.&rdquo;<cite>THE PRECINCT</cite></blockquote>
         </div>
         <div class="stamp">Real stories.<br>Your panels.</div>
       </section>
@@ -263,7 +315,7 @@
       <footer>
         The artwork here comes from Glenn Malcolm&rsquo;s own 2023 Midjourney noir comic.
         <a href="/blog/21cl-bkk-ai-is-not-taking-our-jobs-quite-the-opposite-midjourney-generative-art/">Read how it was made</a>.
-        Your idea and workshop code go to a Cloudflare Worker for this site, which asks Anthropic&rsquo;s API for a suggestion. Nothing you type is stored or shown to anyone else.
+        Your description, your idea, your prompt, anything you paste into the compare check and your workshop code go to a Cloudflare Worker for this site, and then to Anthropic&rsquo;s API. Nothing you type is stored or shown to anyone else.
         Part of the <a href="/">HeutaLab</a> AIFE workshop materials: &ldquo;Human Creativity, AI Precision&rdquo;.
       </footer>
 
@@ -275,8 +327,29 @@
 import THEME from '/the-precinct/theme.js';
 
 (function(){
-  const API = "/the-precinct/api/brief";
+  const API = "/the-precinct/api/";
   const state = { platform:null, subject:null, palette:THEME.defaultPalette, tier:null, cast:[] };
+  const TIER_LEVEL = { basic:1, medium:2, advanced:3 };
+  const ATTEMPT_MIN = 15;
+
+  // Browser storage can be missing or blocked; the page works without it.
+  const store = {
+    get(k){ try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v){ try { localStorage.setItem(k, v); } catch (e) {} },
+  };
+  // A random id per browser, so the desk can share itself fairly. Not a login.
+  let session = store.get('precinct_session');
+  if (!session || !/^[A-Za-z0-9-]{8,64}$/.test(session)) {
+    session = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + '-' + Date.now().toString(36));
+    store.set('precinct_session', session);
+  }
+  async function post(route, payload){
+    const res = await fetch(API + route, {
+      method:'POST', headers:{'content-type':'application/json'},
+      body: JSON.stringify(Object.assign({ code: codeInput.value.trim(), session }, payload)),
+    });
+    return { res, data: await res.json().catch(() => ({})) };
+  }
   const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
   const castName = id => THEME.cast.find(c => c.id === id).name;
 
@@ -298,24 +371,71 @@ import THEME from '/the-precinct/theme.js';
   document.getElementById('paletteRow').innerHTML = Object.entries(THEME.palettes).map(([id, p]) =>
     '<button class="pill' + (id === state.palette ? ' active' : '') + '" data-val="' + id + '"><i class="dot" style="background:' + p.dot + '"></i>' + esc(p.label) + '</button>').join('');
 
+  // ---- the code and the levels it unlocks ----
+  // The level here only decides what the page shows. The Worker checks the
+  // code again on every request, so nothing is unlocked by editing this.
   const codeInput = document.getElementById('code');
   const codeStatus = document.getElementById('codeStatus');
-  let savedCode = null;
-  try { savedCode = localStorage.getItem('precinct_code'); } catch (e) {}
-  if (savedCode) { codeInput.value = savedCode; codeStatus.textContent = 'saved'; codeStatus.classList.add('ok'); }
+  const levelStrip = document.getElementById('levelStrip');
+  const levelIntro = document.getElementById('levelIntro');
+  let level = Number(store.get('precinct_level')) || 0;
+
+  function setStatus(text, kind){
+    codeStatus.textContent = text;
+    codeStatus.classList.toggle('ok', kind === 'ok');
+    codeStatus.classList.toggle('bad', kind === 'bad');
+  }
+  function applyLevel(n){
+    level = n;
+    store.set('precinct_level', String(n));
+    levelStrip.innerHTML = THEME.game.map(g =>
+      '<li class="' + (g.level <= level ? 'open' : 'locked') + '"><b>' + g.level + '</b><span><strong>' + esc(g.name) + '</strong>'
+      + esc(g.task) + '</span><i>' + (g.level <= level ? 'open' : 'locked') + '</i></li>').join('');
+    document.querySelectorAll('#tierRow .pill').forEach(b => {
+      const locked = TIER_LEVEL[b.dataset.val] > level;
+      b.disabled = locked;
+      b.title = locked ? 'Locked until your facilitator gives out the next code' : '';
+      if (locked && b.classList.contains('active')) { b.classList.remove('active'); state.tier = null; syncTier(); }
+    });
+    document.getElementById('cmpRefStep').hidden = level < 3;
+    checkReady(); checkCompareReady();
+  }
+  function syncTier(){
+    const g = THEME.game.find(x => x.tier === state.tier);
+    levelIntro.hidden = !g;
+    levelIntro.textContent = g ? g.intro : '';
+  }
+
+  let codeTimer = null, codeSeq = 0;
+  async function verifyCode(){
+    const code = codeInput.value.trim();
+    if (!code) { setStatus('not checked yet'); applyLevel(0); return; }
+    const seq = ++codeSeq;
+    setStatus('checking...');
+    try {
+      const { res, data } = await post('code', {});
+      if (seq !== codeSeq) return;
+      if (res.ok) { setStatus(data.name + ' unlocked', 'ok'); applyLevel(data.level); }
+      else if (res.status === 401) { setStatus('wrong code', 'bad'); applyLevel(0); }
+      else setStatus(data.error ? 'try again in a minute' : 'could not check', 'bad');
+    } catch (e) { if (seq === codeSeq) setStatus('offline?', 'bad'); }
+  }
+  const savedCode = store.get('precinct_code');
+  if (savedCode) codeInput.value = savedCode;
   codeInput.addEventListener('input', () => {
-    try { localStorage.setItem('precinct_code', codeInput.value); } catch (e) {}
-    codeStatus.textContent = codeInput.value ? 'saved' : 'not checked yet';
-    codeStatus.classList.toggle('ok', !!codeInput.value);
-    codeStatus.classList.remove('bad');
+    store.set('precinct_code', codeInput.value);
+    clearTimeout(codeTimer);
+    codeTimer = setTimeout(verifyCode, 700);
   });
 
   function wireRow(id, key){
     document.getElementById(id).querySelectorAll('.pill').forEach(btn => {
       btn.addEventListener('click', () => {
+        if (btn.disabled) return;
         document.getElementById(id).querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         state[key] = btn.dataset.val;
+        if (key === 'tier') syncTier();
         checkReady();
       });
     });
@@ -371,9 +491,23 @@ import THEME from '/the-precinct/theme.js';
   const ideaCount = document.getElementById('ideaCount');
   idea.addEventListener('input', () => { ideaCount.textContent = idea.value.length; checkReady(); });
 
+  const attempt = document.getElementById('attempt');
+  const attemptCount = document.getElementById('attemptCount');
+  const wordsIn = t => (t.trim().match(/\S+/g) || []).length;
+  function countAttempt(){
+    const n = wordsIn(attempt.value);
+    attemptCount.textContent = n + (n === 1 ? ' word' : ' words') + (n < ATTEMPT_MIN ? ', ' + (ATTEMPT_MIN - n) + ' to go' : '');
+    attemptCount.classList.toggle('ok', n >= ATTEMPT_MIN);
+  }
+  attempt.addEventListener('input', () => { countAttempt(); checkReady(); });
+
+  // Round 2 means the desk has asked its questions once; the next send gets a brief regardless.
+  let round = 1;
   const goBtn = document.getElementById('goBtn');
+  const goLabel = () => round === 2 ? 'Send it back to the desk' : 'Get briefing';
   function checkReady(){
-    goBtn.disabled = !(state.platform && state.subject && state.tier && idea.value.trim().length >= 3);
+    goBtn.disabled = !(state.platform && state.subject && state.tier && TIER_LEVEL[state.tier] <= level
+      && idea.value.trim().length >= 3 && wordsIn(attempt.value) >= ATTEMPT_MIN);
   }
 
   const errorBox = document.getElementById('errorBox');
@@ -389,16 +523,24 @@ import THEME from '/the-precinct/theme.js';
     errorBox.style.display = 'block';
   }
 
-  function blockHTML(label, text){
+  function blockHTML(label, text, checkIndex){
     const safe = text.replace(/&/g,'&amp;').replace(/</g,'&lt;');
     return '<div class="block"><div class="label">'+label+'</div><pre>'+safe+'</pre>'
-      + '<button class="copybtn" data-copy="'+encodeURIComponent(text)+'">Copy</button></div>';
+      + '<button class="copybtn" data-copy="'+encodeURIComponent(text)+'">Copy</button>'
+      + (checkIndex != null ? '<button type="button" class="checkbtn" data-check="' + checkIndex + '">Check the result &rarr;</button>' : '')
+      + '</div>';
   }
+
+  const gateBox = document.getElementById('gateBox');
+  const stockNote = document.getElementById('stockNote');
+  const attemptEcho = document.getElementById('attemptEcho');
 
   function render(data){
     anchorBlock.style.display = 'none';
     anchorBlock.innerHTML = '';
     promptBlocks.innerHTML = '';
+    stockNote.hidden = !data.fallback;
+    attemptEcho.textContent = data.attempt || attempt.value.trim();
 
     if (data.anchor && data.anchor.trim()) {
       anchorBlock.style.display = 'block';
@@ -406,8 +548,9 @@ import THEME from '/the-precinct/theme.js';
     }
     (data.prompts || []).forEach((p, i) => {
       const label = (data.prompts.length > 1) ? ('Prompt ' + (i+1)) : 'Prompt';
-      promptBlocks.innerHTML += blockHTML(label, p);
+      promptBlocks.innerHTML += blockHTML(label, p, i);
     });
+    setLastBrief({ anchor: (data.anchor || '').trim(), prompts: data.prompts || [] });
 
     // A note that comes back empty is hidden, not shown as a bare heading.
     [[whyText, data.why_this_works], [platformText, data.platform_notes], [watchText, data.watch_for]].forEach(([el, text]) => {
@@ -416,6 +559,10 @@ import THEME from '/the-precinct/theme.js';
     });
 
     result.classList.add('show');
+    result.querySelectorAll('.checkbtn').forEach(btn => btn.addEventListener('click', () => {
+      fillComparePrompt(Number(btn.dataset.check));
+      document.getElementById('check').scrollIntoView({behavior:'smooth'});
+    }));
     result.querySelectorAll('.copybtn').forEach(btn => {
       btn.addEventListener('click', () => {
         navigator.clipboard.writeText(decodeURIComponent(btn.dataset.copy));
@@ -430,45 +577,136 @@ import THEME from '/the-precinct/theme.js';
     errorBox.style.display = 'none';
     result.classList.remove('show');
     goBtn.disabled = true;
-    goBtn.innerHTML = '<span class="spinner"></span>Working...';
+    goBtn.innerHTML = '<span class="spinner"></span>' + (round === 1 ? 'Reading your description...' : 'Working...');
 
     try {
-      const res = await fetch(API, {
-        method:'POST',
-        headers:{'content-type':'application/json'},
-        body: JSON.stringify({
-          code: codeInput.value.trim(),
-          platform: state.platform,
-          subject: state.subject,
-          palette: state.palette,
-          cast: state.subject === 'character' ? state.cast : [],
-          tier: state.tier,
-          idea: idea.value.trim()
-        })
+      const { res, data } = await post('brief', {
+        platform: state.platform,
+        subject: state.subject,
+        palette: state.palette,
+        cast: state.subject === 'character' ? state.cast : [],
+        tier: state.tier,
+        attempt: attempt.value.trim(),
+        idea: idea.value.trim(),
+        round,
       });
-      const data = await res.json().catch(() => ({}));
-      if (res.status === 401) { codeStatus.textContent = 'wrong code'; codeStatus.classList.remove('ok'); codeStatus.classList.add('bad'); }
-      else if (res.ok) { codeStatus.textContent = 'accepted'; codeStatus.classList.remove('bad'); codeStatus.classList.add('ok'); }
+      if (res.status === 401) { setStatus('wrong code', 'bad'); applyLevel(0); }
+      if (res.status === 403 && typeof data.level === 'number') applyLevel(data.level);
       if (!res.ok) { showError(data.error || ('Something went wrong (' + res.status + ').')); }
-      else { render(data); }
+      else if (data.gate) {
+        // The desk asks before it briefs: questions only, never a verdict.
+        document.getElementById('gateQs').innerHTML = (data.questions || []).map(q => '<li>' + esc(q) + '</li>').join('');
+        gateBox.hidden = false;
+        round = 2;
+        gateBox.scrollIntoView({behavior:'smooth', block:'center'});
+      }
+      else { gateBox.hidden = true; round = 1; render(data); }
     } catch (e) {
       showError('Could not reach the briefing desk. Check your connection and try again.');
     } finally {
-      goBtn.disabled = false;
-      goBtn.textContent = 'Get briefing';
+      goBtn.textContent = goLabel();
       checkReady();
     }
   });
 
+  // ---- the compare check ----
+  const cmpPrompt = document.getElementById('cmpPrompt'), cmpDesc = document.getElementById('cmpDesc'), cmpRef = document.getElementById('cmpRef');
+  const cmpBtn = document.getElementById('cmpBtn'), cmpError = document.getElementById('cmpError'), cmpResult = document.getElementById('cmpResult');
+  const cmpPromptNote = document.getElementById('cmpPromptNote');
+  let lastBrief = null, autoFilled = false;
+  try { lastBrief = JSON.parse(store.get('precinct_lastbrief') || 'null'); } catch (e) {}
+
+  function setLastBrief(b){
+    lastBrief = b;
+    store.set('precinct_lastbrief', JSON.stringify(b));
+    if (!cmpPrompt.value.trim() || autoFilled) fillComparePrompt(0);
+  }
+  function fillComparePrompt(i){
+    if (!lastBrief || !lastBrief.prompts || !lastBrief.prompts[i]) return;
+    cmpPrompt.value = (lastBrief.anchor ? lastBrief.anchor + '\n\n' : '') + lastBrief.prompts[i];
+    autoFilled = true;
+    cmpPromptNote.hidden = false;
+    cmpPromptNote.textContent = 'Filled in from your last brief' + (lastBrief.prompts.length > 1 ? ' (prompt ' + (i + 1) + ')' : '') + '. Change it if you ran something else.';
+    checkCompareReady();
+  }
+  cmpPromptNote.hidden = true;
+  if (lastBrief) fillComparePrompt(0);
+  cmpPrompt.addEventListener('input', () => { autoFilled = false; cmpPromptNote.hidden = true; checkCompareReady(); });
+  cmpDesc.addEventListener('input', checkCompareReady);
+  function checkCompareReady(){
+    cmpBtn.disabled = !(level >= 1 && wordsIn(cmpPrompt.value) >= 3 && wordsIn(cmpDesc.value) >= 8);
+  }
+
+  document.getElementById('askCopy').addEventListener('click', e => {
+    navigator.clipboard.writeText(document.getElementById('askText').textContent).then(() => {
+      e.target.textContent = 'Copied'; setTimeout(() => e.target.textContent = 'Copy', 1200);
+    }).catch(() => {});
+  });
+
+  const listHTML = (title, items, cls) => '<div class="cmp-col ' + cls + '"><h4>' + title + '</h4>'
+    + (items.length ? '<ul>' + items.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul>' : '<p class="none">Nothing named.</p>') + '</div>';
+
+  function renderCompare(d){
+    let html = '';
+    if (d.copied) {
+      html = '<p class="copied"><b>Same words back</b>' + esc(d.message) + '</p>';
+    } else if (d.fallback) {
+      html = '<p class="stock"><b>The desk is swamped</b>It could not read this in time. Check these yourself, one at a time:</p>'
+        + '<ul class="checklist">' + d.checklist.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul>'
+        + '<p class="closer">Change one thing and run it again.</p>';
+    } else {
+      if (d.looks_copied) html += '<p class="copied"><b>Reads like a prompt</b>This sounds more like instructions than a description of a picture. Did your tool see the image?</p>';
+      html += '<div class="cmp-cols">'
+        + listHTML('Asked for, not seen', d.asked_and_missing, 'missing')
+        + listHTML('Turned up unasked', d.appeared_unasked, 'extra')
+        + '<div class="cmp-col words"><h4>Words to try</h4>' + (d.drift_words.length
+          ? '<p class="chips">' + d.drift_words.map(w => '<span>' + esc(w) + '</span>').join('') + '</p><p class="step-note">Words in the description that pull away from your prompt.</p>'
+          : '<p class="none">No drift words named.</p>') + '</div>'
+        + '</div>'
+        + (d.questions.length ? '<div class="cmp-qs"><h4>Questions for you</h4><ul>' + d.questions.map(q => '<li>' + esc(q) + '</li>').join('') + '</ul></div>' : '')
+        + '<p class="closer">Change one thing and run it again.</p>';
+    }
+    cmpResult.innerHTML = html;
+    cmpResult.classList.add('show');
+  }
+
+  cmpBtn.addEventListener('click', async () => {
+    cmpError.style.display = 'none';
+    cmpResult.classList.remove('show');
+    cmpBtn.disabled = true;
+    cmpBtn.innerHTML = '<span class="spinner"></span>Comparing...';
+    try {
+      const { res, data } = await post('compare', {
+        prompt: cmpPrompt.value.trim(), description: cmpDesc.value.trim(),
+        reference: level >= 3 ? cmpRef.value.trim() : '',
+        brief: lastBrief,
+      });
+      if (res.status === 401) { setStatus('wrong code', 'bad'); applyLevel(0); }
+      if (!res.ok) { cmpError.textContent = data.error || ('Something went wrong (' + res.status + ').'); cmpError.style.display = 'block'; }
+      else renderCompare(data);
+    } catch (e) {
+      cmpError.textContent = 'Could not reach the desk. Check your connection and try again.';
+      cmpError.style.display = 'block';
+    } finally {
+      cmpBtn.textContent = 'Compare';
+      checkCompareReady();
+    }
+  });
+
+  // Show the last known level straight away, then ask the Worker what the saved code really unlocks.
+  applyLevel(level);
+  if (codeInput.value.trim()) verifyCode();
+
   // A description sent over from the References page, so nobody types it twice.
+  // It is the attendee's own looking, so it goes in the description box.
   let handoff = null;
   try {
     handoff = JSON.parse(localStorage.getItem('precinct_handoff') || 'null');
     localStorage.removeItem('precinct_handoff');
   } catch (e) {}
   if (handoff && handoff.idea && Date.now() - (handoff.ts || 0) < 6 * 3600e3) {
-    idea.value = String(handoff.idea).slice(0, 800);
-    ideaCount.textContent = idea.value.length;
+    attempt.value = String(handoff.idea).slice(0, 1500);
+    countAttempt();
     ['subject', 'tier'].forEach(k => {
       const b = document.querySelector('#' + k + 'Row [data-val="' + handoff[k] + '"]');
       if (b) b.click();
