@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0d0f12">
+<title>The Precinct — AIFE Prompt Briefing Desk</title>
+<style>
+  :root{
+    --bg:#0d0f12;
+    --panel:#15181d;
+    --panel-2:#1b1f26;
+    --line:#2a2f38;
+    --ink:#e8e6df;
+    --ink-dim:#a3a8b0;
+    --yellow:#f2c744;
+    --yellow-dim:#8a7326;
+    --danger:#e2574c;
+    --radius:10px;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink)}
+  body{padding-bottom:4rem}
+  .wrap{max-width:760px;margin:0 auto;padding:0 1.25rem}
+
+  header.top{border-bottom:1px solid var(--line);padding:2.25rem 0 1.5rem;background:
+    radial-gradient(ellipse at top left, rgba(242,199,68,0.06), transparent 60%);}
+  header.top h1{
+    font-family:Georgia,"Times New Roman",serif;
+    font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    font-size:2rem;margin:0 0 .25rem;color:var(--ink);
+  }
+  header.top h1 span{color:var(--yellow)}
+  header.top p{margin:0;color:var(--ink-dim);font-size:.95rem}
+
+  .lock{margin-top:1.5rem;display:flex;gap:.5rem;align-items:center}
+  .lock input{
+    flex:1;background:var(--panel);border:1px solid var(--line);border-radius:8px;
+    padding:.6rem .8rem;color:var(--ink);font-size:.95rem;
+  }
+  .lock input:focus{outline:2px solid var(--yellow-dim)}
+  .lock .status{font-size:.8rem;color:var(--ink-dim);white-space:nowrap}
+  .lock .status.ok{color:#7fbf6a}
+  .lock .status.bad{color:var(--danger)}
+
+  section.step{padding:1.75rem 0;border-bottom:1px solid var(--line)}
+  section.step h2{
+    font-size:.75rem;text-transform:uppercase;letter-spacing:.12em;
+    color:var(--yellow);margin:0 0 1rem;font-weight:700;
+  }
+
+  .pillrow{display:flex;flex-wrap:wrap;gap:.5rem}
+  .pill{
+    background:var(--panel);border:1px solid var(--line);color:var(--ink-dim);
+    padding:.55rem 1rem;border-radius:999px;font-size:.9rem;cursor:pointer;
+    transition:border-color .15s, color .15s, background .15s;
+  }
+  .pill:hover{border-color:var(--yellow-dim)}
+  .pill.active{background:var(--yellow);border-color:var(--yellow);color:#1a1500;font-weight:600}
+  .pill:disabled{opacity:.4;cursor:not-allowed}
+
+  textarea{
+    width:100%;min-height:5.5rem;resize:vertical;background:var(--panel);
+    border:1px solid var(--line);border-radius:var(--radius);color:var(--ink);
+    padding:.85rem 1rem;font-size:1rem;font-family:inherit;line-height:1.4;
+  }
+  textarea:focus{outline:2px solid var(--yellow-dim)}
+  .count{text-align:right;font-size:.75rem;color:var(--ink-dim);margin-top:.35rem}
+
+  button.go{
+    margin-top:1.5rem;width:100%;padding:.9rem;border-radius:var(--radius);
+    border:1px solid var(--yellow);background:var(--yellow);color:#1a1500;
+    font-size:1rem;font-weight:700;letter-spacing:.03em;cursor:pointer;
+    text-transform:uppercase;
+  }
+  button.go:disabled{background:var(--panel-2);border-color:var(--line);color:var(--ink-dim);cursor:not-allowed}
+  button.go:not(:disabled):hover{filter:brightness(1.08)}
+
+  .error{
+    margin-top:1rem;padding:.75rem 1rem;border-radius:8px;
+    background:rgba(226,87,76,0.1);border:1px solid var(--danger);color:#f2a49d;font-size:.9rem;
+  }
+
+  .result{display:none;padding-top:1.75rem}
+  .result.show{display:block}
+  .result h2{
+    font-family:Georgia,serif;font-size:1.15rem;color:var(--yellow);
+    margin:0 0 1rem;text-transform:uppercase;letter-spacing:.05em;
+  }
+  .block{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:1rem 1.1rem;margin-bottom:.9rem;position:relative;
+  }
+  .block .label{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-dim);margin-bottom:.5rem}
+  .block pre{
+    white-space:pre-wrap;word-break:break-word;margin:0;font-family:Georgia,serif;
+    font-size:.98rem;line-height:1.55;color:var(--ink);
+  }
+  .copybtn{
+    position:absolute;top:.8rem;right:.8rem;background:var(--panel-2);border:1px solid var(--line);
+    color:var(--ink-dim);font-size:.72rem;padding:.3rem .6rem;border-radius:6px;cursor:pointer;
+  }
+  .copybtn:hover{color:var(--yellow);border-color:var(--yellow-dim)}
+  .note{font-size:.9rem;line-height:1.5;color:var(--ink-dim);margin:0 0 .9rem}
+  .note strong{color:var(--ink)}
+
+  footer{margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--line);
+    font-size:.78rem;color:var(--ink-dim);line-height:1.6}
+  footer a{color:var(--yellow-dim)}
+
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,.25);
+    border-top-color:#1a1500;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:.4rem}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1>The <span>Precinct</span></h1>
+    <p>Prompt briefing desk &middot; AIFE Workshop &middot; Human Creativity, AI Precision</p>
+    <div class="lock">
+      <input id="code" type="password" placeholder="Workshop code" autocomplete="off">
+      <span class="status" id="codeStatus">not checked yet</span>
+    </div>
+  </header>
+
+  <section class="step">
+    <h2>1 &middot; Platform</h2>
+    <div class="pillrow" id="platformRow">
+      <button class="pill" data-val="gemini">Gemini</button>
+      <button class="pill" data-val="chatgpt">ChatGPT</button>
+      <button class="pill" data-val="copilot">Copilot</button>
+      <button class="pill" data-val="nanobanana">Nano Banana</button>
+      <button class="pill" data-val="midjourney">Midjourney</button>
+    </div>
+  </section>
+
+  <section class="step">
+    <h2>2 &middot; Subject</h2>
+    <div class="pillrow" id="subjectRow">
+      <button class="pill" data-val="character">Character</button>
+      <button class="pill" data-val="setting">Setting</button>
+    </div>
+  </section>
+
+  <section class="step">
+    <h2>3 &middot; Tier</h2>
+    <div class="pillrow" id="tierRow">
+      <button class="pill" data-val="basic">Basic</button>
+      <button class="pill" data-val="medium">Medium</button>
+      <button class="pill" data-val="advanced">Advanced</button>
+    </div>
+  </section>
+
+  <section class="step">
+    <h2>4 &middot; Your idea</h2>
+    <textarea id="idea" maxlength="500" placeholder="Describe what you're picturing, in your own words. e.g. &ldquo;the detective waiting in a doorway across the street from the police station, watching&rdquo;"></textarea>
+    <div class="count"><span id="ideaCount">0</span>/500</div>
+    <button class="go" id="goBtn" disabled>Get briefing</button>
+    <div class="error" id="errorBox" style="display:none"></div>
+  </section>
+
+  <div class="result" id="result">
+    <h2>Briefing</h2>
+    <div id="anchorBlock" style="display:none"></div>
+    <div id="promptBlocks"></div>
+    <p class="note"><strong>Why this works:</strong> <span id="whyText"></span></p>
+    <p class="note"><strong>On another platform:</strong> <span id="platformText"></span></p>
+    <p class="note"><strong>Watch for:</strong> <span id="watchText"></span></p>
+  </div>
+
+  <footer>
+    Your idea and workshop code are sent to a Cloudflare Worker for this site, which calls
+    Anthropic's API to generate a suggestion. Nothing you type is stored or shown to anyone else.
+    Part of the <a href="/blog/" target="_blank" rel="noopener">HeutaLab</a> AIFE workshop materials.
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  const API = "/the-precinct/api/brief";
+  const state = { platform:null, subject:null, tier:null };
+
+  const codeInput = document.getElementById('code');
+  const codeStatus = document.getElementById('codeStatus');
+  const savedCode = localStorage.getItem('precinct_code');
+  if (savedCode) { codeInput.value = savedCode; codeStatus.textContent = 'saved'; codeStatus.classList.add('ok'); }
+  codeInput.addEventListener('input', () => {
+    localStorage.setItem('precinct_code', codeInput.value);
+    codeStatus.textContent = codeInput.value ? 'saved' : 'not checked yet';
+    codeStatus.classList.toggle('ok', !!codeInput.value);
+    codeStatus.classList.remove('bad');
+  });
+
+  function wireRow(id, key){
+    document.getElementById(id).querySelectorAll('.pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById(id).querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state[key] = btn.dataset.val;
+        checkReady();
+      });
+    });
+  }
+  wireRow('platformRow','platform');
+  wireRow('subjectRow','subject');
+  wireRow('tierRow','tier');
+
+  const idea = document.getElementById('idea');
+  const ideaCount = document.getElementById('ideaCount');
+  idea.addEventListener('input', () => { ideaCount.textContent = idea.value.length; checkReady(); });
+
+  const goBtn = document.getElementById('goBtn');
+  function checkReady(){
+    goBtn.disabled = !(state.platform && state.subject && state.tier && idea.value.trim().length >= 3);
+  }
+
+  const errorBox = document.getElementById('errorBox');
+  const result = document.getElementById('result');
+  const anchorBlock = document.getElementById('anchorBlock');
+  const promptBlocks = document.getElementById('promptBlocks');
+  const whyText = document.getElementById('whyText');
+  const platformText = document.getElementById('platformText');
+  const watchText = document.getElementById('watchText');
+
+  function showError(msg){
+    errorBox.textContent = msg;
+    errorBox.style.display = 'block';
+  }
+
+  function blockHTML(label, text){
+    const safe = text.replace(/</g,'&lt;');
+    return '<div class="block"><div class="label">'+label+'</div><pre>'+safe+'</pre>'
+      + '<button class="copybtn" data-copy="'+encodeURIComponent(text)+'">Copy</button></div>';
+  }
+
+  function render(data){
+    anchorBlock.style.display = 'none';
+    anchorBlock.innerHTML = '';
+    promptBlocks.innerHTML = '';
+
+    if (data.anchor && data.anchor.trim()) {
+      anchorBlock.style.display = 'block';
+      anchorBlock.innerHTML = blockHTML('Shared anchor (reuse in every prompt below)', data.anchor.trim());
+    }
+    (data.prompts || []).forEach((p, i) => {
+      const label = (data.prompts.length > 1) ? ('Prompt ' + (i+1)) : 'Prompt';
+      promptBlocks.innerHTML += blockHTML(label, p);
+    });
+
+    whyText.textContent = data.why_this_works || '';
+    platformText.textContent = data.platform_notes || '';
+    watchText.textContent = data.watch_for || '';
+
+    result.classList.add('show');
+    result.querySelectorAll('.copybtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        navigator.clipboard.writeText(decodeURIComponent(btn.dataset.copy));
+        const old = btn.textContent; btn.textContent = 'Copied';
+        setTimeout(() => btn.textContent = old, 1200);
+      });
+    });
+    result.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  goBtn.addEventListener('click', async () => {
+    errorBox.style.display = 'none';
+    result.classList.remove('show');
+    goBtn.disabled = true;
+    goBtn.innerHTML = '<span class="spinner"></span>Working...';
+
+    try {
+      const res = await fetch(API, {
+        method:'POST',
+        headers:{'content-type':'application/json'},
+        body: JSON.stringify({
+          code: codeInput.value.trim(),
+          platform: state.platform,
+          subject: state.subject,
+          tier: state.tier,
+          idea: idea.value.trim()
+        })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 401) { codeStatus.textContent = 'wrong code'; codeStatus.classList.remove('ok'); codeStatus.classList.add('bad'); }
+      else if (res.ok) { codeStatus.textContent = 'accepted'; codeStatus.classList.remove('bad'); codeStatus.classList.add('ok'); }
+      if (!res.ok) { showError(data.error || ('Something went wrong (' + res.status + ').')); }
+      else { render(data); }
+    } catch (e) {
+      showError('Could not reach the briefing desk. Check your connection and try again.');
+    } finally {
+      goBtn.disabled = false;
+      goBtn.textContent = 'Get briefing';
+      checkReady();
+    }
+  });
+})();
+</script>
+</body>
+</html>

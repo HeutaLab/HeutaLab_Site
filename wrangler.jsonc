@@ -1,10 +1,24 @@
 {
   // Deploys the static site to the existing Worker behind heutalab.com.
   // Usage: npx wrangler login (once), then: npx wrangler deploy
+  //
+  // Added for The Precinct (AIFE workshop tool): a "main" script now runs
+  // in front of the static assets so it can handle one API route
+  // (/the-precinct/api/brief) before falling back to serving files as before.
+  //
+  // One-time setup after pulling this change, run by hand (never scripted,
+  // these are secrets):
+  //   npx wrangler secret put ANTHROPIC_API_KEY
+  //   npx wrangler secret put WORKSHOP_CODE
   "name": "hidden-hall-06d6",
   "compatibility_date": "2026-07-01",
+  "main": "worker.js",
   "assets": {
     "directory": ".",
+    "binding": "ASSETS",
+    // Without this, the assets layer answers first and a POST to the API
+    // path could get the 404 page instead of reaching worker.js.
+    "run_worker_first": ["/the-precinct/api/*"],
     "not_found_handling": "404-page"
   }
 }

@@ -1,0 +1,168 @@
+// heutalab.com Worker: serves the static site, and handles one API route
+// for The Precinct (AIFE workshop prompt-briefing tool).
+//
+// Secrets required (set with `npx wrangler secret put <NAME>`, run by hand,
+// never pasted into chat or a script):
+//   ANTHROPIC_API_KEY  - a Claude API key from console.anthropic.com
+//   WORKSHOP_CODE      - any short passcode you give out at the session,
+//                        so a stranger who finds the URL can't burn your
+//                        API budget. Attendees type it once per browser.
+
+const API_PATH = "/the-precinct/api/brief";
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    if (url.pathname === API_PATH) {
+      if (request.method !== "POST") return json({ error: "POST only" }, 405);
+      return handleBrief(request, env);
+    }
+
+    // Everything else: serve the static site as before.
+    return env.ASSETS.fetch(request);
+  },
+};
+
+async function handleBrief(request, env) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "Bad request body" }, 400);
+  }
+
+  const { code, platform, tier, subject, idea } = body || {};
+
+  if (!env.WORKSHOP_CODE) return json({ error: "Server not configured (missing WORKSHOP_CODE)" }, 500);
+  if (!code || code.trim() !== env.WORKSHOP_CODE) return json({ error: "Wrong workshop code" }, 401);
+
+  const validPlatforms = ["gemini", "chatgpt", "copilot", "midjourney", "nanobanana"];
+  const validTiers = ["basic", "medium", "advanced"];
+  const validSubjects = ["character", "setting"];
+
+  if (!validPlatforms.includes(platform)) return json({ error: "Unknown platform" }, 400);
+  if (!validTiers.includes(tier)) return json({ error: "Unknown tier" }, 400);
+  if (!validSubjects.includes(subject)) return json({ error: "Unknown subject" }, 400);
+  if (!idea || typeof idea !== "string" || idea.trim().length < 3) {
+    return json({ error: "Describe what you want first" }, 400);
+  }
+  if (idea.length > 500) return json({ error: "Keep it under 500 characters" }, 400);
+
+  if (!env.ANTHROPIC_API_KEY) return json({ error: "Server not configured (missing ANTHROPIC_API_KEY)" }, 500);
+
+  const system = buildSystemPrompt();
+  const userMessage = [
+    `Platform: ${platform}`,
+    `Tier: ${tier}`,
+    `Subject type: ${subject}`,
+    `Attendee's idea, in their own words: ${idea.trim()}`,
+  ].join("\n");
+
+  let anthropicRes;
+  try {
+    anthropicRes = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "x-api-key": env.ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
+        // Lets a request the model declines be re-run on a fallback model
+        // server-side, instead of coming back as a refusal.
+        "anthropic-beta": "server-side-fallback-2026-07-01",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "claude-opus-5",
+        max_tokens: 16000,
+        // medium, not the default high: a room of attendees is waiting on
+        // each reply, and a prompt suggestion doesn't need deep thought.
+        output_config: { effort: "medium", format: { type: "json_schema", schema: BRIEF_SCHEMA } },
+        fallbacks: "default",
+        system,
+        messages: [{ role: "user", content: userMessage }],
+      }),
+    });
+  } catch {
+    return json({ error: "Could not reach the AI service. Try again." }, 502);
+  }
+
+  if (!anthropicRes.ok) {
+    const detail = await anthropicRes.text().catch(() => "");
+    console.error("Anthropic API error", anthropicRes.status, detail.slice(0, 500));
+    return json({ error: "The AI service returned an error. Try again in a moment." }, 502);
+  }
+
+  const data = await anthropicRes.json();
+  if (data.stop_reason === "refusal") {
+    return json({ error: "The AI declined that one. Try rewording your idea." }, 422);
+  }
+  if (data.stop_reason === "max_tokens") {
+    return json({ error: "The reply was cut off. Try again, or shorten your idea." }, 502);
+  }
+
+  // With thinking on, content[0] can be a thinking block; the answer is the text block.
+  const text = (data.content || []).find((b) => b.type === "text")?.text || "";
+
+  let parsed;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    console.error("Unparseable reply", text.slice(0, 500));
+    return json({ error: "Could not read the AI's reply. Try again." }, 502);
+  }
+
+  return json(parsed, 200);
+}
+
+// Structured outputs hold the reply to this shape, so no regex-extracting JSON from prose.
+const BRIEF_SCHEMA = {
+  type: "object",
+  properties: {
+    anchor: { type: "string" },
+    prompts: { type: "array", items: { type: "string" } },
+    why_this_works: { type: "string" },
+    platform_notes: { type: "string" },
+    watch_for: { type: "string" },
+  },
+  required: ["anchor", "prompts", "why_this_works", "platform_notes", "watch_for"],
+  additionalProperties: false,
+};
+
+function buildSystemPrompt() {
+  return `You are the briefing desk for a 1940s-noir comic-generation workshop for teachers ("Human Creativity, AI Precision"). Visual scheme: black, grey and noir tones plus a single yellow accent. House style reference: Al Williamson, 1940s film noir comic book, black and white ink illustration. Cast available: a police commissioner, a detective, a corrupt cop, and a femme fatale.
+
+You write ONE ready-to-paste image-generation prompt (or a short set, for medium/advanced tiers) tailored to the platform and tier given, based on the attendee's own idea. You do not generate images yourself, only the text prompt and the teaching notes around it.
+
+TIER RULES:
+- basic: exactly ONE prompt. Single self-contained image, no continuity requirement. Keep it reliable enough to likely succeed in one attempt (attendees may be on a free tier with limited generations).
+- medium: an "anchor" paragraph (shared style/location/character description, reused verbatim) plus exactly TWO prompts that each append a different specific detail to that anchor. The test is whether the two separate generations read as the same world.
+- advanced: an anchor paragraph plus THREE OR MORE short shot prompts appended to it, forming a mini sequence (establishing shot, then two or more follow-on shots). Note that attendees should ideally plan the shot list with an LLM as co-writer before generating.
+
+PLATFORM KNOWLEDGE (apply this specifically, do not give generic advice):
+- gemini: strongly tends to auto-populate scenes with extra people, dialogue balloons, captions and sound effects unless explicitly told not to. Always include an explicit negative instruction ("no characters, no text, no dialogue, no captions") when the goal is an empty setting or a single subject. Gemini can also invent incidental details (weather, props) and then hold them consistent across a session unprompted, which is a feature to mention but not rely on. Responds well to named artist + era + medium for style-locking.
+- chatgpt: generally more literal and compliant with explicit constraints than Gemini, but weaker at holding consistency across separate, unlinked generations. If the tier needs consistency (medium/advanced), recommend uploading the first generated image back in as a reference for the next prompt rather than relying on text alone.
+- copilot: similar compliance to chatgpt (same underlying image model family) but defaults toward a glossier, more "digital painting" look. Needs an explicit style correction such as "flat ink illustration, hatching and cross-hatching shading, not digital painting or airbrush" to avoid that.
+- midjourney: parameter-driven and the most literal about art-style keywords and named artists. Mention relevant parameters where useful (e.g. --ar 1:1 for a character sheet, --ar 16:9 for a wide establishing shot). Best consistency tool of the set via image-prompting or --seed, but requires a paid plan, which is why it's a look-only demo in this workshop rather than the hands-on tool.
+- nanobanana: Google's image model accessed via API/AI Studio rather than the consumer Gemini app; generally more literal and compliant with negative constraints than the consumer Gemini chat app, closer to chatgpt/copilot behaviour than to Gemini's chat behaviour.
+
+SUBJECT KNOWLEDGE:
+- character: emphasise plain/white background for basic, full body or bust, one clear expression and pose, character-reference-sheet framing.
+- setting: emphasise empty of people (state this explicitly regardless of platform), a wide establishing shot, and for medium/advanced, load-bearing continuity details (window shape, ceiling material, light fixtures, time of day/weather) that should repeat verbatim across prompts.
+
+OUTPUT FORMAT: a JSON object with these fields:
+{
+  "anchor": "shared anchor paragraph, or empty string for basic tier",
+  "prompts": ["prompt 1", "prompt 2", "..."],
+  "why_this_works": "2-3 sentences on why this prompt is shaped this way for THIS platform and tier, referencing the attendee's actual idea",
+  "platform_notes": "1-2 sentences on what would need to change if they used a different platform instead (name at least one other platform)",
+  "watch_for": "one sentence naming the single most likely failure mode for this platform/tier combination, phrased as something to check in the result, not a disclaimer"
+}`;
+}
+
+function json(obj, status = 200) {
+  return new Response(JSON.stringify(obj), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+

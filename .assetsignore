@@ -9,3 +9,10 @@ package.json
 README.md
 migration
 /heutalab-static-site.zip
+# The Precinct: the Worker script and the handoff notes are not site files
+worker.js
+PRECINCT-HANDOFF.md
+the-precinct/HANDOFF-POINTER.md
+# Stray 37 MB zips of the Midjourney images, over the 25 MiB asset limit
+blog/ziOLCZUy
+blog/zihkbkKH
