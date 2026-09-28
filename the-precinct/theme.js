@@ -101,6 +101,7 @@ export default {
     'sunset-street': ['A city street at sunset with lit windows, street lamps and a parked black car', 'setting'],
     'fedora':        ['A stern man in a fedora and trench coat, close-up', 'character', 'commissioner'],
     'boss':          ['A heavy-set man with slicked-back hair in a suit, glaring', 'character'],
+    'rourke-card':   ['A huge muscular man in shirtsleeves, braces and a loosened tie, teeth bared around a matchstick, glaring out of the dark', 'character', 'disillusioned'],
     'rourke-front':  ['A huge muscular man in shirtsleeves and braces, a holster at his side and a jacket over his shoulder, scowling', 'character', 'disillusioned'],
     'rourke-snarl':  ['Close-up of a dark-haired man baring his teeth around a cigarette, face half in shadow', 'character', 'disillusioned'],
     'rourke-rage':   ['A stubbled man snarling with rage, a matchstick clamped in his teeth', 'character', 'disillusioned'],
@@ -203,5 +204,5 @@ export default {
   // Pictures offered in the comic builder's library.
   library: ['chief','hat-woman','cop','bar','blonde-green','blonde-yellow','rain-street','office','sunset-street','fedora','boss',
     'cop-badge','lamp-man','blue-man','houses','green-city','walking-woman','teal-woman','detective-car','sunset-man',
-    'walking-rain','hat-green','rourke-front','rourke-snarl','rourke-rage','rourke-sheet'],
+    'walking-rain','hat-green','rourke-card','rourke-front','rourke-snarl','rourke-rage','rourke-sheet'],
 };
