@@ -135,6 +135,9 @@
     display:none;align-items:center;justify-content:center;color:#111;font:700 max(11px,1.7cqw)/1 sans-serif}
   .it.sel .rot-h{display:flex}
   .it:not(.it-sfx) .rot-h{left:-1.6cqw;top:-1.6cqw}
+  .prot-h{position:absolute;z-index:7;width:3.2cqw;height:3.2cqw;min-width:20px;min-height:20px;border-radius:50%;transform:translate(-50%,-50%);
+    background:#fff;border:2px solid #111;color:#111;font:700 max(12px,1.9cqw)/1 sans-serif;display:flex;align-items:center;justify-content:center;
+    cursor:grab;touch-action:none;pointer-events:auto;box-shadow:0 1px 4px rgba(0,0,0,.5)}
   .rs-h{right:-.9cqw;top:50%;width:1.5cqw;height:4cqw;min-width:10px;min-height:24px;border-radius:3px;transform:translateY(-50%);cursor:ew-resize}
   .pframe.drop .pnl-inner{outline:.6cqw dashed var(--yellow);outline-offset:.2cqw}
   .pnl-empty .picks{display:flex;gap:1cqw;flex-wrap:wrap;justify-content:center}
@@ -176,7 +179,7 @@
   @media print{
     html,body{background:#fff !important}
     body{padding:0 !important}
-    .hero,.side,.tools,.notice,footer,.rule,.sub-intro,.it-ctl,.tip-h,.rs-h,.rot-h,.rm,.addframe,.dock,.tray,.tip,.scard{display:none !important}
+    .hero,.side,.tools,.notice,footer,.rule,.sub-intro,.it-ctl,.tip-h,.rs-h,.rot-h,.prot-h,.rm,.addframe,.dock,.tray,.tip,.scard{display:none !important}
     .layout{display:block;margin:0}.page{padding:0;margin:0;max-width:none}
     .workbench,#bench{padding:0;background:none;margin:0}
     .sheet{box-shadow:none;width:auto;height:calc(100vh - 1mm);max-width:100%;margin:0 auto;break-inside:avoid;
@@ -639,11 +642,26 @@ import THEME from '/the-precinct/theme.js';
   // Zoom is about the framing point; a flip then mirrors the whole panel about its centre line,
   // which is (50 - x)% of the width (or 50 - y% of the height) away from that point. drawCover() does the same on the canvas.
   // fit.flip is left to right, fit.flipY top to bottom.
-  function imgStyle(fit){
-    const sx = fit.flip ? -1 : 1, sy = fit.flipY ? -1 : 1;
-    const flip = sx < 0 || sy < 0 ? 'translate(' + (50 - fit.x) * (sx < 0) + '%,' + (50 - fit.y) * (sy < 0) + '%) scale(' + sx + ',' + sy
-      + ') translate(' + (fit.x - 50) * (sx < 0) + '%,' + (fit.y - 50) * (sy < 0) + '%) ' : '';
-    return 'object-position:' + fit.x + '% ' + fit.y + '%;transform:' + flip + 'scale(' + fit.z + ');transform-origin:' + fit.x + '% ' + fit.y + '%';
+  // A picture turned by r degrees leaves the panel's corners bare unless it grows by this much (ar: the panel's width / height).
+  const fillFor = (r, ar) => { const a = Math.abs(r || 0) * Math.PI / 180; return Math.abs(Math.cos(a)) + Math.max(ar, 1 / ar) * Math.abs(Math.sin(a)); };
+  function imgStyle(fit, ar){
+    const sx = fit.flip ? -1 : 1, sy = fit.flipY ? -1 : 1, r = fit.r || 0, k = r ? fillFor(r, ar || 1) : 1;
+    const turn = sx < 0 || sy < 0 || r ? 'translate(' + (50 - fit.x) + '%,' + (50 - fit.y) + '%) rotate(' + r + 'deg) scale(' + k * sx + ',' + k * sy
+      + ') translate(' + (fit.x - 50) + '%,' + (fit.y - 50) + '%) ' : '';
+    return 'object-position:' + fit.x + '% ' + fit.y + '%;transform:' + turn + 'scale(' + fit.z + ');transform-origin:' + fit.x + '% ' + fit.y + '%';
+  }
+  // The whole style for panel i's picture: its frame's shape, and the style's inking.
+  function picStyle(i){
+    const fit = panelList()[i].fit;
+    if (S.level === 'prose') return imgStyle(fit, 16 / 9);
+    const b = bbox(look().panels[i]);
+    return imgStyle(fit, b.w / b.h) + (look().ink ? ';filter:' + look().ink : '');
+  }
+  // A picture's rotate handle sits a little in from its panel's top-right corner (inside, whatever the panel's shape).
+  function protHTML(poly, b){
+    const cx = poly.reduce((s, p) => s + p[0], 0) / poly.length, cy = poly.reduce((s, p) => s + p[1], 0) / poly.length;
+    const x = poly[1][0] + (cx - poly[1][0]) * 0.14, y = poly[1][1] + (cy - poly[1][1]) * 0.14;
+    return '<span class="prot-h" title="Drag to turn the picture (hold Shift for steps of 15°)" style="left:' + ((x - b.x) / b.w * 100) + '%;top:' + ((y - b.y) / b.h * 100) + '%">&#8635;</span>';
   }
   const imgEl = i => bench.querySelector('[data-i="' + i + '"]:not(.wl) > .pnl-inner > img');
   const empty = on => on
@@ -665,7 +683,7 @@ import THEME from '/the-precinct/theme.js';
     if (S.level === 'prose') {
       bench.innerHTML = '<div class="prose-page"><div class="prose-title" contenteditable="true" spellcheck="false" data-ph="Your title" id="titleEl">' + esc(S.title) + '</div>'
         + list.map((f, i) => '<div class="pframe' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '">'
-          + '<div class="pnl-inner">' + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + imgStyle(f.fit) + '">' : empty(sel.p === i)) + '</div>'
+          + '<div class="pnl-inner">' + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + picStyle(i) + '">' : empty(sel.p === i)) + '</div>'
           + '<textarea data-i="' + i + '" placeholder="Write this part of the story. Who is here? What just happened? What happens next?">' + esc(f.text) + '</textarea>'
           + (list.length > 1 ? '<button type="button" class="rm" data-rm="' + i + '" aria-label="Remove this frame">&times;</button>' : '') + '</div>').join('')
         + (list.length < 6 ? '<button type="button" class="addframe" id="addFrame">+ Add another picture</button>' : '') + '</div>';
@@ -682,7 +700,7 @@ import THEME from '/the-precinct/theme.js';
         const pts = local.map(q => q.join(',')).join(' ');
         return '<div class="pnl' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '" style="left:' + b.x + '%;top:' + (b.y / PAGE_H * 100) + '%;width:' + b.w + '%;height:' + (b.h / PAGE_H * 100) + '%">'
           + '<div class="pnl-inner" style="clip-path:polygon(' + clip + ')">'
-          + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + imgStyle(p.fit) + (lk.ink ? ';filter:' + lk.ink : '') + '">' : empty(sel.p === i))
+          + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + picStyle(i) + '">' : empty(sel.p === i))
           + '<svg class="edge" viewBox="0 0 ' + b.w + ' ' + b.h + '" preserveAspectRatio="none" aria-hidden="true">'
           + framesOf(lk, i).map(([w, c]) => '<polygon points="' + pts + '" fill="none" stroke="' + c + '" stroke-width="' + 2 * w + '"/>').join('')
           + '<polygon class="hl" points="' + pts + '"/></svg>'
@@ -691,7 +709,8 @@ import THEME from '/the-precinct/theme.js';
       + lk.panels.map((poly, i) => {
         const b = bbox(poly);
         return '<div class="pnl wl' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '" style="left:' + b.x + '%;top:' + (b.y / PAGE_H * 100) + '%;width:' + b.w + '%;height:' + (b.h / PAGE_H * 100) + '%"><div class="pnl-inner">'
-          + S.panels[i].items.map((it, j) => itemHTML(it, j, sel.p === i && sel.it === j)).join('') + '</div></div>';
+          + S.panels[i].items.map((it, j) => itemHTML(it, j, sel.p === i && sel.it === j)).join('')
+          + (sel.p === i && sel.it == null && S.panels[i].img ? protHTML(poly, b) : '') + '</div></div>';
       }).join('') + '</div>';
     ro.disconnect();
     bench.querySelectorAll('.it').forEach(el => { el.classList.contains('it-sfx') ? placeRot(el) : drawBox(el); ro.observe(el.querySelector('.it-text')); });
@@ -770,6 +789,11 @@ import THEME from '/the-precinct/theme.js';
       if (sel.p === i && S.prose[i].img && inner.contains(e.target)) startDrag(e, { kind: 'pan', i, box });
       return;
     }
+    if (e.target.closest('.prot-h')) {
+      e.preventDefault();
+      const r = bench.querySelector('.pnl:not(.wl)[data-i="' + i + '"] .pnl-inner').getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      return startDrag(e, { kind: 'prot', i, box, cx, cy, r0: S.panels[i].fit.r || 0, a0: Math.atan2(e.clientY - cy, e.clientX - cx) * 180 / Math.PI });
+    }
     const hd = e.target.closest('.tip-h, .rs-h, .rot-h');
     if (hd) {
       e.preventDefault();
@@ -798,6 +822,7 @@ import THEME from '/the-precinct/theme.js';
   function startDrag(e, d){
     d.x0 = e.clientX; d.y0 = e.clientY; d.moved = false; d.pid = e.pointerId;
     if (d.kind === 'pan') { const f = panelList()[d.i].fit; d.fx = f.x; d.fy = f.y; }
+    else if (d.kind === 'prot') {}
     else {
       const it = S.panels[d.i].items[d.j];
       d.ix = it.x; d.iy = it.y; d.tip = Object.assign({}, it.tip);
@@ -819,12 +844,24 @@ import THEME from '/the-precinct/theme.js';
     if (!drag.moved) { drag.moved = true; checkpoint(); if (document.activeElement) document.activeElement.blur(); }
     e.preventDefault();
     const px = dx / drag.box.width * 100, py = dy / drag.box.height * 100;
+    if (drag.kind === 'prot') {
+      let a = drag.r0 + Math.atan2(e.clientY - drag.cy, e.clientX - drag.cx) * 180 / Math.PI - drag.a0;
+      a = ((a + 540) % 360) - 180;
+      const q = e.shiftKey ? 15 : 90;
+      if (e.shiftKey || Math.abs(a - Math.round(a / q) * q) < 4) a = Math.round(a / q) * q;
+      S.panels[drag.i].fit.r = Math.round(a);
+      const im = imgEl(drag.i);
+      if (im) im.setAttribute('style', picStyle(drag.i));
+      return;
+    }
     if (drag.kind === 'pan') {
       const f = panelList()[drag.i].fit;
+      // a turned picture moves along its own directions, so it still follows the finger
+      const [lx, ly] = unturn(dx, dy, f.r), px = lx / drag.box.width * 100, py = ly / drag.box.height * 100;
       f.x = Math.max(0, Math.min(100, drag.fx - px * 1.4 * (f.flip ? -1 : 1)));   // a flipped picture still follows the finger
       f.y = Math.max(0, Math.min(100, drag.fy - py * 1.4 * (f.flipY ? -1 : 1)));
       const im = imgEl(drag.i);
-      if (im) im.setAttribute('style', imgStyle(f) + (look().ink && S.level !== 'prose' ? ';filter:' + look().ink : ''));
+      if (im) im.setAttribute('style', picStyle(drag.i));
       return;
     }
     const it = S.panels[drag.i].items[drag.j];
@@ -864,7 +901,7 @@ import THEME from '/the-precinct/theme.js';
     if (d.moved) {
       save();
       if (d.kind === 'tip' || d.kind === 'width') { markSeen('tail'); showTip(); }   // they found the handles
-      if (d.kind === 'rot') { markSeen('rotate'); render(); }                          // the style bar shows the new angle
+      if (d.kind === 'rot' || d.kind === 'prot') { markSeen('rotate'); render(); }                          // the style bar shows the new angle
       return;
     }
     if (d.kind === 'item' && d.editOnTap) editItem(d.el);
@@ -885,6 +922,12 @@ import THEME from '/the-precinct/theme.js';
       if (ed) { ed.blur(); return; }
       if (sel.p != null) { sel = sel.it != null ? { p: sel.p, it: null } : NONE(); render(); }
       return;
+    }
+    if (!ed && sel.p != null && sel.it == null && (e.key === '[' || e.key === ']') && panelList()[sel.p].img) {
+      e.preventDefault(); checkpoint();
+      const f = panelList()[sel.p].fit;
+      f.r = (((f.r || 0) + (e.key === ']' ? 5 : -5) + 540) % 360) - 180;
+      save(); render(); return;
     }
     if (ed || sel.p == null || sel.it == null || S.level === 'prose') return;
     const items = S.panels[sel.p].items, it = items[sel.it];
@@ -936,7 +979,7 @@ import THEME from '/the-precinct/theme.js';
     const f = panelList()[i].fit; f.z = Math.max(1, Math.min(3, z));
     if ($('zoom')) $('zoom').value = f.z;
     const im = imgEl(i);
-    if (im) im.setAttribute('style', imgStyle(f) + (look().ink && S.level !== 'prose' ? ';filter:' + look().ink : ''));
+    if (im) im.setAttribute('style', picStyle(i));
     save();
   }
   // Pinch on a trackpad (or Ctrl + scroll) zooms the chosen picture.
@@ -1069,12 +1112,13 @@ import THEME from '/the-precinct/theme.js';
       h = '<span class="what">' + (S.level === 'prose' ? 'Frame ' : 'Panel ') + (sel.p + 1) + '</span>'
         + g('picture', '<b>Picture</b>' + (p.img
           ? b('upload', 'Replace') + b('lib', 'Library') + b('flip', 'Flip &#8646;', { v: 'flip', on: p.fit.flip, title: 'Flip the picture left to right, so a character faces the other way' })
-            + b('flip', 'Flip &#8645;', { v: 'flipY', on: p.fit.flipY, title: 'Flip the picture upside down, for a reflection in a puddle or a window' }) + b('clear', 'Remove')
+            + b('flip', 'Flip &#8645;', { v: 'flipY', on: p.fit.flipY, title: 'Flip the picture upside down, for a reflection in a puddle or a window' })
+            + (p.fit.r ? '<span class="note">' + p.fit.r + '°</span>' + b('straighten', 'Straighten') : '') + b('clear', 'Remove')
             + '<label class="zoom">Zoom <input type="range" id="zoom" min="1" max="3" step="0.05" value="' + p.fit.z + '"></label>'
           : b('upload', 'Upload') + b('lib', 'From our library') + '<span class="note">or paste (Ctrl/&#8984;+V) or drop a picture on the panel</span>'));
       if (addReady()) h += g('add', '<b>Add</b>' + (S.level === 'advanced' ? ['caption', 'speech', 'thought', 'sfx'] : ['caption', 'speech'])
         .map(k => b('add', ADD_NAMES[k], { v: k, isNew: !seen('n:' + k), on: k === 'sfx' && bankOpen(), exp: k === 'sfx' ? bankOpen() : null })).join(''));
-      done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this panel (Esc)&#10;&#10;Keyboard, with a panel chosen:&#10;Ctrl/&#8984;+V: paste a picture you have copied&#10;Ctrl + scroll, or pinch on a trackpad: zoom the picture&#10;Ctrl/&#8984;+Z: undo, Shift+Ctrl/&#8984;+Z: redo' });
+      done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this panel (Esc)&#10;&#10;Keyboard, with a panel chosen:&#10;Ctrl/&#8984;+V: paste a picture you have copied&#10;Ctrl + scroll, or pinch on a trackpad: zoom the picture&#10;[ and ]: turn the picture&#10;Ctrl/&#8984;+Z: undo, Shift+Ctrl/&#8984;+Z: redo' });
     } else {
       h = '<span class="what">Page</span>'
         + (S.level === 'advanced' ? g('style', '<b>Style' + (seen('n:style') ? '' : NEW) + '</b>'
@@ -1139,6 +1183,7 @@ import THEME from '/the-precinct/theme.js';
       case 'done': sel = sel.it != null ? { p: sel.p, it: null } : NONE(); return render();
       case 'upload': return pickUpload();
       case 'lib': return openLib();
+      case 'straighten': checkpoint(); panelList()[sel.p].fit.r = 0; save(); return render();
       case 'flip': { checkpoint(); const f = panelList()[sel.p].fit; f[v] = !f[v]; save(); return render(); }
       case 'clear': checkpoint(); panelList()[sel.p].img = null; save(); return render();
       case 'add':
@@ -1278,8 +1323,12 @@ import THEME from '/the-precinct/theme.js';
       inkBW(oc);
       ctx.drawImage(oc, x, y); ctx.restore(); return;
     }
-    if (fit.flip) { ctx.translate(2 * x + w, 0); ctx.scale(-1, 1); }    // mirror about the panel's centre lines
-    if (fit.flipY) { ctx.translate(0, 2 * y + h); ctx.scale(1, -1); }
+    // flips, a turn and the fill-the-corners enlargement, about the panel's centre (as imgStyle() does on the page)
+    if (fit.flip || fit.flipY || fit.r) {
+      const k = fit.r ? fillFor(fit.r, w / h) : 1;
+      ctx.translate(x + w / 2, y + h / 2); ctx.rotate((fit.r || 0) * Math.PI / 180);
+      ctx.scale(k * (fit.flip ? -1 : 1), k * (fit.flipY ? -1 : 1)); ctx.translate(-(x + w / 2), -(y + h / 2));
+    }
     if (im) {
       const s0 = Math.max(w / im.width, h / im.height), rw = im.width * s0, rh = im.height * s0;
       const offX = (w - rw) * fit.x / 100, offY = (h - rh) * fit.y / 100;
