@@ -27,8 +27,8 @@ export default {
     },
     {
       id: 'disillusioned', name: 'The Disillusioned Detective', tag: 'The bad cop',
-      story: 'A brute, and the Commissioner’s pawn, though he doesn’t know it yet. He is in love with the Femme Fatale.',
-      look: 'a big heavy-set man in his forties, bare-headed with slicked-back dark hair, a heavy brow over tired, half-lidded eyes and a hard glare, a rumpled dark suit and a loosened tie',
+      story: 'A brute with a short fuse, always one word from exploding. He is the Commissioner’s pawn, though he doesn’t know it yet, and he is in love with the Femme Fatale.',
+      look: 'a big, heavy-set, muscular man in his forties, bull neck and broad shoulders straining a rumpled dark suit, loosened tie, bare-headed with slicked-back dark hair, jaw clenched and a vein standing out at his temple, a furious glare, on the verge of exploding with rage',
       img: IMG + 'ref/boss.jpg',
     },
     {
