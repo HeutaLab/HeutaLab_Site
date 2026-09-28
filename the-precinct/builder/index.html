@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0f0f">
+<title>Comic Builder — The Precinct</title>
+<meta name="description" content="Build your own noir comic page: add your pictures, then captions, speech balloons and sound effects, at prose, medium or advanced level.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Knewave&family=Oswald:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&family=Comic+Neue:wght@700&display=swap">
+<link rel="stylesheet" href="/the-precinct/precinct.css">
+<style>
+  .tools{margin-top:0}
+  .tools .grp{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:12px 0;border-top:1px solid rgba(52,64,62,.6)}
+  .tools .grp:first-child{border-top:0;padding-top:0}
+  .tools h4{font-family:var(--label);font-weight:500;font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--yellow);margin:0 6px 0 0;min-width:88px}
+  .tools .lvl-note{flex-basis:100%;margin:2px 0 0;font-size:13px;color:var(--ink-dim)}
+  .tools .pill{padding:7px 12px;font-size:12.5px}
+  .tools .pill:disabled{opacity:.35;cursor:not-allowed}
+  .tools .pill:disabled:hover{border-color:var(--frame)}
+  .tools input[type=range]{accent-color:var(--yellow);width:140px}
+  .tools .hint{font-size:12.5px;color:var(--ink-dim);font-style:italic}
+  .btn.ghost{background:transparent;color:var(--ink);box-shadow:none;border:1px solid var(--frame)}
+  .btn.ghost:hover{border-color:var(--yellow);color:var(--yellow);background:transparent}
+  .btn.small{font-size:11.5px;padding:7px 12px}
+
+  .workbench{margin-top:18px;display:flex;justify-content:center;padding:22px 16px;background:
+    repeating-linear-gradient(45deg,rgba(255,255,255,.015) 0 10px,transparent 10px 20px),var(--panel)}
+
+  /* the comic page */
+  .sheet{position:relative;width:min(100%,720px);aspect-ratio:2/3;background:#f3eee0;container-type:inline-size;
+    box-shadow:0 10px 40px rgba(0,0,0,.6);color:#111;user-select:none;-webkit-user-select:none}
+  .sheet-title{position:absolute;left:3%;right:3%;top:1.6%;height:6%;display:flex;align-items:center;
+    font-family:var(--brush);font-size:5.4cqw;line-height:1;color:#111;text-transform:uppercase;outline:none;
+    white-space:nowrap;overflow:hidden;user-select:text;-webkit-user-select:text}
+  .sheet-title:empty::before{content:attr(data-ph);color:#b3ab98}
+  .panels{position:absolute;left:3%;right:3%;top:9%;bottom:2.5%}
+  .pnl{position:absolute;padding:.7cqw}
+  .pnl-inner{position:relative;width:100%;height:100%;overflow:hidden;border:.45cqw solid #111;background:#222;touch-action:none}
+  .pnl.sel .pnl-inner{outline:.6cqw solid var(--yellow);outline-offset:.2cqw}
+  .pnl-inner > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+  .pnl-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1cqw;
+    color:#9aa09a;font-family:var(--label);font-size:2.2cqw;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:4%}
+  .pnl-empty b{font-size:6cqw;line-height:1;color:#5d6660;font-weight:400}
+
+  .it{position:absolute;touch-action:none;cursor:grab;width:max-content}
+  .it.sel{z-index:5}
+  .it-text{outline:none;font-family:"Comic Neue","Comic Sans MS",cursive;font-weight:700;text-transform:uppercase;
+    font-size:2.2cqw;line-height:1.15;text-align:center;word-wrap:break-word;user-select:text;-webkit-user-select:text;cursor:text;min-height:1.15em}
+  .it-text:empty::before{content:attr(data-ph);color:#999}
+  .it-speech .it-text,.it-thought .it-text{background:#fff;border:.3cqw solid #111;border-radius:50%;padding:1.6cqw 2.4cqw;position:relative;z-index:1}
+  .it-thought .it-text{border-radius:48% 52% 46% 54% / 55% 50% 50% 45%}
+  .it-caption .it-text{background:#f2c744;border:.3cqw solid #111;padding:.8cqw 1.1cqw;text-align:left}
+  .it-sfx .it-text{font-family:var(--brush);font-weight:400;font-size:7cqw;color:#f2c744;-webkit-text-stroke:.35cqw #111;paint-order:stroke fill;transform:rotate(-8deg);line-height:1;white-space:nowrap}
+  .tail{position:absolute;z-index:2;width:22%;height:auto;pointer-events:none}
+  .tail.bl{left:18%;top:calc(100% - .6cqw)}
+  .tail.br{right:18%;top:calc(100% - .6cqw);transform:scaleX(-1)}
+  .bub{position:absolute;border:.3cqw solid #111;background:#fff;border-radius:50%;pointer-events:none}
+  .it-ctl{position:absolute;top:-3.4cqw;right:-1cqw;display:none;gap:.6cqw;z-index:6}
+  .it.sel .it-ctl{display:flex}
+  .it-ctl button{width:3.2cqw;height:3.2cqw;min-width:22px;min-height:22px;border-radius:50%;border:0;background:#111;color:#f2c744;
+    font-size:max(11px,1.8cqw);line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+  /* prose mode */
+  .prose-page{width:min(100%,720px);background:#f3eee0;color:#111;padding:5% 6% 6%;box-shadow:0 10px 40px rgba(0,0,0,.6);container-type:inline-size}
+  .prose-title{font-family:var(--brush);font-size:6cqw;text-transform:uppercase;outline:none;margin-bottom:3cqw;line-height:1.05}
+  .prose-title:empty::before{content:attr(data-ph);color:#b3ab98}
+  .pframe{margin-bottom:4cqw;position:relative}
+  .pframe .pnl-inner{aspect-ratio:16/9;height:auto;border-width:.5cqw}
+  .pframe.sel .pnl-inner{outline:.7cqw solid var(--yellow);outline-offset:.3cqw}
+  .pframe textarea{margin-top:2cqw;width:100%;min-height:9cqw;background:transparent;border:0;border-bottom:1px dashed #b9b19c;color:#111;
+    font-family:var(--serif);font-size:max(14px,2.5cqw);line-height:1.6;resize:vertical;padding:0 0 1cqw}
+  .pframe textarea:focus{outline:none;border-bottom-color:#111}
+  .pframe .rm{position:absolute;top:-2.4cqw;right:-2cqw;width:26px;height:26px;border-radius:50%;border:0;background:#111;color:#f2c744;cursor:pointer;display:none}
+  .pframe.sel .rm{display:block}
+  .addframe{display:block;width:100%;padding:2.4cqw;border:.3cqw dashed #b9b19c;background:none;color:#7c7462;font-family:var(--label);
+    letter-spacing:.14em;text-transform:uppercase;font-size:max(12px,2cqw);cursor:pointer}
+  .addframe:hover{border-color:#111;color:#111}
+
+  /* library picker */
+  dialog.lib{width:min(920px,calc(100vw - 32px));max-height:86vh;background:var(--panel);color:var(--ink);border:1px solid var(--frame);padding:0}
+  dialog.lib::backdrop{background:rgba(0,0,0,.7)}
+  .lib-head{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--frame)}
+  .lib-head h3{margin:0;font-family:var(--brush);font-weight:400;color:var(--yellow);font-size:24px;text-transform:uppercase}
+  .lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;padding:16px 18px;overflow:auto;max-height:calc(86vh - 70px)}
+  .lib-grid button{padding:0;border:1px solid var(--frame);background:#000;cursor:pointer;aspect-ratio:1/1;overflow:hidden}
+  .lib-grid button:hover{border-color:var(--yellow)}
+  .lib-grid img{width:100%;height:100%;object-fit:cover}
+
+  .notice{margin:12px 0 0;font-size:13px;color:var(--ink-dim)}
+
+  @media print{
+    body{background:#fff}
+    .hero,.side,.tools,.notice,footer,.rule,.sub-intro,.it-ctl,.rm,.addframe{display:none !important}
+    .layout{display:block}.page{padding:0;max-width:none}
+    .workbench{padding:0;background:none;margin:0}
+    .sheet,.prose-page{box-shadow:none;width:100%}
+    .pnl.sel .pnl-inner,.pframe.sel .pnl-inner{outline:none}
+    .pnl-empty{visibility:hidden}
+  }
+  @media (max-width:600px){.tools h4{min-width:0;flex-basis:100%}.workbench{padding:12px 8px;margin-left:-16px;margin-right:-16px}}
+</style>
+</head>
+<body id="top">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="noir" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values=".33 .5 .17 0 0  .33 .5 .17 0 0  .33 .5 .17 0 0  0 0 0 1 0"/>
+    <feComponentTransfer>
+      <feFuncR type="table" tableValues="0.03 0.09 0.30 0.95 0.98"/>
+      <feFuncG type="table" tableValues="0.05 0.21 0.45 0.78 0.92"/>
+      <feFuncB type="table" tableValues="0.055 0.22 0.42 0.27 0.70"/>
+    </feComponentTransfer>
+  </filter>
+</svg>
+
+<div class="page">
+
+  <header class="hero mini frame">
+    <div class="copy">
+      <a class="kicker" href="/the-precinct/">The Precinct</a>
+      <h1><span class="name">Comic builder</span></h1>
+      <p class="tag">Your pictures. Your words.<br>Build the page panel by panel.</p>
+    </div>
+    <div class="art">
+      <img class="noir" src="/the-precinct/img/card-story.jpg" alt="" width="640" height="465">
+      <div class="script" aria-hidden="true"><span>Real stories.</span><span>Your panels.</span></div>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <aside class="side">
+      <nav aria-label="The Precinct">
+        <a href="/the-precinct/"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+        <a href="/the-precinct/#brief"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>Get a brief</a>
+        <a href="/the-precinct/references/"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>References</a>
+        <a href="/the-precinct/builder/" class="on" aria-current="page"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg>Comic builder</a>
+        <a href="/the-precinct/#characters"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.3-7 8-7s7 2.5 8 7"/></svg>Characters</a>
+        <a href="/the-precinct/#settings"><svg viewBox="0 0 24 24"><path d="M3 21V9l5-3v15M8 21V4l8 3v14M16 21V11l5 2v8M2 21h20"/></svg>Settings</a>
+        <a href="/the-precinct/#palettes"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.3-1.2-1.6-1.2-2.8 0-1 .8-1.4 1.8-1.4H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg>Palettes</a>
+        <a href="/the-precinct/#compare"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="16"/><rect x="13" y="4" width="8" height="16"/></svg>Compare</a>
+        <a href="/the-precinct/#resources"><svg viewBox="0 0 24 24"><path d="M3 5c3-1 6-1 9 1 3-2 6-2 9-1v14c-3-1-6-1-9 1-3-2-6-2-9-1z"/><path d="M12 6v14"/></svg>Resources</a>
+        <a href="/" class="home-link"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg>HeutaLab</a>
+      </nav>
+      <blockquote>&ldquo;The truth is always in the last panel.&rdquo;<cite>&mdash; THE PRECINCT</cite></blockquote>
+      <a class="whois" href="/about/">
+        <b>Who&rsquo;s behind this?</b>
+        Glenn Malcolm: technology &amp; learning curriculum designer, subject leader and international schools consultant. HeutaLab is his home for practical EdTech tools, ideas and training for teachers, leaders and parents.
+        <span>About Glenn &rarr;</span>
+      </a>
+    </aside>
+
+    <main>
+      <p class="sub-intro">Add the pictures you made with Gemini, ChatGPT or Copilot (or borrow ours), then tell the story in words. Your pictures never leave this device, and your page saves itself in this browser as you go.</p>
+
+      <section class="tools frame panel" aria-label="Builder tools">
+        <div class="grp">
+          <h4>Level</h4>
+          <div class="pillrow" id="levelRow">
+            <button class="pill" data-val="prose">Prose</button>
+            <button class="pill" data-val="medium">Medium</button>
+            <button class="pill" data-val="advanced">Advanced</button>
+          </div>
+          <p class="lvl-note" id="levelNote"></p>
+        </div>
+        <div class="grp" id="layoutGrp">
+          <h4>Layout</h4>
+          <div class="pillrow" id="layoutRow">
+            <button class="pill" data-val="grid6">Six panels</button>
+            <button class="pill" data-val="splash">Splash + 3</button>
+            <button class="pill" data-val="wide">Wide + 2 + wide</button>
+            <button class="pill" data-val="tiers">Three tiers</button>
+            <button class="pill" data-val="grid4">Four panels</button>
+          </div>
+        </div>
+        <div class="grp">
+          <h4>Picture</h4>
+          <button class="pill" id="uploadBtn">Upload</button>
+          <button class="pill" id="libBtn">From our library</button>
+          <button class="pill" id="clearImgBtn">Remove</button>
+          <span id="zoomWrap"><label class="hint" for="zoom">Zoom</label> <input type="range" id="zoom" min="1" max="3" step="0.05" value="1"></span>
+          <span class="hint" id="panelHint">Tap a panel to choose it.</span>
+        </div>
+        <div class="grp" id="addGrp">
+          <h4>Add</h4>
+          <button class="pill" data-add="caption">Caption box</button>
+          <button class="pill" data-add="speech">Speech balloon</button>
+          <button class="pill" data-add="thought">Thought bubble</button>
+          <button class="pill" data-add="sfx">Sound effect</button>
+        </div>
+        <div class="grp">
+          <h4>Page</h4>
+          <button class="btn small" id="pngBtn">Download PNG <span class="arr">&darr;</span></button>
+          <button class="btn ghost small" id="printBtn">Print or save as PDF</button>
+          <button class="btn ghost small" id="resetBtn">Start again</button>
+        </div>
+      </section>
+      <p class="notice" id="notice" hidden></p>
+
+      <section class="workbench" id="bench"></section>
+
+      <footer>
+        Library pictures are panels from Glenn Malcolm&rsquo;s own 2023 Midjourney noir comic.
+        Pictures you upload stay in this browser on this device: nothing is sent anywhere.
+        Part of the <a href="/">HeutaLab</a> AIFE workshop materials: &ldquo;Human Creativity, AI Precision&rdquo;.
+      </footer>
+    </main>
+  </div>
+</div>
+
+<dialog class="lib" id="libDlg">
+  <div class="lib-head"><h3>Pick a picture</h3><button class="btn ghost small" id="libClose">Close</button></div>
+  <div class="lib-grid" id="libGrid"></div>
+</dialog>
+<input type="file" id="fileIn" accept="image/*" hidden>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+
+  // ---------- data ----------
+  const LEVEL_NOTES = {
+    prose: 'Prose: write it like a storybook. One picture, a paragraph underneath. Get the story straight before you think about panels.',
+    medium: 'Medium: four panels. Give each one a caption box for the narrator and a speech balloon for a character.',
+    advanced: 'Advanced: choose a layout, place captions, speech, thoughts and sound effects anywhere, and frame each picture with drag and zoom.',
+  };
+  // Panel rectangles as [left, top, width, height] in % of the panel area.
+  const LAYOUTS = {
+    grid4: [[0,0,50,50],[50,0,50,50],[0,50,50,50],[50,50,50,50]],
+    grid6: [[0,0,50,33.33],[50,0,50,33.33],[0,33.33,50,33.34],[50,33.33,50,33.34],[0,66.67,50,33.33],[50,66.67,50,33.33]],
+    splash: [[0,0,100,58],[0,58,33.33,42],[33.33,58,33.34,42],[66.67,58,33.33,42]],
+    wide: [[0,0,100,33.33],[0,33.33,50,33.34],[50,33.33,50,33.34],[0,66.67,100,33.33]],
+    tiers: [[0,0,100,33.33],[0,33.33,100,33.34],[0,66.67,100,33.33]],
+  };
+  const LIB = ['ref/chief','ref/hat-woman','ref/cop','ref/bar','ref/blonde-green','ref/blonde-yellow','ref/rain-street','ref/office',
+    'ref/sunset-street','ref/fedora','ref/boss','ref/cop-badge','ref/lamp-man','ref/blue-man','ref/houses','ref/green-city',
+    'ref/walking-woman','ref/teal-woman','ref/detective-car','ref/sunset-man','ref/walking-rain','ref/hat-green']
+    .map(p => '/the-precinct/img/' + p + '.jpg');
+  const DEFAULTS = {
+    caption: { x: 3, y: 3, w: 58, text: '' },
+    speech: { x: 40, y: 50, w: 46, text: '', tail: 'bl' },
+    thought: { x: 8, y: 8, w: 42, text: '' },
+    sfx: { x: 28, y: 34, w: 60, text: 'BLAM!' },
+  };
+  const PH = { caption: 'Meanwhile, at the precinct...', speech: 'Type what they say', thought: 'What are they thinking?', sfx: '' };
+  const blank = () => ({ img: null, fit: { x: 50, y: 50, z: 1 }, items: [] });
+  const fresh = () => ({
+    level: 'medium', layout: 'grid6', title: '',
+    panels: Array.from({ length: 6 }, blank),
+    prose: Array.from({ length: 3 }, () => ({ img: null, fit: { x: 50, y: 50, z: 1 }, text: '' })),
+  });
+
+  let S = fresh();
+  let sel = { p: null, it: null };   // selected panel (or prose frame) and item
+
+  // ---------- storage: IndexedDB keeps the page and uploaded pictures ----------
+  let db = null;
+  function openDB(){
+    return new Promise(res => {
+      try {
+        const r = indexedDB.open('precinct-builder', 1);
+        r.onupgradeneeded = () => r.result.createObjectStore('kv');
+        r.onsuccess = () => res(r.result);
+        r.onerror = () => res(null);
+      } catch (e) { res(null); }
+    });
+  }
+  function idb(mode, fn){
+    return new Promise(res => {
+      if (!db) return res(null);
+      const tx = db.transaction('kv', mode), st = tx.objectStore('kv');
+      const r = fn(st);
+      tx.oncomplete = () => res(r && r.result);
+      tx.onerror = () => res(null);
+    });
+  }
+  const put = (k, v) => idb('readwrite', st => st.put(v, k));
+  const get = k => idb('readonly', st => st.get(k));
+  const del = k => idb('readwrite', st => st.delete(k));
+
+  let saveT = null;
+  function save(){
+    clearTimeout(saveT);
+    saveT = setTimeout(() => put('state', JSON.parse(JSON.stringify(S))), 400);
+  }
+
+  const urls = {};  // picture id -> object URL
+  async function urlFor(img){
+    if (!img) return null;
+    if (img.lib) return img.lib;
+    if (urls[img.id]) return urls[img.id];
+    const blob = await get('img:' + img.id);
+    if (!blob) return null;
+    return (urls[img.id] = URL.createObjectURL(blob));
+  }
+
+  // Big phone photos are shrunk to 1600px so the page stays quick and saves reliably.
+  async function shrink(file){
+    try {
+      const bmp = await createImageBitmap(file);
+      const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+      c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+      return await new Promise(r => c.toBlob(r, 'image/jpeg', 0.9));
+    } catch (e) { return file; }
+  }
+
+  // ---------- rendering ----------
+  const bench = $('bench');
+  const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+  const TAIL = '<svg class="tail {c}" viewBox="0 0 40 34" aria-hidden="true"><path d="M10 0 L1 33 L31 0" fill="#fff"/><path d="M10 2 L1 33 L31 2" fill="none" stroke="#111" stroke-width="2.4" stroke-linejoin="round"/></svg>';
+
+  function panelList(){
+    return S.level === 'prose' ? S.prose : S.panels.slice(0, LAYOUTS[S.level === 'medium' ? 'grid4' : S.layout].length);
+  }
+
+  function itemHTML(it, j, on){
+    let extra = '';
+    if (it.type === 'speech' && it.tail !== 'none') extra = TAIL.replace('{c}', it.tail);
+    if (it.type === 'thought') extra = '<i class="bub" style="left:18%;top:calc(100% + .6cqw);width:3.2cqw;height:3.2cqw"></i><i class="bub" style="left:12%;top:calc(100% + 4.4cqw);width:1.8cqw;height:1.8cqw"></i>';
+    const ctl = '<span class="it-ctl">' + (it.type === 'speech' ? '<button type="button" data-act="tail" title="Move the tail" aria-label="Move the tail">&#x21c4;</button>' : '')
+      + '<button type="button" data-act="del" title="Delete" aria-label="Delete">&times;</button></span>';
+    return '<div class="it it-' + it.type + (on ? ' sel' : '') + '" data-j="' + j + '" style="left:' + it.x + '%;top:' + it.y + '%;max-width:' + it.w + '%">'
+      + '<div class="it-text" contenteditable="true" spellcheck="false" data-ph="' + esc(PH[it.type]) + '">' + esc(it.text) + '</div>' + extra + ctl + '</div>';
+  }
+
+  function imgStyle(fit){
+    return 'object-position:' + fit.x + '% ' + fit.y + '%;transform:scale(' + fit.z + ');transform-origin:' + fit.x + '% ' + fit.y + '%';
+  }
+  const EMPTY = '<div class="pnl-empty"><b>+</b>Tap, then add a picture</div>';
+
+  async function render(){
+    document.querySelectorAll('#levelRow .pill').forEach(b => b.classList.toggle('active', b.dataset.val === S.level));
+    document.querySelectorAll('#layoutRow .pill').forEach(b => b.classList.toggle('active', b.dataset.val === S.layout));
+    $('levelNote').textContent = LEVEL_NOTES[S.level];
+    $('layoutGrp').hidden = S.level !== 'advanced';
+    $('addGrp').hidden = S.level === 'prose';
+    document.querySelectorAll('[data-add=thought],[data-add=sfx]').forEach(b => b.hidden = S.level !== 'advanced');
+    $('zoomWrap').hidden = S.level !== 'advanced';
+
+    const list = panelList();
+    if (sel.p != null && sel.p >= list.length) sel = { p: null, it: null };
+    const has = sel.p != null;
+    ['uploadBtn','libBtn'].forEach(id => $(id).disabled = !has);
+    $('clearImgBtn').disabled = !(has && list[sel.p].img);
+    document.querySelectorAll('[data-add]').forEach(b => b.disabled = !has);
+    $('panelHint').textContent = has ? (S.level === 'prose' ? 'Frame ' : 'Panel ') + (sel.p + 1) + ' chosen.' : 'Tap a panel to choose it.';
+    if (has) $('zoom').value = list[sel.p].fit.z;
+
+    const srcs = await Promise.all(list.map(p => urlFor(p.img)));
+
+    if (S.level === 'prose') {
+      bench.innerHTML = '<div class="prose-page"><div class="prose-title" contenteditable="true" spellcheck="false" data-ph="Your title" id="titleEl">' + esc(S.title) + '</div>'
+        + list.map((f, i) => '<div class="pframe' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '">'
+          + '<div class="pnl-inner">' + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + imgStyle(f.fit) + '">' : EMPTY) + '</div>'
+          + '<textarea data-i="' + i + '" placeholder="Write this part of the story. Who is here? What just happened? What happens next?">' + esc(f.text) + '</textarea>'
+          + (list.length > 1 ? '<button type="button" class="rm" data-rm="' + i + '" aria-label="Remove this frame">&times;</button>' : '') + '</div>').join('')
+        + (list.length < 6 ? '<button type="button" class="addframe" id="addFrame">+ Add another picture</button>' : '') + '</div>';
+      return;
+    }
+
+    const rects = LAYOUTS[S.level === 'medium' ? 'grid4' : S.layout];
+    bench.innerHTML = '<div class="sheet" id="sheet"><div class="sheet-title" contenteditable="true" spellcheck="false" data-ph="Your title" id="titleEl">' + esc(S.title) + '</div><div class="panels">'
+      + rects.map((r, i) => {
+        const p = S.panels[i];
+        return '<div class="pnl' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '" style="left:' + r[0] + '%;top:' + r[1] + '%;width:' + r[2] + '%;height:' + r[3] + '%"><div class="pnl-inner">'
+          + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + imgStyle(p.fit) + '">' : EMPTY)
+          + p.items.map((it, j) => itemHTML(it, j, sel.p === i && sel.it === j)).join('')
+          + '</div></div>';
+      }).join('') + '</div></div>';
+  }
+
+  function note(msg){ const n = $('notice'); n.textContent = msg; n.hidden = !msg; }
+
+  // ---------- interaction ----------
+  document.querySelectorAll('#levelRow .pill').forEach(b => b.addEventListener('click', () => { S.level = b.dataset.val; sel = { p: null, it: null }; save(); render(); }));
+  document.querySelectorAll('#layoutRow .pill').forEach(b => b.addEventListener('click', () => { S.layout = b.dataset.val; sel = { p: null, it: null }; save(); render(); }));
+
+  bench.addEventListener('input', e => {
+    if (e.target.id === 'titleEl') { S.title = e.target.textContent; save(); return; }
+    if (e.target.matches('.pframe textarea')) { S.prose[+e.target.dataset.i].text = e.target.value; save(); return; }
+    const itEl = e.target.closest('.it');
+    if (itEl) {
+      const p = +itEl.closest('.pnl').dataset.i, j = +itEl.dataset.j;
+      S.panels[p].items[j].text = e.target.innerText.replace(/\n+$/, '');
+      save();
+    }
+  });
+  // Titles stay on one line.
+  bench.addEventListener('keydown', e => { if (e.target.id === 'titleEl' && e.key === 'Enter') { e.preventDefault(); e.target.blur(); } });
+
+  bench.addEventListener('click', e => {
+    if (e.target.id === 'addFrame') { S.prose.push({ img: null, fit: { x: 50, y: 50, z: 1 }, text: '' }); sel = { p: S.prose.length - 1, it: null }; save(); render(); return; }
+    const rm = e.target.closest('[data-rm]');
+    if (rm) { S.prose.splice(+rm.dataset.rm, 1); sel = { p: null, it: null }; save(); render(); return; }
+    const act = e.target.closest('[data-act]');
+    if (act) {
+      const itEl = act.closest('.it'), p = +itEl.closest('.pnl').dataset.i, j = +itEl.dataset.j, it = S.panels[p].items[j];
+      if (act.dataset.act === 'del') { S.panels[p].items.splice(j, 1); sel.it = null; }
+      if (act.dataset.act === 'tail') it.tail = ({ bl: 'br', br: 'none', none: 'bl' })[it.tail || 'bl'];
+      save(); render(); return;
+    }
+    if (e.target.closest('.pframe textarea')) { const i = +e.target.dataset.i; if (sel.p !== i) { sel = { p: i, it: null }; render().then(() => bench.querySelector('textarea[data-i="' + i + '"]').focus()); } return; }
+    const fr = e.target.closest('.pframe');
+    if (fr) { sel = { p: +fr.dataset.i, it: null }; render(); }
+  });
+
+  // Dragging: items move; the picture pans (advanced) inside a chosen panel.
+  let drag = null;
+  bench.addEventListener('pointerdown', e => {
+    if (S.level === 'prose' || e.target.closest('[data-act]')) return;
+    const pnl = e.target.closest('.pnl');
+    if (!pnl) { if (!e.target.closest('#titleEl')) { sel = { p: null, it: null }; render(); } return; }
+    const i = +pnl.dataset.i, box = pnl.querySelector('.pnl-inner').getBoundingClientRect();
+    const itEl = e.target.closest('.it');
+    if (itEl) {
+      const j = +itEl.dataset.j;
+      if (sel.p !== i || sel.it !== j) {
+        // First touch selects the item; typing starts on the next tap.
+        e.preventDefault();
+        sel = { p: i, it: j };
+        render().then(() => {
+          const el = bench.querySelector('.pnl[data-i="' + i + '"] .it[data-j="' + j + '"]');
+          if (el) startDrag(e, { kind: 'item', i, j, box, el, editOnTap: true });
+        });
+        return;
+      }
+      return startDrag(e, { kind: 'item', i, j, box, el: itEl, editOnTap: false });
+    }
+    if (sel.p !== i || sel.it != null) { sel = { p: i, it: null }; render(); return; }
+    if (S.level === 'advanced' && S.panels[i].img) startDrag(e, { kind: 'pan', i, box });
+  });
+
+  function startDrag(e, d){
+    d.x0 = e.clientX; d.y0 = e.clientY; d.moved = false; d.pid = e.pointerId;
+    if (d.kind === 'item') { const it = S.panels[d.i].items[d.j]; d.ix = it.x; d.iy = it.y; }
+    else { const f = S.panels[d.i].fit; d.fx = f.x; d.fy = f.y; }
+    drag = d;
+  }
+  addEventListener('pointermove', e => {
+    if (!drag || e.pointerId !== drag.pid) return;
+    const dx = e.clientX - drag.x0, dy = e.clientY - drag.y0;
+    if (!drag.moved && Math.hypot(dx, dy) < 5) return;
+    if (!drag.moved) { drag.moved = true; if (document.activeElement) document.activeElement.blur(); }
+    e.preventDefault();
+    const px = dx / drag.box.width * 100, py = dy / drag.box.height * 100;
+    if (drag.kind === 'item') {
+      const it = S.panels[drag.i].items[drag.j];
+      it.x = Math.max(-10, Math.min(95, drag.ix + px));
+      it.y = Math.max(-10, Math.min(95, drag.iy + py));
+      drag.el.style.left = it.x + '%'; drag.el.style.top = it.y + '%';
+    } else {
+      const f = S.panels[drag.i].fit;
+      f.x = Math.max(0, Math.min(100, drag.fx - px * 1.4));
+      f.y = Math.max(0, Math.min(100, drag.fy - py * 1.4));
+      const im = bench.querySelector('.pnl[data-i="' + drag.i + '"] .pnl-inner > img');
+      if (im) im.setAttribute('style', imgStyle(f));
+    }
+  }, { passive: false });
+  addEventListener('pointerup', e => {
+    if (!drag || e.pointerId !== drag.pid) return;
+    const d = drag; drag = null;
+    if (d.moved) { save(); return; }
+    if (d.kind === 'item' && d.editOnTap) {
+      const t = d.el.querySelector('.it-text'); t.focus();
+      const r = document.createRange(); r.selectNodeContents(t); r.collapse(false);
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    }
+  });
+
+  // Picture tools
+  let pendingFor = null;
+  $('uploadBtn').addEventListener('click', () => { if (sel.p == null) return; pendingFor = sel.p; $('fileIn').click(); });
+  $('fileIn').addEventListener('change', async () => {
+    const f = $('fileIn').files[0]; $('fileIn').value = '';
+    if (!f || pendingFor == null) return;
+    const blob = await shrink(f);
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    const list = panelList(), old = list[pendingFor].img;
+    if (db) { await put('img:' + id, blob); } else { urls[id] = URL.createObjectURL(blob); }
+    list[pendingFor].img = { id }; list[pendingFor].fit = { x: 50, y: 50, z: 1 };
+    if (old && old.id) releaseImg(old.id);
+    save(); render();
+  });
+  function releaseImg(id){
+    // Keep a picture only while some panel or frame still uses it.
+    const used = S.panels.concat(S.prose).some(p => p.img && p.img.id === id);
+    if (used) return;
+    del('img:' + id);
+    if (urls[id]) { URL.revokeObjectURL(urls[id]); delete urls[id]; }
+  }
+  $('clearImgBtn').addEventListener('click', () => {
+    if (sel.p == null) return;
+    const p = panelList()[sel.p], old = p.img; p.img = null;
+    if (old && old.id) releaseImg(old.id);
+    save(); render();
+  });
+  $('zoom').addEventListener('input', () => {
+    if (sel.p == null) return;
+    const f = panelList()[sel.p].fit; f.z = +$('zoom').value;
+    const im = bench.querySelector('.pnl[data-i="' + sel.p + '"] .pnl-inner > img');
+    if (im) im.setAttribute('style', imgStyle(f));
+    save();
+  });
+
+  // Library
+  $('libGrid').innerHTML = LIB.map(src => '<button type="button" data-src="' + src + '"><img src="' + src + '" alt="" loading="lazy"></button>').join('');
+  $('libBtn').addEventListener('click', () => { if (sel.p == null) return; pendingFor = sel.p; $('libDlg').showModal(); });
+  $('libClose').addEventListener('click', () => $('libDlg').close());
+  $('libGrid').addEventListener('click', e => {
+    const b = e.target.closest('[data-src]'); if (!b) return;
+    const p = panelList()[pendingFor], old = p.img;
+    p.img = { lib: b.dataset.src }; p.fit = { x: 50, y: 50, z: 1 };
+    if (old && old.id) releaseImg(old.id);
+    $('libDlg').close(); save(); render();
+  });
+
+  // Text items
+  document.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => {
+    if (sel.p == null || S.level === 'prose') return;
+    const type = b.dataset.add, items = S.panels[sel.p].items;
+    const it = Object.assign({ type }, JSON.parse(JSON.stringify(DEFAULTS[type])));
+    it.y = Math.min(80, it.y + (items.length % 3) * 6);
+    items.push(it);
+    sel.it = items.length - 1;
+    save();
+    render().then(() => {
+      const t = bench.querySelector('.pnl[data-i="' + sel.p + '"] .it[data-j="' + sel.it + '"] .it-text');
+      if (t) { t.focus(); if (type === 'sfx') getSelection().selectAllChildren(t); }
+    });
+  }));
+
+  $('resetBtn').addEventListener('click', async () => {
+    if (!confirm('Clear this page and start again? Your pictures will be removed from this browser.')) return;
+    const ids = S.panels.concat(S.prose).filter(p => p.img && p.img.id).map(p => p.img.id);
+    S = fresh(); sel = { p: null, it: null };
+    ids.forEach(releaseImg);
+    save(); render();
+  });
+  $('printBtn').addEventListener('click', () => { sel = { p: null, it: null }; render().then(() => print()); });
+
+  // ---------- PNG export: redraw the page on a canvas ----------
+  const W = 1600;
+  function loadImg(src){ return new Promise(r => { if (!src) return r(null); const im = new Image(); im.onload = () => r(im); im.onerror = () => r(null); im.src = src; }); }
+  function wrap(ctx, text, maxW){
+    const out = [];
+    String(text).split('\n').forEach(par => {
+      let line = '';
+      par.split(/\s+/).forEach(w => {
+        const t = line ? line + ' ' + w : w;
+        if (ctx.measureText(t).width > maxW && line) { out.push(line); line = w; } else line = t;
+      });
+      out.push(line);
+    });
+    return out;
+  }
+  function drawCover(ctx, im, fit, x, y, w, h){
+    ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
+    ctx.fillStyle = '#222'; ctx.fillRect(x, y, w, h);
+    if (im) {
+      const s0 = Math.max(w / im.width, h / im.height), rw = im.width * s0, rh = im.height * s0;
+      const offX = (w - rw) * fit.x / 100, offY = (h - rh) * fit.y / 100;
+      const ox = w * fit.x / 100, oy = h * fit.y / 100;
+      ctx.drawImage(im, x + ox + (offX - ox) * fit.z, y + oy + (offY - oy) * fit.z, rw * fit.z, rh * fit.z);
+    }
+    ctx.restore();
+  }
+  function drawItem(ctx, it, px, py, pw, ph){
+    const cq = W / 100, x = px + pw * it.x / 100, y = py + ph * it.y / 100;
+    let w = pw * it.w / 100;
+    const text = (it.text || '').trim();
+    if (!text) return;
+    ctx.save();
+    if (it.type === 'sfx') {
+      ctx.font = (7 * cq) + 'px Knewave'; ctx.textBaseline = 'top';
+      ctx.translate(x, y); ctx.rotate(-8 * Math.PI / 180);
+      ctx.lineJoin = 'round'; ctx.lineWidth = 0.7 * cq; ctx.strokeStyle = '#111'; ctx.strokeText(text.toUpperCase(), 0, 0);
+      ctx.fillStyle = '#f2c744'; ctx.fillText(text.toUpperCase(), 0, 0);
+      ctx.restore(); return;
+    }
+    const fs = 2.2 * cq, lh = fs * 1.15;
+    ctx.font = '700 ' + fs + 'px "Comic Neue"';
+    const padX = (it.type === 'caption' ? 1.1 : 2.4) * cq, padY = (it.type === 'caption' ? 0.8 : 1.6) * cq, bw = 0.3 * cq;
+    const lines = wrap(ctx, text.toUpperCase(), w - 2 * padX - 2 * bw);
+    // Balloons shrink to their words, as on screen (width: max-content, capped at w).
+    w = Math.min(w, Math.max(...lines.map(l => ctx.measureText(l).width)) + 2 * padX + 2 * bw + 2);
+    const h = lines.length * lh + 2 * padY + 2 * bw;
+    ctx.lineWidth = bw; ctx.strokeStyle = '#111';
+    if (it.type === 'caption') {
+      ctx.fillStyle = '#f2c744'; ctx.fillRect(x, y, w, h); ctx.strokeRect(x + bw / 2, y + bw / 2, w - bw, h - bw);
+    } else {
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.ellipse(x + w / 2, y + h / 2, w / 2 - bw / 2, h / 2 - bw / 2, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      if (it.type === 'speech' && it.tail !== 'none') {
+        const tw = w * 0.22, flip = it.tail === 'br', bx = flip ? x + w - w * 0.18 - tw : x + w * 0.18, by = y + h - 0.6 * cq, k = tw / 40;
+        const P = (a, b) => [flip ? bx + tw - a * k : bx + a * k, by + b * k];
+        const t0 = P(10, 0), t1 = P(1, 33), t2 = P(31, 0);
+        ctx.beginPath(); ctx.moveTo(...t0); ctx.lineTo(...t1); ctx.lineTo(...t2); ctx.closePath(); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(...P(10, 2)); ctx.lineTo(...t1); ctx.lineTo(...P(31, 2)); ctx.lineWidth = 2.4 * k; ctx.lineJoin = 'round'; ctx.stroke();
+      }
+      if (it.type === 'thought') {
+        [[0.18, 0.6, 3.2], [0.12, 4.4, 1.8]].forEach(([fx, dy, d]) => {
+          ctx.beginPath(); ctx.ellipse(x + w * fx + d * cq / 2, y + h + dy * cq + d * cq / 2, d * cq / 2, d * cq / 2, 0, 0, Math.PI * 2);
+          ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = bw; ctx.stroke();
+        });
+      }
+    }
+    ctx.fillStyle = '#111'; ctx.textBaseline = 'top'; ctx.textAlign = it.type === 'caption' ? 'left' : 'center';
+    lines.forEach((ln, k) => ctx.fillText(ln, it.type === 'caption' ? x + bw + padX : x + w / 2, y + bw + padY + k * lh + fs * 0.05));
+    ctx.restore();
+  }
+
+  async function exportPNG(){
+    const btn = $('pngBtn'); btn.disabled = true;
+    try {
+      await Promise.all(['40px Knewave', '700 40px "Comic Neue"', '40px "Libre Baskerville"'].map(f => document.fonts.load(f).catch(() => {})));
+      const list = panelList();
+      const ims = await Promise.all(list.map(async p => loadImg(await urlFor(p.img))));
+      const c = document.createElement('canvas'), ctx = c.getContext('2d'), cq = W / 100;
+      if (S.level === 'prose') {
+        const m = W * 0.06, iw = W - 2 * m, ih = iw * 9 / 16, fs = 2.5 * cq, lh = fs * 1.6;
+        ctx.font = fs + 'px "Libre Baskerville"';
+        const blocks = list.map(f => wrap(ctx, (f.text || '').trim(), iw));
+        const titleH = S.title.trim() ? 9 * cq : 0;
+        c.width = W; c.height = Math.round(m + titleH + list.reduce((a, f, i) => a + ih + 2 * cq + (f.text.trim() ? blocks[i].length * lh : 0) + 4 * cq, 0) + m);
+        ctx.fillStyle = '#f3eee0'; ctx.fillRect(0, 0, c.width, c.height);
+        let y = m;
+        if (titleH) { ctx.fillStyle = '#111'; ctx.font = (6 * cq) + 'px Knewave'; ctx.textBaseline = 'top'; ctx.fillText(S.title.toUpperCase(), m, y); y += titleH; }
+        list.forEach((f, i) => {
+          drawCover(ctx, ims[i], f.fit, m, y, iw, ih);
+          ctx.lineWidth = 0.5 * cq; ctx.strokeStyle = '#111'; ctx.strokeRect(m, y, iw, ih);
+          y += ih + 2 * cq;
+          ctx.fillStyle = '#111'; ctx.font = fs + 'px "Libre Baskerville"'; ctx.textBaseline = 'top';
+          if (f.text.trim()) blocks[i].forEach(ln => { ctx.fillText(ln, m, y); y += lh; });
+          y += 4 * cq;
+        });
+      } else {
+        const H = W * 1.5; c.width = W; c.height = H;
+        ctx.fillStyle = '#f3eee0'; ctx.fillRect(0, 0, W, H);
+        if (S.title.trim()) { ctx.fillStyle = '#111'; ctx.font = (5.4 * cq) + 'px Knewave'; ctx.textBaseline = 'middle'; ctx.fillText(S.title.toUpperCase(), W * 0.03, H * 0.046); }
+        const ax = W * 0.03, ay = H * 0.09, aw = W * 0.94, ah = H * (1 - 0.09 - 0.025), pad = 0.7 * cq, bw = 0.45 * cq;
+        const rects = LAYOUTS[S.level === 'medium' ? 'grid4' : S.layout];
+        rects.forEach((r, i) => {
+          const x = ax + aw * r[0] / 100 + pad, y = ay + ah * r[1] / 100 + pad, w = aw * r[2] / 100 - 2 * pad, h = ah * r[3] / 100 - 2 * pad;
+          drawCover(ctx, ims[i], S.panels[i].fit, x, y, w, h);
+          ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
+          S.panels[i].items.forEach(it => drawItem(ctx, it, x + bw, y + bw, w - 2 * bw, h - 2 * bw));
+          ctx.restore();
+          ctx.lineWidth = bw; ctx.strokeStyle = '#111'; ctx.strokeRect(x + bw / 2, y + bw / 2, w - bw, h - bw);
+        });
+      }
+      const blob = await new Promise(r => c.toBlob(r, 'image/png'));
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = (S.title.trim() || 'my-precinct-comic').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    } catch (e) {
+      note('Sorry, the download didn’t work in this browser. Try "Print or save as PDF" instead.');
+    } finally { btn.disabled = false; }
+  }
+  $('pngBtn').addEventListener('click', () => { sel = { p: null, it: null }; render(); exportPNG(); });
+
+  // ---------- start ----------
+  (async () => {
+    db = await openDB();
+    if (!db) note('This browser won’t let the page save, so download your page before you close it.');
+    const saved = await get('state');
+    if (saved && saved.panels) S = Object.assign(fresh(), saved);
+    render();
+  })();
+})();
+</script>
+</body>
+</html>

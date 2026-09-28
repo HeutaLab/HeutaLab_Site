@@ -50,7 +50,7 @@ async function handleBrief(request, env) {
   if (!idea || typeof idea !== "string" || idea.trim().length < 3) {
     return json({ error: "Describe what you want first" }, 400);
   }
-  if (idea.length > 500) return json({ error: "Keep it under 500 characters" }, 400);
+  if (idea.length > 800) return json({ error: "Keep it under 800 characters" }, 400);
 
   if (!env.ANTHROPIC_API_KEY) return json({ error: "Server not configured (missing ANTHROPIC_API_KEY)" }, 500);
 
