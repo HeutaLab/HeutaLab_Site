@@ -33,6 +33,8 @@ async function handleBrief(request, env) {
   }
 
   const { code, platform, tier, subject, idea } = body || {};
+  // Older copies of the page send no palette; the house style is yellow.
+  const palette = (body && body.palette) || "yellow";
 
   if (!env.WORKSHOP_CODE) return json({ error: "Server not configured (missing WORKSHOP_CODE)" }, 500);
   if (!code || code.trim() !== env.WORKSHOP_CODE) return json({ error: "Wrong workshop code" }, 401);
@@ -44,6 +46,7 @@ async function handleBrief(request, env) {
   if (!validPlatforms.includes(platform)) return json({ error: "Unknown platform" }, 400);
   if (!validTiers.includes(tier)) return json({ error: "Unknown tier" }, 400);
   if (!validSubjects.includes(subject)) return json({ error: "Unknown subject" }, 400);
+  if (!PALETTES[palette]) return json({ error: "Unknown palette" }, 400);
   if (!idea || typeof idea !== "string" || idea.trim().length < 3) {
     return json({ error: "Describe what you want first" }, 400);
   }
@@ -56,6 +59,7 @@ async function handleBrief(request, env) {
     `Platform: ${platform}`,
     `Tier: ${tier}`,
     `Subject type: ${subject}`,
+    `Palette: ${palette} (${PALETTES[palette]})`,
     `Attendee's idea, in their own words: ${idea.trim()}`,
   ].join("\n");
 
@@ -114,6 +118,16 @@ async function handleBrief(request, env) {
   return json(parsed, 200);
 }
 
+// The palettes in Glenn's 2023 comic. Each is monochrome plus at most one
+// accent family; the phrase is what the prompt should carry, near verbatim.
+const PALETTES = {
+  bw: "black and white ink only, grey wash tones, no colour",
+  yellow: "black ink and grey tones with a single yellow accent (lamplight, lit windows, a taxi), no other colours",
+  green: "deep green-black shadows, muted teal-green midtones and pale green highlights, no other colours",
+  blue: "midnight blue and blue-black shadows with pale cold highlights, no other colours",
+  red: "black and charcoal with red-orange and amber accents (sunset, neon, fire), no other colours",
+};
+
 // Structured outputs hold the reply to this shape, so no regex-extracting JSON from prose.
 const BRIEF_SCHEMA = {
   type: "object",
@@ -129,7 +143,7 @@ const BRIEF_SCHEMA = {
 };
 
 function buildSystemPrompt() {
-  return `You are the briefing desk for a 1940s-noir comic-generation workshop for teachers ("Human Creativity, AI Precision"). Visual scheme: black, grey and noir tones plus a single yellow accent. House style reference: Al Williamson, 1940s film noir comic book, black and white ink illustration. Cast available: a police commissioner, a detective, a corrupt cop, and a femme fatale.
+  return `You are the briefing desk for a 1940s-noir comic-generation workshop for teachers ("Human Creativity, AI Precision"). Every comic is monochrome noir; the attendee picks the palette (see PALETTE RULES). House style reference: Al Williamson, 1940s film noir comic book, black and white ink illustration. Cast available: a police commissioner, a detective, a corrupt cop, and a femme fatale.
 
 You write ONE ready-to-paste image-generation prompt (or a short set, for medium/advanced tiers) tailored to the platform and tier given, based on the attendee's own idea. You do not generate images yourself, only the text prompt and the teaching notes around it.
 
@@ -144,6 +158,13 @@ PLATFORM KNOWLEDGE (apply this specifically, do not give generic advice):
 - copilot: similar compliance to chatgpt (same underlying image model family) but defaults toward a glossier, more "digital painting" look. Needs an explicit style correction such as "flat ink illustration, hatching and cross-hatching shading, not digital painting or airbrush" to avoid that.
 - midjourney: parameter-driven and the most literal about art-style keywords and named artists. Mention relevant parameters where useful (e.g. --ar 1:1 for a character sheet, --ar 16:9 for a wide establishing shot). Best consistency tool of the set via image-prompting or --seed, but requires a paid plan, which is why it's a look-only demo in this workshop rather than the hands-on tool.
 - nanobanana: Google's image model accessed via API/AI Studio rather than the consumer Gemini app; generally more literal and compliant with negative constraints than the consumer Gemini chat app, closer to chatgpt/copilot behaviour than to Gemini's chat behaviour.
+
+PALETTE RULES (the palette line in the request is the attendee's choice; honour it exactly):
+- Put the palette in every prompt in so many words, as a "limited palette" line. For medium and advanced tiers it belongs in the anchor, word for word, so every generation carries it.
+- Always close the palette line with "no other colours". Without it, models drift: a Gemini control run with no palette pinned came back sepia, and chat models slide back into full colour.
+- bw is the easiest to hold. With a single accent (yellow, red), say what the accent touches (lamplight, windows, a car, the sky) so it lands on one or two things instead of washing the whole frame.
+- green and blue are whole-image tints rather than accents: describe the shadows and the highlights, not objects.
+- Only the Gemini sepia result above was tested. Treat the rest of this palette advice as reasoned, not proven, and don't present it to attendees as tested.
 
 SUBJECT KNOWLEDGE:
 - character: emphasise plain/white background for basic, full body or bust, one clear expression and pose, character-reference-sheet framing.
