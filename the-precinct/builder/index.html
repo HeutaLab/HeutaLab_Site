@@ -89,7 +89,13 @@
   /* the comic page */
   .sheet{position:relative;isolation:isolate;width:min(100%,720px);aspect-ratio:2/3;background:#f3eee0;container-type:inline-size;
     box-shadow:0 10px 40px rgba(0,0,0,.6);color:#111;user-select:none;-webkit-user-select:none}
-  .sheet-title{position:absolute;z-index:8;left:3%;right:3%;top:1.6%;height:6%;display:flex;align-items:center;
+  .ttl{position:absolute;z-index:8;left:3%;top:1.6%;height:6%;max-width:94%;transform-origin:left center}
+  .ttl-prose{position:relative;display:inline-block;max-width:100%;margin-bottom:3cqw;transform-origin:left center}
+  .ttl-h{position:absolute;right:max(-30px,-3.6cqw);top:50%;transform:translate(0,-50%);z-index:9;width:2.8cqw;height:2.8cqw;min-width:18px;min-height:18px;
+    border-radius:50%;background:#f2c744;border:2px solid #111;color:#111;font:700 max(11px,1.7cqw)/1 sans-serif;display:none;align-items:center;
+    justify-content:center;cursor:grab;touch-action:none}
+  .ttl:hover .ttl-h,.ttl:focus-within .ttl-h,.ttl.turning .ttl-h,.ttl-prose:hover .ttl-h,.ttl-prose:focus-within .ttl-h,.ttl-prose.turning .ttl-h{display:flex}
+  .sheet-title{position:relative;height:100%;display:flex;align-items:center;
     font-family:var(--brush);font-size:5.4cqw;line-height:1;color:#111;text-transform:uppercase;outline:none;
     white-space:nowrap;overflow:hidden;user-select:text;-webkit-user-select:text}
   .sheet-title:empty::before{content:attr(data-ph);color:#b3ab98}
@@ -147,7 +153,7 @@
 
   /* prose mode */
   .prose-page{width:min(100%,720px);background:#f3eee0;color:#111;padding:5% 6% 6%;box-shadow:0 10px 40px rgba(0,0,0,.6);container-type:inline-size}
-  .prose-title{font-family:var(--brush);font-size:6cqw;text-transform:uppercase;outline:none;margin-bottom:3cqw;line-height:1.05}
+  .prose-title{font-family:var(--brush);font-size:6cqw;text-transform:uppercase;outline:none;line-height:1.05}
   .prose-title:empty::before{content:attr(data-ph);color:#b3ab98}
   .pframe{margin-bottom:4cqw;position:relative}
   .pframe .pnl-inner{aspect-ratio:16/9;height:auto;border:.5cqw solid #111}
@@ -179,7 +185,7 @@
   @media print{
     html,body{background:#fff !important}
     body{padding:0 !important}
-    .hero,.side,.tools,.notice,footer,.rule,.sub-intro,.it-ctl,.tip-h,.rs-h,.rot-h,.prot-h,.rm,.addframe,.dock,.tray,.tip,.scard{display:none !important}
+    .hero,.side,.tools,.notice,footer,.rule,.sub-intro,.it-ctl,.tip-h,.rs-h,.rot-h,.prot-h,.ttl-h,.rm,.addframe,.dock,.tray,.tip,.scard{display:none !important}
     .layout{display:block;margin:0}.page{padding:0;margin:0;max-width:none}
     .workbench,#bench{padding:0;background:none;margin:0}
     .sheet{box-shadow:none;width:auto;height:calc(100vh - 1mm);max-width:100%;margin:0 auto;break-inside:avoid;
@@ -525,9 +531,11 @@ import THEME from '/the-precinct/theme.js';
   function titleCss(tt){
     return 'font-family:' + tt.family + ';font-weight:' + tt.weight + ';font-size:' + tt.size + 'cqw;color:' + tt.color
       + (tt.spacing ? ';letter-spacing:' + tt.spacing + 'em' : '')
-      + (tt.stroke ? ';-webkit-text-stroke:' + 2 * tt.stroke[0] + 'cqw ' + tt.stroke[1] + ';paint-order:stroke fill' : '')
-      + (tt.rotate ? ';transform:rotate(' + tt.rotate + 'deg);transform-origin:left center' : '');
+      + (tt.stroke ? ';-webkit-text-stroke:' + 2 * tt.stroke[0] + 'cqw ' + tt.stroke[1] + ';paint-order:stroke fill' : '');
   }
+  // How far the title is turned, about its left end: the style's own tilt (Marvel's -3°) plus the user's.
+  const titleTurn = () => (S.level === 'prose' ? 0 : look().title.rotate || 0) + (S.titleRot || 0);
+  const TTL_H = '<span class="ttl-h" title="Drag to tilt the title (double-click to straighten)">&#8635;</span>';
   // Give every box the lettering of a style, and make new boxes start that way too.
   function applyLetters(key){
     const L = LOOKS[key].letters;
@@ -681,7 +689,7 @@ import THEME from '/the-precinct/theme.js';
     const srcs = await Promise.all(list.map(p => urlFor(p.img)));
 
     if (S.level === 'prose') {
-      bench.innerHTML = '<div class="prose-page"><div class="prose-title" contenteditable="true" spellcheck="false" data-ph="Your title" id="titleEl">' + esc(S.title) + '</div>'
+      bench.innerHTML = '<div class="prose-page"><div class="ttl-prose" style="transform:rotate(' + titleTurn() + 'deg)"><div class="prose-title" contenteditable="true" spellcheck="false" data-ph="Your title" id="titleEl">' + esc(S.title) + '</div>' + TTL_H + '</div>'
         + list.map((f, i) => '<div class="pframe' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '">'
           + '<div class="pnl-inner">' + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + picStyle(i) + '">'
             + (sel.p === i ? '<span class="prot-h" title="Drag to turn the picture (hold Shift for steps of 15°)" style="left:94%;top:13%">&#8635;</span>' : '')
@@ -694,8 +702,8 @@ import THEME from '/the-precinct/theme.js';
     }
 
     const lk = look();
-    bench.innerHTML = '<div class="sheet" id="sheet" style="background:' + lk.page + '"><div class="sheet-title" contenteditable="true" spellcheck="false" data-ph="Your title" id="titleEl" style="'
-      + titleCss(lk.title) + '">' + esc(S.title) + '</div>'
+    bench.innerHTML = '<div class="sheet" id="sheet" style="background:' + lk.page + '"><div class="ttl" style="transform:rotate(' + titleTurn() + 'deg)"><div class="sheet-title" contenteditable="true" spellcheck="false" data-ph="Your title" id="titleEl" style="'
+      + titleCss(lk.title) + '">' + esc(S.title) + '</div>' + TTL_H + '</div>'
       + lk.panels.map((poly, i) => {
         const p = S.panels[i], b = bbox(poly), local = poly.map(([x, y]) => [x - b.x, y - b.y]);
         const clip = local.map(([x, y]) => (x / b.w * 100) + '% ' + (y / b.h * 100) + '%').join(',');
@@ -783,6 +791,13 @@ import THEME from '/the-precinct/theme.js';
   bench.addEventListener('pointerdown', e => {
     if (e.button > 0 || e.target.closest('[data-act],[data-pick],textarea')) return;
     cardOpen = false;
+    const th = e.target.closest('.ttl-h');
+    if (th) {
+      e.preventDefault();   // also keeps the title from losing focus, so the handle stays put
+      const w = th.parentElement, pr = w.offsetParent.getBoundingClientRect(), cx = pr.left + w.offsetLeft, cy = pr.top + w.offsetTop + w.offsetHeight / 2;
+      w.classList.add('turning');
+      return startDrag(e, { kind: 'trot', el: w, box: w.getBoundingClientRect(), cx, cy, r0: S.titleRot || 0, a0: Math.atan2(e.clientY - cy, e.clientX - cx) * 180 / Math.PI });
+    }
     const pnl = e.target.closest('.pnl, .pframe');
     if (!pnl) { if (S.level !== 'prose' && !e.target.closest('#titleEl')) { sel = NONE(); render(); } return; }
     const i = +pnl.dataset.i, inner = pnl.querySelector('.pnl-inner'), box = inner.getBoundingClientRect();
@@ -827,7 +842,7 @@ import THEME from '/the-precinct/theme.js';
   function startDrag(e, d){
     d.x0 = e.clientX; d.y0 = e.clientY; d.moved = false; d.pid = e.pointerId;
     if (d.kind === 'pan') { const f = panelList()[d.i].fit; d.fx = f.x; d.fy = f.y; }
-    else if (d.kind === 'prot') {}
+    else if (d.kind === 'prot' || d.kind === 'trot') {}
     else {
       const it = S.panels[d.i].items[d.j];
       d.ix = it.x; d.iy = it.y; d.tip = Object.assign({}, it.tip);
@@ -849,6 +864,15 @@ import THEME from '/the-precinct/theme.js';
     if (!drag.moved) { drag.moved = true; checkpoint(); if (document.activeElement) document.activeElement.blur(); }
     e.preventDefault();
     const px = dx / drag.box.width * 100, py = dy / drag.box.height * 100;
+    if (drag.kind === 'trot') {
+      let a = drag.r0 + Math.atan2(e.clientY - drag.cy, e.clientX - drag.cx) * 180 / Math.PI - drag.a0;
+      a = ((a + 540) % 360) - 180;
+      const q = e.shiftKey ? 15 : 90;
+      if (e.shiftKey || Math.abs(a - Math.round(a / q) * q) < 4) a = Math.round(a / q) * q;
+      S.titleRot = Math.round(a);
+      drag.el.style.transform = 'rotate(' + titleTurn() + 'deg)';
+      return;
+    }
     if (drag.kind === 'prot') {
       let a = drag.r0 + Math.atan2(e.clientY - drag.cy, e.clientX - drag.cx) * 180 / Math.PI - drag.a0;
       a = ((a + 540) % 360) - 180;
@@ -903,13 +927,18 @@ import THEME from '/the-precinct/theme.js';
   addEventListener('pointerup', e => {
     if (!drag || e.pointerId !== drag.pid) return;
     const d = drag; drag = null;
+    if (d.kind === 'trot') d.el.classList.remove('turning');
     if (d.moved) {
       save();
       if (d.kind === 'tip' || d.kind === 'width') { markSeen('tail'); showTip(); }   // they found the handles
-      if (d.kind === 'rot' || d.kind === 'prot') { markSeen('rotate'); render(); }                          // the style bar shows the new angle
+      if (d.kind === 'rot' || d.kind === 'prot' || d.kind === 'trot') { markSeen('rotate'); render(); }                          // the style bar shows the new angle
       return;
     }
     if (d.kind === 'item' && d.editOnTap) editItem(d.el);
+  });
+  bench.addEventListener('dblclick', e => {
+    if (!e.target.closest('.ttl-h') || !S.titleRot) return;
+    checkpoint(); S.titleRot = 0; save(); render();
   });
   function editItem(el){
     const t = el.querySelector('.it-text'); t.focus();
@@ -1413,7 +1442,12 @@ import THEME from '/the-precinct/theme.js';
         c.width = W; c.height = Math.round(m + titleH + list.reduce((a, f, i) => a + ih + 2 * cq + (f.text.trim() ? blocks[i].length * lh : 0) + 4 * cq, 0) + m);
         ctx.fillStyle = '#f3eee0'; ctx.fillRect(0, 0, c.width, c.height);
         let y = m;
-        if (titleH) { ctx.fillStyle = '#111'; ctx.font = (6 * cq) + 'px Knewave'; ctx.textBaseline = 'top'; ctx.fillText(S.title.toUpperCase(), m, y); y += titleH; }
+        if (titleH) {
+          // turned about the middle of its left end, as on the page (the title's line is 1.05 × 6 cq tall)
+          ctx.save(); ctx.fillStyle = '#111'; ctx.font = (6 * cq) + 'px Knewave'; ctx.textBaseline = 'middle';
+          ctx.translate(m, y + 3.15 * cq); ctx.rotate(titleTurn() * Math.PI / 180); ctx.fillText(S.title.toUpperCase(), 0, 0);
+          ctx.restore(); y += titleH;
+        }
         list.forEach((f, i) => {
           drawCover(ctx, ims[i], f.fit, m, y, iw, ih);
           ctx.lineWidth = 0.5 * cq; ctx.strokeStyle = '#111'; ctx.strokeRect(m, y, iw, ih);
@@ -1435,7 +1469,7 @@ import THEME from '/the-precinct/theme.js';
           ctx.restore();
         });
         // the title goes on last: in the Image style a picture fills the page underneath it
-        if (S.title.trim()) drawTitle(ctx, S.title.toUpperCase(), lk.title, cq, H);
+        if (S.title.trim()) drawTitle(ctx, S.title.toUpperCase(), Object.assign({}, lk.title, { rotate: titleTurn() }), cq, H);
         // words last and unclipped, as on the page, so they can burst out of their panels
         lk.panels.forEach((poly, i) => {
           const b = bbox(poly.map(([x, y]) => [x * cq, y * cq]));
