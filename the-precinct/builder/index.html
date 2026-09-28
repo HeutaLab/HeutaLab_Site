@@ -499,8 +499,11 @@ import THEME from '/the-precinct/theme.js';
   // Boxes redraw whenever their words (or the page) change size.
   const ro = new ResizeObserver(es => es.forEach(en => drawBox(en.target.closest('.it'))));
 
+  // Zoom is about the framing point; a flip then mirrors the whole panel about its centre line,
+  // which is (50 - x)% of the width away from that point. drawCover() does the same on the canvas.
   function imgStyle(fit){
-    return 'object-position:' + fit.x + '% ' + fit.y + '%;transform:scale(' + fit.z + ');transform-origin:' + fit.x + '% ' + fit.y + '%';
+    const flip = fit.flip ? 'translateX(' + (50 - fit.x) + '%) scaleX(-1) translateX(' + (fit.x - 50) + '%) ' : '';
+    return 'object-position:' + fit.x + '% ' + fit.y + '%;transform:' + flip + 'scale(' + fit.z + ');transform-origin:' + fit.x + '% ' + fit.y + '%';
   }
   const imgEl = i => bench.querySelector('[data-i="' + i + '"] > .pnl-inner > img');
   const empty = on => on
@@ -660,7 +663,7 @@ import THEME from '/the-precinct/theme.js';
     const px = dx / drag.box.width * 100, py = dy / drag.box.height * 100;
     if (drag.kind === 'pan') {
       const f = panelList()[drag.i].fit;
-      f.x = Math.max(0, Math.min(100, drag.fx - px * 1.4));
+      f.x = Math.max(0, Math.min(100, drag.fx - px * 1.4 * (f.flip ? -1 : 1)));   // a flipped picture still follows the finger
       f.y = Math.max(0, Math.min(100, drag.fy - py * 1.4));
       const im = imgEl(drag.i);
       if (im) im.setAttribute('style', imgStyle(f));
@@ -872,16 +875,16 @@ import THEME from '/the-precinct/theme.js';
     const it = chosenItem(), list = panelList(), p = sel.p != null && list[sel.p];
     let h;
     let done = '';
-    if (it) { h = styleHTML(it); done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this box (Esc)' }); }
+    if (it) { h = styleHTML(it); done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this box (Esc)&#10;&#10;Keyboard, with a box chosen:&#10;Delete: remove it&#10;Arrow keys: nudge it (hold Shift for bigger steps)&#10;Ctrl/&#8984;+D: duplicate it&#10;Enter: edit the words&#10;Ctrl/&#8984;+Z: undo, Shift+Ctrl/&#8984;+Z: redo' }); }
     else if (p) {
       h = '<span class="what">' + (S.level === 'prose' ? 'Frame ' : 'Panel ') + (sel.p + 1) + '</span>'
         + g('picture', '<b>Picture</b>' + (p.img
-          ? b('upload', 'Replace') + b('lib', 'Library') + b('clear', 'Remove')
+          ? b('upload', 'Replace') + b('lib', 'Library') + b('flip', 'Flip &#8646;', { on: p.fit.flip, title: 'Flip the picture left to right, so a character faces the other way' }) + b('clear', 'Remove')
             + '<label class="zoom">Zoom <input type="range" id="zoom" min="1" max="3" step="0.05" value="' + p.fit.z + '"></label>'
           : b('upload', 'Upload') + b('lib', 'From our library') + '<span class="note">or paste (Ctrl/&#8984;+V) or drop a picture on the panel</span>'));
       if (addReady()) h += g('add', '<b>Add</b>' + (S.level === 'advanced' ? ['caption', 'speech', 'thought', 'sfx'] : ['caption', 'speech'])
         .map(k => b('add', ADD_NAMES[k], { v: k, isNew: !seen('n:' + k), on: k === 'sfx' && bankOpen(), exp: k === 'sfx' ? bankOpen() : null })).join(''));
-      done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this panel (Esc)' });
+      done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this panel (Esc)&#10;&#10;Keyboard, with a panel chosen:&#10;Ctrl/&#8984;+V: paste a picture you have copied&#10;Ctrl + scroll, or pinch on a trackpad: zoom the picture&#10;Ctrl/&#8984;+Z: undo, Shift+Ctrl/&#8984;+Z: redo' });
     } else {
       h = '<span class="what">Page</span>'
         + (S.level === 'advanced' ? g('layout', '<b>Layout' + (seen('n:layout') ? '' : NEW) + '</b>'
@@ -921,6 +924,7 @@ import THEME from '/the-precinct/theme.js';
       case 'done': sel = sel.it != null ? { p: sel.p, it: null } : NONE(); return render();
       case 'upload': return pickUpload();
       case 'lib': return openLib();
+      case 'flip': { checkpoint(); const f = panelList()[sel.p].fit; f.flip = !f.flip; save(); return render(); }
       case 'clear': checkpoint(); panelList()[sel.p].img = null; save(); return render();
       case 'add':
         markSeen('n:' + v); markSeen('add');
@@ -1045,6 +1049,7 @@ import THEME from '/the-precinct/theme.js';
   function drawCover(ctx, im, fit, x, y, w, h){
     ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
     ctx.fillStyle = '#222'; ctx.fillRect(x, y, w, h);
+    if (fit.flip) { ctx.translate(2 * x + w, 0); ctx.scale(-1, 1); }   // mirror about the panel's centre line
     if (im) {
       const s0 = Math.max(w / im.width, h / im.height), rw = im.width * s0, rh = im.height * s0;
       const offX = (w - rw) * fit.x / 100, offY = (h - rh) * fit.y / 100;
