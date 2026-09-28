@@ -134,6 +134,7 @@
   .rot-h{width:2.8cqw;height:2.8cqw;min-width:18px;min-height:18px;border-radius:50%;transform:translate(-50%,-50%);cursor:grab;
     display:none;align-items:center;justify-content:center;color:#111;font:700 max(11px,1.7cqw)/1 sans-serif}
   .it.sel .rot-h{display:flex}
+  .it:not(.it-sfx) .rot-h{left:-1.6cqw;top:-1.6cqw}
   .rs-h{right:-.9cqw;top:50%;width:1.5cqw;height:4cqw;min-width:10px;min-height:24px;border-radius:3px;transform:translateY(-50%);cursor:ew-resize}
   .pframe.drop .pnl-inner{outline:.6cqw dashed var(--yellow);outline-offset:.2cqw}
   .pnl-empty .picks{display:flex;gap:1cqw;flex-wrap:wrap;justify-content:center}
@@ -545,13 +546,15 @@ import THEME from '/the-precinct/theme.js';
         + ';color:' + c.text + ';padding:' + p[1] + 'cqw ' + p[0] + 'cqw';
       extra = '<svg class="bal" aria-hidden="true"></svg>';
       if (hasTail(it) && it.tail !== 'none') extra += '<span class="tip-h" title="Drag to point the tail"></span>';
-      extra += '<span class="rs-h" title="Drag to make it wider or narrower"></span>';
+      extra += '<span class="rs-h" title="Drag to make it wider or narrower"></span>'
+        + '<span class="rot-h" title="Drag to tilt it (hold Shift for steps of 15°)">&#8635;</span>';
     }
     const ctl = '<span class="it-ctl">'
       + (hasTail(it) ? '<button type="button" data-act="tail" title="Tail on or off" aria-label="Tail on or off">&#x2198;</button>' : '')
       + '<button type="button" data-act="dup" title="Duplicate" aria-label="Duplicate">&#x2750;</button>'
       + '<button type="button" data-act="del" title="Delete" aria-label="Delete">&times;</button></span>';
-    return '<div class="it it-' + it.type + (on ? ' sel' : '') + '" data-j="' + j + '" style="left:' + it.x + '%;top:' + it.y + '%;' + (it.fw ? 'width:' : 'max-width:') + it.w + '%">'
+    return '<div class="it it-' + it.type + (on ? ' sel' : '') + '" data-j="' + j + '" style="left:' + it.x + '%;top:' + it.y + '%;' + (it.fw ? 'width:' : 'max-width:') + it.w + '%'
+      + (it.rot ? ';transform:rotate(' + it.rot + 'deg)' : '') + '">'
       + '<div class="it-text" contenteditable="true" spellcheck="false" data-ph="' + esc(PH[it.type]) + '" style="font-size:' + textSize(it) + 'cqw;' + css + '">' + esc(it.text) + '</div>' + extra + ctl + '</div>';
   }
 
@@ -800,7 +803,12 @@ import THEME from '/the-precinct/theme.js';
       d.ix = it.x; d.iy = it.y; d.tip = Object.assign({}, it.tip);
       d.w0 = it.fw ? it.w : d.el.offsetWidth / d.box.width * 100;
       d.cq = bench.querySelector('.sheet').clientWidth / 100;
-      if (d.kind === 'rot') { const r = d.el.querySelector('.it-text').getBoundingClientRect(); d.cx = r.left + r.width / 2; d.cy = r.top + r.height / 2; }
+      // A sound effect turns its word (tilt); a caption or balloon turns the whole box (rot). Either way about its centre.
+      d.rkey = it.type === 'sfx' ? 'tilt' : 'rot'; d.r0 = st(it, d.rkey) || 0;
+      if (d.kind === 'rot') {
+        const r = d.el.querySelector('.it-text').getBoundingClientRect(); d.cx = r.left + r.width / 2; d.cy = r.top + r.height / 2;
+        d.a0 = Math.atan2(e.clientY - d.cy, e.clientX - d.cx) * 180 / Math.PI;
+      }
     }
     drag = d;
   }
@@ -825,24 +833,31 @@ import THEME from '/the-precinct/theme.js';
       it.y = Math.max(-10, Math.min(95, drag.iy + py));
       drag.el.style.left = it.x + '%'; drag.el.style.top = it.y + '%';
     } else if (drag.kind === 'rot') {
-      // The angle from the word's centre to the pointer, with "straight up" as 0°. It clicks to level and upright
-      // within 4°; Shift gives steps of 15°.
-      let a = Math.atan2(e.clientY - drag.cy, e.clientX - drag.cx) * 180 / Math.PI + 90;
-      if (a > 180) a -= 360;
+      // Turn by as much as the pointer has swung round the centre. It clicks to level and upright within 4°;
+      // Shift gives steps of 15°.
+      let a = drag.r0 + Math.atan2(e.clientY - drag.cy, e.clientX - drag.cx) * 180 / Math.PI - drag.a0;
+      a = ((a + 540) % 360) - 180;
       const q = e.shiftKey ? 15 : 90;
       if (e.shiftKey || Math.abs(a - Math.round(a / q) * q) < 4) a = Math.round(a / q) * q;
-      it.tilt = Math.round(a);
-      drag.el.querySelector('.it-text').style.transform = 'rotate(' + it.tilt + 'deg)';
-      placeRot(drag.el);
+      it[drag.rkey] = Math.round(a);
+      if (drag.rkey === 'tilt') { drag.el.querySelector('.it-text').style.transform = 'rotate(' + it.tilt + 'deg)'; placeRot(drag.el); }
+      else drag.el.style.transform = it.rot ? 'rotate(' + it.rot + 'deg)' : '';
     } else if (drag.kind === 'tip') {
-      it.tip = { x: drag.tip.x + dx / drag.cq, y: drag.tip.y + dy / drag.cq };
+      const [lx, ly] = unturn(dx, dy, it.rot);
+      it.tip = { x: drag.tip.x + lx / drag.cq, y: drag.tip.y + ly / drag.cq };
       drawBox(drag.el);
     } else {
-      it.fw = true; it.w = Math.max(10, Math.min(100, drag.w0 + px));
+      it.fw = true; it.w = Math.max(10, Math.min(100, drag.w0 + unturn(dx, dy, it.rot)[0] / drag.box.width * 100));
       drag.el.style.maxWidth = ''; drag.el.style.width = it.w + '%';   // the ResizeObserver redraws the balloon
     }
     placeTip();
   }, { passive: false });
+  // A screen movement, in a box's own directions once the box is tilted by deg.
+  function unturn(dx, dy, deg){
+    if (!deg) return [dx, dy];
+    const r = deg * Math.PI / 180, c = Math.cos(r), s = Math.sin(r);
+    return [dx * c + dy * s, -dx * s + dy * c];
+  }
   addEventListener('pointerup', e => {
     if (!drag || e.pointerId !== drag.pid) return;
     const d = drag; drag = null;
@@ -882,9 +897,10 @@ import THEME from '/the-precinct/theme.js';
       save(); render();
     }
     else if (mod && k === 'd') { e.preventDefault(); duplicate(sel.p, sel.it); }
-    else if ((e.key === '[' || e.key === ']') && it.type === 'sfx') {
+    else if (e.key === '[' || e.key === ']') {
       e.preventDefault(); checkpoint();
-      it.tilt = ((st(it, 'tilt') + (e.key === ']' ? 5 : -5) + 540) % 360) - 180;
+      const rk = it.type === 'sfx' ? 'tilt' : 'rot';
+      it[rk] = (((st(it, rk) || 0) + (e.key === ']' ? 5 : -5) + 540) % 360) - 180;
       save(); render();
     }
     else if (e.key === 'Enter') { e.preventDefault(); const el = bench.querySelector('.it.sel'); if (el) editItem(el); }
@@ -1024,7 +1040,8 @@ import THEME from '/the-precinct/theme.js';
       '<button type="button" class="sw' + (st(it, 'color') === k ? ' active' : '') + '" data-style="color" data-v="' + k + '" title="' + c.label
       + '" aria-label="' + c.label + '" style="background:' + c.fill + '"></button>').join('') + '</div>';
     if (it.type === 'sfx') h += grp('Tilt', 'tilt', TILTS).replace(/<\/div>$/, '<span class="note">' + st(it, 'tilt') + '° · or drag &#8635;</span></div>');
-    else if (fonts.length > 1) h += grp('Lettering', 'font', fonts,
+    if (it.type !== 'sfx' && it.rot) h += '<div class="sg"><b>Tilt</b><span class="note">' + it.rot + '°</span><button type="button" class="pill" data-style="rot" data-v="0">Straighten</button></div>';
+    if (it.type === 'sfx') {} else if (fonts.length > 1) h += grp('Lettering', 'font', fonts,
       k => 'font-family:' + FONTS[k].family.replace(/"/g, "'") + ';text-transform:none;letter-spacing:0;font-size:' + (13 * FONTS[k].k) + 'px');
     h += grp('Size', 's', sizes);
     if (tier.more) h += '<span class="more">' + tier.more + '</span>';
@@ -1047,7 +1064,7 @@ import THEME from '/the-precinct/theme.js';
     const it = chosenItem(), list = panelList(), p = sel.p != null && list[sel.p];
     let h;
     let done = '';
-    if (it) { h = styleHTML(it); done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this box (Esc)&#10;&#10;Keyboard, with a box chosen:&#10;Delete: remove it&#10;Arrow keys: nudge it (hold Shift for bigger steps)&#10;Ctrl/&#8984;+D: duplicate it&#10;Enter: edit the words&#10;[ and ]: tilt a sound effect&#10;Ctrl/&#8984;+Z: undo, Shift+Ctrl/&#8984;+Z: redo' }); }
+    if (it) { h = styleHTML(it); done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this box (Esc)&#10;&#10;Keyboard, with a box chosen:&#10;Delete: remove it&#10;Arrow keys: nudge it (hold Shift for bigger steps)&#10;Ctrl/&#8984;+D: duplicate it&#10;Enter: edit the words&#10;[ and ]: tilt it&#10;Ctrl/&#8984;+Z: undo, Shift+Ctrl/&#8984;+Z: redo' }); }
     else if (p) {
       h = '<span class="what">' + (S.level === 'prose' ? 'Frame ' : 'Panel ') + (sel.p + 1) + '</span>'
         + g('picture', '<b>Picture</b>' + (p.img
@@ -1107,10 +1124,10 @@ import THEME from '/the-precinct/theme.js';
   $('dock').addEventListener('click', e => {
     const sb = e.target.closest('[data-style]'), it = chosenItem();
     if (sb && it) {
-      const k = sb.dataset.style, v = k === 's' || k === 'tilt' ? +sb.dataset.v : sb.dataset.v;
+      const k = sb.dataset.style, v = k === 's' || k === 'tilt' || k === 'rot' ? +sb.dataset.v : sb.dataset.v;
       checkpoint();
       it[k] = v;
-      S.last = S.last || {}; (S.last[it.type] = S.last[it.type] || {})[k] = v;
+      if (k !== 'rot') { S.last = S.last || {}; (S.last[it.type] = S.last[it.type] || {})[k] = v; }   // a tilt belongs to one box
       markSeen('style');
       save(); render(); return;
     }
@@ -1186,8 +1203,8 @@ import THEME from '/the-precinct/theme.js';
       title: 'Now tell the story', text: 'Add a caption box for the narrator and a speech balloon for whoever is talking. Drag the picture to frame it.' },
     { id: 'tail', at: 'tail', when: () => { const it = chosenItem(); return it && hasTail(it) && it.tail !== 'none'; },
       title: 'Point the tail', text: 'Drag the yellow dot to whoever is talking. The yellow bar makes the box wider or narrower.' },
-    { id: 'rotate', at: 'rot', when: () => { const it = chosenItem(); return it && it.type === 'sfx'; },
-      title: 'Tilt it', text: 'Drag the round handle to tilt the sound effect any way you like. Hold Shift for steps of 15°.' },
+    { id: 'rotate', at: 'rot', when: () => !!chosenItem(),
+      title: 'Tilt it', text: 'Drag the round handle to tilt it any way you like. Hold Shift for steps of 15°.' },
     { id: 'style', at: 'dock', when: () => !!chosenItem(),
       title: 'Make it look right', text: 'Change the look down here. Delete removes the box, the arrow keys nudge it, and Esc lets go.' },
     { id: 'sfx', at: 'tray', when: bankOpen,
@@ -1314,6 +1331,7 @@ import THEME from '/the-precinct/theme.js';
     // Boxes shrink to their words, as on screen (width: max-content, capped at w), unless their width was set by hand.
     if (!it.fw) w = Math.min(w, Math.max(...lines.map(l => ctx.measureText(l).width)) + 2 * padX + 2);
     const h = lines.length * lh + 2 * padY;
+    if (it.rot) { const cx = x + w / 2, cy = y + h / 2; ctx.translate(cx, cy); ctx.rotate(it.rot * Math.PI / 180); ctx.translate(-cx, -cy); }
     const g = geom(w, h, it, cq), parts = pieces(it, g, cq), dash = dashOf(it, g);
     ctx.save(); ctx.translate(x, y);
     ctx.lineWidth = 2 * g.bw; ctx.strokeStyle = c.line; ctx.lineJoin = 'round';
