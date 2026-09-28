@@ -25,7 +25,7 @@ export default {
       id: 'detective', name: 'Edward Novak', short: 'Edward Novak', role: 'The Detective', tag: 'The good guy',
       story: 'The hero. Straight, stubborn and still sure the truth matters. He is the one Vera Sinclair really wants.',
       look: 'a lean square-jawed man in his late twenties, clean-shaven with a steady clear-eyed gaze, a neat dark suit with a detective badge on the coat, pale shirt and tie done up tight, a fedora worn straight',
-      img: IMG + 'ref/cop-badge.jpg',
+      img: IMG + 'ref/novak-card.jpg',
     },
     {
       id: 'disillusioned', name: 'Sergeant Frank Rourke', short: 'Frank Rourke', role: 'The Disillusioned Detective', tag: 'The bad cop',
@@ -101,6 +101,7 @@ export default {
     'sunset-street': ['A city street at sunset with lit windows, street lamps and a parked black car', 'setting'],
     'fedora':        ['A stern man in a fedora and trench coat, close-up', 'character', 'commissioner'],
     'boss':          ['A heavy-set man with slicked-back hair in a suit, glaring', 'character'],
+    'novak-card':    ['A clean-shaven young man in a fedora, dark suit and tie, a badge on his jacket, looking steadily at us out of the dark', 'character', 'detective'],
     'vance-card':    ['A heavy-set older man in a fedora and belted trench coat over a three-piece suit, hands in his pockets, staring coldly out of the dark', 'character', 'commissioner'],
     'vera-card':     ['A woman with shoulder-length platinum-blonde waves, pearl earrings and a black evening gown, looking back over her shoulder with a knowing smile', 'character', 'femme'],
     'rourke-card':   ['A huge muscular man in shirtsleeves, braces and a loosened tie, teeth bared around a matchstick, glaring out of the dark', 'character', 'disillusioned'],
@@ -206,5 +207,5 @@ export default {
   // Pictures offered in the comic builder's library.
   library: ['chief','hat-woman','cop','bar','blonde-green','blonde-yellow','rain-street','office','sunset-street','fedora','boss',
     'cop-badge','lamp-man','blue-man','houses','green-city','walking-woman','teal-woman','detective-car','sunset-man',
-    'walking-rain','hat-green','vance-card','rourke-card','vera-card','rourke-front','rourke-snarl','rourke-rage','rourke-sheet'],
+    'walking-rain','hat-green','novak-card','vance-card','rourke-card','vera-card','rourke-front','rourke-snarl','rourke-rage','rourke-sheet'],
 };
