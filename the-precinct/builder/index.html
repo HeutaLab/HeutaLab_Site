@@ -136,15 +136,25 @@
 
   .notice{margin:12px 0 0;font-size:13px;color:var(--ink-dim)}
 
+  /* Print: one comic page on one sheet of paper. The page is 2:3 and paper is squatter (A4 and US Letter are
+     about 1:1.3), so fitting the width overflows the bottom; fit the height instead and let the width follow. */
+  @page{margin:10mm}
   @media print{
-    body{background:#fff}
+    html,body{background:#fff !important}
+    body{padding:0 !important}
     .hero,.side,.tools,.notice,footer,.rule,.sub-intro,.it-ctl,.tip-h,.rs-h,.rm,.addframe,.dock,.tray,.tip{display:none !important}
-    .layout{display:block}.page{padding:0;max-width:none}
+    .layout{display:block;margin:0}.page{padding:0;margin:0;max-width:none}
     .workbench,#bench{padding:0;background:none;margin:0}
-    .sheet,.prose-page{box-shadow:none;width:100%}
+    .sheet{box-shadow:none;width:auto;height:calc(100vh - 1mm);max-width:100%;margin:0 auto;break-inside:avoid;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .prose-page{box-shadow:none;width:100%;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .pframe{break-inside:avoid}
     .pnl.sel .pnl-inner,.pframe.sel .pnl-inner{outline:none}
     .pnl-empty{visibility:hidden}
+    .pnl-inner{background:#fff}   /* an empty panel prints as a white frame to draw in, not a block of ink */
+    .sheet-title:empty::before,.prose-title:empty::before,.it-text:empty::before{content:none}   /* placeholders stay on screen */
   }
+
   @media (max-width:600px){.workbench{margin-left:-16px;margin-right:-16px}#bench{padding:12px 8px}
     .dock{flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:6px;padding:8px 10px calc(8px + env(safe-area-inset-bottom))}
     .dock .what{display:none}
@@ -500,9 +510,12 @@ import THEME from '/the-precinct/theme.js';
   const ro = new ResizeObserver(es => es.forEach(en => drawBox(en.target.closest('.it'))));
 
   // Zoom is about the framing point; a flip then mirrors the whole panel about its centre line,
-  // which is (50 - x)% of the width away from that point. drawCover() does the same on the canvas.
+  // which is (50 - x)% of the width (or 50 - y% of the height) away from that point. drawCover() does the same on the canvas.
+  // fit.flip is left to right, fit.flipY top to bottom.
   function imgStyle(fit){
-    const flip = fit.flip ? 'translateX(' + (50 - fit.x) + '%) scaleX(-1) translateX(' + (fit.x - 50) + '%) ' : '';
+    const sx = fit.flip ? -1 : 1, sy = fit.flipY ? -1 : 1;
+    const flip = sx < 0 || sy < 0 ? 'translate(' + (50 - fit.x) * (sx < 0) + '%,' + (50 - fit.y) * (sy < 0) + '%) scale(' + sx + ',' + sy
+      + ') translate(' + (fit.x - 50) * (sx < 0) + '%,' + (fit.y - 50) * (sy < 0) + '%) ' : '';
     return 'object-position:' + fit.x + '% ' + fit.y + '%;transform:' + flip + 'scale(' + fit.z + ');transform-origin:' + fit.x + '% ' + fit.y + '%';
   }
   const imgEl = i => bench.querySelector('[data-i="' + i + '"] > .pnl-inner > img');
@@ -664,7 +677,7 @@ import THEME from '/the-precinct/theme.js';
     if (drag.kind === 'pan') {
       const f = panelList()[drag.i].fit;
       f.x = Math.max(0, Math.min(100, drag.fx - px * 1.4 * (f.flip ? -1 : 1)));   // a flipped picture still follows the finger
-      f.y = Math.max(0, Math.min(100, drag.fy - py * 1.4));
+      f.y = Math.max(0, Math.min(100, drag.fy - py * 1.4 * (f.flipY ? -1 : 1)));
       const im = imgEl(drag.i);
       if (im) im.setAttribute('style', imgStyle(f));
       return;
@@ -879,7 +892,8 @@ import THEME from '/the-precinct/theme.js';
     else if (p) {
       h = '<span class="what">' + (S.level === 'prose' ? 'Frame ' : 'Panel ') + (sel.p + 1) + '</span>'
         + g('picture', '<b>Picture</b>' + (p.img
-          ? b('upload', 'Replace') + b('lib', 'Library') + b('flip', 'Flip &#8646;', { on: p.fit.flip, title: 'Flip the picture left to right, so a character faces the other way' }) + b('clear', 'Remove')
+          ? b('upload', 'Replace') + b('lib', 'Library') + b('flip', 'Flip &#8646;', { v: 'flip', on: p.fit.flip, title: 'Flip the picture left to right, so a character faces the other way' })
+            + b('flip', 'Flip &#8645;', { v: 'flipY', on: p.fit.flipY, title: 'Flip the picture upside down, for a reflection in a puddle or a window' }) + b('clear', 'Remove')
             + '<label class="zoom">Zoom <input type="range" id="zoom" min="1" max="3" step="0.05" value="' + p.fit.z + '"></label>'
           : b('upload', 'Upload') + b('lib', 'From our library') + '<span class="note">or paste (Ctrl/&#8984;+V) or drop a picture on the panel</span>'));
       if (addReady()) h += g('add', '<b>Add</b>' + (S.level === 'advanced' ? ['caption', 'speech', 'thought', 'sfx'] : ['caption', 'speech'])
@@ -924,7 +938,7 @@ import THEME from '/the-precinct/theme.js';
       case 'done': sel = sel.it != null ? { p: sel.p, it: null } : NONE(); return render();
       case 'upload': return pickUpload();
       case 'lib': return openLib();
-      case 'flip': { checkpoint(); const f = panelList()[sel.p].fit; f.flip = !f.flip; save(); return render(); }
+      case 'flip': { checkpoint(); const f = panelList()[sel.p].fit; f[v] = !f[v]; save(); return render(); }
       case 'clear': checkpoint(); panelList()[sel.p].img = null; save(); return render();
       case 'add':
         markSeen('n:' + v); markSeen('add');
@@ -1049,7 +1063,8 @@ import THEME from '/the-precinct/theme.js';
   function drawCover(ctx, im, fit, x, y, w, h){
     ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
     ctx.fillStyle = '#222'; ctx.fillRect(x, y, w, h);
-    if (fit.flip) { ctx.translate(2 * x + w, 0); ctx.scale(-1, 1); }   // mirror about the panel's centre line
+    if (fit.flip) { ctx.translate(2 * x + w, 0); ctx.scale(-1, 1); }    // mirror about the panel's centre lines
+    if (fit.flipY) { ctx.translate(0, 2 * y + h); ctx.scale(1, -1); }
     if (im) {
       const s0 = Math.max(w / im.width, h / im.height), rw = im.width * s0, rh = im.height * s0;
       const offX = (w - rw) * fit.x / 100, offY = (h - rh) * fit.y / 100;
