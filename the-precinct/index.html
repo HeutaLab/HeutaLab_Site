@@ -399,9 +399,11 @@ import THEME from '/the-precinct/theme.js';
       promptBlocks.innerHTML += blockHTML(label, p);
     });
 
-    whyText.textContent = data.why_this_works || '';
-    platformText.textContent = data.platform_notes || '';
-    watchText.textContent = data.watch_for || '';
+    // A note that comes back empty is hidden, not shown as a bare heading.
+    [[whyText, data.why_this_works], [platformText, data.platform_notes], [watchText, data.watch_for]].forEach(([el, text]) => {
+      el.textContent = (text || '').trim();
+      el.parentElement.hidden = !el.textContent;
+    });
 
     result.classList.add('show');
     result.querySelectorAll('.copybtn').forEach(btn => {
@@ -470,8 +472,11 @@ import THEME from '/the-precinct/theme.js';
   const links = [...document.querySelectorAll('.side nav a[href^="#"]')];
   const targets = links.map(a => document.querySelector(a.getAttribute('href')));
   function markNav(){
-    let current = 0;
-    targets.forEach((t, i) => { if (t && t.getBoundingClientRect().top < 140) current = i; });
+    let current = 0, best = -Infinity;
+    targets.forEach((t, i) => {
+      const top = t ? t.getBoundingClientRect().top : Infinity;
+      if (top < 140 && top > best) { best = top; current = i; }
+    });
     links.forEach((a, i) => a.classList.toggle('on', i === current));
   }
   addEventListener('scroll', markNav, { passive:true });

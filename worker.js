@@ -141,11 +141,11 @@ function castSummary() {
 const BRIEF_SCHEMA = {
   type: "object",
   properties: {
-    anchor: { type: "string" },
-    prompts: { type: "array", items: { type: "string" } },
-    why_this_works: { type: "string" },
-    platform_notes: { type: "string" },
-    watch_for: { type: "string" },
+    anchor: { type: "string", description: "Shared anchor paragraph; empty only for the basic tier" },
+    prompts: { type: "array", items: { type: "string" }, description: "The ready-to-paste prompt(s)" },
+    why_this_works: { type: "string", description: "Required, never empty: 2-3 sentences on why the prompt is shaped this way" },
+    platform_notes: { type: "string", description: "Required, never empty: what would change on another named platform" },
+    watch_for: { type: "string", description: "Required, never empty: the single most likely failure to check for" },
   },
   required: ["anchor", "prompts", "why_this_works", "platform_notes", "watch_for"],
   additionalProperties: false,
@@ -186,10 +186,11 @@ CAST RULES (when the request names cast members):
 - If no cast is picked, work only from the attendee's idea.
 
 SUBJECT KNOWLEDGE:
-- character: emphasise plain/white background for basic, full body or bust, one clear expression and pose, character-reference-sheet framing.
+- character: one figure, full body or bust, one clear expression and pose. For basic, if the attendee's idea is only the character, use character-reference-sheet framing on a plain background. If their idea puts the character somewhere or doing something (a streetlight, a doorway, rain), keep that: give a simple, uncluttered setting instead of a plain background, and never ask for both in one prompt.
+- The attendee's idea always wins over these defaults. Never write a prompt that contradicts itself.
 - setting: emphasise empty of people (state this explicitly regardless of platform), a wide establishing shot, and for medium/advanced, load-bearing continuity details (window shape, ceiling material, light fixtures, time of day/weather) that should repeat verbatim across prompts.
 
-OUTPUT FORMAT: a JSON object with these fields:
+OUTPUT FORMAT: a JSON object with these fields. Fill every field; only "anchor" may be an empty string, and only for the basic tier. The three notes are what attendees learn from, so never leave them blank:
 {
   "anchor": "shared anchor paragraph, or empty string for basic tier",
   "prompts": ["prompt 1", "prompt 2", "..."],
