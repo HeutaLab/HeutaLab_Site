@@ -151,7 +151,7 @@ export default {
     medium: {
       name: 'Medium', lens: 'The details', short: 'the details',
       blurb: 'Zoom in. These are the details that decide whether the AI draws your character or a stranger.',
-      qs: [['hair','Hair style','Hair'], ['clothing','Clothing','Clothing'], ['makeup','Makeup','Makeup'],
+      qs: [['hair','Hair style','Hair'], ['clothing','Clothing','Clothing'], ['makeup','Make-up','Make-up'],
            ['accessories','Accessories','Accessories'], ['jewellery','Jewellery','Jewellery'],
            ['angle','Camera angle','Camera angle'], ['lighting','Lighting','Lighting'], ['background','Background','Background']],
       demo: ['bar', {
@@ -206,14 +206,21 @@ export default {
 
   // The workshop as a game: each tier is a level, unlocked by a code the
   // facilitator announces from the stage. worker.js checks the code on every
-  // request; the page only uses these for names and intros.
+  // request; the page only uses these for names and intros. `setting` holds
+  // the task and intro shown when the attendee picks Setting instead of Character.
   game: [
     { level: 1, tier: 'basic', name: 'Rookie', task: 'One character portrait.',
-      intro: 'Rookie: one face, one case. A single portrait, lit like it matters.' },
+      intro: 'Rookie: one face, one case. A single portrait, lit like it matters.',
+      setting: { task: 'One empty room.',
+        intro: 'Rookie: one room, no witnesses. An empty place, lit like something just happened there.' } },
     { level: 2, tier: 'medium', name: 'Detective', task: 'The same face in a room.',
-      intro: 'Detective: same face, new room. The anchor paragraph goes in word for word, every time, or the face walks off the job.' },
+      intro: 'Detective: same face, new room. The anchor paragraph goes in word for word, every time, or the face walks off the job.',
+      setting: { task: 'Two rooms, one building.',
+        intro: 'Detective: two rooms, one building. The anchor paragraph goes in word for word, or the walls stop matching.' } },
     { level: 3, tier: 'advanced', name: 'Commissioner', task: 'A three-panel shot list.',
-      intro: 'Commissioner: three panels, one story. Work out the shots with an AI as your partner before anything gets drawn. The pictures are optional; the plan is not.' },
+      intro: 'Commissioner: three panels, one story. Work out the shots with an AI as your partner before anything gets drawn. The pictures are optional; the plan is not.',
+      setting: { task: 'One street, three shots.',
+        intro: 'Commissioner: one street, three shots. Plan the camera with an AI partner first: same time of day, same weather, same palette in every frame.' } },
   ],
 
   // What the desk hands out when the AI is busy or down: stock briefs from the
@@ -223,7 +230,7 @@ export default {
     character: {
       basic: {
         anchor: '',
-        prompts: ['A character reference sheet of {who}, full body, standing square to the viewer, one clear guarded expression. 1940s film noir comic book, black and white ink illustration with fine hatching and one hard light from the upper left. Limited palette: {palette}. Plain pale background. No text, no captions, no speech balloons, no other people.'],
+        prompts: ['A character reference sheet of {who}, full body, standing square to the viewer, one clear expression. 1940s film noir comic book, black and white ink illustration with fine hatching and one hard light from the upper left. Limited palette: {palette}. Plain pale background. No text, no captions, no speech balloons, no other people.'],
         why_this_works: 'Era, medium and one named light source do most of the work: without them, image tools drift to a modern colour comic. The plain background keeps the tool from inventing a scene around your character.',
         platform_notes: 'Gemini needs the "no text, no captions" line most; ChatGPT and Copilot follow it more readily but may need "flat ink illustration, not digital painting".',
         watch_for: 'Check the colours first: any colour outside your palette means the palette line was ignored.',
@@ -231,8 +238,8 @@ export default {
       medium: {
         anchor: '1940s film noir comic book, black and white ink illustration with fine hatching. {Who}. Limited palette: {palette}. No text, no captions, no speech balloons.',
         prompts: ['The character stands behind a wide wooden desk in a dim office at night, venetian blinds throwing striped shadows across the wall, a desk lamp the only light.',
-                  'The character waits in the doorway of a rain-soaked alley at night, a single streetlamp behind, a long shadow stretched across the wet cobbles.'],
-        why_this_works: 'The anchor carries the character and the style, so paste it word for word into both prompts. Each prompt adds only the room, which is the one thing that should change.',
+                  'The character sits alone in a diner booth at night, a single hanging lamp overhead, rain streaking the window behind.'],
+        why_this_works: 'The anchor carries the character and the style, so paste it word for word into both prompts. Each prompt adds only the room (an office, a diner), which is the one thing that should change.',
         platform_notes: 'On ChatGPT, upload the first picture back in before the second prompt; on Gemini, stay in the same chat so it can hold details.',
         watch_for: 'Put the two pictures side by side: is it the same face and the same coat, or a stranger in similar clothes?',
       },
@@ -255,7 +262,7 @@ export default {
         watch_for: 'Look for people, speech balloons or captions: tested Gemini runs added all three when the prompt did not forbid them.',
       },
       medium: {
-        anchor: 'Inside the same 1940s city police precinct building at night, empty of people. Checkerboard ceiling tiles, tall multi-pane windows with venetian blinds, rain on the glass, green-shaded desk lamps. 1940s film noir comic book, black and white ink illustration with fine hatching. Limited palette: {palette}. No characters, no text, no dialogue, no captions.',
+        anchor: 'Inside the same 1940s city police precinct building at night, empty of people. Chequerboard ceiling tiles, tall multi-pane windows with venetian blinds, rain on the glass, desk lamps with deep shades. 1940s film noir comic book, black and white ink illustration with fine hatching. Limited palette: {palette}. No characters, no text, no dialogue, no captions.',
         prompts: ['The detectives’ bullpen: rows of wooden desks with typewriters and telephones, filing cabinets along the back wall, a wide establishing shot.',
                   'The chief’s private office: one large desk facing the door, a leather chair, a framed city map on the wall, a wide establishing shot.'],
         why_this_works: 'The anchor repeats the details that make two rooms one building (ceiling, windows, lamps, weather). Each prompt adds a concrete layout line; in testing, the anchor alone was not enough.',
@@ -263,7 +270,7 @@ export default {
         watch_for: 'Check the windows and ceiling match across both rooms: those are the details that break first.',
       },
       advanced: {
-        anchor: 'The same 1940s American city block at night in heavy rain, wet streets shining under streetlamps, brick buildings with fire escapes, empty of people. 1940s film noir comic book, black and white ink illustration with fine hatching. Limited palette: {palette}. No characters, no text, no dialogue, no captions.',
+        anchor: 'The same 1940s American city block at night in heavy rain, wet streets shining under streetlamps, tall old tenement buildings with fire escapes, empty of people. 1940s film noir comic book, black and white ink illustration with fine hatching. Limited palette: {palette}. No characters, no text, no dialogue, no captions.',
         prompts: ['Wide street shot from the corner: the whole block, a row of shopfronts with dark windows, streetlamps receding into the rain.',
                   'The alley beside the corner building: bins, a fire escape, a single bulb over a side door.',
                   'Low angle along the kerb: three parked 1940s sedans, rain bouncing off their roofs, the streetlamps reflected in puddles.'],
@@ -278,7 +285,7 @@ export default {
   // flags a part as missing but sends no questions of its own.
   gateQuestions: {
     see: 'What is actually in the picture: who or what, and what are they doing?',
-    details: 'Look closer: what are they wearing or holding, and what is on their face?',
+    details: 'Look closer: what small things do you notice, like clothes, objects, materials or how the light falls?',
     world: 'Step back: where is this, and what time of day or weather does it feel like?',
   },
 

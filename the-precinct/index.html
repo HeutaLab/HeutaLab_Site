@@ -68,7 +68,7 @@
       <a class="whois" href="/about/cv/">
         <b>Who&rsquo;s behind this?</b>
         Glenn Malcolm: technology &amp; learning curriculum designer, subject leader and international schools consultant. HeutaLab is his home for practical EdTech tools, ideas and training for teachers, leaders and parents.
-        <span>Glenn's CV &rarr;</span>
+        <span>Glenn&rsquo;s CV &rarr;</span>
       </a>
       <a class="whois alt" href="/apps/"><b>More from HeutaLab</b>Classroom apps: LoopLab, PlanBench, Sage Stage and more.<span>See the apps &rarr;</span></a>
     </aside>
@@ -88,7 +88,7 @@
           <img class="noir-red" src="img/hat.jpg" alt="A man in a fedora under neon signs" width="489" height="335">
           <div class="txt">
             <h2>Get your<br>brief</h2>
-            <p>Describe your idea in plain English. The desk writes a prompt tuned for Gemini, ChatGPT, Copilot or Midjourney.</p>
+            <p>Describe your idea in plain English. The desk writes a prompt tuned for Gemini, ChatGPT, Copilot, Nano Banana or Midjourney.</p>
             <a class="btn" href="#brief">Open the desk <span class="arr">&rarr;</span></a>
           </div>
         </article>
@@ -143,7 +143,7 @@
           <h3>Settings</h3>
           <p class="lesson"><strong>Tested on Gemini</strong>Ask for &ldquo;an old police station office&rdquo; and Gemini fills it with named cops, speech balloons and an arrest in progress. For an empty room, say so: no characters, no text, no dialogue, no captions.</p>
           <div class="tier"><b>Basic</b><p>One empty room, as a wide establishing shot.</p></div>
-          <div class="tier"><b>Medium</b><p>Two rooms that must read as one building. Repeat the anchor exactly, and give each room its own concrete layout line. The anchor alone isn't enough.</p></div>
+          <div class="tier"><b>Medium</b><p>Two rooms that must read as one building. Repeat the anchor exactly, and give each room its own concrete layout line. The anchor alone isn&rsquo;t enough.</p></div>
           <div class="tier"><b>Advanced</b><p>A location sheet: several exterior shots holding one palette and one time of day.</p></div>
         </article>
       </section>
@@ -192,7 +192,7 @@
             <button class="pill" data-val="medium">Medium<small>Detective</small></button>
             <button class="pill" data-val="advanced">Advanced<small>Commissioner</small></button>
           </div>
-          <p class="level-intro" id="levelIntro" hidden></p>
+          <p class="level-intro" id="levelIntro" hidden aria-live="polite"></p>
         </div>
         <div class="step" id="whoStep" hidden>
           <h4>Who?</h4>
@@ -212,7 +212,7 @@
         </div>
         <div class="step">
           <h4>Your idea</h4>
-          <textarea id="idea" maxlength="800" placeholder="Describe what you're picturing, in your own words. e.g. &ldquo;Edward Novak waiting in a doorway across the street from the precinct, watching&rdquo;"></textarea>
+          <textarea id="idea" maxlength="800" placeholder="Describe what you&rsquo;re picturing, in your own words. e.g. &ldquo;Edward Novak waiting in a doorway across the street from the precinct, watching&rdquo;"></textarea>
           <div class="count"><span id="ideaCount">0</span>/800</div>
           <button class="go" id="goBtn" disabled>Get briefing</button>
           <div class="error" id="errorBox" style="display:none"></div>
@@ -227,7 +227,7 @@
           <h3>Your briefing</h3>
           <p class="stock" id="stockNote" hidden><b>From the files</b>The desk is swamped, so this is a stock brief, not one written for your idea. Make it yours: swap in your own words before you paste it.<span class="setup-note" id="setupNote" hidden> Tell your facilitator: the desk&rsquo;s AI account needs attention.</span></p>
           <div class="pair">
-            <div class="yours"><div class="label">Your description</div><p id="attemptEcho"></p></div>
+            <div class="yours"><div class="label" id="attemptLabel">Your description</div><p id="attemptEcho"></p></div>
             <div class="theirs">
               <div id="anchorBlock" style="display:none"></div>
               <div id="promptBlocks"></div>
@@ -241,7 +241,7 @@
 
       <h2 class="rule" id="compare">Compare &amp; fix</h2>
       <section class="compare">
-        <div class="frame"><b>1</b><h4>Reference</h4><p>Pick the image you're aiming for.</p></div>
+        <div class="frame"><b>1</b><h4>Reference</h4><p>Pick the image you&rsquo;re aiming for.</p></div>
         <div class="frame"><b>2</b><h4>Prompt</h4><p>Paste the exact words you used.</p></div>
         <div class="frame"><b>3</b><h4>Result</h4><p>Keep what came back, even the misses.</p></div>
         <div class="frame"><b>4</b><h4>Compare</h4><p>Style, era, people, text, light: what drifted?</p></div>
@@ -270,14 +270,15 @@
         </div>
         <div class="step">
           <h4>What your tool saw</h4>
-          <textarea id="cmpDesc" maxlength="3000" placeholder="Paste your tool's description of the picture it made."></textarea>
+          <textarea id="cmpDesc" maxlength="3000" placeholder="Paste your tool&rsquo;s description of the picture it made."></textarea>
         </div>
         <div class="step" id="cmpRefStep" hidden>
           <h4>What it saw in your reference <small>optional</small></h4>
           <p class="step-note first">Commissioner level: ask the same question about the reference picture you were aiming for. The gap between the two descriptions is the gap you are closing.</p>
-          <textarea id="cmpRef" maxlength="3000" placeholder="Paste your tool's description of the reference picture."></textarea>
+          <textarea id="cmpRef" maxlength="3000" placeholder="Paste your tool&rsquo;s description of the reference picture."></textarea>
         </div>
         <button class="go" id="cmpBtn" disabled>Compare</button>
+        <p class="step-note" id="cmpNeedsCode" hidden>The compare check needs a workshop code: type it at the <a href="#brief">briefing desk</a> above.</p>
         <div class="error" id="cmpError" style="display:none"></div>
         <div class="result" id="cmpResult" aria-live="polite"></div>
       </section>
@@ -291,10 +292,11 @@
           <a href="https://gemini.google.com/" rel="noopener" target="_blank">Gemini</a> &middot;
           <a href="https://chatgpt.com/" rel="noopener" target="_blank">ChatGPT</a> &middot;
           <a href="https://copilot.microsoft.com/" rel="noopener" target="_blank">Copilot</a> &middot;
+          <a href="https://aistudio.google.com/" rel="noopener" target="_blank">Nano Banana</a> <em>(in Google AI Studio)</em> &middot;
           <a href="https://www.midjourney.com/" rel="noopener" target="_blank">Midjourney</a> <em>(paid, demo only)</em></div>
         <div class="frame castdl">
           <b>The cast, ready to use</b>
-          <p>All four characters in the site's yellow palette, as square PNGs for your slides, storyboards or reference sheets. Match them with each character's look from <a href="#cast">the cast</a>.</p>
+          <p>All four characters in the site&rsquo;s yellow palette, as square PNGs for your slides, storyboards or reference sheets. Match them with each character&rsquo;s look from <a href="#cast">the cast</a>.</p>
           <div class="castdl-grid">
             <a href="img/cast/harlan-vance-yellow.png" download><img class="noir" src="img/ref/vance-card.jpg" alt="Commissioner Harlan Vance" loading="lazy" width="900" height="900"><span>Harlan Vance &darr;</span></a>
             <a href="img/cast/edward-novak-yellow.png" download><img class="noir" src="img/ref/novak-card.jpg" alt="Edward Novak" loading="lazy" width="900" height="900"><span>Edward Novak &darr;</span></a>
@@ -306,7 +308,7 @@
 
       <section class="strip">
         <div class="frame">
-          <img class="noir" src="img/street.jpg" alt="A sedan's headlights on a rain-soaked street at night" width="922" height="266" loading="lazy">
+          <img class="noir" src="img/street.jpg" alt="A sedan&rsquo;s headlights on a rain-soaked street at night" width="922" height="266" loading="lazy">
           <blockquote>&ldquo;It&rsquo;s not just a comic.<br>It&rsquo;s a case.&rdquo;<cite>THE PRECINCT</cite></blockquote>
         </div>
         <div class="stamp">Real stories.<br>Your panels.</div>
@@ -315,7 +317,7 @@
       <footer>
         The artwork here comes from Glenn Malcolm&rsquo;s own 2023 Midjourney noir comic.
         <a href="/blog/21cl-bkk-ai-is-not-taking-our-jobs-quite-the-opposite-midjourney-generative-art/">Read how it was made</a>.
-        Your description, your idea, your prompt, anything you paste into the compare check and your workshop code go to a Cloudflare Worker for this site, and then to Anthropic&rsquo;s API. Nothing you type is stored or shown to anyone else.
+        Your description, your idea, and the prompt and descriptions you paste into the compare check go to a Cloudflare Worker for this site and then to Anthropic&rsquo;s API. Your workshop code is checked by the Worker only. Nothing you type is kept on the server or shown to anyone else; this browser remembers your code, your level and your last brief.
         Part of the <a href="/">HeutaLab</a> AIFE workshop materials: &ldquo;Human Creativity, AI Precision&rdquo;.
       </footer>
 
@@ -380,58 +382,84 @@ import { words } from '/the-precinct/copycheck.js';
   const levelStrip = document.getElementById('levelStrip');
   const levelIntro = document.getElementById('levelIntro');
   let level = Number(store.get('precinct_level')) || 0;
+  let pendingTier = null;   // a tier asked for while locked (a tap, or a References handoff)
+  const forSubject = g => (state.subject === 'setting' && g.setting) ? g.setting : g;
 
   function setStatus(text, kind){
     codeStatus.textContent = text;
     codeStatus.classList.toggle('ok', kind === 'ok');
     codeStatus.classList.toggle('bad', kind === 'bad');
   }
+  function renderStrip(){
+    levelStrip.innerHTML = THEME.game.map(g =>
+      '<li class="' + (g.level <= level ? 'open' : 'locked') + '"><b>' + g.level + '</b><span><strong>' + esc(g.name) + '</strong>'
+      + esc(forSubject(g).task) + '</span><i>' + (g.level <= level ? 'open' : 'locked') + '</i></li>').join('');
+  }
   function applyLevel(n){
     level = n;
     store.set('precinct_level', String(n));
-    levelStrip.innerHTML = THEME.game.map(g =>
-      '<li class="' + (g.level <= level ? 'open' : 'locked') + '"><b>' + g.level + '</b><span><strong>' + esc(g.name) + '</strong>'
-      + esc(g.task) + '</span><i>' + (g.level <= level ? 'open' : 'locked') + '</i></li>').join('');
+    renderStrip();
+    // Locked pills use aria-disabled, not disabled, so a tap still reaches the
+    // page: it checks a freshly typed code and picks the tier once it opens.
     document.querySelectorAll('#tierRow .pill').forEach(b => {
       const locked = TIER_LEVEL[b.dataset.val] > level;
-      b.disabled = locked;
+      b.classList.toggle('locked', locked);
+      b.setAttribute('aria-disabled', String(locked));
       b.title = locked ? 'Locked until your facilitator gives out the next code' : '';
-      if (locked && b.classList.contains('active')) { b.classList.remove('active'); state.tier = null; syncTier(); }
+      if (locked && b.classList.contains('active')) {
+        b.classList.remove('active'); state.tier = null;
+        pendingTier = b.dataset.val;   // comes back by itself when a code opens it again
+        lockedHint(pendingTier);
+      }
     });
     document.getElementById('cmpRefStep').hidden = level < 3;
     checkReady(); checkCompareReady();
+    applyPending();
+  }
+  // Picks a tier asked for while it was locked, once it opens, but never while
+  // a brief is out (that would change the settings under the attendee's feet).
+  function applyPending(){
+    if (!pendingTier || briefBusy || TIER_LEVEL[pendingTier] > level) return;
+    const t = pendingTier; pendingTier = null;
+    document.querySelector('#tierRow [data-val="' + t + '"]').click();
   }
   function syncTier(){
     const g = THEME.game.find(x => x.tier === state.tier);
     levelIntro.hidden = !g;
-    levelIntro.textContent = g ? g.intro : '';
+    levelIntro.textContent = g ? forSubject(g).intro : '';
+  }
+  function lockedHint(tier){
+    const g = THEME.game.find(x => x.tier === tier);
+    levelIntro.hidden = false;
+    levelIntro.textContent = g.name + ' is locked. It opens when your facilitator gives out the next code: type it in the code box above.';
   }
 
   // The code is checked on Enter or when the box loses focus, never mid-typing:
   // half-typed codes would count as wrong ones, and the checks are limited per
   // venue IP, which the whole room may share.
-  let codeSeq = 0, sentCode = null;
+  let codeSeq = 0, checking = null, answeredCode = null;   // answeredCode: got a 200 or 401 already
   async function verifyCode(){
     const code = codeInput.value.trim();
-    if (!code) { sentCode = null; setStatus('not checked yet'); applyLevel(0); return; }
-    if (code === sentCode) return;   // Enter and the change event both fire; check once
-    sentCode = code;
+    if (!code) { ++codeSeq; checking = null; setStatus('not checked yet'); applyLevel(0); return; }
+    if (code === checking) return;   // Enter and the change event both fire; one check at a time
+    checking = code;
     const seq = ++codeSeq;
-    setStatus('checking...');
+    setStatus('checking\u2026');
     try {
       const { res, data } = await post('code', {});
-      if (seq !== codeSeq) return;
-      if (res.ok) { setStatus(data.name + ' unlocked', 'ok'); applyLevel(data.level); }
-      else if (res.status === 401) { setStatus('wrong code', 'bad'); applyLevel(0); }
-      else { sentCode = null; setStatus(res.status === 429 ? 'try again in a minute' : 'could not check', 'bad'); }
-    } catch (e) { if (seq === codeSeq) { sentCode = null; setStatus('offline?', 'bad'); } }
+      if (seq !== codeSeq) return;   // the box changed while this was out
+      if (res.ok) { answeredCode = code; setStatus(data.name + ' unlocked', 'ok'); applyLevel(data.level); }
+      else if (res.status === 401) { answeredCode = code; setStatus('wrong code', 'bad'); applyLevel(0); }
+      else setStatus(res.status === 429 ? 'try again in a minute' : res.status === 500 ? 'desk not set up yet' : 'could not check', 'bad');
+    } catch (e) { if (seq === codeSeq) setStatus('offline?', 'bad'); }
+    finally { if (seq === codeSeq) checking = null; }
   }
   const savedCode = store.get('precinct_code');
   if (savedCode) codeInput.value = savedCode;
   codeInput.addEventListener('input', () => {
     store.set('precinct_code', codeInput.value);
-    sentCode = null;
-    setStatus(codeInput.value.trim() ? 'press Enter to check' : 'not checked yet');
+    ++codeSeq; checking = null; answeredCode = null;
+    setStatus(codeInput.value.trim() ? 'press Enter (or Go) to check' : 'not checked yet');
   });
   codeInput.addEventListener('change', verifyCode);
   codeInput.addEventListener('keydown', e => { if (e.key === 'Enter') verifyCode(); });
@@ -439,11 +467,18 @@ import { words } from '/the-precinct/copycheck.js';
   function wireRow(id, key){
     document.getElementById(id).querySelectorAll('.pill').forEach(btn => {
       btn.addEventListener('click', () => {
-        if (btn.disabled) return;
+        if (btn.classList.contains('locked')) {
+          pendingTier = btn.dataset.val;
+          lockedHint(pendingTier);
+          const typed = codeInput.value.trim();
+          if (typed && typed !== answeredCode) verifyCode();
+          return;
+        }
         document.getElementById(id).querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         state[key] = btn.dataset.val;
-        if (key === 'tier') syncTier();
+        if (key === 'tier') { pendingTier = null; syncTier(); }
+        if (key === 'subject') { renderStrip(); if (pendingTier) lockedHint(pendingTier); else syncTier(); }
         checkReady();
       });
     });
@@ -507,14 +542,25 @@ import { words } from '/the-precinct/copycheck.js';
     attemptCount.textContent = n + (n === 1 ? ' word' : ' words') + (n < ATTEMPT_MIN ? ', ' + (ATTEMPT_MIN - n) + ' to go' : '');
     attemptCount.classList.toggle('ok', n >= ATTEMPT_MIN);
   }
-  attempt.addEventListener('input', () => { countAttempt(); checkReady(); });
+  // A worked example brought over from References (Demo or Guide) is sent
+  // labelled as one, so the desk doesn't treat it as the attendee's own looking.
+  let attemptIsExample = false;
+  const handoffNote = document.getElementById('handoffNote');
+  const HANDOFF_NOTE = 'Your description from References is in the box. Read it through, then say below what you want to make.';
+  function setExample(on, text){
+    attemptIsExample = on;
+    if (on) { store.set('precinct_example', text); handoffNote.textContent = 'This is the worked example from References, not your own looking. Swap in what you see in your own picture, or send it as a demo.'; }
+    else { store.set('precinct_example', ''); if (!handoffNote.hidden) handoffNote.textContent = HANDOFF_NOTE; }
+  }
+  attempt.addEventListener('input', () => { if (attemptIsExample) setExample(false); countAttempt(); checkReady(); });
 
   // Round 2 means the desk has asked its questions once; the next send gets a brief regardless.
-  let round = 1;
+  let round = 1, briefBusy = false;
   const goBtn = document.getElementById('goBtn');
   const goLabel = () => round === 2 ? 'Send it back to the desk' : 'Get briefing';
   function checkReady(){
-    goBtn.disabled = !(state.platform && state.subject && state.tier && TIER_LEVEL[state.tier] <= level
+    // Stays off while a request is out, so typing during the wait can't send a second one.
+    goBtn.disabled = briefBusy || !(state.platform && state.subject && state.tier && TIER_LEVEL[state.tier] <= level
       && idea.value.trim().length >= 3 && wordsIn(attempt.value) >= ATTEMPT_MIN);
   }
 
@@ -550,6 +596,7 @@ import { words } from '/the-precinct/copycheck.js';
     stockNote.hidden = !data.fallback;
     document.getElementById('setupNote').hidden = !data.setup;
     attemptEcho.textContent = data.attempt || attempt.value.trim();
+    document.getElementById('attemptLabel').textContent = attemptIsExample ? 'Worked example (from References)' : 'Your description';
 
     if (data.anchor && data.anchor.trim()) {
       anchorBlock.style.display = 'block';
@@ -574,19 +621,23 @@ import { words } from '/the-precinct/copycheck.js';
     }));
     result.querySelectorAll('.copybtn').forEach(btn => {
       btn.addEventListener('click', () => {
-        navigator.clipboard.writeText(decodeURIComponent(btn.dataset.copy));
-        const old = btn.textContent; btn.textContent = 'Copied';
-        setTimeout(() => btn.textContent = old, 1200);
+        navigator.clipboard.writeText(decodeURIComponent(btn.dataset.copy)).then(() => {
+          btn.textContent = 'Copied'; setTimeout(() => btn.textContent = 'Copy', 1200);
+        }).catch(() => {
+          btn.textContent = 'Select and copy'; setTimeout(() => btn.textContent = 'Copy', 2000);
+        });
       });
     });
     result.scrollIntoView({behavior:'smooth', block:'start'});
   }
 
   goBtn.addEventListener('click', async () => {
+    if (briefBusy) return;
+    briefBusy = true;
     errorBox.style.display = 'none';
     result.classList.remove('show');
     goBtn.disabled = true;
-    goBtn.innerHTML = '<span class="spinner"></span>' + (round === 1 ? 'Reading your description...' : 'Working...');
+    goBtn.innerHTML = '<span class="spinner"></span>' + (round === 1 ? 'Reading your description\u2026' : 'Working\u2026');
 
     try {
       const { res, data } = await post('brief', {
@@ -596,6 +647,7 @@ import { words } from '/the-precinct/copycheck.js';
         cast: state.subject === 'character' ? state.cast : [],
         tier: state.tier,
         attempt: attempt.value.trim(),
+        example: attemptIsExample,
         idea: idea.value.trim(),
         round,
       });
@@ -613,16 +665,18 @@ import { words } from '/the-precinct/copycheck.js';
     } catch (e) {
       showError('Could not reach the briefing desk. Check your connection and try again.');
     } finally {
+      briefBusy = false;
       goBtn.textContent = goLabel();
       checkReady();
+      applyPending();
     }
   });
 
   // ---- the compare check ----
   const cmpPrompt = document.getElementById('cmpPrompt'), cmpDesc = document.getElementById('cmpDesc'), cmpRef = document.getElementById('cmpRef');
   const cmpBtn = document.getElementById('cmpBtn'), cmpError = document.getElementById('cmpError'), cmpResult = document.getElementById('cmpResult');
-  const cmpPromptNote = document.getElementById('cmpPromptNote');
-  let lastBrief = null, autoFilled = false;
+  const cmpPromptNote = document.getElementById('cmpPromptNote'), cmpNeedsCode = document.getElementById('cmpNeedsCode');
+  let lastBrief = null, autoFilled = false, cmpBusy = false;
   try { lastBrief = JSON.parse(store.get('precinct_lastbrief') || 'null'); } catch (e) {}
 
   function setLastBrief(b){
@@ -632,18 +686,27 @@ import { words } from '/the-precinct/copycheck.js';
   }
   function fillComparePrompt(i){
     if (!lastBrief || !lastBrief.prompts || !lastBrief.prompts[i]) return;
-    cmpPrompt.value = (lastBrief.anchor ? lastBrief.anchor + '\n\n' : '') + lastBrief.prompts[i];
+    cmpPrompt.value = briefFill(i);
     autoFilled = true;
     cmpPromptNote.hidden = false;
     cmpPromptNote.textContent = 'Filled in from your last brief' + (lastBrief.prompts.length > 1 ? ' (prompt ' + (i + 1) + ')' : '') + '. Change it if you ran something else.';
     checkCompareReady();
   }
   cmpPromptNote.hidden = true;
-  if (lastBrief) fillComparePrompt(0);
+  const briefFill = i => (lastBrief.anchor ? lastBrief.anchor + '\n\n' : '') + lastBrief.prompts[i];
+  if (lastBrief && Array.isArray(lastBrief.prompts)) {
+    if (!cmpPrompt.value.trim()) fillComparePrompt(0);
+    else {
+      // The browser restored the box: if it still holds one of the brief's prompts, keep treating it as filled in.
+      const i = lastBrief.prompts.findIndex((p, k) => briefFill(k) === cmpPrompt.value);
+      if (i >= 0) fillComparePrompt(i);
+    }
+  }
   cmpPrompt.addEventListener('input', () => { autoFilled = false; cmpPromptNote.hidden = true; checkCompareReady(); });
   cmpDesc.addEventListener('input', checkCompareReady);
   function checkCompareReady(){
-    cmpBtn.disabled = !(level >= 1 && wordsIn(cmpPrompt.value) >= 3 && wordsIn(cmpDesc.value) >= 8);
+    cmpNeedsCode.hidden = level >= 1;
+    cmpBtn.disabled = cmpBusy || !(level >= 1 && wordsIn(cmpPrompt.value) >= 3 && wordsIn(cmpDesc.value) >= 8);
   }
 
   document.getElementById('askCopy').addEventListener('click', e => {
@@ -669,8 +732,8 @@ import { words } from '/the-precinct/copycheck.js';
       html += '<div class="cmp-cols">'
         + listHTML('Asked for, not seen', d.asked_and_missing, 'missing')
         + listHTML('Turned up unasked', d.appeared_unasked, 'extra')
-        + '<div class="cmp-col words"><h4>Words to try</h4>' + (d.drift_words.length
-          ? '<p class="chips">' + d.drift_words.map(w => '<span>' + esc(w) + '</span>').join('') + '</p><p class="step-note">Words in the description that pull away from your prompt.</p>'
+        + '<div class="cmp-col words"><h4>Drift words</h4>' + (d.drift_words.length
+          ? '<p class="chips">' + d.drift_words.map(w => '<span>' + esc(w) + '</span>').join('') + '</p><p class="step-note">Words in the description that pull away from your prompt. Which word in your prompt could pull each one back?</p>'
           : '<p class="none">No drift words named.</p>') + '</div>'
         + '</div>'
         + (d.questions.length ? '<div class="cmp-qs"><h4>Questions for you</h4><ul>' + d.questions.map(q => '<li>' + esc(q) + '</li>').join('') + '</ul></div>' : '')
@@ -681,10 +744,12 @@ import { words } from '/the-precinct/copycheck.js';
   }
 
   cmpBtn.addEventListener('click', async () => {
+    if (cmpBusy) return;
+    cmpBusy = true;
     cmpError.style.display = 'none';
     cmpResult.classList.remove('show');
     cmpBtn.disabled = true;
-    cmpBtn.innerHTML = '<span class="spinner"></span>Comparing...';
+    cmpBtn.innerHTML = '<span class="spinner"></span>Comparing\u2026';
     try {
       const { res, data } = await post('compare', {
         prompt: cmpPrompt.value.trim(), description: cmpDesc.value.trim(),
@@ -698,6 +763,7 @@ import { words } from '/the-precinct/copycheck.js';
       cmpError.textContent = 'Could not reach the desk. Check your connection and try again.';
       cmpError.style.display = 'block';
     } finally {
+      cmpBusy = false;
       cmpBtn.textContent = 'Compare';
       checkCompareReady();
     }
@@ -719,14 +785,19 @@ import { words } from '/the-precinct/copycheck.js';
   } catch (e) {}
   if (handoff && handoff.idea && Date.now() - (handoff.ts || 0) < 6 * 3600e3) {
     attempt.value = String(handoff.idea).slice(0, 1500);
+    setExample(handoff.mode === 'demo' || handoff.mode === 'guide', attempt.value);
     countAttempt();
     ['subject', 'tier'].forEach(k => {
       const b = document.querySelector('#' + k + 'Row [data-val="' + handoff[k] + '"]');
       if (b) b.click();
     });
     if (Array.isArray(handoff.cast)) { state.cast = handoff.cast.filter(id => THEME.cast.some(c => c.id === id)); syncWho(); }
-    document.getElementById('handoffNote').hidden = false;
+    handoffNote.hidden = false;
     checkReady();
+  } else if (attempt.value && attempt.value === store.get('precinct_example')) {
+    // The browser restored a worked example into the box on reload: keep its label.
+    setExample(true, attempt.value);
+    handoffNote.hidden = false;
   }
 
   // Sidebar: highlight the section in view.

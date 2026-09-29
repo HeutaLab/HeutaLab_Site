@@ -25,6 +25,9 @@
   // share one venue IP, so the per-IP limits are flood guards, not per-person
   // ones: SESSION = AI requests per browser, IP = brief/compare requests per
   // IP, CODE_CHECKS = code checks per browser, CODE_IP = code checks per IP.
+  // SESSION_CAP: AI requests per browser per six hours (read by worker.js).
+  // Change it here: a deploy resets vars to this file.
+  "vars": { "SESSION_CAP": "30" },
   "ratelimits": [
     { "name": "PRECINCT_SESSION_LIMIT", "namespace_id": "4101", "simple": { "limit": 8, "period": 60 } },
     { "name": "PRECINCT_IP_LIMIT", "namespace_id": "4102", "simple": { "limit": 200, "period": 60 } },

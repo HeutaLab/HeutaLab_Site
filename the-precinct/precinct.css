@@ -184,8 +184,8 @@
   .levels li.open i{color:var(--yellow)}
   .levels li.locked{opacity:.5}
   .levels li.locked b{color:var(--ink-dim)}
-  .pill:disabled{opacity:.38;cursor:not-allowed;border-style:dashed}
-  .pill:disabled:hover{border-color:var(--frame)}
+  .pill.locked{opacity:.38;border-style:dashed}
+  .pill.locked:hover{border-color:var(--frame)}
   .level-intro{margin:12px 0 0;padding:10px 14px;border-left:3px solid var(--yellow);background:rgba(242,199,68,.07);font-style:italic;font-size:14px}
   .step-note.first{margin:0 0 10px}
   .step h4 small{font-family:var(--serif);font-style:italic;text-transform:none;letter-spacing:.04em;color:var(--ink-dim);margin-left:6px}

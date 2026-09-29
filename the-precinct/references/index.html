@@ -112,7 +112,7 @@
       <a class="whois" href="/about/cv/">
         <b>Who&rsquo;s behind this?</b>
         Glenn Malcolm: technology &amp; learning curriculum designer, subject leader and international schools consultant. HeutaLab is his home for practical EdTech tools, ideas and training for teachers, leaders and parents.
-        <span>Glenn's CV &rarr;</span>
+        <span>Glenn&rsquo;s CV &rarr;</span>
       </a>
     </aside>
 
@@ -336,7 +336,7 @@ import THEME from '/the-precinct/theme.js';
     const who = pickedCast();
     try {
       localStorage.setItem('precinct_handoff', JSON.stringify({
-        idea: text, tier: state.level, subject: REFS[currentRef()][1], cast: who ? [who] : [], ts: Date.now(),
+        idea: text, tier: state.level, subject: REFS[currentRef()][1], cast: who ? [who] : [], mode: state.mode, ts: Date.now(),
       }));
     } catch (e) {}
     location.href = '/the-precinct/#brief';
