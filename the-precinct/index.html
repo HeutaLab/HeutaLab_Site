@@ -34,6 +34,14 @@
   </filter>
 </svg>
 
+<div class="keybanner" id="keyBanner" role="region" aria-label="API key needed" hidden>
+  <p><b>Bring your own AI key</b>You will need to create a personal API key to use the HeutaLab Comic Book Creator with AI-assisted character and setting creation. Please go to the API key page to paste in your API key.</p>
+  <div class="keybanner-btns">
+    <a class="btn" href="/the-precinct/key/">Go to the API key page <span class="arr">&rarr;</span></a>
+    <button type="button" class="btn ghost" id="keyBannerClose">Main page</button>
+  </div>
+</div>
+
 <div class="page">
 
   <header class="hero frame">
@@ -61,6 +69,7 @@
         <a href="#palettes"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.3-1.2-1.6-1.2-2.8 0-1 .8-1.4 1.8-1.4H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg>Palettes</a>
         <a href="#compare"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="16"/><rect x="13" y="4" width="8" height="16"/></svg>Compare</a>
         <a href="#resources"><svg viewBox="0 0 24 24"><path d="M3 5c3-1 6-1 9 1 3-2 6-2 9-1v14c-3-1-6-1-9 1-3-2-6-2-9-1z"/><path d="M12 6v14"/></svg>Resources</a>
+        <a href="/the-precinct/key/"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/></svg>API key</a>
         <a href="/" class="home-link"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg>HeutaLab</a>
       </nav>
       <div class="city"><img class="noir" src="img/skyline.jpg" alt="" width="466" height="335" loading="lazy"></div>
@@ -159,13 +168,14 @@
         <div class="desk-head">
           <div>
             <h2>Get your brief</h2>
-            <p class="intro">Three levels, one code each. Your facilitator announces the next code when the room is ready. Type it here; this browser remembers it.</p>
+            <p class="intro" id="deskIntro">Three levels, one code each. Your facilitator announces the next code when the room is ready. Type it here; this browser remembers it.</p>
           </div>
-          <div class="lock">
+          <div class="lock" id="codeLock">
             <input id="code" type="password" placeholder="Workshop code" autocomplete="off" enterkeyhint="go" aria-label="Workshop code">
             <span class="status" id="codeStatus" aria-live="polite">not checked yet</span>
           </div>
         </div>
+        <p class="keyline" id="keyLine" hidden></p>
         <ol class="levels" id="levelStrip" aria-label="Levels"></ol>
 
         <div class="step">
@@ -225,7 +235,7 @@
 
         <div class="result" id="result">
           <h3>Your briefing</h3>
-          <p class="stock" id="stockNote" hidden><b>From the files</b>The desk is swamped, so this is a stock brief, not one written for your idea. Make it yours: swap in your own words before you paste it.<span class="setup-note" id="setupNote" hidden> Tell your facilitator: the desk&rsquo;s AI account needs attention.</span></p>
+          <p class="stock" id="stockNote" hidden><b>From the files</b><span id="stockWhy">The desk is swamped</span>, so this is a stock brief, not one written for your idea. Make it yours: swap in your own words before you paste it.<span class="setup-note" id="setupNote" hidden> Tell your facilitator: the desk&rsquo;s AI account needs attention.</span></p>
           <div class="pair">
             <div class="yours"><div class="label" id="attemptLabel">Your description</div><p id="attemptEcho"></p></div>
             <div class="theirs">
@@ -317,7 +327,7 @@
       <footer>
         The artwork here comes from Glenn Malcolm&rsquo;s own 2023 Midjourney noir comic.
         <a href="/blog/21cl-bkk-ai-is-not-taking-our-jobs-quite-the-opposite-midjourney-generative-art/">Read how it was made</a>.
-        Your description, your idea, and the prompt and descriptions you paste into the compare check go to a Cloudflare Worker for this site and then to Anthropic&rsquo;s API. Your workshop code is checked by the Worker only. Nothing you type is kept on the server or shown to anyone else; this browser remembers your code, your level and your last brief.
+        Your description, your idea, and the prompt and descriptions you paste into the compare check go to a Cloudflare Worker for this site and then to Anthropic&rsquo;s API. Your workshop code is checked by the Worker only. Nothing you type is kept on the server or shown to anyone else; this browser remembers your code, your level and your last brief. If you add your own AI key, the key and what you type go straight from this browser to that service (Google, OpenAI or Anthropic) and never to this site.
         Part of the <a href="/">HeutaLab</a> AIFE workshop materials: &ldquo;Human Creativity, AI Precision&rdquo;.
       </footer>
 
@@ -328,6 +338,11 @@
 <script type="module">
 import THEME from '/the-precinct/theme.js';
 import { words } from '/the-precinct/copycheck.js';
+import {
+  TIMEOUT_MS, readBrief, gateRequest, gateOutcome, briefRequest,
+  readCompare, compareStepA, compareRequest, cleanCompare, stockBrief,
+} from '/the-precinct/desk.js';
+import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, personalKeysNeeded } from '/the-precinct/providers.js';
 
 (function(){
   const API = "/the-precinct/api/";
@@ -354,6 +369,70 @@ import { words } from '/the-precinct/copycheck.js';
     return { res, data: await res.json().catch(() => ({})) };
   }
   const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+
+  // ---- the attendee's own AI key ----
+  // With a key saved (any time) or once personal keys are needed (from
+  // 7 November 2026), the desk calls the AI straight from this browser and
+  // the workshop code and levels step aside: every level is open.
+  const personalOnly = personalKeysNeeded();
+  const ownKey = loadKey();
+  const usingOwnKey = !!ownKey || personalOnly;
+
+  // Runs a brief or compare request on the attendee's own key and answers in
+  // the same shape as the Worker, so the rest of the page treats both alike.
+  async function ownRequest(route, payload){
+    const answer = (status, data) => ({ res: { ok: status === 200, status }, data });
+    if (!ownKey) return answer(428, { error: 'Add your own AI key on the API key page first.' });
+    const failed = fail => answer(fail === 'refusal' ? 422 : 502, { error: failureMessage(fail, ownKey.provider) });
+    if (route === 'brief') {
+      const b = readBrief(payload);
+      if (b.error) return answer(400, b);
+      const started = Date.now();
+      if (b.round === 1 && !b.example) {
+        const gate = await askAI(ownKey, { ...gateRequest(b), timeoutMs: 20000 });
+        if (gate.data) {
+          const asks = gateOutcome(gate.data);
+          if (asks) return answer(200, { gate: true, questions: asks.questions, attempt: b.attempt });
+        } else if (gate.fail === 'bad_key' || gate.fail === 'no_credit') return failed(gate.fail);
+        // Otherwise the gate is a nudge: if it can't answer, the brief goes through.
+      }
+      // Your own key isn't queuing behind a room, so it gets a longer budget.
+      const brief = await askAI(ownKey, briefRequest(b, Math.max(8000, 45000 - (Date.now() - started))));
+      if (brief.data) return answer(200, { ...brief.data, attempt: b.attempt });
+      if (isTransient(brief.fail)) return answer(200, { ...stockBrief(b.subject, b.tier, b.palette, b.castUsed), fallback: true, own: true, attempt: b.attempt });
+      return failed(brief.fail);
+    }
+    const c = readCompare(payload, 3);
+    if (c.error) return answer(400, c);
+    const a = compareStepA(c);
+    if (a.copied) return answer(200, a);
+    const out = await askAI(ownKey, { ...compareRequest(c, a), timeoutMs: 25000 });
+    if (out.data) return answer(200, cleanCompare(out.data));
+    if (isTransient(out.fail)) return answer(200, { fallback: true, own: true, checklist: THEME.compareChecklist });
+    return failed(out.fail);
+  }
+  const send = (route, payload) => usingOwnKey ? ownRequest(route, payload) : post(route, payload);
+
+  // The banner and the key line.
+  const banner = document.getElementById('keyBanner');
+  let bannerClosed = false;
+  try { bannerClosed = sessionStorage.getItem('precinct_banner_closed') === '1'; } catch (e) {}
+  banner.hidden = !(personalOnly && !ownKey) || bannerClosed;
+  document.getElementById('keyBannerClose').addEventListener('click', () => {
+    banner.hidden = true;
+    try { sessionStorage.setItem('precinct_banner_closed', '1'); } catch (e) {}
+  });
+  const keyLine = document.getElementById('keyLine');
+  if (usingOwnKey) {
+    keyLine.hidden = false;
+    keyLine.innerHTML = ownKey
+      ? 'Using your own <b>' + esc(PROVIDERS[ownKey.provider].short) + '</b> key ' + esc(maskKey(ownKey.key)) + '. Every level is open. <a href="/the-precinct/key/">Change or forget it</a>'
+      : 'The desk now runs on your own AI key. <a href="/the-precinct/key/">Add your key on the API key page</a> to get a brief.';
+    document.getElementById('codeLock').hidden = true;
+    document.getElementById('deskIntro').textContent = ownKey
+      ? 'Your own AI key writes your brief, straight from this browser. Work through the levels at your own pace.'
+      : 'Add your own AI key and the desk will write your brief, straight from this browser.';
+  }
   const castName = id => THEME.cast.find(c => c.id === id).name;
 
   // ---- built from theme.js: the cast, the palettes, and their pills at the desk ----
@@ -396,8 +475,9 @@ import { words } from '/the-precinct/copycheck.js';
       + esc(forSubject(g).task) + '</span><i>' + (g.level <= level ? 'open' : 'locked') + '</i></li>').join('');
   }
   function applyLevel(n){
+    if (usingOwnKey) n = 3;   // your own key opens every level; the workshop level stays as it was
+    else store.set('precinct_level', String(n));
     level = n;
-    store.set('precinct_level', String(n));
     renderStrip();
     // Locked pills use aria-disabled, not disabled, so a tap still reaches the
     // page: it checks a freshly typed code and picks the tier once it opens.
@@ -560,7 +640,7 @@ import { words } from '/the-precinct/copycheck.js';
   const goLabel = () => round === 2 ? 'Send it back to the desk' : 'Get briefing';
   function checkReady(){
     // Stays off while a request is out, so typing during the wait can't send a second one.
-    goBtn.disabled = briefBusy || !(state.platform && state.subject && state.tier && TIER_LEVEL[state.tier] <= level
+    goBtn.disabled = briefBusy || (personalOnly && !ownKey) || !(state.platform && state.subject && state.tier && TIER_LEVEL[state.tier] <= level
       && idea.value.trim().length >= 3 && wordsIn(attempt.value) >= ATTEMPT_MIN);
   }
 
@@ -594,6 +674,7 @@ import { words } from '/the-precinct/copycheck.js';
     anchorBlock.innerHTML = '';
     promptBlocks.innerHTML = '';
     stockNote.hidden = !data.fallback;
+    document.getElementById('stockWhy').textContent = data.own ? 'Your AI didn\u2019t answer in time' : 'The desk is swamped';
     document.getElementById('setupNote').hidden = !data.setup;
     attemptEcho.textContent = data.attempt || attempt.value.trim();
     document.getElementById('attemptLabel').textContent = attemptIsExample ? 'Worked example (from References)' : 'Your description';
@@ -640,7 +721,7 @@ import { words } from '/the-precinct/copycheck.js';
     goBtn.innerHTML = '<span class="spinner"></span>' + (round === 1 ? 'Reading your description\u2026' : 'Working\u2026');
 
     try {
-      const { res, data } = await post('brief', {
+      const { res, data } = await send('brief', {
         platform: state.platform,
         subject: state.subject,
         palette: state.palette,
@@ -705,8 +786,8 @@ import { words } from '/the-precinct/copycheck.js';
   cmpPrompt.addEventListener('input', () => { autoFilled = false; cmpPromptNote.hidden = true; checkCompareReady(); });
   cmpDesc.addEventListener('input', checkCompareReady);
   function checkCompareReady(){
-    cmpNeedsCode.hidden = level >= 1;
-    cmpBtn.disabled = cmpBusy || !(level >= 1 && wordsIn(cmpPrompt.value) >= 3 && wordsIn(cmpDesc.value) >= 8);
+    cmpNeedsCode.hidden = usingOwnKey ? !!ownKey : level >= 1;
+    cmpBtn.disabled = cmpBusy || (personalOnly && !ownKey) || !(level >= 1 && wordsIn(cmpPrompt.value) >= 3 && wordsIn(cmpDesc.value) >= 8);
   }
 
   document.getElementById('askCopy').addEventListener('click', e => {
@@ -723,7 +804,7 @@ import { words } from '/the-precinct/copycheck.js';
     if (d.copied) {
       html = '<p class="copied"><b>Same words back</b>' + esc(d.message) + '</p>';
     } else if (d.fallback) {
-      html = '<p class="stock"><b>The desk is swamped</b>It could not read this in time. Check these yourself, one at a time:'
+      html = '<p class="stock"><b>' + (d.own ? 'No answer in time' : 'The desk is swamped') + '</b>' + (d.own ? 'Your AI' : 'It') + ' could not read this in time. Check these yourself, one at a time:'
         + (d.setup ? ' <span class="setup-note">Tell your facilitator: the desk&rsquo;s AI account needs attention.</span>' : '') + '</p>'
         + '<ul class="checklist">' + d.checklist.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul>'
         + '<p class="closer">Change one thing and run it again.</p>';
@@ -751,7 +832,7 @@ import { words } from '/the-precinct/copycheck.js';
     cmpBtn.disabled = true;
     cmpBtn.innerHTML = '<span class="spinner"></span>Comparing\u2026';
     try {
-      const { res, data } = await post('compare', {
+      const { res, data } = await send('compare', {
         prompt: cmpPrompt.value.trim(), description: cmpDesc.value.trim(),
         reference: level >= 3 ? cmpRef.value.trim() : '',
         brief: lastBrief,
@@ -771,7 +852,9 @@ import { words } from '/the-precinct/copycheck.js';
 
   // Show the last known level straight away, then ask the Worker what the saved code really unlocks.
   applyLevel(level);
-  if (codeInput.value.trim()) verifyCode();
+  if (usingOwnKey) {
+    document.getElementById('cmpNeedsCode').innerHTML = 'The compare check needs your own AI key: <a href="/the-precinct/key/">add it on the API key page</a>.';
+  } else if (codeInput.value.trim()) verifyCode();
   // The browser may have restored the boxes' contents on reload or Back.
   countAttempt();
   ideaCount.textContent = idea.value.length;

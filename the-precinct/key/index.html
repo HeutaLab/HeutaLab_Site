@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0f0f">
+<title>Your API key: The Precinct</title>
+<meta name="description" content="Add your own AI key (Google Gemini, OpenAI or Anthropic Claude) so The Precinct's briefing desk can write your character and setting prompts. The key stays in your browser.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Knewave&family=Oswald:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&display=swap">
+<link rel="stylesheet" href="/the-precinct/precinct.css">
+<style>
+  .keydesk{padding:26px 28px 30px}
+  .keydesk h2{font-family:var(--brush);font-weight:400;text-transform:uppercase;color:var(--yellow);font-size:clamp(30px,3.2vw,42px);margin:0;line-height:1;transform:rotate(-2deg);transform-origin:left;text-shadow:2px 2px 0 #000}
+  .keydesk .intro{margin:12px 0 0;font-size:14.5px;max-width:64ch}
+  .keydesk .when{margin:10px 0 0;padding:10px 14px;border-left:3px solid var(--yellow);background:rgba(242,199,68,.07);font-size:13.5px;max-width:64ch}
+  .provider-pills .pill{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left}
+  .provider-pills .pill small{margin-left:0}
+  .getkey{margin:12px 0 0;font-size:14px}
+  .getkey ol{margin:6px 0 0;padding-left:20px}
+  .getkey li{margin-bottom:4px}
+  .keyrow{display:flex;gap:8px;flex-wrap:wrap}
+  .keyrow input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--frame);padding:12px 14px;color:var(--ink);font-family:ui-monospace,Menlo,monospace;font-size:14px}
+  .keyrow input:focus{outline:2px solid var(--yellow)}
+  .keyrow button{flex:none}
+  .keystatus{margin:14px 0 0;padding:12px 14px;border:1px solid var(--frame);background:var(--bg);font-size:14px}
+  .keystatus.ok{border-color:#8fc27a}
+  .keystatus.bad{border-color:var(--danger);color:#f2a49d}
+  .keystatus b{font-family:var(--label);font-weight:500;letter-spacing:.14em;text-transform:uppercase;font-size:12px;color:var(--yellow);display:block;margin-bottom:4px}
+  .keybtns{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .safety{margin-top:22px;padding-top:16px;border-top:1px dashed var(--frame);font-size:13.5px}
+  .safety h3{font-family:var(--label);font-weight:500;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--yellow);margin:0 0 8px}
+  .safety ul{margin:0;padding-left:18px}
+  .safety li{margin-bottom:6px}
+  @media (max-width:600px){.keydesk{padding:22px 18px 24px}.keyrow button{width:100%}}
+</style>
+</head>
+<body id="top">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="noir" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values=".33 .5 .17 0 0  .33 .5 .17 0 0  .33 .5 .17 0 0  0 0 0 1 0"/>
+    <feComponentTransfer>
+      <feFuncR type="table" tableValues="0.03 0.09 0.30 0.95 0.98"/>
+      <feFuncG type="table" tableValues="0.05 0.21 0.45 0.78 0.92"/>
+      <feFuncB type="table" tableValues="0.055 0.22 0.42 0.27 0.70"/>
+    </feComponentTransfer>
+  </filter>
+</svg>
+
+<div class="page">
+
+  <header class="hero mini frame">
+    <div class="copy">
+      <a class="kicker" href="/the-precinct/">The Precinct</a>
+      <h1><span class="name">API key</span></h1>
+      <p class="tag">Your key, your desk.<br>It stays in this browser.</p>
+    </div>
+    <div class="art">
+      <img class="noir" src="/the-precinct/img/hat.jpg" alt="" width="489" height="335">
+      <div class="script" aria-hidden="true"><span>Bring your</span><span>own key.</span></div>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <aside class="side">
+      <nav aria-label="The Precinct">
+        <a href="/the-precinct/"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+        <a href="/the-precinct/#brief"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>Get a brief</a>
+        <a href="/the-precinct/references/"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>References</a>
+        <a href="/the-precinct/builder/"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg>Comic builder</a>
+        <a href="/the-precinct/#cast"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.3-7 8-7s7 2.5 8 7"/></svg>The cast</a>
+        <a href="/the-precinct/#settings"><svg viewBox="0 0 24 24"><path d="M3 21V9l5-3v15M8 21V4l8 3v14M16 21V11l5 2v8M2 21h20"/></svg>Settings</a>
+        <a href="/the-precinct/#palettes"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.3-1.2-1.6-1.2-2.8 0-1 .8-1.4 1.8-1.4H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg>Palettes</a>
+        <a href="/the-precinct/#compare"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="16"/><rect x="13" y="4" width="8" height="16"/></svg>Compare</a>
+        <a href="/the-precinct/#resources"><svg viewBox="0 0 24 24"><path d="M3 5c3-1 6-1 9 1 3-2 6-2 9-1v14c-3-1-6-1-9 1-3-2-6-2-9-1z"/><path d="M12 6v14"/></svg>Resources</a>
+        <a href="/the-precinct/key/" class="on" aria-current="page"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/></svg>API key</a>
+        <a href="/" class="home-link"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg>HeutaLab</a>
+      </nav>
+      <blockquote>&ldquo;Every detective carries their own key.&rdquo;<cite>THE PRECINCT</cite></blockquote>
+    </aside>
+
+    <main>
+      <section class="keydesk frame" aria-labelledby="keyTitle">
+        <h2 id="keyTitle">Your AI key</h2>
+        <p class="intro">The briefing desk and the compare check use an AI to write your character and setting prompts. Add a key from Google, OpenAI or Anthropic and the desk sends your requests straight to that service, on your account.</p>
+        <p class="when" id="whenNote"></p>
+
+        <div class="step">
+          <h4>Which AI?</h4>
+          <div class="pillrow provider-pills" id="providerRow"></div>
+          <div class="getkey" id="getKey"></div>
+        </div>
+
+        <div class="step">
+          <h4>Paste your key</h4>
+          <div class="keyrow">
+            <input id="keyInput" type="password" autocomplete="off" spellcheck="false" autocapitalize="off" placeholder="Paste your API key here" aria-label="API key">
+            <button type="button" class="btn ghost small" id="showKey" aria-pressed="false">Show</button>
+          </div>
+          <button class="go" id="saveKey" disabled>Save and test</button>
+          <div class="keystatus" id="keyStatus" aria-live="polite" hidden></div>
+          <div class="keybtns">
+            <a class="btn" href="/the-precinct/#brief">Go to the briefing desk <span class="arr">&rarr;</span></a>
+            <button type="button" class="btn ghost" id="forgetKey" hidden>Forget this key</button>
+          </div>
+        </div>
+
+        <div class="safety">
+          <h3>Keeping your key safe</h3>
+          <ul>
+            <li>Your key is saved in this browser only. The desk sends it straight to the AI service you picked; it never goes to heutalab.com.</li>
+            <li>On a shared or school computer, press <strong>Forget this key</strong> when you finish.</li>
+            <li>Set a monthly spending limit in your AI account, and never share the key or paste it into a document.</li>
+            <li>If you think someone else has your key, delete it in your AI account and make a new one.</li>
+          </ul>
+        </div>
+      </section>
+
+      <footer>
+        Your key and what you type at the desk go from this browser to the AI service you chose (Google, OpenAI or Anthropic) under that service&rsquo;s terms. Nothing is sent to or kept by heutalab.com.
+        Part of the <a href="/">HeutaLab</a> AIFE workshop materials: &ldquo;Human Creativity, AI Precision&rdquo;.
+      </footer>
+    </main>
+  </div>
+</div>
+
+<script type="module">
+import { PROVIDERS, loadKey, saveKey, forgetKey, maskKey, testKey, failureMessage, isTransient, personalKeysNeeded } from '/the-precinct/providers.js';
+
+(function(){
+  const $ = id => document.getElementById(id);
+  const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+  const saved = loadKey();
+  let provider = saved ? saved.provider : 'gemini';
+
+  $('whenNote').textContent = personalKeysNeeded()
+    ? 'The shared workshop desk has closed, so the desk needs your own key to work.'
+    : 'Optional until 7 November 2026: workshop attendees can use the workshop code instead. From 7 November the desk needs your own key.';
+
+  function renderProviders(){
+    $('providerRow').innerHTML = Object.entries(PROVIDERS).map(([id, p]) =>
+      '<button type="button" class="pill' + (id === provider ? ' active' : '') + '" data-val="' + id + '" aria-pressed="' + (id === provider) + '">'
+      + esc(p.label) + '<small>' + esc(p.note) + '</small></button>').join('');
+    const p = PROVIDERS[provider];
+    $('getKey').innerHTML = '<strong>Getting ' + (/^[AEIOU]/.test(p.short) ? 'an ' : 'a ') + esc(p.short) + ' key:</strong><ol>'
+      + '<li>Open <a href="' + p.keyUrl + '" target="_blank" rel="noopener">' + esc(p.keySite) + '</a> and sign in.</li>'
+      + '<li>Create a new API key, and copy it.</li>'
+      + '<li>Paste it below and press <strong>Save and test</strong>.</li></ol>';
+  }
+  $('providerRow').addEventListener('click', e => {
+    const b = e.target.closest('[data-val]');
+    if (!b) return;
+    provider = b.dataset.val;
+    renderProviders();
+    checkReady();
+  });
+
+  function status(kind, title, text){
+    const box = $('keyStatus');
+    box.hidden = false;
+    box.className = 'keystatus' + (kind ? ' ' + kind : '');
+    box.innerHTML = '<b>' + esc(title) + '</b>' + esc(text);
+  }
+  function showSaved(){
+    const k = loadKey();
+    $('forgetKey').hidden = !k;
+    if (k) status('ok', 'Saved', 'Using your ' + PROVIDERS[k.provider].short + ' key ' + maskKey(k.key) + ' on this device.');
+  }
+
+  const input = $('keyInput'), save = $('saveKey');
+  function checkReady(){ save.disabled = !input.value.trim(); }
+  input.addEventListener('input', checkReady);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter' && !save.disabled) save.click(); });
+  $('showKey').addEventListener('click', e => {
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    e.target.textContent = show ? 'Hide' : 'Show';
+    e.target.setAttribute('aria-pressed', String(show));
+  });
+
+  save.addEventListener('click', async () => {
+    const key = input.value.trim();
+    if (!key) return;
+    save.disabled = true;
+    save.innerHTML = '<span class="spinner"></span>Testing\u2026';
+    const p = PROVIDERS[provider];
+    const hint = p.looksRight(key) ? '' : ' (It doesn\u2019t look like a usual ' + p.short + ' key: check you picked the right AI above.)';
+    const r = await testKey({ provider, key });
+    save.textContent = 'Save and test';
+    checkReady();
+    if (r.data) {
+      saveKey(provider, key);
+      input.value = ''; checkReady();
+      showSaved();
+      status('ok', 'Working', 'Your ' + p.short + ' key ' + maskKey(key) + ' works and is saved on this device. You\u2019re ready for the briefing desk.');
+    } else if (isTransient(r.fail)) {
+      saveKey(provider, key);
+      input.value = ''; checkReady();
+      $('forgetKey').hidden = false;
+      status('', 'Saved, not checked', p.short + ' didn\u2019t answer the test in time, so the key is saved but unchecked. It will be tried when you use the desk.');
+    } else {
+      status('bad', 'Not saved', failureMessage(r.fail, provider, true) + hint);
+    }
+  });
+
+  $('forgetKey').addEventListener('click', () => {
+    forgetKey();
+    $('forgetKey').hidden = true;
+    status('', 'Forgotten', 'The key has been removed from this browser.');
+  });
+
+  renderProviders();
+  showSaved();
+})();
+</script>
+</body>
+</html>
