@@ -105,9 +105,11 @@ function build(el, cs, W, H) {
 
 const SIDES = ['Top', 'Right', 'Bottom', 'Left'];
 function sketch(el) {
+  // Undo only what this script drew last time. An element's own background picture or border colour stays:
+  // clearing them all used to wipe pictures set on the page (the home page cards) whenever a card was redrawn.
   if (el.__pp) {
-    el.style.removeProperty('background-image');
-    SIDES.forEach(s => el.style.removeProperty('border-' + s.toLowerCase() + '-color'));
+    if (el.__pp.bg) ['image', 'size', 'repeat', 'position', 'origin'].forEach(k => el.style.removeProperty('background-' + k));
+    (el.__pp.sides || []).forEach(s => el.style.removeProperty('border-' + s.toLowerCase() + '-color'));
     if (el.__pp.shadow) el.style.removeProperty('box-shadow');
   }
   const W = el.offsetWidth, H = el.offsetHeight;
@@ -119,7 +121,8 @@ function sketch(el) {
   if (!out) return;
   el.style.backgroundImage = 'url("data:image/svg+xml,' + encodeURIComponent(out.svg) + '")';
   el.style.backgroundSize = '100% 100%'; el.style.backgroundRepeat = 'no-repeat'; el.style.backgroundPosition = '0 0'; el.style.backgroundOrigin = 'border-box';
-  out.on.forEach((v, i) => { if (v) el.style['border' + SIDES[i] + 'Color'] = 'transparent'; });
+  el.__pp.bg = true; el.__pp.sides = [];
+  out.on.forEach((v, i) => { if (v) { el.style['border' + SIDES[i] + 'Color'] = 'transparent'; el.__pp.sides.push(SIDES[i]); } });
   if (cs.boxShadow !== 'none' && !/inset/.test(cs.boxShadow)) { el.style.boxShadow = 'none'; el.__pp.shadow = true; }
 }
 
