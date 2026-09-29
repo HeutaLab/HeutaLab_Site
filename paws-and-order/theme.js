@@ -353,6 +353,9 @@ export default {
     { key: 'poster', name: 'Poster page', era: 'One huge picture', title: 'Poster page',
       about: 'One giant picture fills the whole page, with smaller panels laid on top at jaunty angles. It feels like a poster with a story inside.',
       prompt: 'Poster-style picture, big bold shapes, bright saturated flat colours, dramatic low angle, sunburst behind.' },
+    { key: 'noir', name: 'Midnight noir', era: 'Black and white, like an old detective film', title: 'Midnight noir',
+      about: 'A black page and every picture in black and white, stickers too, like a mystery film from long ago. Start wide to show where we are, slow down with three tall panels, then end on the big reveal.',
+      prompt: 'Black and white comic panel, no colour at all, strong black shadows, one bright streetlamp, rain as white streaks, thick wobbly outlines, a spooky but friendly mystery.' },
   ],
 
   // Sound effects offered in the Comic Maker, grouped by what makes the noise.

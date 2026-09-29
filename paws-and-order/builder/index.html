@@ -547,6 +547,13 @@ import THEME from '../theme.js';
       title: { family: "'Luckiest Guy'", weight: 400, size: 8, color: '#fff', stroke: [0.3, '#111'] },
       letters: { caption: { shape: 'round', color: 'blue', font: 'bold' }, speech: { shape: 'round', color: 'white', font: 'bold' },
         thought: { shape: 'cloud', color: 'white', font: 'bold' }, sfx: { color: 'red', tilt: 8, s: 1.3 } } },
+    // Black page, thin white frames, and every picture and sticker inked black and white (the same filter inkBW() draws in the PNG).
+    // A wide opening shot, three tall suspense beats, then a wide ending.
+    noir: { page: '#0b0b0b', frames: [[0.6, '#fff']], ink: 'grayscale(1) contrast(2.1) brightness(.95)',
+      panels: grid([[0,0,100,30],[0,30,33.33,38],[33.33,30,33.34,38],[66.67,30,33.33,38],[0,68,100,32]], 3),
+      title: { family: "'Luckiest Guy'", weight: 400, size: 6, color: '#fff', spacing: 0.04 },
+      letters: { caption: { shape: 'rect', color: 'black', font: 'type' }, speech: { shape: 'oval', color: 'white', font: 'comic' },
+        thought: { shape: 'cloud', color: 'white', font: 'comic' }, sfx: { color: 'white', tilt: 0, s: 1.2 } } },
   };
   // Four panels always uses the classic look.
   const MEDIUM = Object.assign({}, LOOKS.classic, { panels: grid([[0,0,50,50],[50,0,50,50],[0,50,50,50],[50,50,50,50]], 2) });
