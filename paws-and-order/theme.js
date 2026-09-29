@@ -431,4 +431,67 @@ export default {
     ] },
   ],
   stickerPath: (dir, file, border) => IMG + 'stickers/' + dir + '/' + file + (border ? '-b' : '') + '.webp',
+  thumbPath: name => IMG + 'thumbs/' + name + '.webp',
+
+  // Starter pages for the Comic Maker (Featured templates on the home page). Each opens ready to go: a page layout,
+  // a place picture from the library in every panel, the gang as stickers, and a first caption to get started.
+  // level: 'medium' is the four-panel page; 'advanced' uses a page style. Panels are filled in order.
+  // A sticker is [src, { cx, h, bottom, clip, flip }]: cx is the middle across the panel (0 to 1), h its height as a share of
+  // the panel's height, bottom where its feet go (1 is the bottom edge; more than 1 sinks it below, for a close-up).
+  // The Comic Maker works out the size from the picture's own shape, so a template fits any page layout.
+  // Words are [type, text, { x, y, w }] in % of the panel; empty words show a hint for the child to fill in.
+  templates: [
+    { key: 'doughnut-thief', name: 'The Doughnut Thief', blurb: 'Someone took the doughnuts. Who did it?',
+      thumb: ['doughnut-factory', 'grumbleton/doughnut-theft'], level: 'medium', title: 'The Doughnut Thief',
+      panels: [
+        { place: 'police-pound', stickers: [['nettle/standing', { cx: .5, h: .62 }]], words: [['caption', 'One sunny morning at the Police Pound...', { x: 3, y: 3, w: 70 }]] },
+        { place: 'doughnut-factory', stickers: [['grumbleton/doughnut-theft', { cx: .52, h: .7 }]], words: [['thought', '', { x: 6, y: 5, w: 44 }]] },
+        { place: 'pound-office', stickers: [['rocco/stomping', { cx: .5, h: .68 }]], words: [['speech', '', { x: 44, y: 6, w: 50 }]] },
+        { place: 'milkshake-bar', stickers: [['nettle/pointing', { cx: .3, h: .6 }], ['grumbleton/face-guilty', { cx: .78, h: .5, bottom: 1.04, clip: true }]], words: [['speech', '', { x: 4, y: 5, w: 52 }]] },
+      ] },
+    { key: 'harbour-day', name: 'Harbour Day', blurb: 'Captain Barnaby has lost something in the sea.',
+      thumb: ['harbour', 'barnaby/waving'], level: 'medium', title: 'Harbour Day',
+      panels: [
+        { place: 'harbour', stickers: [['barnaby/standing', { cx: .5, h: .62 }]], words: [['caption', 'It was the busiest day of the year at the harbour.', { x: 3, y: 3, w: 72 }]] },
+        { place: 'harbour', stickers: [['barnaby/telescope', { cx: .55, h: .62, bottom: 1.03, clip: true }]], words: [['thought', '', { x: 4, y: 5, w: 44 }]] },
+        { place: 'duck-pond-park', stickers: [['flash/snapping', { cx: .26, h: .56 }], ['vivi/dancing', { cx: .78, h: .66 }]], words: [['speech', '', { x: 36, y: 4, w: 50 }]] },
+        { place: 'harbour', stickers: [['barnaby/face-surprised', { cx: .5, h: .62, bottom: 1.04, clip: true }]], words: [['sfx', 'SPLASH!', { x: 20, y: 8, w: 60 }]] },
+      ] },
+    { key: 'milkshake-mix-up', name: 'Milkshake Mix-up', blurb: 'Nana Shellby’s famous milkshake has gone missing.',
+      thumb: ['milkshake-bar', 'nana/carrying-tray'], level: 'medium', title: 'The Milkshake Mix-up',
+      panels: [
+        { place: 'milkshake-bar', stickers: [['nana/carrying-tray', { cx: .5, h: .6 }]], words: [['caption', 'Nobody makes a milkshake like Nana Shellby.', { x: 3, y: 3, w: 70 }]] },
+        { place: 'milkshake-bar', stickers: [['rocco/cup-of-tea', { cx: .5, h: .66 }]], words: [['speech', '', { x: 4, y: 5, w: 50 }]] },
+        { place: 'sunset-street', stickers: [['nana/face-surprised', { cx: .5, h: .6, bottom: 1.04, clip: true }]], words: [['thought', '', { x: 50, y: 5, w: 46 }]] },
+        { place: 'milkshake-bar', stickers: [['nana/waving', { cx: .3, h: .58 }], ['rocco/face-kind', { cx: .76, h: .48, bottom: 1.04, clip: true }]], words: [['speech', '', { x: 40, y: 4, w: 54 }]] },
+      ] },
+    { key: 'funfair-chase', name: 'Funfair Chase', blurb: 'Flash has the story of the year, and Rocco wants it.',
+      thumb: ['funfair', 'flash/running'], level: 'advanced', style: 'strips', title: 'The Funfair Chase',
+      panels: [
+        { place: 'funfair', stickers: [['flash/running', { cx: .7, h: .9, bottom: 1.02 }]], words: [['caption', 'The funfair was open late...', { x: 2, y: 6, w: 40 }]] },
+        { place: 'funfair', stickers: [['rocco/stomping', { cx: .3, h: .95, bottom: 1.02 }]], words: [['speech', '', { x: 50, y: 8, w: 34 }]] },
+        { place: 'wonky-row', stickers: [['flash/peeking', { cx: .82, h: 1, bottom: 1.04, clip: true }]], words: [['thought', '', { x: 44, y: 8, w: 30 }]] },
+        { place: 'playground', stickers: [['rocco/face-tantrum', { cx: .5, h: 1.25, bottom: 1.15, clip: true }]], words: [['sfx', 'ROAR!', { x: 64, y: 12, w: 34 }]] },
+        { place: 'bus-stop', stickers: [['nana/waving', { cx: .25, h: .9, bottom: 1.02 }], ['flash/running', { cx: .7, h: .9, bottom: 1.02 }]], words: [['speech', '', { x: 36, y: 8, w: 26 }]] },
+        { place: 'milkshake-bar', stickers: [['flash/face-proud', { cx: .3, h: 1.2, bottom: 1.12, clip: true }], ['rocco/face-kind', { cx: .75, h: 1.2, bottom: 1.12, clip: true }]], words: [['caption', '', { x: 2, y: 6, w: 34 }]] },
+      ] },
+    { key: 'moon-mission', name: 'Moon Base Mission', blurb: 'Mabel’s newest gadget goes a bit too far.',
+      thumb: ['moon-base', 'mabel/gadget'], level: 'advanced', style: 'night', title: 'Moon Base Mission',
+      panels: [
+        { place: 'treehouse', stickers: [['mabel/gadget', { cx: .42, h: .62 }]], words: [['caption', 'Mabel Mudge had built her best gadget yet.', { x: 3, y: 3, w: 60 }]] },
+        { place: 'rooftop-balcony', stickers: [['nettle/examining', { cx: .5, h: .7 }]], words: [['thought', '', { x: 4, y: 4, w: 58 }]] },
+        { place: 'moon-base', stickers: [['mabel/spanner', { cx: .5, h: .7 }]], words: [['sfx', 'WHOOSH!', { x: 6, y: 6, w: 80 }]] },
+        { place: 'moon-base', stickers: [['mabel/face-triumphant', { cx: .5, h: .75, bottom: 1.05, clip: true }]], words: [['speech', '', { x: 4, y: 4, w: 56 }]] },
+        { place: 'moon-base', stickers: [['nettle/standing', { cx: .3, h: .62 }], ['mabel/standing', { cx: .7, h: .56 }]], words: [['speech', '', { x: 40, y: 4, w: 44 }]] },
+      ] },
+    { key: 'library-mystery', name: 'The Library Mystery', blurb: 'A black-and-white whodunnit. Every picture is a clue.',
+      thumb: ['library', 'nettle/examining'], level: 'advanced', style: 'noir', title: 'The Library Mystery',
+      panels: [
+        { place: 'rain-soaked-street', stickers: [['nettle/standing', { cx: .7, h: .62 }]], words: [['caption', 'Midnight. The library clock had stopped.', { x: 3, y: 4, w: 46 }]] },
+        { place: 'library', stickers: [['flash/peeking', { cx: .7, h: .8, bottom: 1.04, clip: true }]], words: [['thought', '', { x: 4, y: 4, w: 80 }]] },
+        { place: 'library', stickers: [['vivi/face-surprised', { cx: .5, h: .62, bottom: 1.05, clip: true }]], words: [['speech', '', { x: 4, y: 4, w: 84 }]] },
+        { place: 'wet-pavement', stickers: [['nettle/examining', { cx: .5, h: .7 }]], words: [['caption', '', { x: 4, y: 4, w: 84 }]] },
+        { place: 'library', stickers: [['nettle/pointing', { cx: .3, h: .7 }], ['grumbleton/face-guilty', { cx: .78, h: .7, bottom: 1.06, clip: true }]], words: [['speech', '', { x: 4, y: 4, w: 40 }]] },
+      ] },
+  ],
 };

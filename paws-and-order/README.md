@@ -17,8 +17,9 @@ Drop square pictures into `img/cast/` (`hero.png`, `buddy.png`, `trouble.png`, `
 ## Files
 - `index.html` home, prompt helper, gang, colours, compare check, Grown-ups setup
 - `references/` Look Closely
-- `builder/` Comic Maker
+- `builder/` Comic Maker. `builder/?template=<key>` opens a starter page from `templates` in `theme.js`; `builder/?comic=<id>` opens a page saved in My comics. My comics are kept in this browser's IndexedDB (`police-pound-builder`, keys `comic:<id>`), and the home page lists them
 - `theme.js` all wording, cast, palettes, levels; `ai.js` provider calls and safety checks
+- `img/thumbs/` small copies of the place pictures for the home page
 - `pound.css`, `fonts/` (self-hosted open-licence fonts), `img/`
 - `img/stickers/<character>/` the gang cut out of their character sheets for the Comic Maker's sticker tray: `<name>.webp` with a see-through background and `<name>-b.webp` with a white border. They are listed in `stickers` in `theme.js`.
 

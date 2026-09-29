@@ -11,85 +11,93 @@
 <body id="top">
 <a class="skip" href="#main">Skip to the main part</a>
 
+<aside class="side">
+  <a class="brand" href="/" aria-label="HeutaLab home"><span>Heuta</span><span>Lab</span></a>
+  <nav aria-label="Paws &amp; Order">
+    <a href="./" class="on" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+    <a href="#brief"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>Make a prompt</a>
+    <a href="references/"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>Look closely</a>
+    <a href="builder/"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg>Comic maker</a>
+    <a href="#templates"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 10h18M10 10v10"/><path d="M15.5 13.2l.9 1.8 2 .3-1.5 1.4.4 2-1.8-1-1.8 1 .4-2-1.5-1.4 2-.3z"/></svg>Templates</a>
+    <a href="#mycomics"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h10l4 4v12H5z"/><path d="M8 3v0M9 12h6M9 16h4"/><path d="M15 4v4h4"/></svg>My comics</a>
+    <a href="#cast"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.3-7 8-7s7 2.5 8 7"/></svg>Meet the gang</a>
+    <a href="#settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V9l5-3v15M8 21V4l8 3v14M16 21V11l5 2v8M2 21h20"/></svg>Places</a>
+    <a href="#palettes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.3-1.2-1.6-1.2-2.8 0-1 .8-1.4 1.8-1.4H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg>Colours</a>
+    <a href="#compare"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="8" height="16"/><rect x="13" y="4" width="8" height="16"/></svg>Check it</a>
+    <a href="#grownups"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Grown-ups</a>
+  </nav>
+  <div class="side-foot"><svg viewBox="0 0 120 40" aria-hidden="true"><path d="M2 39V24h8v-9h7v24h6V9h10v30h5V19h8v20h6V4h4V1h2v3h4v35h5V17h9v22h6V23h7v16h5V13h9v26h4V27h6v12"/></svg>Paws &amp; Order<small>Part of HeutaLab</small></div>
+</aside>
 <div class="page">
 
-  <header class="hero frame">
+  <header class="hero">
     <div class="copy">
       <h1><span class="name">Paws &amp; Order</span></h1>
-      <div class="verbs">MAKE<span>&middot;</span>PLAN<span>&middot;</span>DRAW<span>&middot;</span>TELL</div>
+      <div class="verbs">Make<span>&middot;</span>Plan<span>&middot;</span>Draw<span>&middot;</span>Tell</div>
       <p class="tag">Make your own comic with AI! Look closely, write a super prompt, then build your story.</p>
     </div>
     <div class="art">
-      <!-- Drop your own banner character in as img/hero.png and it appears here. -->
-      <img class="hero-char" src="img/hero.png" alt="" onerror="this.remove()">
-      <div class="script" aria-hidden="true"><span>Same town.</span><span>New case.</span><span>Your story!</span></div>
+      <img class="who flip" src="img/stickers/nettle/pointing.webp" alt="Inspector Nettle, the hero of Paws &amp; Order" width="360" height="430">
+      <div class="burst" aria-hidden="true"><svg viewBox="0 0 200 200" aria-hidden="true"><path d="M100 4l17 40 38-24-6 44 44 2-34 28 36 26-44 6 12 42-40-20-23 38-17-40-38 24 6-44-44-2 34-28-36-26 44-6-12-42 40 20z" fill="#ffd23f" stroke="#141414" stroke-width="6" stroke-linejoin="round"/></svg><b>Your story. Your way!</b></div>
     </div>
   </header>
 
-  <div class="layout">
-
-    <aside class="side">
-      <nav aria-label="Paws &amp; Order">
-        <a href="#top" class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
-        <a href="#brief"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>Make a prompt</a>
-        <a href="references/"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>Look closely</a>
-        <a href="builder/"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg>Comic maker</a>
-        <a href="#cast"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.3-7 8-7s7 2.5 8 7"/></svg>Meet the gang</a>
-        <a href="#settings"><svg viewBox="0 0 24 24"><path d="M3 21V9l5-3v15M8 21V4l8 3v14M16 21V11l5 2v8M2 21h20"/></svg>Places</a>
-        <a href="#palettes"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.3-1.2-1.6-1.2-2.8 0-1 .8-1.4 1.8-1.4H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg>Colours</a>
-        <a href="#compare"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="16"/><rect x="13" y="4" width="8" height="16"/></svg>Check it</a>
-        <a href="#grownups"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Grown-ups</a>
-      </nav>
-      <blockquote>&ldquo;Every great comic starts with a really good look.&rdquo;<cite>PAWS &amp; ORDER</cite></blockquote>
-    </aside>
-
-    <main id="main">
-
-      <section class="features">
-        <article class="feature learn frame">
-          <div class="pic"><img src="img/icons/look.svg" alt="" width="200" height="200"></div>
-          <div class="txt">
-            <h2>Learn to<br>look closely</h2>
-            <p>Look before you prompt. Say what you see, then the little details, then the world around it. The words you find become your prompt.</p>
-            <a class="btn" href="references/">Start looking <span class="arr">&rarr;</span></a>
+  <main id="main">
+      <section class="steps" aria-label="Four steps to a comic">
+        <article class="stepcard">
+          <div class="head"><span class="num">1</span><h2>Make a prompt</h2><p>Tell the AI helper what picture you want for your comic.</p></div>
+          <div class="art" aria-hidden="true">
+            <img class="stk" src="img/stickers/nettle/notes.webp" alt="" style="left:0;bottom:0;height:92%">
+            <div class="bub l" style="right:0;top:2%;width:60%">A brave hedgehog, a big adventure&hellip;</div>
           </div>
+          <a class="btn" href="#brief">Start here <span class="arr">&rarr;</span></a>
         </article>
-        <article class="feature scene frame">
-          <div class="txt">
-            <h2>Get your<br>prompt</h2>
-            <p>Describe your idea in plain English. The helper writes a prompt for Gemini, ChatGPT, Copilot or Nano Banana.</p>
-            <a class="btn" href="#brief">Open the helper <span class="arr">&rarr;</span></a>
+        <article class="stepcard">
+          <div class="head"><span class="num">2</span><h2>Look closely</h2><p>Explore the pictures: what you see, the details, the world around it.</p></div>
+          <div class="art" aria-hidden="true">
+            <div class="pic" style="inset:4% 16% 12% 2%;background-image:url(img/thumbs/wonky-row.webp)"></div>
+            <img class="stk" src="img/stickers/nettle/magnifying-glass-b.webp" alt="" style="right:0;bottom:0;height:70%;transform:rotate(-12deg)">
           </div>
+          <a class="btn" href="references/">Explore <span class="arr">&rarr;</span></a>
+        </article>
+        <article class="stepcard">
+          <div class="head"><span class="num">3</span><h2>Build your comic</h2><p>Panels, the gang, speech bubbles and sound effects.</p></div>
+          <div class="art" aria-hidden="true">
+            <div class="minipage">
+              <i style="background-image:url(img/thumbs/police-pound.webp)"><img src="img/stickers/nettle/standing.webp" alt=""></i>
+              <i style="background-image:url(img/thumbs/doughnut-factory.webp)"><img src="img/stickers/grumbleton/doughnut-theft.webp" alt=""></i>
+              <i style="background-image:url(img/thumbs/funfair.webp)"><img src="img/stickers/flash/running.webp" alt=""></i>
+              <i style="background-image:url(img/thumbs/pound-office.webp)"><img src="img/stickers/rocco/stomping.webp" alt=""></i>
+            </div>
+            <span class="zap" style="right:-4px;top:-6px">On it!</span>
+          </div>
+          <a class="btn" href="builder/">Create <span class="arr">&rarr;</span></a>
+        </article>
+        <article class="stepcard">
+          <div class="head"><span class="num">4</span><h2>Share your story</h2><p>Save it in My comics, print it, or show your friends.</p></div>
+          <div class="art" aria-hidden="true">
+            <div class="cover" style="background-image:url(img/thumbs/gang.webp)"><b>Paws &amp;<br>Order</b></div>
+            <span class="zap" style="right:-6px;top:18%;width:48%;font-size:14px;padding:20px 12px">Comics<br>by you!</span>
+          </div>
+          <a class="btn" href="#mycomics">My comics <span class="arr">&rarr;</span></a>
         </article>
       </section>
 
-      <h2 class="rule">Get started</h2>
-      <section class="cards">
-        <article class="card frame">
-          <div class="ico"><img src="img/icons/look.svg" alt="" width="200" height="200"></div>
-          <div class="body"><h3>1. Look closely</h3><p>Study a picture: what you see, the details, then the world around it.</p>
-            <a class="btn" href="references/">Look <span class="arr">&rarr;</span></a></div>
-        </article>
-        <article class="card frame">
-          <div class="ico"><img src="img/icons/gang.svg" alt="" width="200" height="200"></div>
-          <div class="body"><h3>2. Meet the gang</h3><p>Pick your characters, or make some of your own.</p>
-            <a class="btn" href="#cast">The gang <span class="arr">&rarr;</span></a></div>
-        </article>
-        <article class="card frame">
-          <div class="ico"><img src="img/icons/place.svg" alt="" width="200" height="200"></div>
-          <div class="body"><h3>3. Pick a place</h3><p>One empty room, then two that fit together, then a whole street.</p>
-            <a class="btn" href="#settings">Places <span class="arr">&rarr;</span></a></div>
-        </article>
-        <article class="card frame">
-          <div class="ico"><img src="img/icons/comic.svg" alt="" width="200" height="200"></div>
-          <div class="body"><h3>4. Tell your story</h3><p>Drop your pictures into a comic page. Add captions and speech bubbles.</p>
-            <a class="btn" href="builder/">Comic maker <span class="arr">&rarr;</span></a></div>
-        </article>
-        <article class="card frame">
-          <div class="ico"><img src="img/icons/check.svg" alt="" width="200" height="200"></div>
-          <div class="body"><h3>5. Check &amp; fix</h3><p>Put your picture next to your prompt. What drifted, and which word fixes it?</p>
-            <a class="btn" href="#compare">Check it <span class="arr">&rarr;</span></a></div>
-        </article>
+      <section class="shelves">
+        <div class="shelf" id="templates">
+          <div class="shelf-head"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.5 1.3 6.5L12 17l-5.9 3.3 1.3-6.5L2.5 9.3l6.6-.8z"/></svg><h2>Featured templates</h2></div>
+          <p class="shelf-note">A page ready to go: the places, the gang and the first words. Open one and make it your own.</p>
+          <div class="tpls" id="tplGrid"></div>
+        </div>
+        <div class="shelf" id="mycomics">
+          <div class="shelf-head"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.5 1.3 6.5L12 17l-5.9 3.3 1.3-6.5L2.5 9.3l6.6-.8z"/></svg><h2>My comics</h2></div>
+          <p class="shelf-note">Pages you saved in the Comic Maker. They stay in this browser, on this device, and nobody else can see them.</p>
+          <div class="mine-row">
+            <button type="button" class="mine-arrow prev" id="minePrev" aria-label="Back" disabled>&lsaquo;</button>
+            <div class="mine" id="mineRow"></div>
+            <button type="button" class="mine-arrow next" id="mineNext" aria-label="More" disabled>&rsaquo;</button>
+          </div>
+        </div>
       </section>
 
       <h2 class="rule" id="cast">Meet the gang</h2>
@@ -318,13 +326,16 @@
         </div>
       </section>
 
-      <footer>
+  </main>
+
+  <div class="townband">
+    <img class="who" src="img/stickers/nettle/face-pleased.webp" alt="" width="200" height="220">
+    <p class="say">Every great story starts with a closer look&hellip;</p>
+    <footer>
         Everything here runs in your browser. The pictures on Look Closely and in the Comic Maker were drawn for this site.
         The prompt helper and the check send what you type to the AI service your grown-up chose in Grown-ups, and to nobody else. Nothing you type is kept by this site.
         Part of <a href="/">HeutaLab</a>.
       </footer>
-
-    </main>
   </div>
 </div>
 
@@ -781,18 +792,82 @@ import * as AI from './ai.js';
   }
 
   // Sidebar: highlight the section in view.
-  const links = [...document.querySelectorAll('.side nav a[href^="#"]')];
-  const targets = links.map(a => document.querySelector(a.getAttribute('href')));
+  const links = [...document.querySelectorAll('.side nav a[href="./"], .side nav a[href^="#"]')];
+  const targets = links.map(a => a.getAttribute('href') === './' ? document.querySelector('.hero') : document.querySelector(a.getAttribute('href')));
   function markNav(){
     let current = 0, best = -Infinity;
     targets.forEach((t, i) => {
       const top = t ? t.getBoundingClientRect().top : Infinity;
       if (top < 140 && top > best) { best = top; current = i; }
     });
-    links.forEach((a, i) => a.classList.toggle('on', i === current));
+    links.forEach((a, i) => { a.classList.toggle('on', i === current); if (i === current) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current'); });
   }
   addEventListener('scroll', markNav, { passive:true });
   markNav();
+})();
+</script>
+<script type="module">
+// The two shelves: Featured templates (from THEME.templates) and My comics (pages saved by the Comic Maker in this browser).
+import THEME from './theme.js';
+(function(){
+  const $ = id => document.getElementById(id);
+  const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const styleName = k => (THEME.pageStyles.find(s => s.key === k) || {}).name || '';
+  const src = s => { const [dir, file] = s.split('/'); return THEME.stickerPath(dir, file, false); };
+
+  $('tplGrid').innerHTML = (THEME.templates || []).map(t => '<a class="tpl" href="builder/?template=' + encodeURIComponent(t.key) + '">'
+    + '<span class="shot' + (t.style === 'noir' ? ' noir' : '') + '" style="background-image:url(' + THEME.thumbPath(t.thumb[0]) + ')">'
+    + '<img src="' + src(t.thumb[1]) + '" alt="" loading="lazy"><span class="tag">' + esc(t.level === 'advanced' ? styleName(t.style) : 'Four panels') + '</span></span>'
+    + '<b>' + esc(t.name) + '</b><span class="blurb">' + esc(t.blurb) + '</span></a>').join('');
+
+  // The Comic Maker's own store: IndexedDB 'police-pound-builder', object store 'kv', saved pages under 'comic:<id>'.
+  let db = null, urls = [];
+  const openDB = () => new Promise(res => {
+    try { const r = indexedDB.open('police-pound-builder', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => res(null); }
+    catch (e) { res(null); }
+  });
+  const comics = () => new Promise(res => {
+    const out = []; if (!db) return res(out);
+    const tx = db.transaction('kv', 'readonly'), rq = tx.objectStore('kv').openCursor();
+    rq.onsuccess = () => { const c = rq.result; if (!c) return; if (String(c.key).startsWith('comic:') && c.value) out.push(c.value); c.continue(); };
+    tx.oncomplete = () => res(out); tx.onerror = () => res(out);
+  });
+  const when = t => new Date(t).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
+  async function renderMine(){
+    urls.forEach(u => URL.revokeObjectURL(u)); urls = [];
+    const list = (await comics()).sort((a, b) => b.when - a.when);
+    const row = $('mineRow');
+    if (!list.length) {
+      row.innerHTML = '<div class="mine-empty"><img src="' + THEME.stickerPath('nettle', 'face-thinking', true) + '" alt="">'
+        + '<span>Nothing here yet. Build a page in the <a href="builder/">Comic Maker</a>, or start from a template, then press <b>Save to My comics</b>.</span></div>';
+      row.style.display = 'block';
+    } else {
+      row.style.display = '';
+      row.innerHTML = list.map(c => {
+        const u = c.thumb ? URL.createObjectURL(c.thumb) : ''; if (u) urls.push(u);
+        return '<article class="comic"><a class="open" href="builder/?comic=' + encodeURIComponent(c.id) + '" title="Open it in the Comic Maker">'
+          + '<span class="page-pic" style="' + (u ? 'background-image:url(' + u + ')' : '') + '"></span>'
+          + '<b>' + esc(c.title || 'My comic') + '</b><small>' + esc(when(c.when)) + '</small></a>'
+          + '<button type="button" class="rm" data-rm="' + esc(c.id) + '" aria-label="Delete ' + esc(c.title || 'this comic') + '">&times;</button></article>';
+      }).join('');
+    }
+    arrows();
+  }
+  function arrows(){
+    const r = $('mineRow'), more = r.scrollWidth > r.clientWidth + 4;
+    $('minePrev').disabled = !more || r.scrollLeft < 4;
+    $('mineNext').disabled = !more || r.scrollLeft + r.clientWidth > r.scrollWidth - 4;
+  }
+  $('mineRow').addEventListener('scroll', arrows, { passive: true });
+  addEventListener('resize', arrows);
+  $('minePrev').addEventListener('click', () => $('mineRow').scrollBy({ left: -$('mineRow').clientWidth, behavior: 'smooth' }));
+  $('mineNext').addEventListener('click', () => $('mineRow').scrollBy({ left: $('mineRow').clientWidth, behavior: 'smooth' }));
+  $('mineRow').addEventListener('click', e => {
+    const b = e.target.closest('[data-rm]'); if (!b || !db) return;
+    if (!confirm('Delete this comic from My comics? This can\u2019t be undone.')) return;
+    const tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').delete('comic:' + b.dataset.rm); tx.oncomplete = renderMine;
+  });
+  openDB().then(d => { db = d; renderMine(); });
 })();
 </script>
 <script type="module" src="pencil.js"></script>

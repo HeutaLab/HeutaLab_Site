@@ -63,6 +63,7 @@
   .tray{position:fixed;left:0;right:0;z-index:39;max-height:38vh;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px 18px;
     padding:12px 16px;background:#fff;border-top:3px solid var(--frame)}
   .tray[hidden]{display:none}
+  @media (min-width:881px){.dock,.tray{left:var(--side-w)}}   /* start after the sidebar */
   .tray p{margin:0 0 6px;font-family:var(--label);font-size:17px;color:var(--ink-dim)}
   .tray .w{display:flex;flex-wrap:wrap;gap:6px}
   .tray button{font-family:var(--brush);font-size:19px;line-height:1;padding:7px 11px 5px;background:var(--yellow);color:var(--ink);border:3px solid var(--frame);border-radius:12px;cursor:pointer}
@@ -231,34 +232,37 @@
 </head>
 <body id="top">
 <a class="skip" href="#main">Skip to the main part</a>
+<aside class="side">
+  <a class="brand" href="/" aria-label="HeutaLab home"><span>Heuta</span><span>Lab</span></a>
+  <nav aria-label="Paws &amp; Order">
+    <a href="../"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+    <a href="../#brief"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>Make a prompt</a>
+    <a href="../references/"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>Look closely</a>
+    <a href="../builder/" class="on" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg>Comic maker</a>
+    <a href="../#templates"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 10h18M10 10v10"/><path d="M15.5 13.2l.9 1.8 2 .3-1.5 1.4.4 2-1.8-1-1.8 1 .4-2-1.5-1.4 2-.3z"/></svg>Templates</a>
+    <a href="../#mycomics"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h10l4 4v12H5z"/><path d="M8 3v0M9 12h6M9 16h4"/><path d="M15 4v4h4"/></svg>My comics</a>
+    <a href="../#cast"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.3-7 8-7s7 2.5 8 7"/></svg>Meet the gang</a>
+    <a href="../#settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V9l5-3v15M8 21V4l8 3v14M16 21V11l5 2v8M2 21h20"/></svg>Places</a>
+    <a href="../#palettes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.3-1.2-1.6-1.2-2.8 0-1 .8-1.4 1.8-1.4H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg>Colours</a>
+    <a href="../#compare"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="8" height="16"/><rect x="13" y="4" width="8" height="16"/></svg>Check it</a>
+    <a href="../#grownups"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Grown-ups</a>
+  </nav>
+  <div class="side-foot"><svg viewBox="0 0 120 40" aria-hidden="true"><path d="M2 39V24h8v-9h7v24h6V9h10v30h5V19h8v20h6V4h4V1h2v3h4v35h5V17h9v22h6V23h7v16h5V13h9v26h4V27h6v12"/></svg>Paws &amp; Order<small>Part of HeutaLab</small></div>
+</aside>
 <div class="page">
 
-  <header class="hero mini frame">
+  <header class="hero mini">
     <div class="copy">
       <a class="kicker" href="../">Paws &amp; Order</a>
       <h1><span class="name">Comic Maker</span></h1>
       <p class="tag">Your pictures. Your words.<br>Build your page, panel by panel!</p>
     </div>
     <div class="art">
-      <div class="script" aria-hidden="true"><span>Your story.</span><span>Your panels!</span></div>
+      <img class="who" src="../img/stickers/mabel/gadget.webp" alt="" width="300" height="400">
+      <div class="burst" aria-hidden="true"><svg viewBox="0 0 200 200" aria-hidden="true"><path d="M100 4l17 40 38-24-6 44 44 2-34 28 36 26-44 6 12 42-40-20-23 38-17-40-38 24 6-44-44-2 34-28-36-26 44-6-12-42 40 20z" fill="#ffd23f" stroke="#141414" stroke-width="6" stroke-linejoin="round"/></svg><b>Your story. Your panels!</b></div>
     </div>
   </header>
 
-  <div class="layout">
-    <aside class="side">
-      <nav aria-label="Paws &amp; Order">
-        <a href="../" ><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
-        <a href="../#brief"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>Make a prompt</a>
-        <a href="../references/"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>Look closely</a>
-        <a href="./" class="on" aria-current="page"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg>Comic maker</a>
-        <a href="../#cast"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.3-7 8-7s7 2.5 8 7"/></svg>Meet the gang</a>
-        <a href="../#settings"><svg viewBox="0 0 24 24"><path d="M3 21V9l5-3v15M8 21V4l8 3v14M16 21V11l5 2v8M2 21h20"/></svg>Places</a>
-        <a href="../#palettes"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.3-1.2-1.6-1.2-2.8 0-1 .8-1.4 1.8-1.4H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg>Colours</a>
-        <a href="../#compare"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="16"/><rect x="13" y="4" width="8" height="16"/></svg>Check it</a>
-        <a href="../#grownups"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Grown-ups</a>
-      </nav>
-      <blockquote>&ldquo;The best bit is always in the last panel.&rdquo;<cite>PAWS &amp; ORDER</cite></blockquote>
-    </aside>
 
     <main id="main">
       <p class="sub-intro">Add the pictures you made with your AI tool (or borrow ours), put stickers of the gang on top if you like, then tell the story in words. Your pictures never leave this device, and your page saves itself in this browser as you go.</p>
@@ -287,7 +291,6 @@
         <button type="button" class="tips-again" id="tipsAgain">Show the tips again</button>
       </footer>
     </main>
-  </div>
 </div>
 
 <dialog class="lib" id="libDlg">
@@ -355,6 +358,7 @@ import THEME from '../theme.js';
   let past = [], future = [];
   function checkpoint(){
     past.push(JSON.stringify(S)); if (past.length > 100) past.shift();
+    delete S.pristine;   // a template has been changed, so it is worth keeping
     future = []; syncUndo();
   }
   function travel(from, to){
@@ -1069,7 +1073,9 @@ import THEME from '../theme.js';
   // Pictures stay stored while undo might bring them back; tidyImages() clears the unused ones on the next visit.
   async function tidyImages(){
     const keys = await idb('readonly', st => st.getAllKeys()) || [];
-    const used = new Set(S.panels.concat(S.prose).filter(p => p.img && p.img.id).map(p => 'img:' + p.img.id));
+    const comics = (await Promise.all(keys.filter(k => String(k).startsWith('comic:')).map(get))).filter(c => c && c.state);
+    const pages = [S].concat(comics.map(c => c.state)).flatMap(s => (s.panels || []).concat(s.prose || []));
+    const used = new Set(pages.filter(p => p && p.img && p.img.id).map(p => 'img:' + p.img.id));
     keys.filter(k => String(k).startsWith('img:') && !used.has(k)).forEach(del);
   }
 
@@ -1262,7 +1268,8 @@ import THEME from '../theme.js';
           + b('style', esc(styleInfo().name) + ' <span class="n">' + (STYLE_KEYS_ORDER.indexOf(S.style) + 1) + ' / ' + STYLE_KEYS_ORDER.length + '</span> &#9656;',
             { cls: 'stylebtn', title: 'Change the whole page layout' })
           + b('about', 'About this style', { cls: 'btn ghost small', on: cardOpen })) : '')
-        + g('page', b('png', 'Download PNG <span class="arr">&darr;</span>', { cls: 'btn small', id: 'pngBtn', off: exporting })
+        + g('page', (db ? b('savecomic', 'Save to My comics', { cls: 'btn small', title: 'Keep this page in My comics on the home page (on this device only)' }) : '')
+          + b('png', 'Download PNG <span class="arr">&darr;</span>', { cls: 'btn small', id: 'pngBtn', off: exporting })
           + b('print', 'Print or save as PDF', { cls: 'btn ghost small' }) + b('reset', 'Start again', { cls: 'btn ghost small' }));
     }
     h += '<div class="sg undo">' + done + b('undo', 'Undo', { cls: 'btn ghost small', id: 'undoBtn', off: !past.length, title: 'Undo (Ctrl/&#8984;+Z)' })
@@ -1354,9 +1361,12 @@ import THEME from '../theme.js';
       case 'png': sel = NONE(); render(); return exportPNG();
       case 'print': sel = NONE(); return render().then(() => print());
       case 'reset':
-        if (!confirm('Clear this page and start again? Your pictures will be removed from this browser.')) return;
-        S = fresh(); sel = NONE(); past = []; future = [];
-        save(); tidyImages(); return render();
+        if (!isBlank() && !confirm(db ? 'Start a new page? This one will be kept in My comics on the home page.' : 'Clear this page and start again? It can’t be saved in this browser, so it will be lost.')) return;
+        return saveComic(true).then(kept => {
+          S = fresh(); sel = NONE(); past = []; future = [];
+          save(); tidyImages(); note(kept ? 'Your last page is safe in My comics on the home page.' : ''); render();
+        });
+      case 'savecomic': sel = NONE(); render(); return saveComic(false);
     }
   });
   $('dock').addEventListener('input', e => {
@@ -1601,9 +1611,9 @@ import THEME from '../theme.js';
     ctx.restore();
   }
 
-  async function exportPNG(){
-    exporting = true; renderDock();
-    try {
+  // The page drawn on a canvas W pixels wide: the PNG download, and the thumbnail in My comics.
+  async function paint(){
+    {
       await Promise.all(['40px "Luckiest Guy"', '40px "Patrick Hand"', '40px Bangers'].concat(Object.values(FONTS).map(f => f.weight + ' 40px ' + f.family)).map(f => document.fonts.load(f).catch(() => {})));
       const list = panelList();
       const ims = await Promise.all(list.map(async p => loadImg(await urlFor(p.img))));
@@ -1656,6 +1666,14 @@ import THEME from '../theme.js';
         boxes.forEach((b, i) => S.panels[i].items.forEach(it => { if (it.type === 'sticker' && !it.clip) drawSticker(ctx, it, stkIms.get(stickerSrc(it)), b.x, b.y, b.w, b.h, lk.ink); }));
         boxes.forEach((b, i) => S.panels[i].items.forEach(it => { if (it.type !== 'sticker') drawItem(ctx, it, b.x, b.y, b.w, b.h); }));
       }
+      return c;
+    }
+  }
+
+  async function exportPNG(){
+    exporting = true; renderDock();
+    try {
+      const c = await paint();
       const blob = await new Promise(r => c.toBlob(r, 'image/png'));
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
@@ -1667,6 +1685,70 @@ import THEME from '../theme.js';
     } finally { exporting = false; renderDock(); }
   }
 
+  // ---------- My comics: finished pages kept in this browser (IndexedDB 'comic:<id>'), shown on the home page ----------
+  const isBlank = () => !S.title.trim() && S.panels.every(p => !p.img && !p.items.length) && S.prose.every(f => !f.img && !(f.text || '').trim());
+  async function thumbOf(){
+    const c = await paint(), t = document.createElement('canvas'), k = 360 / c.width;
+    t.width = 360; t.height = Math.round(c.height * k);
+    t.getContext('2d').drawImage(c, 0, 0, t.width, t.height);
+    return new Promise(r => t.toBlob(r, 'image/jpeg', 0.82));
+  }
+  // Saves the page (again, if it came from My comics) and says so unless quiet. False when there is nothing to keep.
+  async function saveComic(quiet){
+    if (!db || isBlank() || (quiet && S.pristine)) return false;   // an untouched template is not kept automatically
+    const id = S.comicId || (Date.now().toString(36) + Math.random().toString(36).slice(2, 6));
+    S.comicId = id;
+    let thumb = null;
+    try { thumb = await thumbOf(); } catch (e) {}
+    await put('comic:' + id, { id, title: S.title.trim(), when: Date.now(), state: JSON.parse(JSON.stringify(S)), thumb });
+    save();
+    if (!quiet) note('Saved in My comics. You will find it on the home page.');
+    return true;
+  }
+
+  // A starter page from THEME.templates: the layout, a place in each panel, the gang as stickers sized to fit, and words.
+  async function fromTemplate(t){
+    S = fresh();
+    S.level = t.level === 'advanced' ? 'advanced' : 'medium';
+    if (t.style && LOOKS[t.style]) S.style = t.style;
+    S.title = t.title || t.name;
+    S.pristine = true;
+    if (S.level === 'advanced') applyLetters(S.style);   // captions and balloons in the style's own lettering
+    const polys = look().panels;
+    for (let i = 0; i < polys.length; i++) {
+      const tp = t.panels[i]; if (!tp) continue;
+      const p = S.panels[i], b = bbox(polys[i]);
+      if (tp.place) p.img = { lib: THEME.refPath(tp.place) };
+      for (const [src, o] of tp.stickers || []) {
+        const s = STICKERS.get(src); if (!s) continue;
+        const im = await loadImg(THEME.stickerPath(s.dir, s.file, true));
+        const hc = (o.h || 0.6) * b.h, w = hc * (im ? im.width / im.height : 0.6) / b.w * 100, bottom = o.bottom != null ? o.bottom : 0.97;
+        const r1 = v => Math.round(v * 10) / 10;
+        p.items.push(Object.assign({ type: 'sticker', src, fw: true, w: r1(w), x: r1((o.cx != null ? o.cx : 0.5) * 100 - w / 2), y: r1((bottom * b.h - hc) / b.h * 100) },
+          o.clip ? { clip: true } : {}, o.flip ? { flip: true } : {}));
+      }
+      for (const [type, text, o] of tp.words || []) {
+        if (!DEFAULTS[type]) continue;
+        p.items.push(Object.assign({ type }, JSON.parse(JSON.stringify(DEFAULTS[type])), S.last && S.last[type], o, { text: text || '' }));
+      }
+    }
+  }
+
+  // builder/?template=key or builder/?comic=id (from the home page). The page on the desk goes to My comics first.
+  async function openFromLink(){
+    const q = new URLSearchParams(location.search), tkey = q.get('template'), cid = q.get('comic');
+    if (!tkey && !cid) return;
+    history.replaceState(null, '', location.pathname);   // so a reload keeps the page instead of starting it again
+    const comic = cid ? await get('comic:' + cid) : null, tpl = tkey ? (THEME.templates || []).find(t => t.key === tkey) : null;
+    if (!(comic && comic.state) && !tpl) return;
+    if (comic && S.comicId === cid) return;   // already on the desk
+    const kept = await saveComic(true);
+    if (comic) { S = Object.assign(fresh(), comic.state); S.comicId = cid; }
+    else await fromTemplate(tpl);
+    migrate(); past = []; future = []; sel = NONE(); save();
+    note(kept ? 'Your last page is safe in My comics on the home page.' : '');
+  }
+
   // ---------- start ----------
   (async () => {
     db = await openDB();
@@ -1674,6 +1756,7 @@ import THEME from '../theme.js';
     const saved = await get('state');
     if (saved && saved.panels) S = Object.assign(fresh(), saved);
     migrate();
+    await openFromLink();
     render();
     tidyImages();
     if (document.fonts) document.fonts.ready.then(fitTitle);   // measure the title again once its lettering has loaded
