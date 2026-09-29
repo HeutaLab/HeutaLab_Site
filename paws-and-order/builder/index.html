@@ -74,6 +74,10 @@
   .tray.stk .w button{width:74px;height:74px;padding:4px;background:#fff6dc;display:flex;align-items:center;justify-content:center}
   .tray.stk .w button.on{border-color:var(--blue);outline:2px solid var(--blue)}
   .tray.stk .w img{max-width:100%;max-height:100%;pointer-events:none}
+  .tray.stk .who{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .tray.stk .who button{flex:none;display:flex;align-items:center;gap:6px;font-family:var(--label);font-size:15px;line-height:1;padding:3px 12px 3px 3px;background:#fff;border-radius:999px}
+  .tray.stk .who button[aria-selected=true]{background:var(--yellow);border-color:var(--ink)}
+  .tray.stk .who img{width:34px;height:34px;object-fit:contain;pointer-events:none}
 
   /* one-time tips: each tool is introduced once, then the browser remembers */
   .tip{position:fixed;z-index:50;width:min(280px,calc(100vw - 24px));background:var(--yellow);color:#15120a;padding:12px 14px 10px;box-shadow:5px 5px 0 #111;border:3px solid #111;border-radius:14px;
@@ -1252,6 +1256,7 @@ import THEME from '../theme.js';
     const tray = $('sfxBank'), stk = $('stkTray'), cs = chosenSticker();
     tray.hidden = !bankOpen();
     stk.hidden = !tray.hidden || !stkTrayOpen();
+    if (!stk.hidden && stk.dataset.shows !== stkWho) { stk.innerHTML = stkTrayHTML(); stk.dataset.shows = stkWho; }   // not data-who: the tabs use that
     tray.style.bottom = stk.style.bottom = dock.offsetHeight + 'px';
     stk.querySelectorAll('[data-stk]').forEach(x => x.classList.toggle('on', !!cs && x.dataset.stk === cs.src));
     document.body.style.paddingBottom = (dock.offsetHeight + openTrayH() + 24) + 'px';
@@ -1315,7 +1320,7 @@ import THEME from '../theme.js';
         return render();
       }
       case 'about': cardOpen = !cardOpen; return render();
-      case 'swap': stkOpen = !stkOpen; sfxOpen = false; return render();
+      case 'swap': { const cs = chosenSticker(); if (cs) stkWho = cs.src.split('/')[0]; stkOpen = !stkOpen; sfxOpen = false; return render(); }
       case 'sflip': case 'sborder': case 'ssize': case 'sfront': {
         const cur = chosenSticker(); if (!cur) return;
         checkpoint();
@@ -1356,12 +1361,19 @@ import THEME from '../theme.js';
 
   // Stickers: a tray of the gang above the dock. A sticker goes into the chosen panel, or swaps the chosen sticker
   // (keeping its place, and its size in step with the new one's).
-  let stkOpen = false;
-  $('stkTray').innerHTML = THEME.stickers.map(g => '<div><p>' + esc(g.who) + '</p><div class="w">'
-      + g.items.map(([file, label]) => '<button type="button" data-stk="' + esc(g.dir + '/' + file) + '" title="' + esc(label) + '" aria-label="' + esc(g.who + ': ' + label) + '">'
-        + '<img src="' + THEME.stickerPath(g.dir, file, true) + '" alt="" loading="lazy"></button>').join('') + '</div></div>').join('')
-    + '<div class="own"><span>Tap a sticker to add it to the chosen panel. With a sticker chosen, tapping another one swaps it.</span></div>';
+  // One character at a time: a row of the gang to choose from, then that character's stickers.
+  let stkOpen = false, stkWho = THEME.stickers[0].dir;
+  function stkTrayHTML(){
+    const g = THEME.stickers.find(x => x.dir === stkWho) || THEME.stickers[0];
+    return '<div class="own"><span>Pick a character, then tap a sticker to add it to the chosen panel. With a sticker chosen, tapping another one swaps it.</span></div>'
+      + '<div class="who" role="tablist" aria-label="Characters">' + THEME.stickers.map(x => '<button type="button" role="tab" aria-selected="' + (x === g) + '" data-who="' + esc(x.dir) + '">'
+        + '<img src="' + THEME.stickerPath(x.dir, x.items[0][0], true) + '" alt="">' + esc(x.who) + '</button>').join('') + '</div>'
+      + '<div class="w" role="tabpanel" aria-label="' + esc(g.who) + '">' + g.items.map(([file, label]) => '<button type="button" data-stk="' + esc(g.dir + '/' + file) + '" title="' + esc(label) + '" aria-label="' + esc(g.who + ': ' + label) + '">'
+        + '<img src="' + THEME.stickerPath(g.dir, file, true) + '" alt=""></button>').join('') + '</div>';
+  }
   $('stkTray').addEventListener('click', e => {
+    const wb = e.target.closest('[data-who]');
+    if (wb) { stkWho = wb.dataset.who; return renderDock(); }
     const b = e.target.closest('[data-stk]'); if (!b || sel.p == null) return;
     markSeen('stickers');
     const cur = chosenSticker(), next = STICKERS.get(b.dataset.stk);
