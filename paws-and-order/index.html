@@ -1,0 +1,806 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2ec4f1">
+<title>Paws & Order: comic prompt helper</title>
+<meta name="description" content="Make your own comic with AI. Look closely, write a super picture prompt, meet the gang and build your story.">
+<link rel="stylesheet" href="pound.css">
+</head>
+<body id="top">
+<a class="skip" href="#main">Skip to the main part</a>
+
+<div class="page">
+
+  <header class="hero frame">
+    <div class="copy">
+      <h1><span class="name">Paws &amp; Order</span></h1>
+      <div class="verbs">MAKE<span>&middot;</span>PLAN<span>&middot;</span>DRAW<span>&middot;</span>TELL</div>
+      <p class="tag">Make your own comic with AI! Look closely, write a super prompt, then build your story.</p>
+    </div>
+    <div class="art">
+      <!-- Drop your own banner character in as img/hero.png and it appears here. -->
+      <img class="hero-char" src="img/hero.png" alt="" onerror="this.remove()">
+      <div class="script" aria-hidden="true"><span>Same town.</span><span>New case.</span><span>Your story!</span></div>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <aside class="side">
+      <nav aria-label="Paws &amp; Order">
+        <a href="#top" class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+        <a href="#brief"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>Make a prompt</a>
+        <a href="references/"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>Look closely</a>
+        <a href="builder/"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg>Comic maker</a>
+        <a href="#cast"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.3-7 8-7s7 2.5 8 7"/></svg>Meet the gang</a>
+        <a href="#settings"><svg viewBox="0 0 24 24"><path d="M3 21V9l5-3v15M8 21V4l8 3v14M16 21V11l5 2v8M2 21h20"/></svg>Places</a>
+        <a href="#palettes"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.3-1.2-1.6-1.2-2.8 0-1 .8-1.4 1.8-1.4H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg>Colours</a>
+        <a href="#compare"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="16"/><rect x="13" y="4" width="8" height="16"/></svg>Check it</a>
+        <a href="#grownups"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Grown-ups</a>
+      </nav>
+      <blockquote>&ldquo;Every great comic starts with a really good look.&rdquo;<cite>PAWS &amp; ORDER</cite></blockquote>
+    </aside>
+
+    <main id="main">
+
+      <section class="features">
+        <article class="feature learn frame">
+          <div class="pic"><img src="img/icons/look.svg" alt="" width="200" height="200"></div>
+          <div class="txt">
+            <h2>Learn to<br>look closely</h2>
+            <p>Look before you prompt. Say what you see, then the little details, then the world around it. The words you find become your prompt.</p>
+            <a class="btn" href="references/">Start looking <span class="arr">&rarr;</span></a>
+          </div>
+        </article>
+        <article class="feature scene frame">
+          <div class="txt">
+            <h2>Get your<br>prompt</h2>
+            <p>Describe your idea in plain English. The helper writes a prompt for Gemini, ChatGPT, Copilot or Nano Banana.</p>
+            <a class="btn" href="#brief">Open the helper <span class="arr">&rarr;</span></a>
+          </div>
+        </article>
+      </section>
+
+      <h2 class="rule">Get started</h2>
+      <section class="cards">
+        <article class="card frame">
+          <div class="ico"><img src="img/icons/look.svg" alt="" width="200" height="200"></div>
+          <div class="body"><h3>1. Look closely</h3><p>Study a picture: what you see, the details, then the world around it.</p>
+            <a class="btn" href="references/">Look <span class="arr">&rarr;</span></a></div>
+        </article>
+        <article class="card frame">
+          <div class="ico"><img src="img/icons/gang.svg" alt="" width="200" height="200"></div>
+          <div class="body"><h3>2. Meet the gang</h3><p>Pick your characters, or make some of your own.</p>
+            <a class="btn" href="#cast">The gang <span class="arr">&rarr;</span></a></div>
+        </article>
+        <article class="card frame">
+          <div class="ico"><img src="img/icons/place.svg" alt="" width="200" height="200"></div>
+          <div class="body"><h3>3. Pick a place</h3><p>One empty room, then two that fit together, then a whole street.</p>
+            <a class="btn" href="#settings">Places <span class="arr">&rarr;</span></a></div>
+        </article>
+        <article class="card frame">
+          <div class="ico"><img src="img/icons/comic.svg" alt="" width="200" height="200"></div>
+          <div class="body"><h3>4. Tell your story</h3><p>Drop your pictures into a comic page. Add captions and speech bubbles.</p>
+            <a class="btn" href="builder/">Comic maker <span class="arr">&rarr;</span></a></div>
+        </article>
+        <article class="card frame">
+          <div class="ico"><img src="img/icons/check.svg" alt="" width="200" height="200"></div>
+          <div class="body"><h3>5. Check &amp; fix</h3><p>Put your picture next to your prompt. What drifted, and which word fixes it?</p>
+            <a class="btn" href="#compare">Check it <span class="arr">&rarr;</span></a></div>
+        </article>
+      </section>
+
+      <h2 class="rule" id="cast">Meet the gang</h2>
+      <section class="cast-sec">
+        <p class="cast-intro">Pick who you&rsquo;re drawing, then use their <strong>look</strong> word for word in every prompt. It&rsquo;s what keeps them the same from picture to picture.</p>
+        <div class="cast-grid" id="castGrid"></div>
+        <div class="relations frame" id="relations" hidden></div>
+
+        <form class="addchar frame" id="addChar" autocomplete="off">
+          <h3>Make a character of your own</h3>
+          <p class="step-note first">Invent someone new. Describe them the same way every time and they will stay recognisable. Your characters stay on this device.</p>
+          <div class="row">
+            <div>
+              <label for="acName">Name</label>
+              <input type="text" id="acName" maxlength="30" placeholder="e.g. Captain Biscuit">
+              <label for="acPic">Picture <small>(optional)</small></label>
+              <div class="pickpic"><img id="acPreview" src="img/cast/slot.svg" alt="" width="74" height="74"><input type="file" id="acPic" accept="image/*"></div>
+            </div>
+            <div>
+              <label for="acLook">How do they look? <small>(at least 20 characters)</small></label>
+              <textarea id="acLook" maxlength="500" placeholder="e.g. a tall skinny heron in a yellow raincoat, big round glasses, one bent feather on top of her head, always looking surprised"></textarea>
+              <div class="count"><span id="acCount">0</span>/500</div>
+            </div>
+          </div>
+          <button type="submit" class="btn" style="margin-top:12px">Add to the gang <span class="arr">+</span></button>
+          <div class="error" id="acError" style="display:none"></div>
+        </form>
+      </section>
+
+      <h2 class="rule">Three levels, two subjects</h2>
+      <section class="tiers">
+        <article class="tier-panel frame" id="characters">
+          <h3>Characters</h3>
+          <p class="lesson"><strong>Tip</strong>Ask for just &ldquo;a police officer for a comic&rdquo; and image tools often give you a shiny, realistic picture. Add the style in words (hand-drawn, thick wobbly outlines, flat bright colours) and it flips to a real comic look.</p>
+          <div class="tier"><b>Level 1</b><p>One character portrait. Plain background, one pose, one face, like a character reference sheet.</p></div>
+          <div class="tier"><b>Level 2</b><p>The same character in a place. A shared paragraph describes them, and you copy it word for word.</p></div>
+          <div class="tier"><b>Level 3</b><p>A story of three or more pictures. Plan the shots with an AI partner <em>before</em> you make anything.</p></div>
+        </article>
+        <article class="tier-panel frame" id="settings">
+          <h3>Places</h3>
+          <p class="lesson"><strong>Tip</strong>Ask for &ldquo;a police station office&rdquo; and some tools fill it with people, speech bubbles and a whole scene. For an empty room, say so: no characters, no words, no speech bubbles, no captions.</p>
+          <div class="tier"><b>Level 1</b><p>One empty room, as a wide shot.</p></div>
+          <div class="tier"><b>Level 2</b><p>Two rooms that must feel like one building. Copy the shared paragraph exactly, and give each room its own layout line.</p></div>
+          <div class="tier"><b>Level 3</b><p>A place sheet: several shots of one street with the same time of day, weather and colours.</p></div>
+        </article>
+      </section>
+
+      <h2 class="rule" id="palettes">Pick your colours</h2>
+      <section class="palettes frame">
+        <p class="pal-intro">Choose a colour family and put it in <em>every</em> prompt. End the line with <q>no other colours</q>. When colours are not pinned down, tools drift. Tap a card to pick it in the helper below.</p>
+        <div class="pal-grid" id="palGrid"></div>
+      </section>
+
+      <h2 class="rule" id="brief">The prompt helper</h2>
+      <section class="desk frame">
+        <div class="desk-head">
+          <div>
+            <h2>Get your prompt</h2>
+            <p class="intro">Pick your tool, your subject and your level. Look closely at your picture and write what you see. Then tell the helper your idea, and it will write a prompt you can copy.</p>
+          </div>
+        </div>
+        <p class="notice warn" id="setupNotice" hidden><b>Not switched on</b>The helper needs a grown-up to set it up first. <a href="#grownups">Grown-ups: set up the helper</a>.</p>
+        <ol class="levels" id="levelStrip" aria-label="Levels"></ol>
+
+        <div class="step">
+          <h4>Image tool</h4>
+          <div class="pillrow" id="platformRow"></div>
+        </div>
+        <div class="step">
+          <h4>Subject</h4>
+          <div class="pillrow" id="subjectRow">
+            <button class="pill" data-val="character">Character</button>
+            <button class="pill" data-val="setting">Place</button>
+          </div>
+        </div>
+        <div class="step">
+          <h4>Level</h4>
+          <div class="pillrow" id="tierRow">
+            <button class="pill" data-val="basic">Level 1<small>Doodler</small></button>
+            <button class="pill" data-val="medium">Level 2<small>Sketcher</small></button>
+            <button class="pill" data-val="advanced">Level 3<small>Storyteller</small></button>
+          </div>
+          <p class="level-intro" id="levelIntro" hidden aria-live="polite"></p>
+        </div>
+        <div class="step" id="whoStep" hidden>
+          <h4>Who?</h4>
+          <div class="pillrow" id="castRow"></div>
+          <p class="step-note" id="whoNote"></p>
+        </div>
+        <div class="step">
+          <h4>Colours</h4>
+          <div class="pillrow" id="paletteRow"></div>
+        </div>
+        <div class="step">
+          <h4>Your own description</h4>
+          <p class="handoff" id="handoffNote" hidden>Your description from Look Closely is in the box. Read it through, then say below what you want to make.</p>
+          <p class="step-note first">Look at your picture before you ask for anything. Write what you see, then the details, then the world around it. The helper reads this before it writes your prompt.</p>
+          <textarea id="attempt" maxlength="1500" placeholder="e.g. &ldquo;A round penguin in a blue cap, holding up a letter and smiling. A red bag across its tummy with a gold buckle. Morning, a sunny street, flat bright colours.&rdquo;"></textarea>
+          <div class="count" id="attemptCount" aria-live="polite">0 words, 10 to go</div>
+        </div>
+        <div class="step">
+          <h4>Your idea</h4>
+          <textarea id="idea" maxlength="800" placeholder="Tell the helper what you&rsquo;re picturing, in your own words. e.g. &ldquo;My penguin postie slipping on a banana skin outside the bakery&rdquo;"></textarea>
+          <div class="count"><span id="ideaCount">0</span>/800</div>
+          <p class="step-note">Don&rsquo;t type real names, your school or where you live. Keep it friendly and silly.</p>
+          <button class="go" id="goBtn" disabled>Get my prompt</button>
+          <div class="error" id="errorBox" style="display:none" role="alert"></div>
+          <div class="gate" id="gateBox" hidden aria-live="polite">
+            <b>Before the prompt: a question or two</b>
+            <ul id="gateQs"></ul>
+            <p>Add to your description if you like, then send it again. Or send it as it is: this time the helper writes your prompt either way.</p>
+          </div>
+        </div>
+
+        <div class="result" id="result">
+          <h3>Your prompt</h3>
+          <p class="friendly" id="friendlyNote" hidden><b>A note from the helper</b><span id="friendlyText"></span></p>
+          <p class="stock" id="stockNote" hidden><b>A starter prompt</b>The helper could not answer in time, so this is a starter prompt, not one written for your idea. Make it yours: swap in your own words before you copy it.</p>
+          <div class="pair">
+            <div class="yours"><div class="label" id="attemptLabel">Your description</div><p id="attemptEcho"></p></div>
+            <div class="theirs">
+              <div id="anchorBlock" style="display:none"></div>
+              <div id="promptBlocks"></div>
+            </div>
+          </div>
+          <p class="note"><strong>Why this works</strong><span id="whyText"></span></p>
+          <p class="note"><strong>On another tool</strong><span id="platformText"></span></p>
+          <p class="note"><strong>Watch for</strong><span id="watchText"></span></p>
+        </div>
+      </section>
+
+      <h2 class="rule" id="compare">Check &amp; fix</h2>
+      <section class="compare">
+        <div class="frame"><b>1</b><h4>Aim</h4><p>Pick the picture you&rsquo;re aiming for.</p></div>
+        <div class="frame"><b>2</b><h4>Prompt</h4><p>Paste the exact words you used.</p></div>
+        <div class="frame"><b>3</b><h4>Result</h4><p>Keep what came back, even the misses.</p></div>
+        <div class="frame"><b>4</b><h4>Compare</h4><p>Style, colours, people, words, light: what drifted?</p></div>
+        <div class="frame"><b>5</b><h4>Why</h4><p>Which word was missing, or pulling the wrong way?</p></div>
+        <div class="frame"><b>6</b><h4>Change</h4><p>Change one thing. Try again.</p></div>
+      </section>
+
+      <section class="desk frame check" id="check">
+        <div class="desk-head">
+          <div>
+            <h2>Check it</h2>
+            <p class="intro">The helper can&rsquo;t see your picture, but your image tool can. Ask it what it sees, paste that here, and the helper puts it next to what you asked for.</p>
+          </div>
+        </div>
+        <div class="ask">
+          <b>Ask your tool</b>
+          <p>Give it the picture it made, and only the picture, and ask:</p>
+          <p class="ask-line"><q id="askText">Describe only what you see in this image, as a prompt that would recreate it.</q>
+            <button type="button" class="btn ghost small" id="askCopy">Copy</button></p>
+          <p class="step-note">Don&rsquo;t paste your prompt into that request, or it will just hand your own words back.</p>
+        </div>
+        <div class="step">
+          <h4>The prompt you used</h4>
+          <p class="step-note first" id="cmpPromptNote">Filled in from your last prompt. Change it if you used something else.</p>
+          <textarea id="cmpPrompt" maxlength="3000" placeholder="Paste the exact prompt you gave your image tool."></textarea>
+        </div>
+        <div class="step">
+          <h4>What your tool saw</h4>
+          <textarea id="cmpDesc" maxlength="3000" placeholder="Paste your tool&rsquo;s description of the picture it made."></textarea>
+        </div>
+        <div class="step" id="cmpRefStep" hidden>
+          <h4>What it saw in your reference <small>optional</small></h4>
+          <p class="step-note first">Level 3: ask the same question about the picture you were aiming for. The gap between the two descriptions is the gap you are closing.</p>
+          <textarea id="cmpRef" maxlength="3000" placeholder="Paste your tool&rsquo;s description of the reference picture."></textarea>
+        </div>
+        <button class="go" id="cmpBtn" disabled>Compare</button>
+        <div class="error" id="cmpError" style="display:none" role="alert"></div>
+        <div class="result" id="cmpResult" aria-live="polite"></div>
+      </section>
+
+      <h2 class="rule" id="grownups">Grown-ups</h2>
+      <section class="setup frame">
+        <h3>Set up the helper</h3>
+        <p class="sub-intro">The prompt helper uses an AI service. You choose the service and use <strong>your own key</strong>, so nothing goes through anyone else&rsquo;s account. The key stays in this browser and is only ever sent to the service you pick.</p>
+        <div class="cols">
+          <form id="setupForm" autocomplete="off">
+            <div class="field">
+              <label for="sProvider">AI service</label>
+              <select id="sProvider"></select>
+            </div>
+            <div class="field" id="baseField" hidden>
+              <label for="sBase">Address of the service</label>
+              <input type="url" id="sBase" placeholder="http://localhost:1234/v1">
+              <p class="hint">Anything that speaks the OpenAI style of chat, such as LM Studio or Ollama on this computer. It must allow requests from a web page (look for a &ldquo;CORS&rdquo; setting).</p>
+            </div>
+            <div class="field">
+              <label for="sKey" id="sKeyLabel">API key</label>
+              <input type="password" id="sKey" autocomplete="off" spellcheck="false">
+              <p class="hint" id="sKeyHint"></p>
+            </div>
+            <div class="field">
+              <label for="sModel">Model <small>(leave empty for the suggested one)</small></label>
+              <input type="text" id="sModel" list="sModels" spellcheck="false">
+              <datalist id="sModels"></datalist>
+            </div>
+            <div class="field">
+              <label for="sLevel">Highest level children can use</label>
+              <select id="sLevel">
+                <option value="1">Level 1 only (Doodler)</option>
+                <option value="2">Up to Level 2 (Sketcher)</option>
+                <option value="3">All three levels (Storyteller)</option>
+              </select>
+              <p class="hint">Raise it as the class is ready. This is set for this browser only.</p>
+            </div>
+            <label class="check-row"><input type="checkbox" id="sRemember"> <span>Remember the key on this device. <span class="hint">Leave this off on shared computers: the key is then forgotten when the tab closes.</span></span></label>
+            <div class="btns">
+              <button type="submit" class="btn">Save</button>
+              <button type="button" class="btn ghost" id="sTest">Test it</button>
+              <button type="button" class="btn ghost" id="sForget">Forget the key</button>
+            </div>
+            <p class="result-line" id="sResult" aria-live="polite"></p>
+          </form>
+          <aside>
+            <h4>Good to know</h4>
+            <ul>
+              <li>Whatever a child types (their description, their idea, pasted text in the check) goes from this browser to the AI service you chose. Nothing is stored or seen by us. Check that service&rsquo;s rules for children&rsquo;s data.</li>
+              <li>Use a key with a low spending limit. Anyone who can open this browser&rsquo;s developer tools on this device can read a saved key.</li>
+              <li>The helper is told to keep everything friendly and to invent original characters, and a few adult words are blocked. It is a backstop: a grown-up should still be in the room.</li>
+              <li>It only writes <em>text</em> prompts. Most image tools ask users to be 13+ or use a school account, so a grown-up should run those.</li>
+            </ul>
+            <h4>Add your own pictures and gang</h4>
+            <ul>
+              <li>Characters: put a square picture in <code>img/cast/</code>, then fill in its entry in <code>theme.js</code>.</li>
+              <li>A banner character: save <code>img/hero.png</code>.</li>
+              <li>Colours, levels, wording and starter pictures are all in <code>theme.js</code>.</li>
+            </ul>
+          </aside>
+        </div>
+      </section>
+
+      <footer>
+        Everything here runs in your browser. The pictures on Look Closely and in the Comic Maker were drawn for this site.
+        The prompt helper and the check send what you type to the AI service your grown-up chose in Grown-ups, and to nobody else. Nothing you type is kept by this site.
+        Part of <a href="/">HeutaLab</a>.
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<noscript><p style="max-width:40rem;margin:2rem auto;padding:0 1rem">This site needs JavaScript to work.</p></noscript>
+
+<script type="module">
+import THEME from './theme.js';
+import { words } from './copycheck.js';
+import * as AI from './ai.js';
+
+(function(){
+  const $ = id => document.getElementById(id);
+  const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const TIER_LEVEL = { basic:1, medium:2, advanced:3 };
+  const ATTEMPT_MIN = AI.ATTEMPT_MIN_WORDS;
+  const state = { platform:null, subject:null, palette:THEME.defaultPalette, tier:null, cast:[] };
+
+  // Browser storage can be missing or blocked; the page works without it.
+  const store = {
+    get(k){ try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v){ try { localStorage.setItem(k, v); return true; } catch (e) { return false; } },
+    del(k){ try { localStorage.removeItem(k); } catch (e) {} },
+  };
+  const wordsIn = t => words(t).length;   // the same counter ai.js uses
+
+  // ---- the gang: the site's own slots plus characters made in this browser ----
+  const CAST_KEY = 'police_pound_cast_v1';
+  let custom = [];
+  try { custom = (JSON.parse(store.get(CAST_KEY) || '[]') || []).filter(c => c && c.id && c.name && c.look).slice(0, 8); } catch (e) {}
+  const castList = () => THEME.cast.concat(custom.map(c => Object.assign({ role: 'My character', tag: 'Made by me', story: '', short: c.name.split(' ')[0], custom: true }, c)));
+  const usableCast = () => castList().filter(c => !c.placeholder && c.look);
+  const picOf = c => c.custom ? (c.img || THEME.castPlaceholder) : (c.placeholder ? THEME.castPlaceholder : THEME.castFile(c.file));
+  const castById = id => castList().find(c => c.id === id);
+
+  function renderCast(){
+    $('castGrid').innerHTML = castList().map(c => {
+      const empty = !!c.placeholder;
+      return '<article class="case frame' + (empty ? ' empty' : '') + '" id="cast-' + esc(c.id) + '"><div class="pic"><img src="' + esc(picOf(c)) + '" alt="' + (empty ? '' : esc(c.name)) + '" loading="lazy"'
+        + ' onerror="this.onerror=null;this.src=\'' + esc(THEME.castPlaceholder) + '\'"></div>'
+        + '<div class="case-body"><span class="case-tag">' + esc(c.role) + ' &middot; ' + esc(String(c.tag || '').toLowerCase()) + '</span><h3>' + esc(c.name) + '</h3>'
+        + (c.story ? '<p>' + esc(c.story) + '</p>' : '')
+        + (c.arc ? '<p class="arc"><b>Their face changes</b>' + c.arc.map(esc).join(' &rarr; ') + '</p>' : '')
+        + (empty ? '' : '<div class="look"><b>Their look, every time</b><span>' + esc(c.look) + '</span></div>'
+          + '<div class="case-btns"><button type="button" class="btn small" data-brief="' + esc(c.id) + '">Use this character <span class="arr">&rarr;</span></button>'
+          + '<button type="button" class="btn ghost small" data-copylook="' + esc(c.id) + '">Copy look</button>'
+          + (c.custom ? '<button type="button" class="btn ghost small" data-remove="' + esc(c.id) + '">Remove</button>' : '') + '</div>')
+        + '</div></article>';
+    }).join('');
+    const rels = (THEME.relations || []).filter(([a, , b]) => castById(a) && castById(b));
+    $('relations').hidden = !rels.length;
+    $('relations').innerHTML = rels.length ? '<b>Who is who</b>' + rels.map(([a, verb, b]) =>
+      '<span class="rel"><em>' + esc(castById(a).name) + '</em> ' + esc(verb) + ' <em>' + esc(castById(b).name) + '</em></span>').join('') : '';
+    renderWho();
+  }
+  function renderWho(){
+    const list = usableCast();
+    $('castRow').innerHTML = list.length
+      ? list.map(c => '<button class="pill' + (state.cast.includes(c.id) ? ' active' : '') + '" data-val="' + esc(c.id) + '">' + esc(c.short || c.name) + '<small>' + esc(String(c.role || '').replace(/^The /, '').toLowerCase()) + '</small></button>').join('')
+      : '<span class="step-note" style="margin:0">No characters yet. Make one in <a href="#cast">Meet the gang</a>, or just describe one in your idea.</span>';
+    syncWho();
+  }
+  const maxCast = () => state.tier === 'advanced' ? 2 : 1;
+  function syncWho(){
+    $('whoStep').hidden = state.subject !== 'character';
+    state.cast = state.cast.filter(id => usableCast().some(c => c.id === id)).slice(-maxCast());
+    document.querySelectorAll('#castRow .pill').forEach(b => b.classList.toggle('active', state.cast.includes(b.dataset.val)));
+    $('whoNote').textContent = usableCast().length ? (maxCast() === 2 ? 'Pick up to two for a Level 3 story.' : 'Pick one.') + ' Leave it blank to describe a character of your own in your idea.' : '';
+  }
+  $('castRow').addEventListener('click', e => {
+    const b = e.target.closest('.pill'); if (!b) return;
+    const id = b.dataset.val;
+    state.cast = state.cast.includes(id) ? state.cast.filter(x => x !== id) : state.cast.concat(id);
+    syncWho();
+  });
+  $('castGrid').addEventListener('click', e => {
+    const brief = e.target.closest('[data-brief]'), copy = e.target.closest('[data-copylook]'), rem = e.target.closest('[data-remove]');
+    if (brief) {
+      document.querySelector('#subjectRow [data-val="character"]').click();
+      state.cast = [brief.dataset.brief]; syncWho();
+      $('brief').scrollIntoView({behavior:'smooth'});
+    }
+    if (copy) {
+      const c = castById(copy.dataset.copylook);
+      navigator.clipboard.writeText(c.look).then(() => {
+        const old = copy.textContent; copy.textContent = 'Copied'; setTimeout(() => copy.textContent = old, 1200);
+      }).catch(() => {});
+    }
+    if (rem && confirm('Remove this character from this device?')) {
+      custom = custom.filter(c => c.id !== rem.dataset.remove);
+      store.set(CAST_KEY, JSON.stringify(custom));
+      renderCast();
+    }
+  });
+
+  // ---- making a character in the browser ----
+  let acImg = '';
+  const acLook = $('acLook');
+  acLook.addEventListener('input', () => { $('acCount').textContent = acLook.value.length; });
+  async function shrinkToData(file){
+    const bmp = await createImageBitmap(file);
+    const k = Math.min(1, 560 / Math.max(bmp.width, bmp.height));
+    const c = document.createElement('canvas'); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+    c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', 0.85);
+  }
+  $('acPic').addEventListener('change', async e => {
+    const f = e.target.files && e.target.files[0]; acImg = '';
+    if (!f) { $('acPreview').src = THEME.castPlaceholder; return; }
+    try { acImg = await shrinkToData(f); $('acPreview').src = acImg; } catch (err) { $('acPreview').src = THEME.castPlaceholder; }
+  });
+  $('addChar').addEventListener('submit', e => {
+    e.preventDefault();
+    const err = $('acError'), name = $('acName').value.trim(), look = acLook.value.trim();
+    const fail = m => { err.textContent = m; err.style.display = 'block'; };
+    err.style.display = 'none';
+    if (name.length < 2) return fail('Give your character a name.');
+    if (look.length < 20) return fail('Say a bit more about how they look (at least 20 characters).');
+    if (AI.unfriendly(name + ' ' + look)) return fail('That has a word we do not use here. Try a friendlier version.');
+    if (custom.length >= 8) return fail('That is enough characters for now. Remove one first.');
+    const c = { id: 'mine-' + Date.now().toString(36), name, look, img: acImg };
+    const next = custom.concat(c);
+    if (!store.set(CAST_KEY, JSON.stringify(next))) return fail('This browser would not save it. The picture may be too big, or saving is switched off.');
+    custom = next; e.target.reset(); acImg = ''; $('acPreview').src = THEME.castPlaceholder; $('acCount').textContent = '0';
+    renderCast();
+  });
+
+  // ---- built from theme.js: palettes and their pills ----
+  $('platformRow').innerHTML = THEME.platforms.map(p => '<button class="pill" data-val="' + esc(p.id) + '">' + esc(p.label) + '</button>').join('');
+  $('palGrid').innerHTML = Object.entries(THEME.palettes).map(([id, p]) =>
+    '<figure data-pal="' + esc(id) + '" tabindex="0" role="button" aria-label="Pick ' + esc(p.label) + '"><div class="bars">' + p.colours.map(c => '<span style="background:' + c + '"></span>').join('')
+    + '</div><figcaption><b>' + esc(p.label) + '</b>' + esc(p.note) + '</figcaption></figure>').join('');
+  $('paletteRow').innerHTML = Object.entries(THEME.palettes).map(([id, p]) =>
+    '<button class="pill' + (id === state.palette ? ' active' : '') + '" data-val="' + esc(id) + '"><i class="dot" style="background:' + p.colours[0] + '"></i>' + esc(p.label) + '</button>').join('');
+
+  // ---- levels: a grown-up sets the highest one ----
+  const levelStrip = $('levelStrip'), levelIntro = $('levelIntro');
+  let level = AI.loadSettings().maxLevel;
+  let pendingTier = null;
+  const forSubject = g => (state.subject === 'setting' && g.setting) ? g.setting : g;
+  function renderStrip(){
+    levelStrip.innerHTML = THEME.game.map(g =>
+      '<li class="' + (g.level <= level ? 'open' : 'locked') + '"><b>' + g.level + '</b><span><strong>' + esc(g.name) + '</strong>'
+      + esc(forSubject(g).task) + '</span><i>' + (g.level <= level ? 'open' : 'locked') + '</i></li>').join('');
+  }
+  function applyLevel(n){
+    level = n;
+    renderStrip();
+    document.querySelectorAll('#tierRow .pill').forEach(b => {
+      const locked = TIER_LEVEL[b.dataset.val] > level;
+      b.classList.toggle('locked', locked);
+      b.setAttribute('aria-disabled', String(locked));
+      b.title = locked ? 'Locked until your teacher opens it' : '';
+      if (locked && b.classList.contains('active')) { b.classList.remove('active'); state.tier = null; syncTier(); }
+    });
+    $('cmpRefStep').hidden = level < 3;
+    checkReady(); checkCompareReady();
+  }
+  function syncTier(){
+    const g = THEME.game.find(x => x.tier === state.tier);
+    levelIntro.hidden = !g;
+    levelIntro.textContent = g ? forSubject(g).intro : '';
+  }
+  function lockedHint(tier){
+    const g = THEME.game.find(x => x.tier === tier);
+    levelIntro.hidden = false;
+    levelIntro.textContent = g.name + ' is locked for now. Your teacher opens it when the class is ready.';
+  }
+
+  function wireRow(id, key){
+    $(id).querySelectorAll('.pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.classList.contains('locked')) { lockedHint(btn.dataset.val); return; }
+        $(id).querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state[key] = btn.dataset.val;
+        if (key === 'tier') { syncTier(); }
+        if (key === 'subject') { renderStrip(); syncTier(); }
+        syncWho(); checkReady();
+      });
+    });
+  }
+  wireRow('platformRow','platform');
+  wireRow('subjectRow','subject');
+  wireRow('paletteRow','palette');
+  wireRow('tierRow','tier');
+
+  // Clicking a palette card picks it at the helper.
+  document.querySelectorAll('.pal-grid figure').forEach(fig => {
+    const pick = () => { document.querySelector('#paletteRow [data-val="' + fig.dataset.pal + '"]').click(); $('brief').scrollIntoView({behavior:'smooth'}); };
+    fig.addEventListener('click', pick);
+    fig.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+  });
+
+  const idea = $('idea'), ideaCount = $('ideaCount');
+  idea.addEventListener('input', () => { ideaCount.textContent = idea.value.length; checkReady(); });
+
+  const attempt = $('attempt'), attemptCount = $('attemptCount');
+  function countAttempt(){
+    const n = wordsIn(attempt.value);
+    attemptCount.textContent = n + (n === 1 ? ' word' : ' words') + (n < ATTEMPT_MIN ? ', ' + (ATTEMPT_MIN - n) + ' to go' : '');
+    attemptCount.classList.toggle('ok', n >= ATTEMPT_MIN);
+  }
+  // A worked example brought over from Look Closely (Watch or Together) is sent labelled as one,
+  // so the helper doesn't treat it as the child's own looking.
+  let attemptIsExample = false;
+  const handoffNote = $('handoffNote');
+  const HANDOFF_NOTE = 'Your description from Look Closely is in the box. Read it through, then say below what you want to make.';
+  function setExample(on, text){
+    attemptIsExample = on;
+    if (on) { store.set('police_pound_example', text); handoffNote.textContent = 'This is the worked example from Look Closely, not your own looking. Swap in what you see in your own picture, or send it as a demo.'; }
+    else { store.del('police_pound_example'); if (!handoffNote.hidden) handoffNote.textContent = HANDOFF_NOTE; }
+  }
+  attempt.addEventListener('input', () => { if (attemptIsExample) setExample(false); countAttempt(); checkReady(); });
+
+  // Round 2 means the helper has asked its questions once; the next send gets a prompt regardless.
+  let round = 1, briefBusy = false;
+  const goBtn = $('goBtn');
+  const goLabel = () => round === 2 ? 'Send it back to the helper' : 'Get my prompt';
+  function checkReady(){
+    goBtn.disabled = briefBusy || !(state.platform && state.subject && state.tier && TIER_LEVEL[state.tier] <= level
+      && idea.value.trim().length >= 3 && wordsIn(attempt.value) >= ATTEMPT_MIN);
+  }
+
+  const errorBox = $('errorBox'), result = $('result');
+  function showError(msg){ errorBox.textContent = msg; errorBox.style.display = 'block'; }
+
+  function blockHTML(label, text, checkIndex){
+    return '<div class="block"><div class="label">' + label + '</div><pre>' + esc(text) + '</pre>'
+      + '<button class="copybtn" data-copy="' + encodeURIComponent(text) + '">Copy</button>'
+      + (checkIndex != null ? '<button type="button" class="checkbtn" data-check="' + checkIndex + '">Check the result &rarr;</button>' : '')
+      + '</div>';
+  }
+
+  function render(brief, fallback, attemptText){
+    const anchorBlock = $('anchorBlock'), promptBlocks = $('promptBlocks');
+    anchorBlock.style.display = 'none'; anchorBlock.innerHTML = ''; promptBlocks.innerHTML = '';
+    $('stockNote').hidden = !fallback;
+    $('friendlyNote').hidden = !brief.friendly_note;
+    $('friendlyText').textContent = brief.friendly_note || '';
+    $('attemptEcho').textContent = attemptText || attempt.value.trim();
+    $('attemptLabel').textContent = attemptIsExample ? 'Worked example (from Look Closely)' : 'Your description';
+
+    if (brief.anchor && brief.anchor.trim()) {
+      anchorBlock.style.display = 'block';
+      anchorBlock.innerHTML = blockHTML('Shared paragraph (copy it into every prompt below)', brief.anchor.trim());
+    }
+    brief.prompts.forEach((p, i) => { promptBlocks.innerHTML += blockHTML(brief.prompts.length > 1 ? 'Prompt ' + (i + 1) : 'Prompt', p, i); });
+    setLastBrief({ anchor: (brief.anchor || '').trim(), prompts: brief.prompts });
+
+    [[$('whyText'), brief.why_this_works], [$('platformText'), brief.platform_notes], [$('watchText'), brief.watch_for]].forEach(([el, text]) => {
+      el.textContent = (text || '').trim();
+      el.parentElement.hidden = !el.textContent;
+    });
+
+    result.classList.add('show');
+    result.querySelectorAll('.checkbtn').forEach(btn => btn.addEventListener('click', () => {
+      fillComparePrompt(Number(btn.dataset.check));
+      $('check').scrollIntoView({behavior:'smooth'});
+    }));
+    result.querySelectorAll('.copybtn').forEach(btn => btn.addEventListener('click', () => {
+      navigator.clipboard.writeText(decodeURIComponent(btn.dataset.copy)).then(() => {
+        btn.textContent = 'Copied'; setTimeout(() => btn.textContent = 'Copy', 1200);
+      }).catch(() => { btn.textContent = 'Select and copy'; setTimeout(() => btn.textContent = 'Copy', 2000); });
+    }));
+    result.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  const gateBox = $('gateBox');
+  goBtn.addEventListener('click', async () => {
+    if (briefBusy) return;
+    briefBusy = true;
+    errorBox.style.display = 'none';
+    result.classList.remove('show');
+    goBtn.disabled = true;
+    goBtn.innerHTML = '<span class="spinner"></span>' + (round === 1 ? 'Reading your description…' : 'Working…');
+    try {
+      const out = await AI.makeBrief(AI.loadSettings(), {
+        platform: state.platform, subject: state.subject, palette: state.palette, tier: state.tier,
+        cast: state.subject === 'character' ? state.cast.map(castById).filter(Boolean) : [],
+        attempt: attempt.value.trim(), example: attemptIsExample, idea: idea.value.trim(), round,
+      });
+      if (out.type === 'error') { showError(out.message); updateSetupNotice(); }
+      else if (out.type === 'gate') {
+        // The helper asks before it briefs: questions only, never a verdict.
+        $('gateQs').innerHTML = out.questions.map(q => '<li>' + esc(q) + '</li>').join('');
+        gateBox.hidden = false; round = 2;
+        gateBox.scrollIntoView({behavior:'smooth', block:'center'});
+      } else { gateBox.hidden = true; round = 1; render(out.brief, out.fallback, out.attempt); }
+    } catch (e) {
+      showError('Something went wrong. Check the internet and try again.');
+    } finally {
+      briefBusy = false;
+      goBtn.textContent = goLabel();
+      checkReady();
+    }
+  });
+
+  // ---- the compare check ----
+  const cmpPrompt = $('cmpPrompt'), cmpDesc = $('cmpDesc'), cmpRef = $('cmpRef');
+  const cmpBtn = $('cmpBtn'), cmpError = $('cmpError'), cmpResult = $('cmpResult'), cmpPromptNote = $('cmpPromptNote');
+  let lastBrief = null, autoFilled = false, cmpBusy = false;
+  try { lastBrief = JSON.parse(store.get('police_pound_lastbrief') || 'null'); } catch (e) {}
+
+  function setLastBrief(b){
+    lastBrief = b;
+    store.set('police_pound_lastbrief', JSON.stringify(b));
+    if (!cmpPrompt.value.trim() || autoFilled) fillComparePrompt(0);
+  }
+  const briefFill = i => (lastBrief.anchor ? lastBrief.anchor + '\n\n' : '') + lastBrief.prompts[i];
+  function fillComparePrompt(i){
+    if (!lastBrief || !lastBrief.prompts || !lastBrief.prompts[i]) return;
+    cmpPrompt.value = briefFill(i);
+    autoFilled = true;
+    cmpPromptNote.hidden = false;
+    cmpPromptNote.textContent = 'Filled in from your last prompt' + (lastBrief.prompts.length > 1 ? ' (prompt ' + (i + 1) + ')' : '') + '. Change it if you used something else.';
+    checkCompareReady();
+  }
+  cmpPromptNote.hidden = true;
+  if (lastBrief && Array.isArray(lastBrief.prompts)) {
+    if (!cmpPrompt.value.trim()) fillComparePrompt(0);
+    else {
+      // The browser restored the box: if it still holds one of the prompts, keep treating it as filled in.
+      const i = lastBrief.prompts.findIndex((p, k) => briefFill(k) === cmpPrompt.value);
+      if (i >= 0) fillComparePrompt(i);
+    }
+  }
+  cmpPrompt.addEventListener('input', () => { autoFilled = false; cmpPromptNote.hidden = true; checkCompareReady(); });
+  cmpDesc.addEventListener('input', checkCompareReady);
+  function checkCompareReady(){
+    cmpBtn.disabled = cmpBusy || !(wordsIn(cmpPrompt.value) >= 3 && wordsIn(cmpDesc.value) >= AI.DESCRIPTION_MIN_WORDS);
+  }
+  $('askCopy').addEventListener('click', e => {
+    navigator.clipboard.writeText($('askText').textContent).then(() => {
+      e.target.textContent = 'Copied'; setTimeout(() => e.target.textContent = 'Copy', 1200);
+    }).catch(() => {});
+  });
+
+  const listHTML = (title, items, cls) => '<div class="cmp-col ' + cls + '"><h4>' + title + '</h4>'
+    + (items.length ? '<ul>' + items.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul>' : '<p class="none">Nothing named.</p>') + '</div>';
+  function renderCompare(d){
+    let html = '';
+    if (d.type === 'copied') {
+      html = '<p class="copied"><b>Same words back</b>' + esc(d.message) + '</p>';
+    } else if (d.type === 'fallback') {
+      html = '<p class="stock"><b>Check it yourself</b>The helper could not read this in time. Check these one at a time:</p>'
+        + '<ul class="checklist">' + d.checklist.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul>'
+        + '<p class="closer">Change one thing and try again.</p>';
+    } else {
+      if (d.looks_copied) html += '<p class="copied"><b>Reads like a prompt</b>This sounds more like instructions than a description of a picture. Did your tool see the image?</p>';
+      html += '<div class="cmp-cols">'
+        + listHTML('Asked for, not seen', d.asked_and_missing, 'missing')
+        + listHTML('Turned up unasked', d.appeared_unasked, 'extra')
+        + '<div class="cmp-col words"><h4>Drift words</h4>' + (d.drift_words.length
+          ? '<p class="chips">' + d.drift_words.map(w => '<span>' + esc(w) + '</span>').join('') + '</p><p class="step-note">Words in the description that pull away from your prompt. Which word in your prompt could pull each one back?</p>'
+          : '<p class="none">No drift words named.</p>') + '</div>'
+        + '</div>'
+        + (d.questions.length ? '<div class="cmp-qs"><h4>Questions for you</h4><ul>' + d.questions.map(q => '<li>' + esc(q) + '</li>').join('') + '</ul></div>' : '')
+        + '<p class="closer">Change one thing and try again.</p>';
+    }
+    cmpResult.innerHTML = html;
+    cmpResult.classList.add('show');
+  }
+  cmpBtn.addEventListener('click', async () => {
+    if (cmpBusy) return;
+    cmpBusy = true;
+    cmpError.style.display = 'none';
+    cmpResult.classList.remove('show');
+    cmpBtn.disabled = true;
+    cmpBtn.innerHTML = '<span class="spinner"></span>Comparing…';
+    try {
+      const out = await AI.compare(AI.loadSettings(), {
+        prompt: cmpPrompt.value.trim(), description: cmpDesc.value.trim(),
+        reference: level >= 3 ? cmpRef.value.trim() : '', brief: lastBrief,
+      });
+      if (out.type === 'error') { cmpError.textContent = out.message; cmpError.style.display = 'block'; updateSetupNotice(); }
+      else renderCompare(out);
+    } catch (e) {
+      cmpError.textContent = 'Something went wrong. Check the internet and try again.';
+      cmpError.style.display = 'block';
+    } finally {
+      cmpBusy = false;
+      cmpBtn.textContent = 'Compare';
+      checkCompareReady();
+    }
+  });
+
+  // ---- Grown-ups: set up the helper ----
+  const sProvider = $('sProvider');
+  sProvider.innerHTML = Object.entries(AI.PROVIDERS).map(([id, p]) => '<option value="' + id + '">' + esc(p.label) + '</option>').join('');
+  function syncProviderFields(){
+    const p = AI.PROVIDERS[sProvider.value];
+    $('baseField').hidden = !p.needsBase;
+    $('sKeyLabel').textContent = p.keyLabel;
+    $('sKeyHint').textContent = p.keyHelp ? 'Make one at ' + p.keyHelp + '. Give it a low spending limit.' : 'Only needed if your service asks for one.';
+    $('sModel').placeholder = p.defaultModel ? p.defaultModel + ' (suggested)' : 'The model name your service uses';
+    $('sModels').innerHTML = p.models.map(m => '<option value="' + esc(m) + '">').join('');
+  }
+  function fillSettings(){
+    const s = AI.loadSettings();
+    sProvider.value = s.provider; syncProviderFields();
+    $('sBase').value = s.base; $('sKey').value = s.key; $('sModel').value = s.model;
+    $('sLevel').value = String(s.maxLevel); $('sRemember').checked = !!s.remember;
+  }
+  const readSettings = () => ({ provider: sProvider.value, base: $('sBase').value, key: $('sKey').value, model: $('sModel').value,
+    maxLevel: Number($('sLevel').value), remember: $('sRemember').checked });
+  function say(text, kind){ const el = $('sResult'); el.textContent = text; el.className = 'result-line' + (kind ? ' ' + kind : ''); }
+  function updateSetupNotice(){ $('setupNotice').hidden = AI.isReady(AI.loadSettings()); }
+  sProvider.addEventListener('change', syncProviderFields);
+  $('setupForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const s = readSettings();
+    const ok = AI.saveSettings(s);
+    applyLevel(Math.min(3, Math.max(1, s.maxLevel)));
+    updateSetupNotice();
+    if (!ok) say('Saved for now, but this browser would not keep it. You may need to enter the key again.', 'bad');
+    else say(AI.isReady(s) ? 'Saved. Press Test it to check the connection.' : 'Saved. The helper still needs ' + (AI.PROVIDERS[s.provider].needsBase && !s.base.trim() ? 'an address' : 'a key') + '.', AI.isReady(s) ? 'ok' : 'bad');
+  });
+  $('sTest').addEventListener('click', async () => {
+    const s = readSettings();
+    AI.saveSettings(s); updateSetupNotice();
+    const btn = $('sTest'); btn.disabled = true; say('Testing…');
+    const out = await AI.testConnection(Object.assign(AI.loadSettings(), s));
+    btn.disabled = false;
+    say(out.ok ? 'Working. The helper answered in ' + (out.ms / 1000).toFixed(1) + ' seconds.' : out.message, out.ok ? 'ok' : 'bad');
+  });
+  $('sForget').addEventListener('click', () => {
+    AI.forgetKey(); $('sKey').value = ''; $('sRemember').checked = false; updateSetupNotice();
+    say('The key has been forgotten on this device.', 'ok');
+  });
+
+  // ---- start ----
+  renderCast();
+  fillSettings();
+  renderStrip();
+  applyLevel(level);
+  updateSetupNotice();
+  countAttempt();
+  ideaCount.textContent = idea.value.length;
+
+  // A description sent over from Look Closely, so nobody types it twice.
+  let handoff = null;
+  try { handoff = JSON.parse(store.get('police_pound_handoff') || 'null'); store.del('police_pound_handoff'); } catch (e) {}
+  if (handoff && handoff.idea && Date.now() - (handoff.ts || 0) < 6 * 3600e3) {
+    attempt.value = String(handoff.idea).slice(0, 1500);
+    setExample(handoff.mode === 'demo' || handoff.mode === 'guide', attempt.value);
+    countAttempt();
+    ['subject', 'tier'].forEach(k => { const b = document.querySelector('#' + k + 'Row [data-val="' + handoff[k] + '"]'); if (b) b.click(); });
+    if (Array.isArray(handoff.cast)) { state.cast = handoff.cast.filter(id => castById(id)); syncWho(); }
+    handoffNote.hidden = false;
+    checkReady();
+  } else if (attempt.value && attempt.value === store.get('police_pound_example')) {
+    setExample(true, attempt.value);
+    handoffNote.hidden = false;
+  }
+
+  // Sidebar: highlight the section in view.
+  const links = [...document.querySelectorAll('.side nav a[href^="#"]')];
+  const targets = links.map(a => document.querySelector(a.getAttribute('href')));
+  function markNav(){
+    let current = 0, best = -Infinity;
+    targets.forEach((t, i) => {
+      const top = t ? t.getBoundingClientRect().top : Infinity;
+      if (top < 140 && top > best) { best = top; current = i; }
+    });
+    links.forEach((a, i) => a.classList.toggle('on', i === current));
+  }
+  addEventListener('scroll', markNav, { passive:true });
+  markNav();
+})();
+</script>
+<script type="module" src="pencil.js"></script>
+</body>
+</html>

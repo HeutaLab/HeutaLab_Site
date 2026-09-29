@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffd23f">
+<title>Look Closely: Paws & Order</title>
+<meta name="description" content="Look before you prompt: describe a picture at basic, medium or advanced level, then send your description to the prompt helper.">
+<link rel="stylesheet" href="../pound.css">
+<style>
+  .how{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+  .how button{all:unset;box-sizing:border-box;cursor:pointer;padding:14px 16px 16px;border:3px solid var(--frame);background:#fff;border-radius:16px 22px 14px 20px;font-size:18px;line-height:1.35;font-family:var(--serif);box-shadow:3px 3px 0 var(--frame)}
+  .how button:hover{background:var(--panel-2)}
+  .how button.on{background:var(--yellow)}
+  .how b{display:block;font-family:var(--brush);font-weight:400;color:var(--ink);font-size:26px;line-height:1;margin-bottom:6px}
+  .how button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+  .controls{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin-top:18px;padding:18px 20px}
+  .controls h4{font-family:var(--brush);font-weight:400;font-size:22px;margin:0 0 8px}
+  .stage{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);margin-top:18px;background:#fff}
+  .ref-fig{margin:0;background:var(--panel-2);border-right:3px solid var(--frame);display:flex;flex-direction:column}
+  .ref-fig .imgbox{flex:1;display:flex;align-items:center;justify-content:center;min-height:320px;padding:14px}
+  .ref-fig img{max-height:560px;width:auto;max-width:100%;object-fit:contain;border:3px solid var(--frame);border-radius:12px;background:#fff}
+  .ref-fig figcaption{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-top:3px solid var(--frame);font-family:var(--label);font-size:17px;color:var(--ink-dim)}
+  .shuffle{font-size:15px;padding:7px 12px}
+  .ref-qs{padding:22px 24px 24px}
+  .ref-qs h2{font-family:var(--brush);font-weight:400;font-size:clamp(28px,3vw,40px);margin:0;line-height:1;transform:rotate(-2deg);transform-origin:left}
+  .ref-qs .blurb{margin:12px 0 4px;font-size:19px}
+  .ref-qs .modehint{margin:0 0 14px;font-size:17px;color:var(--ink-dim)}
+  .qs{list-style:none;margin:0;padding:0}
+  .qs li{padding:10px 0;border-top:2px dashed var(--frame)}
+  .qs .q{display:block;font-family:var(--script);font-size:20px;margin-bottom:4px}
+  .qs .a{margin:0;font-size:19px;line-height:1.4}
+  .qs .reveal{background:#fff;border:2px dashed var(--frame);border-radius:999px;color:var(--ink);font-family:var(--label);font-size:16px;padding:4px 14px;cursor:pointer}
+  .qs .reveal:hover{background:var(--yellow)}
+  .qs input{width:100%;background:#fff;border:3px solid var(--frame);border-radius:12px;color:var(--ink);padding:8px 12px;font-family:var(--serif);font-size:19px}
+  .qs input:focus{outline:3px solid var(--blue)}
+  .revealall{margin-top:8px}
+  .castpick{margin-top:16px;padding-top:14px;border-top:2px dashed var(--frame)}
+  .castpick .q{display:block;font-family:var(--script);font-size:20px;margin-bottom:8px}
+  .castpick .pill{padding:6px 12px;font-size:16px}
+  .castag{color:var(--ink)}
+  .box{margin-top:18px;padding-top:16px;border-top:2px dashed var(--frame)}
+  .box label{display:block;font-family:var(--script);font-size:22px;margin-bottom:8px}
+  .box .rowbtns{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
+  .box .rebuild{background:none;border:0;color:var(--ink-dim);font-family:var(--label);font-size:16px;cursor:pointer;text-decoration:underline}
+  .btn.ghost{background:#fff;color:var(--ink)}
+  @media (max-width:1100px){.how{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:880px){.stage{grid-template-columns:minmax(0,1fr)}.ref-fig{border-right:0;border-bottom:3px solid var(--frame)}.ref-fig img{max-height:420px}}
+  @media (max-width:600px){.ref-qs{padding:20px 18px}.ref-fig .imgbox{min-height:220px;padding:10px}}
+</style>
+</head>
+<body id="top">
+<a class="skip" href="#main">Skip to the main part</a>
+<div class="page">
+
+  <header class="hero mini frame">
+    <div class="copy">
+      <a class="kicker" href="../">Paws &amp; Order</a>
+      <h1><span class="name">Look Closely</span></h1>
+      <p class="tag">Look first. Then prompt.<br>The words you find here become your prompt!</p>
+    </div>
+    <div class="art">
+      <div class="script" aria-hidden="true"><span>What do</span><span>you see?</span></div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="side">
+      <nav aria-label="Paws &amp; Order">
+        <a href="../" ><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+        <a href="../#brief"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>Make a prompt</a>
+        <a href="./" class="on" aria-current="page"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>Look closely</a>
+        <a href="../builder/"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg>Comic maker</a>
+        <a href="../#cast"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.3-7 8-7s7 2.5 8 7"/></svg>Meet the gang</a>
+        <a href="../#settings"><svg viewBox="0 0 24 24"><path d="M3 21V9l5-3v15M8 21V4l8 3v14M16 21V11l5 2v8M2 21h20"/></svg>Places</a>
+        <a href="../#palettes"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.3-1.2-1.6-1.2-2.8 0-1 .8-1.4 1.8-1.4H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg>Colours</a>
+        <a href="../#compare"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="16"/><rect x="13" y="4" width="8" height="16"/></svg>Check it</a>
+        <a href="../#grownups"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Grown-ups</a>
+      </nav>
+      <blockquote>&ldquo;Every picture is a clue. Ask it the right questions.&rdquo;<cite>PAWS &amp; ORDER</cite></blockquote>
+    </aside>
+
+    <main id="main">
+      <section class="how" aria-label="How this works" id="howRow"></section>
+
+      <section class="controls frame panel">
+        <div><h4>Level</h4><div class="pillrow" id="levelRow"></div></div>
+        <div><h4>Mode</h4><div class="pillrow" id="modeRow"></div></div>
+      </section>
+
+      <section class="stage frame" aria-live="polite">
+        <figure class="ref-fig">
+          <div class="imgbox"><img id="refImg" src="" alt=""></div>
+          <figcaption><span id="refCap"></span><button type="button" class="btn shuffle" id="shuffleBtn" hidden>Shuffle <span class="arr">&#x21bb;</span></button></figcaption>
+        </figure>
+        <div class="ref-qs">
+          <h2 id="lensTitle"></h2>
+          <p class="blurb" id="lensBlurb"></p>
+          <p class="modehint" id="modeHint"></p>
+          <ol class="qs" id="qs"></ol>
+          <button type="button" class="btn ghost revealall" id="revealAll" hidden>Reveal all</button>
+          <div class="castpick" id="castPick" hidden>
+            <span class="q">Could this be one of the gang?</span>
+            <div class="pillrow" id="castPickRow"></div>
+          </div>
+          <div class="box">
+            <label for="desc" id="descLabel">Your description</label>
+            <textarea id="desc" maxlength="800"></textarea>
+            <div class="count"><span id="descCount">0</span>/800</div>
+            <div class="rowbtns">
+              <button type="button" class="btn" id="sendBtn">Send to the prompt helper <span class="arr">&rarr;</span></button>
+              <button type="button" class="btn ghost" id="copyBtn">Copy</button>
+              <button type="button" class="rebuild" id="rebuildBtn" hidden>Rebuild from my answers</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        Every picture here was drawn for this site. Your answers stay in this browser. Sending to the prompt helper just carries them over to the next page.
+        Part of <a href="/">HeutaLab</a>.
+      </footer>
+    </main>
+  </div>
+</div>
+<script type="module">
+import THEME from '../theme.js';
+
+(function(){
+  const { levels: LEVELS, modes: MODES, refs: REFS } = THEME;
+  const MODE_IDS = Object.keys(MODES);          // demo, guide, create, explore
+  const castById = id => THEME.cast.find(c => c.id === id);
+
+  const state = { level: 'basic', mode: 'demo', exploreRef: null, revealed: {}, cast: {} };
+  const answers = {};          // your own answers, kept per picture and level
+  let manual = false;          // stop rebuilding the box once someone edits it by hand
+
+  const $ = id => document.getElementById(id);
+  const img = $('refImg'), cap = $('refCap'), qs = $('qs'), desc = $('desc');
+  const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+
+  // ---- controls built from the theme ----
+  $('howRow').innerHTML = MODE_IDS.map(m => '<button type="button" data-mode="' + m + '"><b>' + esc(MODES[m].label) + '</b>' + esc(MODES[m].card) + '</button>').join('');
+  $('modeRow').innerHTML = MODE_IDS.map(m => '<button class="pill" data-val="' + m + '">' + esc(MODES[m].label) + '<small>' + esc(MODES[m].sub.toLowerCase()) + '</small></button>').join('');
+  $('levelRow').innerHTML = Object.entries(LEVELS).map(([id, L]) => '<button class="pill" data-val="' + id + '">' + esc(L.name) + '<small>' + esc(L.short) + '</small></button>').join('');
+  $('castPickRow').innerHTML = THEME.cast.map(c => '<button class="pill" data-val="' + c.id + '">' + esc(c.short) + '<small>' + esc(c.role.replace(/^The /, '').toLowerCase()) + '</small></button>').join('');
+
+  function currentRef(){
+    const L = LEVELS[state.level];
+    if (state.mode === 'demo') return L.demo[0];
+    if (state.mode === 'guide') return L.guide[0];
+    if (state.mode === 'create') return L.create;
+    return state.exploreRef;
+  }
+  function modelAnswers(){
+    const L = LEVELS[state.level];
+    return state.mode === 'demo' ? L.demo[1] : state.mode === 'guide' ? L.guide[1] : null;
+  }
+  const key = () => currentRef() + '|' + state.level;
+  const isCharacter = () => REFS[currentRef()][1] === 'character';
+  // The cast member this picture is being read as: your pick, or the picture's own suggestion.
+  function pickedCast(){
+    const k = currentRef();
+    if (!isCharacter()) return null;
+    return k in state.cast ? state.cast[k] : (REFS[k][2] || null);
+  }
+
+  function assemble(){
+    const L = LEVELS[state.level], model = modelAnswers();
+    const mine = answers[key()] || {};
+    const lines = [];
+    L.qs.forEach(([id, , short]) => {
+      let a = '';
+      if (state.mode === 'demo') a = model[id];
+      else if (state.mode === 'guide') a = state.revealed[id] ? model[id] : '';
+      else a = (mine[id] || '').trim();
+      if (a) lines.push(short + ': ' + a);
+    });
+    if (!lines.length) return '';
+    const who = pickedCast();
+    const head = who ? castById(who).name + ', based on a reference picture.'
+      : (isCharacter() ? 'A character' : 'A setting') + ' based on a reference picture.';
+    return (head + '\n' + lines.join('\n')).slice(0, 800);
+  }
+
+  function setDesc(text){
+    desc.value = text;
+    $('descCount').textContent = desc.value.length;
+  }
+
+  function render(){
+    const L = LEVELS[state.level], ref = currentRef(), model = modelAnswers();
+    img.src = THEME.refPath(ref);
+    img.alt = REFS[ref][0];
+    const who = pickedCast();
+    cap.innerHTML = esc(L.name + ' · ' + MODES[state.mode].label)
+      + (REFS[ref][2] ? ' · <span class="castag">could be ' + esc(castById(REFS[ref][2]).name) + '</span>' : '');
+    $('shuffleBtn').hidden = state.mode !== 'explore';
+    $('lensTitle').textContent = L.lens;
+    $('lensBlurb').textContent = L.blurb;
+    $('modeHint').textContent = MODES[state.mode].hint;
+    $('revealAll').hidden = state.mode !== 'guide';
+
+    const mine = answers[key()] || (answers[key()] = {});
+    qs.innerHTML = L.qs.map(([id, q]) => {
+      let body;
+      if (state.mode === 'demo') body = '<p class="a">' + esc(model[id]) + '</p>';
+      else if (state.mode === 'guide') body = state.revealed[id]
+        ? '<p class="a">' + esc(model[id]) + '</p>'
+        : '<button type="button" class="reveal" data-id="' + id + '">Reveal</button>';
+      else body = '<input type="text" data-id="' + id + '" value="' + esc(mine[id] || '') + '" aria-label="' + esc(q) + '">';
+      return '<li><span class="q">' + esc(q) + '</span>' + body + '</li>';
+    }).join('');
+
+    // Only your own readings of a character picture ask which cast member it is.
+    $('castPick').hidden = !(isCharacter() && (state.mode === 'create' || state.mode === 'explore'));
+    document.querySelectorAll('#castPickRow .pill').forEach(b => b.classList.toggle('active', b.dataset.val === who));
+
+    $('descLabel').textContent = state.mode === 'demo' ? 'Put together, ready for the prompt helper'
+      : state.mode === 'guide' ? 'What the group has revealed so far' : 'Your description, ready for the prompt helper';
+    manual = false;
+    $('rebuildBtn').hidden = true;
+    setDesc(assemble());
+
+    document.querySelectorAll('#levelRow .pill').forEach(b => b.classList.toggle('active', b.dataset.val === state.level));
+    document.querySelectorAll('#modeRow .pill').forEach(b => b.classList.toggle('active', b.dataset.val === state.mode));
+    document.querySelectorAll('.how button').forEach(b => b.classList.toggle('on', b.dataset.mode === state.mode));
+  }
+
+  function shuffle(){
+    const all = Object.keys(REFS).filter(k => k !== state.exploreRef);
+    state.exploreRef = all[Math.floor(Math.random() * all.length)];
+  }
+
+  function setMode(m){
+    state.mode = m; state.revealed = {};
+    if (m === 'explore' && !state.exploreRef) shuffle();
+    render();
+  }
+
+  document.querySelectorAll('#levelRow .pill').forEach(b => b.addEventListener('click', () => { state.level = b.dataset.val; state.revealed = {}; render(); }));
+  document.querySelectorAll('#modeRow .pill').forEach(b => b.addEventListener('click', () => setMode(b.dataset.val)));
+  document.querySelectorAll('.how button').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+  $('shuffleBtn').addEventListener('click', () => { shuffle(); render(); });
+
+  $('castPickRow').addEventListener('click', e => {
+    const b = e.target.closest('.pill'); if (!b) return;
+    const k = currentRef();
+    state.cast[k] = pickedCast() === b.dataset.val ? '' : b.dataset.val;   // tap again to clear
+    render();
+  });
+
+  qs.addEventListener('click', e => {
+    const b = e.target.closest('.reveal');
+    if (!b) return;
+    state.revealed[b.dataset.id] = true;
+    render();
+  });
+  $('revealAll').addEventListener('click', () => {
+    LEVELS[state.level].qs.forEach(([id]) => state.revealed[id] = true);
+    render();
+  });
+  qs.addEventListener('input', e => {
+    const i = e.target.closest('input[data-id]');
+    if (!i) return;
+    answers[key()][i.dataset.id] = i.value;
+    if (!manual) setDesc(assemble());
+  });
+
+  desc.addEventListener('input', () => {
+    $('descCount').textContent = desc.value.length;
+    manual = true;
+    $('rebuildBtn').hidden = state.mode === 'demo' || state.mode === 'guide';
+  });
+  $('rebuildBtn').addEventListener('click', () => { manual = false; $('rebuildBtn').hidden = true; setDesc(assemble()); });
+
+  $('copyBtn').addEventListener('click', () => {
+    if (!desc.value.trim()) return;
+    navigator.clipboard.writeText(desc.value).then(() => {
+      const b = $('copyBtn'), old = b.textContent; b.textContent = 'Copied';
+      setTimeout(() => b.textContent = old, 1200);
+    }).catch(() => {});
+  });
+
+  $('sendBtn').addEventListener('click', () => {
+    const text = desc.value.trim();
+    if (!text) { desc.focus(); desc.placeholder = 'Answer a question or two first!'; return; }
+    const who = pickedCast();
+    try {
+      localStorage.setItem('police_pound_handoff', JSON.stringify({
+        idea: text, tier: state.level, subject: REFS[currentRef()][1], cast: who ? [who] : [], mode: state.mode, ts: Date.now(),
+      }));
+    } catch (e) {}
+    location.href = '../#brief';
+  });
+
+  render();
+})();
+</script>
+<script type="module" src="../pencil.js"></script>
+</body>
+</html>

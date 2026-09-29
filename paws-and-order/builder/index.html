@@ -1,0 +1,1520 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffd23f">
+<title>Comic Maker: Paws & Order</title>
+<meta name="description" content="Build your own comic page: add your pictures, then captions, speech balloons and sound effects.">
+<link rel="stylesheet" href="../pound.css">
+<style>
+  .tools{margin-top:0;padding:14px 18px}
+  .tools .grp{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+  .tools h4{font-family:var(--brush);font-weight:400;font-size:20px;color:var(--ink);margin:0 6px 0 0}
+  .tools .lvl-note{margin:8px 0 0;font-size:17px;color:var(--ink-dim)}
+  .tools .pill{padding:6px 14px;font-size:17px}
+  .btn.ghost{background:transparent;color:var(--ink);box-shadow:none;border:1px solid var(--frame)}
+  .btn.ghost:hover{border-color:var(--ink);color:var(--ink);background:transparent}
+  .btn.small{font-size:16px;padding:6px 14px}
+  .btn:disabled,.pill:disabled{opacity:.35;cursor:not-allowed}
+
+  .workbench{margin-top:18px;border:3px solid var(--frame);border-radius:18px 24px 16px 22px;background:
+    radial-gradient(rgba(0,0,0,.08) 1.2px,transparent 1.6px) 0 0/14px 14px,var(--panel-2)}
+  #bench{display:flex;justify-content:center;padding:22px 16px}
+
+  /* The dock: every tool lives along the bottom of the screen and changes with what is chosen
+     (the page, a panel, or a box). At the top it would shove the page down mid-tap, and it would scroll away. */
+  .dock{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px 18px;
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:#fff6dc;border-top:4px solid #111;box-shadow:0 -6px 0 rgba(0,0,0,.08)}
+  .dock .sg{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+  .dock .sg > b{font-family:var(--script);font-weight:400;font-size:17px;color:var(--ink);margin-right:4px;position:relative}
+  .dock .pill{padding:5px 12px;font-size:16px;position:relative}
+  .dock .sw{width:26px;height:26px;border-radius:50%;border:2px solid var(--frame);cursor:pointer;padding:0}
+  .dock .sw.active{outline:2px solid var(--blue);outline-offset:2px;border-color:#000}
+  .dock .what{font-family:var(--brush);color:var(--ink);font-size:20px;margin-right:2px}
+  .dock .more,.dock .note{font-size:16px;color:var(--ink-dim)}
+  .dock label.zoom{font-size:12.5px;font-style:italic;color:var(--ink-dim);display:flex;align-items:center;gap:6px}
+  .dock input[type=range]{accent-color:var(--ink);width:120px}
+  .dock .undo{margin-left:6px}
+  .stylebtn{display:inline-flex;align-items:center;gap:10px;background:var(--yellow);color:#15120a;border:3px solid #111;border-radius:999px;padding:5px 12px 4px 14px;cursor:pointer;position:relative;
+    font-family:var(--label);font-size:17px;box-shadow:3px 3px 0 #111}
+  .stylebtn .n{font-size:13px;background:#15120a;color:#ffd23f;border-radius:9px;padding:2px 7px;letter-spacing:.08em}
+
+  /* the note about a page style, shown when the style changes */
+  .scard{position:fixed;z-index:45;left:50%;transform:translateX(-50%);width:min(460px,calc(100vw - 24px));background:#fff;border:3px solid #111;border-radius:18px;
+    box-shadow:6px 6px 0 #111;padding:14px 16px 12px;animation:pop .3s ease-out}
+  .scard[hidden]{display:none}
+  .scard .era{font-family:var(--label);letter-spacing:.2em;text-transform:uppercase;color:var(--ink);font-size:11px}
+  .scard h3{font-family:var(--brush);font-weight:400;color:var(--ink);font-size:24px;line-height:1.05;margin:2px 0 8px;text-transform:uppercase}
+  .scard p{margin:0 0 10px;font-size:17px;color:var(--ink)}
+  .scard h4{font-family:var(--label);font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);font-size:11px;margin:10px 0 6px}
+  .scard .prompt{background:var(--panel-2);border:2px dashed var(--frame);border-radius:10px;padding:8px 10px;font-size:16px;color:var(--ink)}
+  .scard .row{display:flex;gap:8px;align-items:center;margin-top:10px}
+  .scard small{font-size:12px;color:var(--ink-dim)}
+  .scard .x{position:absolute;top:8px;right:10px;background:none;border:0;color:var(--ink-dim);font-size:22px;line-height:1;cursor:pointer}
+  @media (max-width:600px){.scard{max-height:55vh;overflow:auto}}
+  .new{position:absolute;top:-9px;right:-9px;background:var(--danger);color:#fff;font-family:var(--label);font-style:normal;font-size:9px;letter-spacing:.12em;
+    padding:2px 5px;border-radius:8px;line-height:1.2;pointer-events:none;animation:pop .5s ease-out}
+  .arrive{animation:arrive .4s ease-out both}
+  @keyframes arrive{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+
+  /* sound-effect words: a tray that opens just above the dock */
+  .tray{position:fixed;left:0;right:0;z-index:39;max-height:38vh;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px 18px;
+    padding:12px 16px;background:#fff;border-top:3px solid var(--frame)}
+  .tray[hidden]{display:none}
+  .tray p{margin:0 0 6px;font-family:var(--label);font-size:17px;color:var(--ink-dim)}
+  .tray .w{display:flex;flex-wrap:wrap;gap:6px}
+  .tray button{font-family:var(--brush);font-size:19px;line-height:1;padding:7px 11px 5px;background:var(--yellow);color:var(--ink);border:3px solid var(--frame);border-radius:12px;cursor:pointer}
+  .tray button:hover{border-color:var(--ink)}
+  .tray .own{grid-column:1/-1;order:-1;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--ink-dim)}
+  .tray .own button{font-family:var(--label);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+
+  /* one-time tips: each tool is introduced once, then the browser remembers */
+  .tip{position:fixed;z-index:50;width:min(280px,calc(100vw - 24px));background:var(--yellow);color:#15120a;padding:12px 14px 10px;box-shadow:5px 5px 0 #111;border:3px solid #111;border-radius:14px;
+    font-size:17px;line-height:1.4;animation:pop .3s ease-out}
+  .tip[hidden]{display:none}
+  .tip b{font-family:var(--brush);font-weight:400;font-size:19px;display:block;margin-bottom:4px}
+  .tip button{margin-top:8px;font-family:var(--label);font-size:11px;letter-spacing:.14em;text-transform:uppercase;background:transparent;color:#15120a;
+    border:1.5px solid #15120a;padding:4px 10px;cursor:pointer}
+  .tip::after{content:"";position:absolute;left:var(--ax,28px);width:14px;height:14px;background:var(--yellow);transform:rotate(45deg)}
+  .tip.down::after{bottom:-7px}
+  .tip.up::after{top:-7px}
+  .tips-again{background:none;border:0;padding:0;color:var(--ink);text-decoration:underline;cursor:pointer;font:inherit}
+  @media (prefers-reduced-motion:reduce){.arrive,.new,.tip{animation:none}}
+
+  /* the comic page */
+  .sheet{position:relative;isolation:isolate;width:min(100%,720px);aspect-ratio:2/3;background:#fff6dc;container-type:inline-size;
+    box-shadow:6px 6px 0 #111;border:4px solid #111;color:#111;user-select:none;-webkit-user-select:none}
+  .ttl{position:absolute;z-index:8;left:3%;top:1.6%;height:6%;max-width:94%;transform-origin:left center}
+  .ttl-prose{position:relative;display:inline-block;max-width:100%;margin-bottom:3cqw;transform-origin:left center}
+  .ttl-h{position:absolute;right:max(-30px,-3.6cqw);top:50%;transform:translate(0,-50%);z-index:9;width:2.8cqw;height:2.8cqw;min-width:18px;min-height:18px;
+    border-radius:50%;background:#f2c744;border:2px solid #111;color:#111;font:700 max(11px,1.7cqw)/1 sans-serif;display:none;align-items:center;
+    justify-content:center;cursor:grab;touch-action:none}
+  .ttl:hover .ttl-h,.ttl:focus-within .ttl-h,.ttl.turning .ttl-h,.ttl-prose:hover .ttl-h,.ttl-prose:focus-within .ttl-h,.ttl-prose.turning .ttl-h{display:flex}
+  .sheet-title{position:relative;height:100%;display:flex;align-items:center;
+    font-family:var(--brush);font-size:5.4cqw;line-height:1;color:#111;text-transform:uppercase;outline:none;
+    white-space:nowrap;padding-right:.15em;user-select:text;-webkit-user-select:text}
+  .sheet-title:empty::before{content:attr(data-ph);color:#b3ab98}
+  /* Each panel sits on its polygon's bounding box and is clipped to the polygon; frames (.edge) are SVG strokes of the same
+     polygon, twice as wide as they show, so the clip leaves only the inner half (the canvas export does the same). */
+  .pnl{position:absolute}
+  .sheet .pnl{pointer-events:none}          /* only the clipped shape takes taps, so a slanted panel's box */
+  .sheet .pnl-inner{pointer-events:auto}    /* can't steal them from the neighbour it overlaps */
+  /* Words sit in a layer of their own over all the panels, unclipped, so a caption or a BLAM! can burst over a
+     frame into the next panel. Each layer covers its panel's box (same data-i) and lets taps through except on words. */
+  .sheet .pnl.wl{z-index:10}
+  .sheet .pnl.wl.sel{z-index:11}
+  .sheet .pnl.wl > .pnl-inner{overflow:visible;background:none;pointer-events:none}
+  .sheet .pnl.wl .it{pointer-events:auto}
+  .pnl-inner{position:relative;width:100%;height:100%;overflow:hidden;background:#fff;touch-action:none}
+  .edge{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:4}
+  .edge .hl{fill:none;stroke:none;stroke-width:1.4}
+  .pnl.sel .edge .hl{stroke:var(--blue)}
+  .pnl.drop .edge .hl{stroke:var(--blue);stroke-dasharray:2 1.4}
+  .pnl-inner > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+  .pnl-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1cqw;
+    color:#8a7a52;font-family:var(--label);font-size:2.4cqw;letter-spacing:.06em;text-align:center;padding:4%}
+  .pnl-empty b{font-size:6cqw;line-height:1;color:#d8c88f;font-weight:400}
+
+  .it{position:absolute;touch-action:none;cursor:grab;width:max-content}
+  .it.sel{z-index:5}
+  /* Font, colour, padding and size come inline from itemHTML(); every box outline is SVG, drawn by drawBox(). */
+  .it-text{outline:none;position:relative;z-index:1;line-height:1.15;text-align:center;word-wrap:break-word;
+    user-select:text;-webkit-user-select:text;cursor:text;min-height:1.15em}
+  .it-text:empty::before{content:attr(data-ph);opacity:.45}
+  .it-caption .it-text{text-align:left}
+  .it-sfx .it-text{font-family:var(--brush);font-weight:400;paint-order:stroke fill;line-height:1;white-space:nowrap}
+  .bal{position:absolute;left:0;top:0;overflow:visible;z-index:0;pointer-events:none}
+  .it-ctl{position:absolute;bottom:calc(100% + .4cqw);right:-1cqw;display:none;gap:.6cqw;z-index:6}
+  .it.sel .it-ctl{display:flex}
+  .it-sfx .it-ctl{bottom:auto;top:calc(100% + .6cqw)}   /* under a sound effect: its rotate handle has the space above */
+  .it-ctl button{width:3.2cqw;height:3.2cqw;min-width:22px;min-height:22px;border-radius:50%;border:0;background:#111;color:#f2c744;
+    font-size:max(11px,1.8cqw);line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .tip-h,.rs-h,.rot-h{position:absolute;display:none;z-index:7;background:#f2c744;border:2px solid #111;touch-action:none}
+  .it.sel .tip-h,.it.sel .rs-h{display:block}
+  .tip-h{width:2.4cqw;height:2.4cqw;min-width:16px;min-height:16px;border-radius:50%;transform:translate(-50%,-50%);cursor:move}
+  .rot-h{width:2.8cqw;height:2.8cqw;min-width:18px;min-height:18px;border-radius:50%;transform:translate(-50%,-50%);cursor:grab;
+    display:none;align-items:center;justify-content:center;color:#111;font:700 max(11px,1.7cqw)/1 sans-serif}
+  .it.sel .rot-h{display:flex}
+  .it:not(.it-sfx) .rot-h{left:-1.6cqw;top:-1.6cqw}
+  .prot-h{position:absolute;z-index:7;width:3.2cqw;height:3.2cqw;min-width:20px;min-height:20px;border-radius:50%;transform:translate(-50%,-50%);
+    background:#fff;border:2px solid #111;color:#111;font:700 max(12px,1.9cqw)/1 sans-serif;display:flex;align-items:center;justify-content:center;
+    cursor:grab;touch-action:none;pointer-events:auto;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+  .rs-h{right:-.9cqw;top:50%;width:1.5cqw;height:4cqw;min-width:10px;min-height:24px;border-radius:3px;transform:translateY(-50%);cursor:ew-resize}
+  .pframe.drop .pnl-inner{outline:.6cqw dashed var(--blue);outline-offset:.2cqw}
+  .pnl-empty .picks{display:flex;gap:1cqw;flex-wrap:wrap;justify-content:center}
+  .pnl-empty .picks button{font-family:var(--label);font-size:max(11px,1.9cqw);letter-spacing:.1em;text-transform:uppercase;
+    padding:.8cqw 1.6cqw;background:#f2c744;color:#111;border:0;cursor:pointer}
+  .pnl-empty small{font-size:max(10px,1.6cqw);letter-spacing:.08em;text-transform:none;font-family:var(--serif);font-style:italic}
+
+  /* prose mode */
+  .prose-page{width:min(100%,720px);background:#fff6dc;color:#111;padding:5% 6% 6%;box-shadow:6px 6px 0 #111;border:4px solid #111;container-type:inline-size}
+  .prose-title{font-family:var(--brush);font-size:6cqw;text-transform:uppercase;outline:none;line-height:1.05}
+  .prose-title:empty::before{content:attr(data-ph);color:#b3ab98}
+  .pframe{margin-bottom:4cqw;position:relative}
+  .pframe .pnl-inner{aspect-ratio:16/9;height:auto;border:.5cqw solid #111}
+  .pframe.sel .pnl-inner{outline:.7cqw solid var(--blue);outline-offset:.3cqw}
+  .pframe textarea{margin-top:2cqw;width:100%;min-height:9cqw;background:transparent;border:0;border-bottom:1px dashed #b9b19c;color:#111;
+    font-family:var(--serif);font-size:max(14px,2.5cqw);line-height:1.6;resize:vertical;padding:0 0 1cqw}
+  .pframe textarea:focus{outline:none;border-bottom-color:#111}
+  .pframe .rm{position:absolute;top:-2.4cqw;right:-2cqw;width:26px;height:26px;border-radius:50%;border:0;background:#111;color:#f2c744;cursor:pointer;display:none}
+  .pframe.sel .rm{display:block}
+  .addframe{display:block;width:100%;padding:2.4cqw;border:.3cqw dashed #b9b19c;background:none;color:#7c7462;font-family:var(--label);
+    letter-spacing:.14em;text-transform:uppercase;font-size:max(12px,2cqw);cursor:pointer}
+  .addframe:hover{border-color:#111;color:#111}
+
+  /* library picker */
+  dialog.lib{width:min(920px,calc(100vw - 32px));max-height:86vh;background:#fff;color:var(--ink);border:4px solid var(--frame);border-radius:20px;padding:0}
+  dialog.lib::backdrop{background:rgba(30,20,60,.55)}
+  .lib-head{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:3px solid var(--frame)}
+  .lib-head h3{margin:0;font-family:var(--brush);font-weight:400;color:var(--ink);font-size:26px}
+  .lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;padding:16px 18px;overflow:auto;max-height:calc(86vh - 70px)}
+  .lib-grid button{padding:0;border:3px solid var(--frame);border-radius:12px;background:#fff;cursor:pointer;aspect-ratio:1/1;overflow:hidden}
+  .lib-grid button:hover{border-color:var(--ink)}
+  .lib-grid img{width:100%;height:100%;object-fit:cover}
+
+  .notice{margin:12px 0 0;font-size:17px;color:var(--ink-dim)}
+
+  /* Print: one comic page on one sheet of paper. The page is 2:3 and paper is squatter (A4 and US Letter are
+     about 1:1.3), so fitting the width overflows the bottom; fit the height instead and let the width follow. */
+  @page{margin:10mm}
+  @media print{
+    html,body{background:#fff !important}
+    body{padding:0 !important}
+    .hero,.side,.tools,.notice,footer,.rule,.sub-intro,.it-ctl,.tip-h,.rs-h,.rot-h,.prot-h,.ttl-h,.rm,.addframe,.dock,.tray,.tip,.scard{display:none !important}
+    .layout{display:block;margin:0}.page{padding:0;margin:0;max-width:none}
+    .workbench,#bench{padding:0;background:none;margin:0}
+    .sheet{box-shadow:none;width:auto;height:calc(100vh - 1mm);max-width:100%;margin:0 auto;break-inside:avoid;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .prose-page{box-shadow:none;width:100%;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .pframe{break-inside:avoid}
+    .pframe.sel .pnl-inner{outline:none}
+    .edge .hl{stroke:none !important}
+    .pnl-empty{visibility:hidden}
+    .pnl-inner{background:#fff}   /* an empty panel prints as a white frame to draw in, not a block of ink */
+    .sheet-title:empty::before,.prose-title:empty::before,.it-text:empty::before{content:none}   /* placeholders stay on screen */
+  }
+
+  @media (max-width:600px){.workbench{margin-left:-16px;margin-right:-16px}#bench{padding:12px 8px}
+    .dock{flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:6px;padding:8px 10px calc(8px + env(safe-area-inset-bottom))}
+    .dock .what{display:none}
+    .dock .sg{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:9px 9px 2px 0;margin-top:-7px}
+    .dock .sg > b{min-width:62px;flex:none}
+    .dock .pill,.dock .btn{padding:4px 9px;font-size:15px;white-space:nowrap;flex:none}
+    .dock .sw{flex:none;width:24px;height:24px}
+    .dock .undo{margin-left:0}
+    .dock .note,.dock .more{white-space:nowrap}}
+</style>
+</head>
+<body id="top">
+<a class="skip" href="#main">Skip to the main part</a>
+<div class="page">
+
+  <header class="hero mini frame">
+    <div class="copy">
+      <a class="kicker" href="../">Paws &amp; Order</a>
+      <h1><span class="name">Comic Maker</span></h1>
+      <p class="tag">Your pictures. Your words.<br>Build your page, panel by panel!</p>
+    </div>
+    <div class="art">
+      <div class="script" aria-hidden="true"><span>Your story.</span><span>Your panels!</span></div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="side">
+      <nav aria-label="Paws &amp; Order">
+        <a href="../" ><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+        <a href="../#brief"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>Make a prompt</a>
+        <a href="../references/"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>Look closely</a>
+        <a href="./" class="on" aria-current="page"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg>Comic maker</a>
+        <a href="../#cast"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.3-7 8-7s7 2.5 8 7"/></svg>Meet the gang</a>
+        <a href="../#settings"><svg viewBox="0 0 24 24"><path d="M3 21V9l5-3v15M8 21V4l8 3v14M16 21V11l5 2v8M2 21h20"/></svg>Places</a>
+        <a href="../#palettes"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.3-1.2-1.6-1.2-2.8 0-1 .8-1.4 1.8-1.4H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg>Colours</a>
+        <a href="../#compare"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="16"/><rect x="13" y="4" width="8" height="16"/></svg>Check it</a>
+        <a href="../#grownups"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Grown-ups</a>
+      </nav>
+      <blockquote>&ldquo;The best bit is always in the last panel.&rdquo;<cite>PAWS &amp; ORDER</cite></blockquote>
+    </aside>
+
+    <main id="main">
+      <p class="sub-intro">Add the pictures you made with your AI tool (or borrow ours), then tell the story in words. Your pictures never leave this device, and your page saves itself in this browser as you go.</p>
+
+      <section class="tools frame panel" aria-label="Level">
+        <div class="grp">
+          <h4>Level</h4>
+          <div class="pillrow" id="levelRow">
+            <button class="pill" data-val="prose">Storybook</button>
+            <button class="pill" data-val="medium">Four panels</button>
+            <button class="pill" data-val="advanced">Super maker</button>
+          </div>
+        </div>
+        <p class="lvl-note" id="levelNote"></p>
+      </section>
+      <p class="notice" id="notice" hidden></p>
+
+      <section class="workbench">
+        <div id="bench"></div>
+      </section>
+
+      <footer>
+        The library pictures were drawn for this site.
+        Pictures you upload stay in this browser on this device: nothing is sent anywhere.
+        Part of <a href="/">HeutaLab</a>.
+        <button type="button" class="tips-again" id="tipsAgain">Show the tips again</button>
+      </footer>
+    </main>
+  </div>
+</div>
+
+<dialog class="lib" id="libDlg">
+  <div class="lib-head"><h3>Pick a picture</h3><button class="btn ghost small" id="libClose">Close</button></div>
+  <div class="lib-grid" id="libGrid"></div>
+</dialog>
+<input type="file" id="fileIn" accept="image/*" hidden>
+<div class="tray" id="sfxBank" hidden aria-label="Sound effects"></div>
+<div class="dock" id="dock" role="toolbar" aria-label="Builder tools"></div>
+<div class="tip" id="tip" hidden role="status"></div>
+<div class="scard" id="styleCard" hidden role="dialog" aria-label="About this page style"></div>
+
+<script type="module">
+import THEME from '../theme.js';
+
+(function(){
+  const $ = id => document.getElementById(id);
+
+  // ---------- data ----------
+  const LEVEL_NOTES = {
+    prose: 'Storybook: one picture with a few sentences underneath. Get your story straight before you think about panels.',
+    medium: 'Four panels: give each one a caption box for the storyteller and a speech balloon for a character, and point the balloon at whoever is talking.',
+    advanced: 'Super maker: press Style to change the whole page layout, place captions, speech, thoughts and sound effects anywhere, give every box its own shape, colour and lettering, and frame each picture with drag and zoom.',
+  };
+  const LIB = THEME.library.map(THEME.refPath);
+  const DEFAULTS = {
+    caption: { x: 3, y: 3, w: 58, text: '' },
+    speech: { x: 40, y: 50, w: 46, text: '', tip: { x: -8, y: 5.5 } },
+    thought: { x: 8, y: 8, w: 42, text: '', tip: { x: -8, y: 7 } },
+    sfx: { x: 28, y: 34, w: 60, text: 'BLAM!' },
+  };
+  // Item fields: x, y, w in % of the panel; w is a cap on the width unless fw (fixed width) is set;
+  // s scales the text; tip is the tail's point in cqw from the balloon's bottom centre; tail:'none' hides it.
+  const SIZES = [0.8, 1, 1.3, 1.7];
+  const PH = { caption: 'Meanwhile, in Doodleville...', speech: 'Type what they say', thought: 'What are they thinking?', sfx: 'Type a sound' };
+  const blank = () => ({ img: null, fit: { x: 50, y: 50, z: 1 }, items: [] });
+  const fresh = () => ({
+    level: 'medium', style: 'classic', title: '',
+    panels: Array.from({ length: 6 }, blank),
+    prose: Array.from({ length: 3 }, () => ({ img: null, fit: { x: 50, y: 50, z: 1 }, text: '' })),
+  });
+
+  let S = fresh();
+  let sel = { p: null, it: null };   // selected panel (or prose frame) and item
+
+  // Pages saved before tails could be dragged had tail: 'bl' | 'br' | 'none'.
+  function migrate(){
+    // Pages from before styles had a layout (grid6, splash...); styles bring their own panels now.
+    if (!STYLE_KEYS_ORDER.includes(S.style)) S.style = 'classic';
+    S.panels.forEach(p => p.items.forEach(it => {
+      if ((it.type === 'speech' || it.type === 'thought') && !it.tip) {
+        it.tip = { x: it.tail === 'br' ? 8 : -8, y: it.type === 'speech' ? 5.5 : 7 };
+        if (it.tail !== 'none') delete it.tail;
+      }
+    }));
+  }
+
+  // ---------- undo: snapshots of S taken before each change ----------
+  let past = [], future = [];
+  function checkpoint(){
+    past.push(JSON.stringify(S)); if (past.length > 100) past.shift();
+    future = []; syncUndo();
+  }
+  function travel(from, to){
+    if (!from.length) return;
+    to.push(JSON.stringify(S)); S = JSON.parse(from.pop());
+    save(); render(); syncUndo();   // render() lets go of a selection that no longer exists
+  }
+  const undo = () => travel(past, future), redo = () => travel(future, past);
+  function syncUndo(){ const u = $('undoBtn'), r = $('redoBtn'); if (u) u.disabled = !past.length; if (r) r.disabled = !future.length; }
+
+  // ---------- storage: IndexedDB keeps the page and uploaded pictures ----------
+  let db = null;
+  function openDB(){
+    return new Promise(res => {
+      try {
+        const r = indexedDB.open('police-pound-builder', 1);
+        r.onupgradeneeded = () => r.result.createObjectStore('kv');
+        r.onsuccess = () => res(r.result);
+        r.onerror = () => res(null);
+      } catch (e) { res(null); }
+    });
+  }
+  function idb(mode, fn){
+    return new Promise(res => {
+      if (!db) return res(null);
+      const tx = db.transaction('kv', mode), st = tx.objectStore('kv');
+      const r = fn(st);
+      tx.oncomplete = () => res(r && r.result);
+      tx.onerror = () => res(null);
+    });
+  }
+  const put = (k, v) => idb('readwrite', st => st.put(v, k));
+  const get = k => idb('readonly', st => st.get(k));
+  const del = k => idb('readwrite', st => st.delete(k));
+
+  let saveT = null;
+  function save(){
+    clearTimeout(saveT);
+    saveT = setTimeout(() => put('state', JSON.parse(JSON.stringify(S))), 400);
+  }
+
+  const urls = {};  // picture id -> object URL
+  async function urlFor(img){
+    if (!img) return null;
+    if (img.lib) return img.lib;
+    if (urls[img.id]) return urls[img.id];
+    const blob = await get('img:' + img.id);
+    if (!blob) return null;
+    return (urls[img.id] = URL.createObjectURL(blob));
+  }
+
+  // Big phone photos are shrunk to 1600px so the page stays quick and saves reliably.
+  async function shrink(file){
+    try {
+      const bmp = await createImageBitmap(file);
+      const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+      c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+      return await new Promise(r => c.toBlob(r, 'image/jpeg', 0.9));
+    } catch (e) { return file; }
+  }
+
+  // ---------- rendering ----------
+  const bench = $('bench');
+  const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+  function panelList(){
+    return S.level === 'prose' ? S.prose : S.panels.slice(0, look().panels.length);
+  }
+  const hasTail = it => it.type === 'speech' || it.type === 'thought';
+
+  // ---------- lettering styles: shape, colour, lettering and size for each kind of box ----------
+  const COLOURS = THEME.letterColours;
+  const SHAPES = {
+    speech:  [['oval', 'Oval'], ['round', 'Rounded box'], ['shout', 'Shout'], ['whisper', 'Whisper']],
+    thought: [['cloud', 'Cloud'], ['oval', 'Oval']],
+    caption: [['rect', 'Box'], ['round', 'Rounded'], ['cut', 'Ticket']],
+  };
+  // k evens out how big each typeface looks at the same size.
+  const FONTS = {
+    comic: { label: 'Comic',       family: '"Comic Neue","Comic Sans MS",cursive',     weight: 700, upper: true,  k: 1 },
+    type:  { label: 'Neat',        family: '"Patrick Hand","Comic Sans MS",cursive',   weight: 400, upper: false, k: 1.2 },
+    hand:  { label: 'Handwritten', family: '"Gochi Hand","Bradley Hand",cursive',      weight: 400, upper: false, k: 1.2 },
+    bold:  { label: 'Shouty',      family: 'Bangers,Impact,sans-serif',                weight: 400, upper: true,  k: 1.2 },
+  };
+  const SIZE_NAMES = ['S', 'M', 'L', 'XL'];   // one per SIZES
+  // What the style bar offers grows with the level, as people get used to building a page.
+  // Prose has no boxes, so no style bar. Medium gets a first taste; Advanced (no entry here) gets everything.
+  const TIERS = {
+    medium: { shapes: { speech: ['oval', 'shout'], caption: [] }, colours: ['white', 'yellow', 'black'], fonts: ['comic', 'type'], sizes: [0.8, 1, 1.3],
+              more: 'Whispers, thought bubbles, more colours and lettering come in Advanced.' },
+  };
+  const TILTS = [[-8, 'Tilt left'], [0, 'Straight'], [8, 'Tilt right']];
+  const STYLE0 = {
+    speech:  { shape: 'oval',  color: 'white',  font: 'comic', s: 1 },
+    thought: { shape: 'cloud', color: 'white',  font: 'comic', s: 1 },
+    caption: { shape: 'rect',  color: 'yellow', font: 'comic', s: 1 },
+    sfx:     { color: 'yellow', tilt: -8, s: 1 },
+  };
+  const STYLE_KEYS = ['shape', 'color', 'font', 's', 'tilt'];
+  // Room inside each shape, in cqw [across, down], so the words clear the outline.
+  const PAD = { rect: [1.4, 1.1], round: [1.9, 1.3], cut: [2.3, 1.1], oval: [2.7, 1.9], whisper: [2.7, 1.9], shout: [4.6, 3.8], cloud: [3.8, 3] };
+  const st = (it, k) => it[k] != null ? it[k] : STYLE0[it.type][k];
+  const colourOf = it => COLOURS[st(it, 'color')] || COLOURS.white;
+  const fontOf = it => FONTS[st(it, 'font')] || FONTS.comic;
+  const padOf = it => PAD[st(it, 'shape')] || PAD.oval;
+  const textSize = it => (it.type === 'sfx' ? 7 : 2.2 * fontOf(it).k) * st(it, 's');   // in cqw
+
+  // ---------- page styles: panel shapes, frames, page colour, title and lettering ----------
+  // The page is measured in cq, 1% of its width: 100 across and 150 down. Every panel is a polygon in those units,
+  // drawn by render() with clip-path and by exportPNG() with a canvas clip, so the page, the PNG and the print agree.
+  const PAGE_H = 150, AREA = [3, 13.5, 97, 146.25];   // left, top, right, bottom of the panel area, under the title
+  const Hl = (a, b = 0) => ({ a, b }), Vl = (c, e = 0) => ({ c, e });   // lines y = a + b·x and x = c + e·y
+  function quad(top, bottom, left, right){
+    const X = (h, v) => { const x = (v.c + v.e * h.a) / (1 - v.e * h.b); return [x, h.a + h.b * x]; };
+    return [X(top, left), X(top, right), X(bottom, right), X(bottom, left)];
+  }
+  // Rectangles as [x, y, w, h] in % of the panel area, with a gutter of g cq between them.
+  function grid(list, g){
+    const [x0, y0, x1, y1] = AREA, aw = x1 - x0, ah = y1 - y0;
+    return list.map(([x, y, w, h]) => {
+      const L = x0 + aw * x / 100, T = y0 + ah * y / 100, R = x0 + aw * (x + w) / 100, B = y0 + ah * (y + h) / 100;
+      return quad(Hl(T + (y > 0 ? g / 2 : 0)), Hl(B - (y + h < 99.9 ? g / 2 : 0)), Vl(L + (x > 0 ? g / 2 : 0)), Vl(R - (x + w < 99.9 ? g / 2 : 0)));
+    });
+  }
+  function tilted(cx, cy, w, h, deg){
+    const r = deg * Math.PI / 180, c = Math.cos(r), s = Math.sin(r);
+    return [[-w / 2, -h / 2], [w / 2, -h / 2], [w / 2, h / 2], [-w / 2, h / 2]].map(([x, y]) => [cx + x * c - y * s, cy + x * s + y * c]);
+  }
+  // Hand-drawn panel edges: every side bows and wobbles a little, corners stay put. Seeded, so the page,
+  // the PNG and the print all draw the same wobble. Points stay inside the panel's own box.
+  function wob(poly, seed){
+    const bb = bbox(poly), out = [], n = poly.length;
+    let s = 0;
+    for (let i = 0; i < n; i++) {
+      const a = poly[i], b = poly[(i + 1) % n], len = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1, k = Math.max(2, Math.round(len / 4));
+      const nx = -(b[1] - a[1]) / len, ny = (b[0] - a[0]) / len;
+      const ph = Math.sin((seed + 1) * 12.9898 + i * 78.233) * 43758.5453, bow = (ph - Math.floor(ph) - 0.5) * 0.9;
+      for (let j = 0; j < k; j++) {
+        const t = j / k, env = Math.sin(Math.PI * t);
+        const o = env * (bow + 0.22 * Math.sin(s * 0.7 + seed * 1.3 + i) + 0.12 * Math.sin(s * 2.1 + seed * 2.9));
+        s += len / k;
+        out.push([Math.min(bb.x + bb.w, Math.max(bb.x, a[0] + (b[0] - a[0]) * t + nx * o)), Math.min(bb.y + bb.h, Math.max(bb.y, a[1] + (b[1] - a[1]) * t + ny * o))]);
+      }
+    }
+    return out;
+  }
+  const bbox = poly => { const xs = poly.map(p => p[0]), ys = poly.map(p => p[1]), x = Math.min(...xs), y = Math.min(...ys);
+    return { x, y, w: Math.max(...xs) - x, h: Math.max(...ys) - y }; };
+  // Kirby: an opening splash, three panels between slanted cuts, and a wide close. The slant is fixed at 10°:
+  // steeper, the cuts cross and squeeze the middle panels to slivers.
+  const KIRBY = (() => {
+    const t = Math.tan(10 * Math.PI / 180), g = 2.4, [x0, y0, x1, y1] = AREA, ah = y1 - y0;
+    const m1 = y0 + ah * 0.44, m2 = y0 + ah * 0.74, mid = (m1 + m2) / 2;
+    const L1 = Hl(m1 - t * 50, t), L2 = Hl(m2 + t * 50, -t);
+    const C1 = Vl(x0 + (x1 - x0) * 0.36 - t * mid, t), C2 = Vl(x0 + (x1 - x0) * 0.66 + t * mid, -t);
+    const dy = (l, d) => Hl(l.a + d, l.b), dx = (l, d) => Vl(l.c + d, l.e), T = Hl(y0), B = Hl(y1), Lf = Vl(x0), R = Vl(x1);
+    return [
+      quad(T, dy(L1, -g / 2), Lf, R),
+      quad(dy(L1, g / 2), dy(L2, -g / 2), Lf, dx(C1, -g / 2)),
+      quad(dy(L1, g / 2), dy(L2, -g / 2), dx(C1, g / 2), dx(C2, -g / 2)),
+      quad(dy(L1, g / 2), dy(L2, -g / 2), dx(C2, g / 2), R),
+      quad(dy(L2, g / 2), B, Lf, R),
+    ];
+  })();
+  // frames: [width shown, colour], outermost first. letters: the lettering every box takes on in this style.
+  const LOOKS = {
+    classic: { page: '#fff6dc', frames: [[0.8, '#111']],
+      panels: grid([[0,0,50,33.33],[50,0,50,33.33],[0,33.33,50,33.34],[50,33.33,50,33.34],[0,66.67,50,33.33],[50,66.67,50,33.33]], 2),
+      title: { family: "'Luckiest Guy'", weight: 400, size: 5.6, color: '#111' },
+      letters: { caption: { shape: 'rect', color: 'yellow', font: 'comic' }, speech: { shape: 'oval', color: 'white', font: 'comic' },
+        thought: { shape: 'cloud', color: 'white', font: 'comic' }, sfx: { color: 'yellow', tilt: -8, s: 1 } } },
+    strips: { page: '#dff5ff', frames: [[0.7, '#111']],
+      panels: grid([0, 1, 2, 3, 4, 5].map(i => [0, i * 100 / 6, 100, 100 / 6]), 1.8),
+      title: { family: "'Luckiest Guy'", weight: 400, size: 5, color: '#1b78a8' },
+      letters: { caption: { shape: 'round', color: 'paper', font: 'type' }, speech: { shape: 'oval', color: 'white', font: 'comic' },
+        thought: { shape: 'oval', color: 'white', font: 'type' }, sfx: { color: 'red', tilt: 0, s: 0.9 } } },
+    night: { page: '#1f2a6b', frames: [[0.8, '#fff']],
+      panels: grid([[0,0,58,64],[58,0,42,30],[58,30,42,34],[0,64,40,36],[40,64,60,36]], 3.4),
+      title: { family: "'Luckiest Guy'", weight: 400, size: 6.4, color: '#ffd23f', stroke: [0.3, '#111'] },
+      letters: { caption: { shape: 'round', color: 'white', font: 'hand' }, speech: { shape: 'oval', color: 'white', font: 'hand' },
+        thought: { shape: 'cloud', color: 'white', font: 'hand' }, sfx: { color: 'yellow', tilt: -6, s: 1.2 } } },
+    action: { page: '#fff0a8', frames: [[0.9, '#111']], panels: KIRBY,
+      title: { family: "'Luckiest Guy'", weight: 400, size: 7, color: '#e5322d', stroke: [0.35, '#111'], rotate: -3 },
+      letters: { caption: { shape: 'rect', color: 'yellow', font: 'bold' }, speech: { shape: 'oval', color: 'white', font: 'comic' },
+        thought: { shape: 'cloud', color: 'white', font: 'comic' }, sfx: { color: 'red', tilt: -8, s: 1.3 } } },
+    poster: { page: '#3b2a86', frames: [[0.9, '#fff'], [0.3, '#111']], layered: true, clearTitle: 9,   // panel 0 fills the page, unframed; its words start below the title
+      panels: [[[0, 0], [100, 0], [100, PAGE_H], [0, PAGE_H]], tilted(30, 75, 50, 27, -4), tilted(68, 45, 50, 30, 3), tilted(62, 114, 66, 25.5, -2), tilted(26, 132, 40, 21, 4)],
+      title: { family: "'Luckiest Guy'", weight: 400, size: 8, color: '#fff', stroke: [0.3, '#111'] },
+      letters: { caption: { shape: 'round', color: 'blue', font: 'bold' }, speech: { shape: 'round', color: 'white', font: 'bold' },
+        thought: { shape: 'cloud', color: 'white', font: 'bold' }, sfx: { color: 'red', tilt: 8, s: 1.3 } } },
+  };
+  // Four panels always uses the classic look.
+  const MEDIUM = Object.assign({}, LOOKS.classic, { panels: grid([[0,0,50,50],[50,0,50,50],[0,50,50,50],[50,50,50,50]], 2) });
+  const STYLE_KEYS_ORDER = THEME.pageStyles.map(s => s.key);
+  const look = () => S.level === 'medium' ? MEDIUM : (LOOKS[S.style] || LOOKS.classic);
+  const framesOf = (lk, i) => lk.layered && i === 0 ? [] : lk.frames;
+  function titleCss(tt){
+    return 'font-family:' + tt.family + ';font-weight:' + tt.weight + ';font-size:' + tt.size + 'cqw;color:' + tt.color
+      + (tt.spacing ? ';letter-spacing:' + tt.spacing + 'em' : '')
+      + (tt.stroke ? ';-webkit-text-stroke:' + 2 * tt.stroke[0] + 'cqw ' + tt.stroke[1] + ';paint-order:stroke fill' : '');
+  }
+  // How far the title is turned, about its left end: the style's own tilt (the Zoom page's -3°) plus the user's.
+  const titleTurn = () => (S.level === 'prose' ? 0 : look().title.rotate || 0) + (S.titleRot || 0);
+  const TITLE_ROOM = 0.94;
+  function fitTitle(){
+    const el = $('titleEl'), sheet = el && el.closest('.sheet'); if (!sheet) return;
+    const size = look().title.size;
+    el.style.fontSize = size + 'cqw';
+    const room = sheet.clientWidth * TITLE_ROOM, w = el.scrollWidth;
+    if (w > room) el.style.fontSize = (size * room / w) + 'cqw';
+  }
+  const TTL_H = '<span class="ttl-h" title="Drag to tilt the title (double-click to straighten)">&#8635;</span>';
+  // Give every box the lettering of a style, and make new boxes start that way too.
+  function applyLetters(key){
+    const L = LOOKS[key].letters;
+    S.panels.forEach(p => p.items.forEach(it => Object.assign(it, L[it.type])));
+    const ct = LOOKS[key].clearTitle;
+    if (ct) S.panels[0].items.forEach(it => { it.y = Math.max(it.y, ct); });
+    S.last = JSON.parse(JSON.stringify(L));
+  }
+
+  function itemHTML(it, j, on){
+    const c = colourOf(it);
+    let css, extra = '';
+    if (it.type === 'sfx') {
+      extra = '<span class="rot-h" title="Drag to tilt it (hold Shift for steps of 15°)">&#8635;</span>';
+      css = 'color:' + c.fill + ';-webkit-text-stroke:.35cqw ' + c.line + ';transform:rotate(' + st(it, 'tilt') + 'deg)';
+    } else {
+      const f = fontOf(it), p = padOf(it);
+      css = 'font-family:' + f.family.replace(/"/g, "'") + ';font-weight:' + f.weight + ';text-transform:' + (f.upper ? 'uppercase' : 'none')
+        + ';color:' + c.text + ';padding:' + p[1] + 'cqw ' + p[0] + 'cqw';
+      extra = '<svg class="bal" aria-hidden="true"></svg>';
+      if (hasTail(it) && it.tail !== 'none') extra += '<span class="tip-h" title="Drag to point the tail"></span>';
+      extra += '<span class="rs-h" title="Drag to make it wider or narrower"></span>'
+        + '<span class="rot-h" title="Drag to tilt it (hold Shift for steps of 15°)">&#8635;</span>';
+    }
+    const ctl = '<span class="it-ctl">'
+      + (hasTail(it) ? '<button type="button" data-act="tail" title="Tail on or off" aria-label="Tail on or off">&#x2198;</button>' : '')
+      + '<button type="button" data-act="dup" title="Duplicate" aria-label="Duplicate">&#x2750;</button>'
+      + '<button type="button" data-act="del" title="Delete" aria-label="Delete">&times;</button></span>';
+    return '<div class="it it-' + it.type + (on ? ' sel' : '') + '" data-j="' + j + '" style="left:' + it.x + '%;top:' + it.y + '%;' + (it.fw ? 'width:' : 'max-width:') + it.w + '%'
+      + (it.rot ? ';transform:rotate(' + it.rot + 'deg)' : '') + '">'
+      + '<div class="it-text" contenteditable="true" spellcheck="false" data-ph="' + esc(PH[it.type]) + '" style="font-size:' + textSize(it) + 'cqw;' + css + '">' + esc(it.text) + '</div>' + extra + ctl + '</div>';
+  }
+
+  // Box geometry, shared by the page (drawBox) and the PNG export (drawItem): both draw the same SVG path strings.
+  // w, h: the text box in px; cq: 1% of the page width in px. The outline is stroked 2 × bw wide and then filled over,
+  // so only its outer half shows: that is what joins a tail to its balloon with no line across the join.
+  const SPREAD = 0.34;                                  // half-width of a tail's base, in radians of the ellipse
+  const DOTS = [[0.25, 3.2], [0.6, 2.1], [0.92, 1.2]];  // thought trail: [share of the way to the tip, diameter in cqw]
+  function geom(w, h, it, cq){
+    const bw = 0.3 * cq, cx = w / 2, cy = h / 2, g = { bw, cx, cy, rx: cx - bw, ry: cy - bw, tip: null };
+    if (it.tail !== 'none' && it.tip) {
+      g.tip = [cx + it.tip.x * cq, h + it.tip.y * cq];
+      const nx = (g.tip[0] - cx) / g.rx, ny = (g.tip[1] - cy) / g.ry;
+      g.t = Math.atan2(ny, nx);
+      if (Math.hypot(nx, ny) < 1.08) g.tip = null;      // tip tucked inside the balloon: no tail
+    }
+    return g;
+  }
+  const ePt = (g, a, k = 1) => [g.cx + g.rx * k * Math.cos(a), g.cy + g.ry * k * Math.sin(a)];
+  const P = p => Math.round(p[0] * 10) / 10 + ',' + Math.round(p[1] * 10) / 10;
+  const circleD = (x, y, r) => 'M' + (x - r) + ',' + y + 'a' + r + ',' + r + ' 0 1 0 ' + 2 * r + ',0a' + r + ',' + r + ' 0 1 0 ' + -2 * r + ',0Z';
+
+  function shapeD(shape, g){
+    const { cx, cy, rx, ry } = g, x0 = cx - rx, y0 = cy - ry, x1 = cx + rx, y1 = cy + ry;
+    if (shape === 'rect') return 'M' + x0 + ',' + y0 + 'H' + x1 + 'V' + y1 + 'H' + x0 + 'Z';
+    if (shape === 'round' || shape === 'cut') {
+      const r = Math.min(rx, ry) * (shape === 'round' ? 0.6 : 0.45);
+      const turn = shape === 'round' ? (x, y) => 'A' + r + ',' + r + ' 0 0 1 ' + x + ',' + y : (x, y) => 'L' + x + ',' + y;
+      return 'M' + (x0 + r) + ',' + y0 + 'H' + (x1 - r) + turn(x1, y0 + r) + 'V' + (y1 - r) + turn(x1 - r, y1)
+        + 'H' + (x0 + r) + turn(x0, y1 - r) + 'V' + (y0 + r) + turn(x0 + r, y0) + 'Z';
+    }
+    if (shape === 'shout') {   // a burst: spikes of uneven length round the ellipse
+      const n = 11, pts = [];
+      for (let k = 0; k < 2 * n; k++) pts.push(P(ePt(g, -Math.PI / 2 + k * Math.PI / n, k % 2 ? 0.78 : 1 - 0.07 * (k * 7 % 3))));
+      return 'M' + pts.join('L') + 'Z';
+    }
+    if (shape === 'cloud') {   // scallops bulging out to the edge of the box
+      const n = 10, s = 2 * Math.PI / n;
+      let d = 'M' + P(ePt(g, 0, 0.84));
+      for (let k = 0; k < n; k++) d += 'Q' + P(ePt(g, k * s + s / 2, 1.16)) + ' ' + P(ePt(g, (k + 1) * s, 0.84));
+      return d + 'Z';
+    }
+    const E = 'A' + rx + ',' + ry + ' 0 1 1 ';   // oval and whisper
+    return 'M' + x0 + ',' + cy + E + x1 + ',' + cy + E + x0 + ',' + cy + 'Z';
+  }
+  // Every filled piece of a box: its shape, a speech tail, a thought trail.
+  function pieces(it, g, cq){
+    const out = [shapeD(st(it, 'shape'), g)];
+    if (it.type === 'speech' && g.tip) out.push('M' + P(ePt(g, g.t - SPREAD, 0.7)) + 'L' + P(g.tip) + 'L' + P(ePt(g, g.t + SPREAD, 0.7)) + 'Z');
+    if (it.type === 'thought' && g.tip) {
+      const e = ePt(g, g.t);
+      DOTS.forEach(([f, d]) => out.push(circleD(e[0] + (g.tip[0] - e[0]) * f, e[1] + (g.tip[1] - e[1]) * f, d * cq / 2 - g.bw)));
+    }
+    return out;
+  }
+  const dashOf = (it, g) => st(it, 'shape') === 'whisper' ? [6 * g.bw, 4.5 * g.bw] : null;
+
+  function drawBox(itEl){
+    const sheet = itEl && itEl.closest('.sheet'); if (!sheet) return;
+    const it = S.panels[+itEl.closest('.pnl').dataset.i].items[+itEl.dataset.j]; if (!it || it.type === 'sfx') return;
+    const cq = sheet.clientWidth / 100, tx = itEl.querySelector('.it-text'), w = tx.offsetWidth, h = tx.offsetHeight;
+    if (!cq || !w) return;   // not laid out yet (e.g. mid-reload); the ResizeObserver calls again once it is
+    const g = geom(w, h, it, cq), c = colourOf(it), parts = pieces(it, g, cq), dash = dashOf(it, g), hd = itEl.querySelector('.tip-h');
+    if (hd && it.tip) { hd.style.left = (w / 2 + it.tip.x * cq) + 'px'; hd.style.top = (h + it.tip.y * cq) + 'px'; }
+    const svg = itEl.querySelector('.bal');
+    svg.setAttribute('width', w); svg.setAttribute('height', h);
+    svg.innerHTML = '<path d="' + parts.join('') + '" fill="none" stroke="' + c.line + '" stroke-width="' + 2 * g.bw + '" stroke-linejoin="round"'
+      + (dash ? ' stroke-dasharray="' + dash.join(' ') + '"' : '') + '/>'
+      + parts.map(d => '<path d="' + d + '" fill="' + c.fill + '"/>').join('');
+  }
+  function placeRot(itEl){
+    const hd = itEl && itEl.querySelector('.rot-h'); if (!hd) return;
+    const it = S.panels[+itEl.closest('.pnl').dataset.i].items[+itEl.dataset.j]; if (!it) return;
+    const tx = itEl.querySelector('.it-text'), sheet = itEl.closest('.sheet'), r = st(it, 'tilt') * Math.PI / 180;
+    const d = tx.offsetHeight / 2 + Math.max(22, 4.5 * sheet.clientWidth / 100);
+    hd.style.left = (tx.offsetLeft + tx.offsetWidth / 2 + Math.sin(r) * d) + 'px';
+    hd.style.top = (tx.offsetTop + tx.offsetHeight / 2 - Math.cos(r) * d) + 'px';
+  }
+  // Boxes redraw (and rotate handles move) whenever their words, or the page, change size.
+  const ro = new ResizeObserver(es => es.forEach(en => { const el = en.target.closest('.it'); el && el.classList.contains('it-sfx') ? placeRot(el) : drawBox(el); }));
+
+  // Zoom is about the framing point; a flip then mirrors the whole panel about its centre line,
+  // which is (50 - x)% of the width (or 50 - y% of the height) away from that point. drawCover() does the same on the canvas.
+  // fit.flip is left to right, fit.flipY top to bottom.
+  // A picture turned by r degrees leaves the panel's corners bare unless it grows by this much (ar: the panel's width / height).
+  const fillFor = (r, ar) => { const a = Math.abs(r || 0) * Math.PI / 180; return Math.abs(Math.cos(a)) + Math.max(ar, 1 / ar) * Math.abs(Math.sin(a)); };
+  function imgStyle(fit, ar){
+    const sx = fit.flip ? -1 : 1, sy = fit.flipY ? -1 : 1, r = fit.r || 0, k = r ? fillFor(r, ar || 1) : 1;
+    const turn = sx < 0 || sy < 0 || r ? 'translate(' + (50 - fit.x) + '%,' + (50 - fit.y) + '%) rotate(' + r + 'deg) scale(' + k * sx + ',' + k * sy
+      + ') translate(' + (fit.x - 50) + '%,' + (fit.y - 50) + '%) ' : '';
+    return 'object-position:' + fit.x + '% ' + fit.y + '%;transform:' + turn + 'scale(' + fit.z + ');transform-origin:' + fit.x + '% ' + fit.y + '%';
+  }
+  // The whole style for panel i's picture: its frame's shape, and the style's inking.
+  function picStyle(i){
+    const fit = panelList()[i].fit;
+    if (S.level === 'prose') return imgStyle(fit, 16 / 9);
+    const b = bbox(look().panels[i]);
+    return imgStyle(fit, b.w / b.h) + (look().ink ? ';filter:' + look().ink : '');
+  }
+  // A picture's rotate handle sits a little in from its panel's top-right corner (inside, whatever the panel's shape).
+  function protHTML(poly, b){
+    const cx = poly.reduce((s, p) => s + p[0], 0) / poly.length, cy = poly.reduce((s, p) => s + p[1], 0) / poly.length;
+    const x = poly[1][0] + (cx - poly[1][0]) * 0.14, y = poly[1][1] + (cy - poly[1][1]) * 0.14;
+    return '<span class="prot-h" title="Drag to turn the picture (hold Shift for steps of 15°)" style="left:' + ((x - b.x) / b.w * 100) + '%;top:' + ((y - b.y) / b.h * 100) + '%">&#8635;</span>';
+  }
+  const imgEl = i => bench.querySelector('[data-i="' + i + '"]:not(.wl) > .pnl-inner > img');
+  const empty = on => on
+    ? '<div class="pnl-empty"><span class="picks"><button type="button" data-pick="up">Upload</button><button type="button" data-pick="lib">Library</button></span><small>or paste or drop a picture here</small></div>'
+    : '<div class="pnl-empty"><b>+</b>Tap to add a picture</div>';
+
+  async function render(){
+    document.querySelectorAll('#levelRow .pill').forEach(b => b.classList.toggle('active', b.dataset.val === S.level));
+    $('levelNote').textContent = LEVEL_NOTES[S.level];
+    const list = panelList();
+    if (sel.p != null && sel.p >= list.length) sel = { p: null, it: null };
+    if (sel.it != null && (S.level === 'prose' || !S.panels[sel.p].items[sel.it])) sel.it = null;
+    const chosen = sel.it != null && S.panels[sel.p].items[sel.it];
+    if (chosen && chosen.type === 'sfx') sfxOpen = true;   // so the words are there to swap
+    renderDock();
+
+    const srcs = await Promise.all(list.map(p => urlFor(p.img)));
+
+    if (S.level === 'prose') {
+      bench.innerHTML = '<div class="prose-page"><div class="ttl-prose" style="transform:rotate(' + titleTurn() + 'deg)"><div class="prose-title" contenteditable="true" spellcheck="false" data-ph="Your title" id="titleEl">' + esc(S.title) + '</div>' + TTL_H + '</div>'
+        + list.map((f, i) => '<div class="pframe' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '">'
+          + '<div class="pnl-inner">' + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + picStyle(i) + '">'
+            + (sel.p === i ? '<span class="prot-h" title="Drag to turn the picture (hold Shift for steps of 15°)" style="left:94%;top:13%">&#8635;</span>' : '')
+            : empty(sel.p === i)) + '</div>'
+          + '<textarea data-i="' + i + '" placeholder="Write this part of the story. Who is here? What just happened? What happens next?">' + esc(f.text) + '</textarea>'
+          + (list.length > 1 ? '<button type="button" class="rm" data-rm="' + i + '" aria-label="Remove this frame">&times;</button>' : '') + '</div>').join('')
+        + (list.length < 6 ? '<button type="button" class="addframe" id="addFrame">+ Add another picture</button>' : '') + '</div>';
+      showTip();
+      return;
+    }
+
+    const lk = look();
+    bench.innerHTML = '<div class="sheet" id="sheet" style="background:' + lk.page + '"><div class="ttl" style="transform:rotate(' + titleTurn() + 'deg)"><div class="sheet-title" contenteditable="true" spellcheck="false" data-ph="Your title" id="titleEl" style="'
+      + titleCss(lk.title) + '">' + esc(S.title) + '</div>' + TTL_H + '</div>'
+      + lk.panels.map((poly0, i) => {
+        const b = bbox(poly0), rough = q => wob(poly0, q).map(([x, y]) => [x - b.x, y - b.y]);
+        const local = rough(i), local2 = rough(i + 37);
+        const clip = local.map(([x, y]) => (x / b.w * 100) + '% ' + (y / b.h * 100) + '%').join(',');
+        const pts = local.map(q => q.join(',')).join(' '), pts2 = local2.map(q => q.join(',')).join(' ');
+        return '<div class="pnl' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '" style="left:' + b.x + '%;top:' + (b.y / PAGE_H * 100) + '%;width:' + b.w + '%;height:' + (b.h / PAGE_H * 100) + '%">'
+          + '<div class="pnl-inner" style="clip-path:polygon(' + clip + ')">'
+          + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + picStyle(i) + '">' : empty(sel.p === i))
+          + '<svg class="edge" viewBox="0 0 ' + b.w + ' ' + b.h + '" preserveAspectRatio="none" aria-hidden="true">'
+          + framesOf(lk, i).map(([w, c]) => '<polygon points="' + pts + '" fill="none" stroke="' + c + '" stroke-width="' + 2 * w + '" stroke-linejoin="round"/>'
+            + '<polygon points="' + pts2 + '" fill="none" stroke="' + c + '" stroke-width="' + 0.9 * w + '" stroke-linejoin="round" opacity=".6"/>').join('')
+          + '<polygon class="hl" points="' + pts + '"/></svg>'
+          + '</div></div>';
+      }).join('')
+      + lk.panels.map((poly, i) => {
+        const b = bbox(poly);
+        return '<div class="pnl wl' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '" style="left:' + b.x + '%;top:' + (b.y / PAGE_H * 100) + '%;width:' + b.w + '%;height:' + (b.h / PAGE_H * 100) + '%"><div class="pnl-inner">'
+          + S.panels[i].items.map((it, j) => itemHTML(it, j, sel.p === i && sel.it === j)).join('')
+          + (sel.p === i && sel.it == null && S.panels[i].img ? protHTML(poly, b) : '') + '</div></div>';
+      }).join('') + '</div>';
+    fitTitle();
+    ro.disconnect();
+    bench.querySelectorAll('.it').forEach(el => { el.classList.contains('it-sfx') ? placeRot(el) : drawBox(el); ro.observe(el.querySelector('.it-text')); });
+    showTip();
+  }
+
+  function note(msg){ const n = $('notice'); n.textContent = msg; n.hidden = !msg; }
+
+  // ---------- interaction ----------
+  const NONE = () => ({ p: null, it: null });
+  document.querySelectorAll('#levelRow .pill').forEach(b => b.addEventListener('click', () => { if (S.level === b.dataset.val) return; checkpoint(); S.level = b.dataset.val; sel = NONE(); save(); render(); }));
+
+  // Typing: one undo step per visit to a text box (the browser's own undo works while you're in it).
+  let typing = false;
+  bench.addEventListener('beforeinput', () => { if (!typing) { checkpoint(); typing = true; } });
+  bench.addEventListener('focusout', () => { typing = false; });
+  bench.addEventListener('input', e => {
+    if (e.target.id === 'titleEl') { S.title = e.target.textContent; fitTitle(); save(); return; }
+    if (e.target.matches('.pframe textarea')) { S.prose[+e.target.dataset.i].text = e.target.value; save(); return; }
+    const itEl = e.target.closest('.it');
+    if (itEl) {
+      const p = +itEl.closest('.pnl').dataset.i, j = +itEl.dataset.j;
+      // innerText keeps line breaks but also applies text-transform, so switch capitals off while reading:
+      // the words are stored as typed, and lettering that isn't all-capitals shows them that way.
+      const tx = e.target, tt = tx.style.textTransform;
+      tx.style.textTransform = 'none';
+      S.panels[p].items[j].text = tx.innerText.replace(/\n+$/, '');
+      tx.style.textTransform = tt;
+      save();
+    }
+  });
+  // Titles stay on one line.
+  bench.addEventListener('keydown', e => { if (e.target.id === 'titleEl' && e.key === 'Enter') { e.preventDefault(); e.target.blur(); } });
+
+  function duplicate(p, j){
+    checkpoint();
+    const items = S.panels[p].items, c = JSON.parse(JSON.stringify(items[j]));
+    c.x = Math.min(90, c.x + 4); c.y = Math.min(90, c.y + 4);
+    items.push(c); sel = { p, it: items.length - 1 };
+    save(); render();
+  }
+
+  bench.addEventListener('click', e => {
+    const pk = e.target.closest('[data-pick]');
+    if (pk) { pk.dataset.pick === 'up' ? pickUpload() : openLib(); return; }
+    if (e.target.id === 'addFrame') { checkpoint(); S.prose.push({ img: null, fit: { x: 50, y: 50, z: 1 }, text: '' }); sel = { p: S.prose.length - 1, it: null }; save(); render(); return; }
+    const rm = e.target.closest('[data-rm]');
+    if (rm) { checkpoint(); S.prose.splice(+rm.dataset.rm, 1); sel = NONE(); save(); render(); return; }
+    const act = e.target.closest('[data-act]');
+    if (act) {
+      const itEl = act.closest('.it'), p = +itEl.closest('.pnl').dataset.i, j = +itEl.dataset.j, it = S.panels[p].items[j];
+      if (act.dataset.act === 'dup') return duplicate(p, j);
+      checkpoint();
+      if (act.dataset.act === 'del') { S.panels[p].items.splice(j, 1); sel.it = null; }
+      if (act.dataset.act === 'tail') {
+        if (it.tail === 'none') { delete it.tail; if (!it.tip) it.tip = Object.assign({}, DEFAULTS[it.type].tip); }
+        else it.tail = 'none';
+      }
+      save(); render(); return;
+    }
+    if (e.target.closest('.pframe textarea')) { const i = +e.target.dataset.i; if (sel.p !== i) { sel = { p: i, it: null }; render().then(() => bench.querySelector('textarea[data-i="' + i + '"]').focus()); } return; }
+    const fr = e.target.closest('.pframe');
+    if (fr && sel.p !== +fr.dataset.i) { sel = { p: +fr.dataset.i, it: null }; render(); }
+  });
+
+  // Dragging: items move, their handles aim the tail or set the width, and the picture pans inside a chosen panel.
+  let drag = null;
+  bench.addEventListener('pointerdown', e => {
+    if (e.button > 0 || e.target.closest('[data-act],[data-pick],textarea')) return;
+    cardOpen = false;
+    const th = e.target.closest('.ttl-h');
+    if (th) {
+      e.preventDefault();   // also keeps the title from losing focus, so the handle stays put
+      const w = th.parentElement, pr = w.offsetParent.getBoundingClientRect(), cx = pr.left + w.offsetLeft, cy = pr.top + w.offsetTop + w.offsetHeight / 2;
+      w.classList.add('turning');
+      return startDrag(e, { kind: 'trot', el: w, box: w.getBoundingClientRect(), cx, cy, r0: S.titleRot || 0, a0: Math.atan2(e.clientY - cy, e.clientX - cx) * 180 / Math.PI });
+    }
+    const pnl = e.target.closest('.pnl, .pframe');
+    if (!pnl) { if (S.level !== 'prose' && !e.target.closest('#titleEl')) { sel = NONE(); render(); } return; }
+    const i = +pnl.dataset.i, inner = pnl.querySelector('.pnl-inner'), box = inner.getBoundingClientRect();
+    // One way to start turning a picture, for panels and prose frames alike: about the centre of the picture's box.
+    const turnPic = box => {
+      e.preventDefault();
+      const cx = box.left + box.width / 2, cy = box.top + box.height / 2;
+      return startDrag(e, { kind: 'prot', i, box, cx, cy, r0: panelList()[i].fit.r || 0, a0: Math.atan2(e.clientY - cy, e.clientX - cx) * 180 / Math.PI });
+    };
+    if (pnl.classList.contains('pframe')) {
+      if (e.target.closest('.prot-h')) return turnPic(box);
+      // Prose frames: the click handler chooses the frame; once chosen, its picture can be panned.
+      if (sel.p === i && S.prose[i].img && inner.contains(e.target)) startDrag(e, { kind: 'pan', i, box });
+      return;
+    }
+    if (e.target.closest('.prot-h')) return turnPic(bench.querySelector('.pnl:not(.wl)[data-i="' + i + '"] .pnl-inner').getBoundingClientRect());
+    const hd = e.target.closest('.tip-h, .rs-h, .rot-h');
+    if (hd) {
+      e.preventDefault();
+      const itEl = hd.closest('.it');
+      return startDrag(e, { kind: hd.classList.contains('tip-h') ? 'tip' : hd.classList.contains('rot-h') ? 'rot' : 'width', i, j: +itEl.dataset.j, box, el: itEl });
+    }
+    const itEl = e.target.closest('.it');
+    if (itEl) {
+      const j = +itEl.dataset.j;
+      if (sel.p !== i || sel.it !== j) {
+        // First touch selects the item; typing starts on the next tap.
+        e.preventDefault();
+        sel = { p: i, it: j };
+        render().then(() => {
+          const el = bench.querySelector('.pnl[data-i="' + i + '"] .it[data-j="' + j + '"]');
+          if (el) startDrag(e, { kind: 'item', i, j, box, el, editOnTap: true });
+        });
+        return;
+      }
+      return startDrag(e, { kind: 'item', i, j, box, el: itEl, editOnTap: false });
+    }
+    if (sel.p !== i || sel.it != null) { sel = { p: i, it: null }; render(); return; }
+    if (S.panels[i].img) startDrag(e, { kind: 'pan', i, box });
+  });
+
+  function startDrag(e, d){
+    d.x0 = e.clientX; d.y0 = e.clientY; d.moved = false; d.pid = e.pointerId;
+    if (d.kind === 'pan') { const f = panelList()[d.i].fit; d.fx = f.x; d.fy = f.y; }
+    else if (d.kind === 'prot' || d.kind === 'trot') {}
+    else {
+      const it = S.panels[d.i].items[d.j];
+      d.ix = it.x; d.iy = it.y; d.tip = Object.assign({}, it.tip);
+      d.w0 = it.fw ? it.w : d.el.offsetWidth / d.box.width * 100;
+      d.cq = bench.querySelector('.sheet').clientWidth / 100;
+      // A sound effect turns its word (tilt); a caption or balloon turns the whole box (rot). Either way about its centre.
+      d.rkey = it.type === 'sfx' ? 'tilt' : 'rot'; d.r0 = st(it, d.rkey) || 0;
+      if (d.kind === 'rot') {
+        const r = d.el.querySelector('.it-text').getBoundingClientRect(); d.cx = r.left + r.width / 2; d.cy = r.top + r.height / 2;
+        d.a0 = Math.atan2(e.clientY - d.cy, e.clientX - d.cx) * 180 / Math.PI;
+      }
+    }
+    drag = d;
+  }
+  addEventListener('pointermove', e => {
+    if (!drag || e.pointerId !== drag.pid) return;
+    const dx = e.clientX - drag.x0, dy = e.clientY - drag.y0;
+    if (!drag.moved && Math.hypot(dx, dy) < 5) return;
+    if (!drag.moved) { drag.moved = true; checkpoint(); if (document.activeElement) document.activeElement.blur(); }
+    e.preventDefault();
+    const px = dx / drag.box.width * 100, py = dy / drag.box.height * 100;
+    if (drag.kind === 'trot') {
+      let a = drag.r0 + Math.atan2(e.clientY - drag.cy, e.clientX - drag.cx) * 180 / Math.PI - drag.a0;
+      a = ((a + 540) % 360) - 180;
+      const q = e.shiftKey ? 15 : 90;
+      if (e.shiftKey || Math.abs(a - Math.round(a / q) * q) < 4) a = Math.round(a / q) * q;
+      S.titleRot = Math.round(a);
+      drag.el.style.transform = 'rotate(' + titleTurn() + 'deg)';
+      return;
+    }
+    if (drag.kind === 'prot') {
+      let a = drag.r0 + Math.atan2(e.clientY - drag.cy, e.clientX - drag.cx) * 180 / Math.PI - drag.a0;
+      a = ((a + 540) % 360) - 180;
+      const q = e.shiftKey ? 15 : 90;
+      if (e.shiftKey || Math.abs(a - Math.round(a / q) * q) < 4) a = Math.round(a / q) * q;
+      panelList()[drag.i].fit.r = Math.round(a);
+      const im = imgEl(drag.i);
+      if (im) im.setAttribute('style', picStyle(drag.i));
+      return;
+    }
+    if (drag.kind === 'pan') {
+      const f = panelList()[drag.i].fit;
+      // a turned picture moves along its own directions, so it still follows the finger
+      const [lx, ly] = unturn(dx, dy, f.r), px = lx / drag.box.width * 100, py = ly / drag.box.height * 100;
+      f.x = Math.max(0, Math.min(100, drag.fx - px * 1.4 * (f.flip ? -1 : 1)));   // a flipped picture still follows the finger
+      f.y = Math.max(0, Math.min(100, drag.fy - py * 1.4 * (f.flipY ? -1 : 1)));
+      const im = imgEl(drag.i);
+      if (im) im.setAttribute('style', picStyle(drag.i));
+      return;
+    }
+    const it = S.panels[drag.i].items[drag.j];
+    if (drag.kind === 'item') {
+      it.x = Math.max(-10, Math.min(95, drag.ix + px));
+      it.y = Math.max(-10, Math.min(95, drag.iy + py));
+      drag.el.style.left = it.x + '%'; drag.el.style.top = it.y + '%';
+    } else if (drag.kind === 'rot') {
+      // Turn by as much as the pointer has swung round the centre. It clicks to level and upright within 4°;
+      // Shift gives steps of 15°.
+      let a = drag.r0 + Math.atan2(e.clientY - drag.cy, e.clientX - drag.cx) * 180 / Math.PI - drag.a0;
+      a = ((a + 540) % 360) - 180;
+      const q = e.shiftKey ? 15 : 90;
+      if (e.shiftKey || Math.abs(a - Math.round(a / q) * q) < 4) a = Math.round(a / q) * q;
+      it[drag.rkey] = Math.round(a);
+      if (drag.rkey === 'tilt') { drag.el.querySelector('.it-text').style.transform = 'rotate(' + it.tilt + 'deg)'; placeRot(drag.el); }
+      else drag.el.style.transform = it.rot ? 'rotate(' + it.rot + 'deg)' : '';
+    } else if (drag.kind === 'tip') {
+      const [lx, ly] = unturn(dx, dy, it.rot);
+      it.tip = { x: drag.tip.x + lx / drag.cq, y: drag.tip.y + ly / drag.cq };
+      drawBox(drag.el);
+    } else {
+      it.fw = true; it.w = Math.max(10, Math.min(100, drag.w0 + unturn(dx, dy, it.rot)[0] / drag.box.width * 100));
+      drag.el.style.maxWidth = ''; drag.el.style.width = it.w + '%';   // the ResizeObserver redraws the balloon
+    }
+    placeTip();
+  }, { passive: false });
+  // A screen movement, in a box's own directions once the box is tilted by deg.
+  function unturn(dx, dy, deg){
+    if (!deg) return [dx, dy];
+    const r = deg * Math.PI / 180, c = Math.cos(r), s = Math.sin(r);
+    return [dx * c + dy * s, -dx * s + dy * c];
+  }
+  addEventListener('pointerup', e => {
+    if (!drag || e.pointerId !== drag.pid) return;
+    const d = drag; drag = null;
+    if (d.kind === 'trot') d.el.classList.remove('turning');
+    if (d.moved) {
+      save();
+      if (d.kind === 'tip' || d.kind === 'width') { markSeen('tail'); showTip(); }   // they found the handles
+      if (d.kind === 'rot' || d.kind === 'prot' || d.kind === 'trot') { markSeen('rotate'); render(); }                          // the style bar shows the new angle
+      return;
+    }
+    if (d.kind === 'item' && d.editOnTap) editItem(d.el);
+  });
+  bench.addEventListener('dblclick', e => {
+    if (!e.target.closest('.ttl-h') || !S.titleRot) return;
+    checkpoint(); S.titleRot = 0; save(); render();
+  });
+  function editItem(el){
+    const t = el.querySelector('.it-text'); t.focus();
+    const r = document.createRange(); r.selectNodeContents(t); r.collapse(false);
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+  }
+
+  // Keys: undo and redo anywhere outside a text box; delete, nudge, duplicate and let go of the chosen item.
+  document.addEventListener('keydown', e => {
+    if ($('libDlg').open) return;
+    const ed = e.target.closest && e.target.closest('[contenteditable=true], textarea, input');
+    const mod = e.metaKey || e.ctrlKey, k = e.key.toLowerCase();
+    if (mod && !ed && (k === 'z' || k === 'y')) { e.preventDefault(); (k === 'y' || e.shiftKey) ? redo() : undo(); return; }
+    if (e.key === 'Escape') {
+      if (ed) { ed.blur(); return; }
+      if (sel.p != null) { sel = sel.it != null ? { p: sel.p, it: null } : NONE(); render(); }
+      return;
+    }
+    if (!ed && sel.p != null && sel.it == null && (e.key === '[' || e.key === ']') && panelList()[sel.p].img) {
+      e.preventDefault(); checkpoint();
+      const f = panelList()[sel.p].fit;
+      f.r = (((f.r || 0) + (e.key === ']' ? 5 : -5) + 540) % 360) - 180;
+      save(); render(); return;
+    }
+    if (ed || sel.p == null || sel.it == null || S.level === 'prose') return;
+    const items = S.panels[sel.p].items, it = items[sel.it];
+    if (!it) return;
+    if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); checkpoint(); items.splice(sel.it, 1); sel.it = null; save(); render(); }
+    else if (e.key.startsWith('Arrow')) {
+      e.preventDefault(); checkpoint();
+      const st = e.shiftKey ? 3 : 0.5, ax = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+      it.x = Math.max(-10, Math.min(95, it.x + ax[0] * st)); it.y = Math.max(-10, Math.min(95, it.y + ax[1] * st));
+      save(); render();
+    }
+    else if (mod && k === 'd') { e.preventDefault(); duplicate(sel.p, sel.it); }
+    else if (e.key === '[' || e.key === ']') {
+      e.preventDefault(); checkpoint();
+      const rk = it.type === 'sfx' ? 'tilt' : 'rot';
+      it[rk] = (((st(it, rk) || 0) + (e.key === ']' ? 5 : -5) + 540) % 360) - 180;
+      save(); render();
+    }
+    else if (e.key === 'Enter') { e.preventDefault(); const el = bench.querySelector('.it.sel'); if (el) editItem(el); }
+  });
+
+  // ---------- pictures ----------
+  async function setPicture(i, file){
+    const blob = await shrink(file);
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    if (db) await put('img:' + id, blob);
+    urls[id] = URL.createObjectURL(blob);
+    checkpoint();
+    const p = panelList()[i];
+    p.img = { id }; p.fit = { x: 50, y: 50, z: 1 };
+    markSeen('picture');
+    save(); render();
+  }
+  // Pictures stay stored while undo might bring them back; tidyImages() clears the unused ones on the next visit.
+  async function tidyImages(){
+    const keys = await idb('readonly', st => st.getAllKeys()) || [];
+    const used = new Set(S.panels.concat(S.prose).filter(p => p.img && p.img.id).map(p => 'img:' + p.img.id));
+    keys.filter(k => String(k).startsWith('img:') && !used.has(k)).forEach(del);
+  }
+
+  let pendingFor = null;
+  function pickUpload(){ if (sel.p == null) return; pendingFor = sel.p; $('fileIn').click(); }
+  $('fileIn').addEventListener('change', () => {
+    const f = $('fileIn').files[0]; $('fileIn').value = '';
+    if (f && pendingFor != null) setPicture(pendingFor, f);
+  });
+  let zooming = false;
+  function zoomTo(i, z){
+    const f = panelList()[i].fit; f.z = Math.max(1, Math.min(3, z));
+    if ($('zoom')) $('zoom').value = f.z;
+    const im = imgEl(i);
+    if (im) im.setAttribute('style', picStyle(i));
+    save();
+  }
+  // Pinch on a trackpad (or Ctrl + scroll) zooms the chosen picture.
+  let wheelT = null;
+  bench.addEventListener('wheel', e => {
+    const pnl = e.target.closest('.pnl, .pframe');
+    if (!e.ctrlKey || !pnl || +pnl.dataset.i !== sel.p || !panelList()[sel.p].img) return;
+    e.preventDefault();
+    if (!zooming) { checkpoint(); zooming = true; }
+    clearTimeout(wheelT); wheelT = setTimeout(() => { zooming = false; }, 500);
+    zoomTo(sel.p, panelList()[sel.p].fit.z * Math.exp(-e.deltaY * 0.01));
+  }, { passive: false });
+
+  // Paste a picture into the chosen panel (or the first empty one); paste words as plain text.
+  document.addEventListener('paste', e => {
+    const cd = e.clipboardData; if (!cd) return;
+    const file = [...cd.items].filter(x => x.kind === 'file' && x.type.startsWith('image/')).map(x => x.getAsFile())[0];
+    const ed = e.target.closest && e.target.closest('[contenteditable=true]');
+    if (file) {
+      e.preventDefault();
+      const i = sel.p != null ? sel.p : panelList().findIndex(p => !p.img);
+      if (i < 0) { note('Tap the panel you want the picture in, then paste again.'); return; }
+      note(''); sel = { p: i, it: null }; setPicture(i, file);
+      return;
+    }
+    if (ed) {
+      e.preventDefault();
+      let t = cd.getData('text/plain');
+      if (ed.id === 'titleEl') t = t.replace(/\s*\n\s*/g, ' ');
+      document.execCommand('insertText', false, t);
+    }
+  });
+
+  // Drop a picture file onto a panel.
+  const hasFiles = e => e.dataTransfer && [...e.dataTransfer.types].includes('Files');
+  function markDrop(t){
+    if (t && t.classList.contains('wl')) t = bench.querySelector('.pnl:not(.wl)[data-i="' + t.dataset.i + '"]');   // over a word: light its panel
+    bench.querySelectorAll('.drop').forEach(x => { if (x !== t) x.classList.remove('drop'); }); if (t) t.classList.add('drop'); }
+  addEventListener('dragover', e => { if (!hasFiles(e)) return; e.preventDefault(); markDrop(e.target.closest && e.target.closest('.pnl, .pframe')); });
+  addEventListener('dragleave', e => { if (!e.relatedTarget) markDrop(null); });
+  addEventListener('drop', e => {
+    if (!hasFiles(e)) return;
+    e.preventDefault(); markDrop(null);
+    const t = e.target.closest && e.target.closest('.pnl, .pframe');
+    const f = [...e.dataTransfer.files].find(f => f.type.startsWith('image/'));
+    if (!t || !f) { if (f) note('Drop the picture onto a panel.'); return; }
+    note(''); sel = { p: +t.dataset.i, it: null }; setPicture(+t.dataset.i, f);
+  });
+
+  // Library
+  $('libGrid').innerHTML = LIB.map(src => '<button type="button" data-src="' + src + '"><img src="' + src + '" alt="" loading="lazy"></button>').join('');
+  function openLib(){ if (sel.p == null) return; pendingFor = sel.p; $('libDlg').showModal(); }
+  $('libClose').addEventListener('click', () => $('libDlg').close());
+  $('libGrid').addEventListener('click', e => {
+    const b = e.target.closest('[data-src]'); if (!b) return;
+    checkpoint();
+    const p = panelList()[pendingFor];
+    p.img = { lib: b.dataset.src }; p.fit = { x: 50, y: 50, z: 1 };
+    markSeen('picture');
+    $('libDlg').close(); save(); render();
+  });
+
+  // ---------- boxes ----------
+  function addItem(type, text, edit){
+    if (sel.p == null || S.level === 'prose') return;
+    checkpoint();
+    const items = S.panels[sel.p].items;
+    const it = Object.assign({ type }, JSON.parse(JSON.stringify(DEFAULTS[type])));
+    Object.assign(it, S.last && S.last[type]);   // new boxes start in the style used last for their kind
+    if (text != null) it.text = text;
+    // Positions are % of the panel's bounding box; start from the panel's own top-left corner, which on a
+    // slanted or tilted panel sits inside that box.
+    const poly = look().panels[sel.p], bb = bbox(poly);
+    if (type === 'caption' || type === 'thought') { it.x += (poly[0][0] - bb.x) / bb.w * 100; it.y += (poly[0][1] - bb.y) / bb.h * 100; }
+    it.y = Math.min(80, it.y + (items.length % 3) * 6);
+    if (sel.p === 0 && look().clearTitle) it.y = Math.max(it.y, look().clearTitle);
+    items.push(it);
+    sel.it = items.length - 1;
+    save();
+    render().then(() => {
+      const el = bench.querySelector('.pnl[data-i="' + sel.p + '"] .it[data-j="' + sel.it + '"]');
+      if (el && edit) editItem(el);
+    });
+  }
+
+  // The style bar (shown in the dock while a box is chosen): shape, colour, lettering (or tilt) and size.
+  const KIND = { speech: 'Speech balloon', thought: 'Thought bubble', caption: 'Caption box', sfx: 'Sound effect' };
+  function styleHTML(it){
+    const grp = (label, key, opts, css) => '<div class="sg" role="group" aria-label="' + label + '"><b>' + label + '</b>'
+      + opts.map(([v, l]) => '<button type="button" class="pill' + (st(it, key) === v ? ' active' : '') + '" data-style="' + key + '" data-v="' + v + '"'
+        + (css ? ' style="' + css(v) + '"' : '') + '>' + l + '</button>').join('') + '</div>';
+    // A tier narrows each list; a list of one or none drops its group. Styles set in Advanced stay put in Medium.
+    const tier = TIERS[S.level] || {}, pick = (all, keep) => keep ? all.filter(o => keep.includes(o[0])) : all;
+    const shapes = pick(SHAPES[it.type] || [], tier.shapes && tier.shapes[it.type]);
+    const colours = pick(Object.entries(COLOURS), tier.colours);
+    const fonts = pick(Object.entries(FONTS).map(([k, f]) => [k, f.label]), tier.fonts);
+    const sizes = pick(SIZES.map((v, k) => [v, SIZE_NAMES[k]]), tier.sizes);
+    let h = '<span class="what">' + KIND[it.type] + '</span>';
+    if (shapes.length > 1) h += grp('Shape', 'shape', shapes);
+    h += '<div class="sg" role="group" aria-label="Colour"><b>Colour</b>' + colours.map(([k, c]) =>
+      '<button type="button" class="sw' + (st(it, 'color') === k ? ' active' : '') + '" data-style="color" data-v="' + k + '" title="' + c.label
+      + '" aria-label="' + c.label + '" style="background:' + c.fill + '"></button>').join('') + '</div>';
+    if (it.type === 'sfx') h += grp('Tilt', 'tilt', TILTS).replace(/<\/div>$/, '<span class="note">' + st(it, 'tilt') + '° · or drag &#8635;</span></div>');
+    if (it.type !== 'sfx' && it.rot) h += '<div class="sg"><b>Tilt</b><span class="note">' + it.rot + '°</span><button type="button" class="pill" data-style="rot" data-v="0">Straighten</button></div>';
+    if (it.type === 'sfx') {} else if (fonts.length > 1) h += grp('Lettering', 'font', fonts,
+      k => 'font-family:' + FONTS[k].family.replace(/"/g, "'") + ';text-transform:none;letter-spacing:0;font-size:' + (13 * FONTS[k].k) + 'px');
+    h += grp('Size', 's', sizes);
+    if (tier.more) h += '<span class="more">' + tier.more + '</span>';
+    return h;
+  }
+
+  // ---------- the dock: page tools, then panel tools, then box styles, as each is chosen ----------
+  const ADD_NAMES = { caption: 'Caption box', speech: 'Speech balloon', thought: 'Thought bubble', sfx: 'Sound effect' };
+  const NEW = '<i class="new">NEW</i>';
+  let exporting = false, shownGroups = [];
+  const chosenItem = () => sel.it != null && S.level !== 'prose' && S.panels[sel.p] && S.panels[sel.p].items[sel.it];
+  // Add waits until the panel has a picture (or already has words): picture first, then the story.
+  const addReady = () => sel.p != null && S.level !== 'prose' && !chosenItem() && (S.panels[sel.p].img || S.panels[sel.p].items.length > 0);
+  const bankOpen = () => sfxOpen && addReady() && S.level === 'advanced';
+  function renderDock(){
+    const b = (cmd, label, o = {}) => '<button type="button" class="' + (o.cls || 'pill') + (o.on ? ' active' : '') + '" data-cmd="' + cmd + '"'
+      + (o.v != null ? ' data-v="' + o.v + '"' : '') + (o.id ? ' id="' + o.id + '"' : '') + (o.off ? ' disabled' : '')
+      + (o.title ? ' title="' + o.title + '"' : '') + (o.exp != null ? ' aria-expanded="' + o.exp + '"' : '') + '>' + label + (o.isNew ? NEW : '') + '</button>';
+    const g = (id, inner) => '<div class="sg" data-g="' + id + '">' + inner + '</div>';
+    const it = chosenItem(), list = panelList(), p = sel.p != null && list[sel.p];
+    let h;
+    let done = '';
+    if (it) { h = styleHTML(it); done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this box (Esc)&#10;&#10;Keyboard, with a box chosen:&#10;Delete: remove it&#10;Arrow keys: nudge it (hold Shift for bigger steps)&#10;Ctrl/&#8984;+D: duplicate it&#10;Enter: edit the words&#10;[ and ]: tilt it&#10;Ctrl/&#8984;+Z: undo, Shift+Ctrl/&#8984;+Z: redo' }); }
+    else if (p) {
+      h = '<span class="what">' + (S.level === 'prose' ? 'Frame ' : 'Panel ') + (sel.p + 1) + '</span>'
+        + g('picture', '<b>Picture</b>' + (p.img
+          ? b('upload', 'Replace') + b('lib', 'Library') + b('flip', 'Flip &#8646;', { v: 'flip', on: p.fit.flip, title: 'Flip the picture left to right, so a character faces the other way' })
+            + b('flip', 'Flip &#8645;', { v: 'flipY', on: p.fit.flipY, title: 'Flip the picture upside down, for a reflection in a puddle or a window' })
+            + (p.fit.r ? '<span class="note">' + p.fit.r + '°</span>' + b('straighten', 'Straighten') : '') + b('clear', 'Remove')
+            + '<label class="zoom">Zoom <input type="range" id="zoom" min="1" max="3" step="0.05" value="' + p.fit.z + '"></label>'
+          : b('upload', 'Upload') + b('lib', 'From our library') + '<span class="note">or paste (Ctrl/&#8984;+V) or drop a picture on the panel</span>'));
+      if (addReady()) h += g('add', '<b>Add</b>' + (S.level === 'advanced' ? ['caption', 'speech', 'thought', 'sfx'] : ['caption', 'speech'])
+        .map(k => b('add', ADD_NAMES[k], { v: k, isNew: !seen('n:' + k), on: k === 'sfx' && bankOpen(), exp: k === 'sfx' ? bankOpen() : null })).join(''));
+      done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this panel (Esc)&#10;&#10;Keyboard, with a panel chosen:&#10;Ctrl/&#8984;+V: paste a picture you have copied&#10;Ctrl + scroll, or pinch on a trackpad: zoom the picture&#10;[ and ]: turn the picture&#10;Ctrl/&#8984;+Z: undo, Shift+Ctrl/&#8984;+Z: redo' });
+    } else {
+      h = '<span class="what">Page</span>'
+        + (S.level === 'advanced' ? g('style', '<b>Style' + (seen('n:style') ? '' : NEW) + '</b>'
+          + b('style', esc(styleInfo().name) + ' <span class="n">' + (STYLE_KEYS_ORDER.indexOf(S.style) + 1) + ' / ' + STYLE_KEYS_ORDER.length + '</span> &#9656;',
+            { cls: 'stylebtn', title: 'Change the whole page layout' })
+          + b('about', 'About this style', { cls: 'btn ghost small', on: cardOpen })) : '')
+        + g('page', b('png', 'Download PNG <span class="arr">&darr;</span>', { cls: 'btn small', id: 'pngBtn', off: exporting })
+          + b('print', 'Print or save as PDF', { cls: 'btn ghost small' }) + b('reset', 'Start again', { cls: 'btn ghost small' }));
+    }
+    h += '<div class="sg undo">' + done + b('undo', 'Undo', { cls: 'btn ghost small', id: 'undoBtn', off: !past.length, title: 'Undo (Ctrl/&#8984;+Z)' })
+      + b('redo', 'Redo', { cls: 'btn ghost small', id: 'redoBtn', off: !future.length, title: 'Redo (Shift+Ctrl/&#8984;+Z)' }) + '</div>';
+    const dock = $('dock');
+    dock.innerHTML = h;
+    // Groups that weren't in the dock a moment ago slide in, so new tools are seen arriving.
+    const ids = [...dock.querySelectorAll('[data-g]')].map(x => x.dataset.g);
+    dock.querySelectorAll('[data-g]').forEach(x => { if (!shownGroups.includes(x.dataset.g)) x.classList.add('arrive'); });
+    shownGroups = ids;
+    const tray = $('sfxBank');
+    tray.hidden = !bankOpen();
+    tray.style.bottom = dock.offsetHeight + 'px';
+    document.body.style.paddingBottom = (dock.offsetHeight + (tray.hidden ? 0 : tray.offsetHeight) + 24) + 'px';
+    renderCard(dock.offsetHeight);
+  }
+
+  // ---------- the style card: what the style is, and a line to ask the AI for pictures that match ----------
+  let cardOpen = false;
+  const styleInfo = () => THEME.pageStyles.find(s => s.key === S.style) || THEME.pageStyles[0];
+  function renderCard(dockH){
+    const el = $('styleCard'), on = cardOpen && S.level === 'advanced' && sel.p == null;
+    el.hidden = !on;
+    if (!on) return;
+    const s = styleInfo();
+    el.innerHTML = '<button type="button" class="x" data-card="close" aria-label="Close">&times;</button>'
+      + '<div class="era">' + esc(s.era) + '</div><h3>' + esc(s.title) + '</h3><p>' + esc(s.about) + '</p>'
+      + '<h4>Pictures to match: add this to your prompt</h4><div class="prompt">' + esc(s.prompt) + '</div>'
+      + '<div class="row"><button type="button" class="btn small" data-card="copy">Copy the prompt line</button>'
+      + '<small>It describes the look instead of naming the artist.</small></div>';
+    el.style.bottom = (dockH + 12) + 'px';
+  }
+  $('styleCard').addEventListener('click', e => {
+    const b = e.target.closest('[data-card]'); if (!b) return;
+    if (b.dataset.card === 'close') { cardOpen = false; return render(); }
+    const done = ok => { b.textContent = ok ? 'Copied' : 'Select the text above to copy it'; };
+    try { navigator.clipboard.writeText(styleInfo().prompt).then(() => done(true), () => done(false)); } catch (err) { done(false); }
+  });
+
+  $('dock').addEventListener('click', e => {
+    const sb = e.target.closest('[data-style]'), it = chosenItem();
+    if (sb && it) {
+      const k = sb.dataset.style, v = k === 's' || k === 'tilt' || k === 'rot' ? +sb.dataset.v : sb.dataset.v;
+      checkpoint();
+      it[k] = v;
+      if (k !== 'rot') { S.last = S.last || {}; (S.last[it.type] = S.last[it.type] || {})[k] = v; }   // a tilt belongs to one box
+      markSeen('style');
+      save(); render(); return;
+    }
+    const b = e.target.closest('[data-cmd]'); if (!b || b.disabled) return;
+    const v = b.dataset.v;
+    switch (b.dataset.cmd) {
+      case 'undo': return undo();
+      case 'redo': return redo();
+      case 'done': sel = sel.it != null ? { p: sel.p, it: null } : NONE(); return render();
+      case 'upload': return pickUpload();
+      case 'lib': return openLib();
+      case 'straighten': checkpoint(); panelList()[sel.p].fit.r = 0; save(); return render();
+      case 'flip': { checkpoint(); const f = panelList()[sel.p].fit; f[v] = !f[v]; save(); return render(); }
+      case 'clear': checkpoint(); panelList()[sel.p].img = null; save(); return render();
+      case 'add':
+        markSeen('n:' + v); markSeen('add');
+        if (v === 'sfx') { sfxOpen = !sfxOpen; return render(); }
+        return addItem(v, null, true);
+      case 'style': {
+        markSeen('n:style');
+        checkpoint();
+        S.style = STYLE_KEYS_ORDER[(STYLE_KEYS_ORDER.indexOf(S.style) + 1) % STYLE_KEYS_ORDER.length];
+        applyLetters(S.style);
+        sel = NONE(); cardOpen = true; save();
+        return render();
+      }
+      case 'about': cardOpen = !cardOpen; return render();
+      case 'png': sel = NONE(); render(); return exportPNG();
+      case 'print': sel = NONE(); return render().then(() => print());
+      case 'reset':
+        if (!confirm('Clear this page and start again? Your pictures will be removed from this browser.')) return;
+        S = fresh(); sel = NONE(); past = []; future = [];
+        save(); tidyImages(); return render();
+    }
+  });
+  $('dock').addEventListener('input', e => {
+    if (e.target.id !== 'zoom' || sel.p == null) return;
+    if (!zooming) { checkpoint(); zooming = true; }
+    zoomTo(sel.p, +e.target.value);
+  });
+  $('dock').addEventListener('change', e => { if (e.target.id === 'zoom') zooming = false; });
+
+  // Sound effects: a tray of words above the dock. A word goes into the chosen panel, or replaces the chosen sound effect.
+  let sfxOpen = false;
+  $('sfxBank').innerHTML = THEME.sfx.map(([group, words]) => '<div><p>' + esc(group) + '</p><div class="w">'
+      + words.map(w => '<button type="button" data-sfx="' + esc(w) + '">' + esc(w) + '</button>').join('') + '</div></div>').join('')
+    + '<div class="own"><button type="button" data-sfx="">Type your own</button>'
+    + '<span>Pick a word to add it to the chosen panel. With a sound effect chosen, a word swaps it.</span></div>';
+  $('sfxBank').addEventListener('click', e => {
+    const b = e.target.closest('[data-sfx]'); if (!b || sel.p == null) return;
+    const w = b.dataset.sfx, cur = chosenItem();
+    markSeen('sfx');
+    if (w && cur && cur.type === 'sfx') { checkpoint(); cur.text = w; save(); render(); return; }
+    addItem('sfx', w, !w);
+  });
+
+  // ---------- one-time tips: each tool is introduced once, and the browser remembers ----------
+  const SEEN = 'police-pound-builder-seen';
+  let seenSet;
+  try { seenSet = new Set(JSON.parse(localStorage.getItem(SEEN) || '[]')); } catch (e) { seenSet = new Set(); }
+  function seen(k){ return seenSet.has(k); }
+  function markSeen(k){
+    if (seenSet.has(k)) return;
+    seenSet.add(k);
+    try { localStorage.setItem(SEEN, JSON.stringify([...seenSet])); } catch (e) {}
+  }
+  // In order: the first one that applies and hasn't been seen is shown.
+  const TIPS = [
+    { id: 'advanced', at: 'dock', when: () => S.level === 'advanced' && sel.p == null,
+      title: 'Super maker unlocked', text: 'Press Style down here to change the whole page layout. Choose a panel for thought bubbles and sound effects.' },
+    { id: 'picture', at: 'dock', when: () => sel.p != null && !chosenItem() && !panelList()[sel.p].img,
+      title: 'Bring a picture in', text: 'Upload one, pick from our library, or copy a picture from your AI tool and paste it here with Ctrl/⌘+V.' },
+    { id: 'add', at: 'dock', when: addReady,
+      title: 'Now tell the story', text: 'Add a caption box for the narrator and a speech balloon for whoever is talking. Drag the picture to frame it.' },
+    { id: 'tail', at: 'tail', when: () => { const it = chosenItem(); return it && hasTail(it) && it.tail !== 'none'; },
+      title: 'Point the tail', text: 'Drag the yellow dot to whoever is talking. The yellow bar makes the box wider or narrower.' },
+    { id: 'rotate', at: 'rot', when: () => !!chosenItem(),
+      title: 'Tilt it', text: 'Drag the round handle to tilt it any way you like. Hold Shift for steps of 15°.' },
+    { id: 'style', at: 'dock', when: () => !!chosenItem(),
+      title: 'Make it look right', text: 'Change the look down here. Delete removes the box, the arrow keys nudge it, and Esc lets go.' },
+    { id: 'sfx', at: 'tray', when: bankOpen,
+      title: 'Sound effects', text: 'Tap a word to add it to the panel. With a sound effect chosen, tapping a word swaps it.' },
+  ];
+  let tipNow = null;
+  function showTip(){
+    const t = $('styleCard').hidden ? TIPS.find(x => !seen(x.id) && x.when()) : null;
+    tipNow = t || null;
+    const el = $('tip');
+    if (!t) { el.hidden = true; return; }
+    el.innerHTML = '<b>' + t.title + '</b>' + t.text + '<br><button type="button" id="tipOk">Got it</button>';
+    el.hidden = false;
+    placeTip();
+  }
+  // Tips sit just above the dock (or the tray), or under the tail's dot, with a pointer at what they're about.
+  function placeTip(){
+    const el = $('tip'); if (!tipNow || el.hidden) return;
+    el.className = 'tip'; el.style.top = el.style.bottom = '';
+    const dockH = $('dock').offsetHeight, tray = $('sfxBank'), trayH = tray.hidden ? 0 : tray.offsetHeight;
+    const dot = { tail: '.it.sel .tip-h', rot: '.it.sel .rot-h' }[tipNow.at] && bench.querySelector({ tail: '.it.sel .tip-h', rot: '.it.sel .rot-h' }[tipNow.at]);
+    if (dot) {
+      const r = dot.getBoundingClientRect(), w = el.offsetWidth;
+      const left = Math.max(12, Math.min(r.left + r.width / 2 - 28, innerWidth - w - 12));
+      el.style.left = left + 'px';
+      el.style.setProperty('--ax', Math.max(12, Math.min(w - 26, r.left + r.width / 2 - left - 7)) + 'px');
+      if (r.bottom + 14 + el.offsetHeight < innerHeight - dockH - 8) { el.classList.add('up'); el.style.top = (r.bottom + 12) + 'px'; }
+      else { el.classList.add('down'); el.style.top = (r.top - el.offsetHeight - 12) + 'px'; }
+      return;
+    }
+    el.classList.add('down');
+    el.style.left = Math.max(12, Math.min(innerWidth / 2 - 300, innerWidth - el.offsetWidth - 12)) + 'px';
+    el.style.setProperty('--ax', '28px');
+    el.style.bottom = (dockH + trayH + 14) + 'px';
+  }
+  $('tip').addEventListener('click', e => {
+    if (e.target.id !== 'tipOk' || !tipNow) return;
+    markSeen(tipNow.id); tipNow = null; $('tip').hidden = true;
+  });
+  addEventListener('scroll', placeTip, { passive: true });
+  addEventListener('resize', () => { renderDock(); placeTip(); });
+  $('tipsAgain').addEventListener('click', () => {
+    seenSet = new Set();
+    try { localStorage.removeItem(SEEN); } catch (e) {}
+    render();
+    scrollTo({ top: $('bench').getBoundingClientRect().top + scrollY - 20, behavior: 'smooth' });
+  });
+
+  // ---------- PNG export: redraw the page on a canvas ----------
+  const W = 1600;
+  function loadImg(src){ return new Promise(r => { if (!src) return r(null); const im = new Image(); im.onload = () => r(im); im.onerror = () => r(null); im.src = src; }); }
+  function wrap(ctx, text, maxW){
+    const out = [];
+    String(text).split('\n').forEach(par => {
+      let line = '';
+      par.split(/\s+/).forEach(w => {
+        const t = line ? line + ' ' + w : w;
+        if (ctx.measureText(t).width > maxW && line) { out.push(line); line = w; } else line = t;
+      });
+      out.push(line);
+    });
+    return out;
+  }
+  function drawCover(ctx, im, fit, x, y, w, h, ink){
+    ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
+    ctx.fillStyle = '#fff'; ctx.fillRect(x, y, w, h);
+    if (im && ink) {   // draw the picture on its own canvas and ink it there, so every browser gets the same result
+      const oc = document.createElement('canvas');
+      oc.width = Math.ceil(w); oc.height = Math.ceil(h);
+      drawCover(oc.getContext('2d'), im, fit, 0, 0, w, h);
+      inkBW(oc);
+      ctx.drawImage(oc, x, y); ctx.restore(); return;
+    }
+    // flips, a turn and the fill-the-corners enlargement, about the panel's centre (as imgStyle() does on the page)
+    if (fit.flip || fit.flipY || fit.r) {
+      const k = fit.r ? fillFor(fit.r, w / h) : 1;
+      ctx.translate(x + w / 2, y + h / 2); ctx.rotate((fit.r || 0) * Math.PI / 180);
+      ctx.scale(k * (fit.flip ? -1 : 1), k * (fit.flipY ? -1 : 1)); ctx.translate(-(x + w / 2), -(y + h / 2));
+    }
+    if (im) {
+      const s0 = Math.max(w / im.width, h / im.height), rw = im.width * s0, rh = im.height * s0;
+      const offX = (w - rw) * fit.x / 100, offY = (h - rh) * fit.y / 100;
+      const ox = w * fit.x / 100, oy = h * fit.y / 100;
+      ctx.drawImage(im, x + ox + (offX - ox) * fit.z, y + oy + (offY - oy) * fit.z, rw * fit.z, rh * fit.z);
+    }
+    ctx.restore();
+  }
+  // The optional black-and-white inking, pixel by pixel, as the page's CSS filter grayscale(1) contrast(2.1) brightness(.95) does it.
+  function inkBW(cv){
+    const cx = cv.getContext('2d'), d = cx.getImageData(0, 0, cv.width, cv.height), a = d.data;
+    for (let k = 0; k < a.length; k += 4) {
+      const g = (0.2126 * a[k] + 0.7152 * a[k + 1] + 0.0722 * a[k + 2]) / 255;
+      a[k] = a[k + 1] = a[k + 2] = Math.max(0, Math.min(1, (g - 0.5) * 2.1 + 0.5)) * 0.95 * 255;
+    }
+    cx.putImageData(d, 0, 0);
+  }
+  function drawTitle(ctx, text, tt, cq, H){
+    ctx.save();
+    const setSize = s => {
+      ctx.font = tt.weight + ' ' + s * cq + 'px ' + tt.family;
+      if (tt.spacing && 'letterSpacing' in ctx) ctx.letterSpacing = tt.spacing * s * cq + 'px';
+    };
+    setSize(tt.size);
+    // too long for the page: shrink to fit, as fitTitle() does on screen (the page's box counts .15em of room for the lean)
+    const w = ctx.measureText(text).width + 0.15 * tt.size * cq, room = W * TITLE_ROOM;
+    if (w > room) setSize(tt.size * room / w);
+    ctx.textBaseline = 'middle'; ctx.translate(W * 0.03, H * 0.046);
+    if (tt.rotate) ctx.rotate(tt.rotate * Math.PI / 180);
+    if (tt.stroke) { ctx.lineWidth = 2 * tt.stroke[0] * cq; ctx.strokeStyle = tt.stroke[1]; ctx.lineJoin = 'round'; ctx.strokeText(text, 0, 0); }
+    ctx.fillStyle = tt.color; ctx.fillText(text, 0, 0);
+    ctx.restore();
+  }
+  function drawItem(ctx, it, px, py, pw, ph){
+    const cq = W / 100, x = px + pw * it.x / 100, y = py + ph * it.y / 100, c = colourOf(it);
+    let w = pw * it.w / 100;
+    const text = (it.text || '').trim(), fs = textSize(it) * cq;
+    if (!text) return;
+    ctx.save();
+    if (it.type === 'sfx') {
+      // The page turns the word about its centre (its box is the word's width by one line of type), so do the same.
+      const word = text.toUpperCase();
+      ctx.font = fs + "px 'Luckiest Guy'";
+      const tw = ctx.measureText(word).width;
+      ctx.translate(x + tw / 2, y + fs / 2); ctx.rotate(st(it, 'tilt') * Math.PI / 180);
+      ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+      ctx.lineJoin = 'round'; ctx.lineWidth = 0.7 * cq; ctx.strokeStyle = c.line; ctx.strokeText(word, 0, 0);
+      ctx.fillStyle = c.fill; ctx.fillText(word, 0, 0);
+      ctx.restore(); return;
+    }
+    const f = fontOf(it), lh = fs * 1.15, words = f.upper ? text.toUpperCase() : text;
+    ctx.font = f.weight + ' ' + fs + 'px ' + f.family;
+    const padX = padOf(it)[0] * cq, padY = padOf(it)[1] * cq;
+    const lines = wrap(ctx, words, w - 2 * padX);
+    // Boxes shrink to their words, as on screen (width: max-content, capped at w), unless their width was set by hand.
+    if (!it.fw) w = Math.min(w, Math.max(...lines.map(l => ctx.measureText(l).width)) + 2 * padX + 2);
+    const h = lines.length * lh + 2 * padY;
+    if (it.rot) { const cx = x + w / 2, cy = y + h / 2; ctx.translate(cx, cy); ctx.rotate(it.rot * Math.PI / 180); ctx.translate(-cx, -cy); }
+    const g = geom(w, h, it, cq), parts = pieces(it, g, cq), dash = dashOf(it, g);
+    ctx.save(); ctx.translate(x, y);
+    ctx.lineWidth = 2 * g.bw; ctx.strokeStyle = c.line; ctx.lineJoin = 'round';
+    if (dash) ctx.setLineDash(dash);
+    ctx.stroke(new Path2D(parts.join('')));
+    ctx.fillStyle = c.fill; parts.forEach(d => ctx.fill(new Path2D(d)));
+    ctx.restore();
+    ctx.fillStyle = c.text; ctx.textBaseline = 'top'; ctx.textAlign = it.type === 'caption' ? 'left' : 'center';
+    lines.forEach((ln, k) => ctx.fillText(ln, it.type === 'caption' ? x + padX : x + w / 2, y + padY + k * lh + fs * 0.05));
+    ctx.restore();
+  }
+
+  async function exportPNG(){
+    exporting = true; renderDock();
+    try {
+      await Promise.all(['40px "Luckiest Guy"', '40px "Patrick Hand"', '40px Bangers'].concat(Object.values(FONTS).map(f => f.weight + ' 40px ' + f.family)).map(f => document.fonts.load(f).catch(() => {})));
+      const list = panelList();
+      const ims = await Promise.all(list.map(async p => loadImg(await urlFor(p.img))));
+      const c = document.createElement('canvas'), ctx = c.getContext('2d'), cq = W / 100;
+      if (S.level === 'prose') {
+        const m = W * 0.06, iw = W - 2 * m, ih = iw * 9 / 16, fs = 2.5 * cq, lh = fs * 1.6;
+        ctx.font = fs + 'px "Patrick Hand"';
+        const blocks = list.map(f => wrap(ctx, (f.text || '').trim(), iw));
+        const titleH = S.title.trim() ? 9 * cq : 0;
+        c.width = W; c.height = Math.round(m + titleH + list.reduce((a, f, i) => a + ih + 2 * cq + (f.text.trim() ? blocks[i].length * lh : 0) + 4 * cq, 0) + m);
+        ctx.fillStyle = '#f3eee0'; ctx.fillRect(0, 0, c.width, c.height);
+        let y = m;
+        if (titleH) {
+          // turned about the middle of its left end, as on the page (the title's line is 1.05 × 6 cq tall)
+          ctx.save(); ctx.fillStyle = '#111'; ctx.font = (6 * cq) + "px 'Luckiest Guy'"; ctx.textBaseline = 'middle';
+          ctx.translate(m, y + 3.15 * cq); ctx.rotate(titleTurn() * Math.PI / 180); ctx.fillText(S.title.toUpperCase(), 0, 0);
+          ctx.restore(); y += titleH;
+        }
+        list.forEach((f, i) => {
+          drawCover(ctx, ims[i], f.fit, m, y, iw, ih);
+          ctx.lineWidth = 0.5 * cq; ctx.strokeStyle = '#111'; ctx.strokeRect(m, y, iw, ih);
+          y += ih + 2 * cq;
+          ctx.fillStyle = '#111'; ctx.font = fs + 'px "Patrick Hand"'; ctx.textBaseline = 'top';
+          if (f.text.trim()) blocks[i].forEach(ln => { ctx.fillText(ln, m, y); y += lh; });
+          y += 4 * cq;
+        });
+      } else {
+        const H = W * 1.5, lk = look(); c.width = W; c.height = H;
+        ctx.fillStyle = lk.page; ctx.fillRect(0, 0, W, H);
+        lk.panels.forEach((poly, i) => {
+          const P0 = poly.map(([x, y]) => [x * cq, y * cq]), b = bbox(P0), path = new Path2D(), path2 = new Path2D();
+          const trace = (pa, pts) => { pts.forEach(([x, y], k) => k ? pa.lineTo(x * cq, y * cq) : pa.moveTo(x * cq, y * cq)); pa.closePath(); };
+          trace(path, wob(poly, i)); trace(path2, wob(poly, i + 37));
+          ctx.save(); ctx.clip(path);
+          drawCover(ctx, ims[i], S.panels[i].fit, b.x, b.y, b.w, b.h, lk.ink);
+          // frames: twice the width, clipped to the panel, so only the inner half shows (as on the page)
+          framesOf(lk, i).forEach(([w, col]) => { ctx.strokeStyle = col; ctx.lineJoin = 'round'; ctx.lineWidth = 2 * w * cq; ctx.stroke(path);
+            ctx.save(); ctx.globalAlpha = 0.6; ctx.lineWidth = 0.9 * w * cq; ctx.stroke(path2); ctx.restore(); });
+          ctx.restore();
+        });
+        // the title goes on last: in the Image style a picture fills the page underneath it
+        if (S.title.trim()) drawTitle(ctx, S.title.toUpperCase(), Object.assign({}, lk.title, { rotate: titleTurn() }), cq, H);
+        // words last and unclipped, as on the page, so they can burst out of their panels
+        lk.panels.forEach((poly, i) => {
+          const b = bbox(poly.map(([x, y]) => [x * cq, y * cq]));
+          S.panels[i].items.forEach(it => drawItem(ctx, it, b.x, b.y, b.w, b.h));
+        });
+      }
+      const blob = await new Promise(r => c.toBlob(r, 'image/png'));
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = (S.title.trim() || 'my-police-pound-comic').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    } catch (e) {
+      note('Sorry, the download didn’t work in this browser. Try "Print or save as PDF" instead.');
+    } finally { exporting = false; renderDock(); }
+  }
+
+  // ---------- start ----------
+  (async () => {
+    db = await openDB();
+    if (!db) note('This browser won’t let the page save, so download your page before you close it.');
+    const saved = await get('state');
+    if (saved && saved.panels) S = Object.assign(fresh(), saved);
+    migrate();
+    render();
+    tidyImages();
+    if (document.fonts) document.fonts.ready.then(fitTitle);   // measure the title again once its lettering has loaded
+  })();
+})();
+</script>
+<script type="module" src="../pencil.js"></script>
+</body>
+</html>

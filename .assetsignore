@@ -24,3 +24,6 @@ precinct-api
 # Empty leftover zips from preparing the Precinct images (0 bytes, unlinked)
 blog/21cl-images-bundle.zip
 blog/21cl-midjourney-images.zip
+
+# Paws & Order: the mock AI server and tests are not site files
+paws-and-order/dev

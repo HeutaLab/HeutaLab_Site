@@ -1,0 +1,7 @@
+/* Self-hosted fonts (no requests to Google, which matters on a children's site).
+   All are open licences: Luckiest Guy (Apache 2.0), the rest SIL Open Font Licence 1.1. */
+@font-face{font-family:"Luckiest Guy";font-style:normal;font-weight:400;font-display:swap;src:url(luckiest-guy-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Patrick Hand";font-style:normal;font-weight:400;font-display:swap;src:url(patrick-hand-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Gochi Hand";font-style:normal;font-weight:400;font-display:swap;src:url(gochi-hand-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Comic Neue";font-style:normal;font-weight:700;font-display:swap;src:url(comic-neue-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Bangers";font-style:normal;font-weight:400;font-display:swap;src:url(bangers-latin-400-normal.woff2) format("woff2")}
