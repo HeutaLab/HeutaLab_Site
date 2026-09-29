@@ -319,6 +319,51 @@ body { color: var(--paper); }
 
 .appgrid-foot { margin-top: var(--gutter); display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 
+/* ---- Comics and AI split -----------------------------------------------
+   Paws & Order and The Precinct are a pair: the same idea (writing with AI,
+   through a comic) for children and for adults. They sit under the grid as
+   two half-width cards with a picture, so they read as a set of their own
+   rather than as cards seven and eight. Same .appcard underneath, so the
+   hover, chip and foot all behave like the grid's. The tints extend the
+   grid's family at the same OKLab lightness (L 0.68): orange at hue 50,
+   between Creance and Perkush, and magenta at hue 340, between LoopLab and
+   Creance. */
+
+.comicsplit {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gutter);
+  margin-top: calc(var(--gutter) * 1.5);
+}
+.comicsplit-label {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--hairline);
+  font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--paper-dim);
+}
+.comiccard { overflow: hidden; }
+.comiccard-pic {
+  display: block;
+  margin: -30px -28px 24px;          /* bleeds to the card edge through its padding */
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+  border-bottom: 1px solid var(--hairline);
+}
+.comiccard-pic img { width: 100%; height: 100%; object-fit: cover; object-position: top left; transition: transform .35s ease; }
+.comiccard:hover .comiccard-pic img { transform: scale(1.03); }
+.comiccard h3 { font-size: clamp(1.4rem, 1.9vw, 1.85rem); max-width: 28ch; }
+.comiccard p { max-width: 52ch; }
+
+@media (max-width: 760px) {
+  .comicsplit { grid-template-columns: 1fr; }
+}
+@media (max-width: 620px) {
+  .comiccard-pic { margin: -30px -28px 20px; }
+  .comiccard:hover, .comiccard:focus-visible { transform: none; }
+}
+
 /* ---- Four claims ----------------------------------------------------- */
 
 .claims { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); margin-top: var(--gutter); }
