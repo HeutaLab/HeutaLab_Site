@@ -20,6 +20,7 @@ Drop square pictures into `img/cast/` (`hero.png`, `buddy.png`, `trouble.png`, `
 - `builder/` Comic Maker
 - `theme.js` all wording, cast, palettes, levels; `ai.js` provider calls and safety checks
 - `pound.css`, `fonts/` (self-hosted open-licence fonts), `img/`
+- `img/stickers/<character>/` the gang cut out of their character sheets for the Comic Maker's sticker tray: `<name>.webp` with a see-through background and `<name>-b.webp` with a white border. They are listed in `stickers` in `theme.js`.
 
 ## Testing without a key
 ```

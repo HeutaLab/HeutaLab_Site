@@ -364,4 +364,19 @@ export default {
     ['Weather', ['SPLISH SPLASH', 'DRIP DRIP', 'RUMBLE', 'FLASH!', 'BRRR']],
     ['Feelings', ['GASP!', 'GIGGLE', 'OOPS!', 'YIKES!', 'YAY!']],
   ],
+
+  // Stickers for the Comic Maker: the gang cut out of their character sheets, so a child can put them
+  // into a picture without an image tool. Each is img/stickers/<dir>/<file>.webp with a see-through
+  // background, plus a twin <file>-b.webp with a white sticker border. [file, label, starting width
+  // in % of the panel]. To add a character, cut their sheet the same way and add an entry here.
+  stickers: [
+    { who: 'Inspector Nettle', dir: 'nettle', items: [
+      ['standing', 'Standing', 30], ['side', 'Side on', 30], ['walking-away', 'Walking away', 30],
+      ['examining', 'Examining clues', 38], ['notes', 'Taking notes', 30], ['pointing', 'Pointing', 40],
+      ['face-pleased', 'Pleased', 24], ['face-thinking', 'Thinking', 24], ['face-confused', 'Confused', 24],
+      ['face-suspicious', 'Suspicious', 24], ['face-determined', 'Determined', 24], ['face-cross', 'Cross', 24],
+      ['magnifying-glass', 'Magnifying glass', 12], ['notepad', 'Notepad', 12], ['pencil', 'Pencil', 8],
+    ] },
+  ],
+  stickerPath: (dir, file, border) => IMG + 'stickers/' + dir + '/' + file + (border ? '-b' : '') + '.webp',
 };
