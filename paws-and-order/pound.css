@@ -69,20 +69,20 @@ main{min-width:0}
 .page > main{padding-top:24px}
 
 /* ---------- hero: the town, the title, a starburst and one of the gang ---------- */
-.hero{position:relative;display:grid;grid-template-columns:minmax(0,54%) minmax(0,1fr);min-height:330px;border:4px solid var(--frame);border-radius:var(--wobble);
+.hero{position:relative;display:grid;grid-template-columns:minmax(0,56%) minmax(0,1fr);min-height:262px;border:4px solid var(--frame);border-radius:var(--wobble);
   box-shadow:6px 6px 0 var(--frame);overflow:hidden;background:#2f7de0 url(img/banner.jpg) right bottom/cover no-repeat}
 .hero::before{content:"";position:absolute;inset:0;z-index:0;
   background:linear-gradient(90deg,rgba(18,58,168,.92) 0%,rgba(24,80,190,.72) 38%,rgba(24,80,190,0) 64%),radial-gradient(rgba(0,0,0,.14) 1.5px,transparent 2px) 0 0/10px 10px}
-.hero .copy{position:relative;z-index:3;padding:30px 30px 28px 34px;display:flex;flex-direction:column;justify-content:center}
+.hero .copy{position:relative;z-index:3;padding:20px 26px 22px 32px;display:flex;flex-direction:column;justify-content:center}
 .hero h1{margin:0;font-family:var(--brush);font-weight:400;text-transform:uppercase;color:var(--yellow);line-height:.84;transform:rotate(-4deg);transform-origin:left bottom;
   -webkit-text-stroke:8px var(--frame);paint-order:stroke fill;text-shadow:6px 6px 0 var(--frame)}
-.hero h1 .name{display:block;font-size:clamp(54px,7vw,104px)}
+.hero h1 .name{display:block;font-size:clamp(48px,5.8vw,86px)}
 .hero h1 .badge{display:inline-block;width:.62em;height:.62em;margin-right:.08em;vertical-align:.05em}
-.hero .verbs{margin:24px 0 8px;font-family:var(--brush);font-size:clamp(18px,1.9vw,24px);letter-spacing:.08em;color:#fff;transform:rotate(-3deg);transform-origin:left;
+.hero .verbs{margin:16px 0 2px;font-family:var(--brush);font-size:clamp(18px,1.9vw,24px);letter-spacing:.08em;color:#fff;transform:rotate(-3deg);transform-origin:left;
   -webkit-text-stroke:4px var(--frame);paint-order:stroke fill}
 .hero .verbs span{color:var(--yellow);margin:0 .3em}
-.hero .tag{align-self:flex-start;margin:14px 0 0;max-width:31ch;padding:9px 15px 10px;background:#fff;color:var(--frame);border:3px solid var(--frame);
-  border-radius:12px 5px 13px 6px / 6px 13px 5px 12px;box-shadow:4px 4px 0 var(--frame);font-family:var(--label);font-size:20px;line-height:1.3;transform:rotate(-1.5deg);transform-origin:left}
+.hero .tag{align-self:flex-start;margin:12px 0 0;max-width:none;padding:8px 15px 9px;background:#fff;color:var(--frame);border:3px solid var(--frame);
+  border-radius:12px 5px 13px 6px / 6px 13px 5px 12px;box-shadow:4px 4px 0 var(--frame);font-family:var(--label);font-size:19px;line-height:1.3;transform:rotate(-1.5deg);transform-origin:left}
 .hero .art{position:relative;z-index:2;min-height:260px}
 .hero .who{position:absolute;right:30%;bottom:-4%;height:100%;width:auto;max-width:none;filter:drop-shadow(6px 6px 0 rgba(0,0,0,.55))}
 .hero .who.flip{transform:scaleX(-1)}
@@ -90,11 +90,11 @@ main{min-width:0}
 .hero .burst svg{display:block;width:100%;height:auto}
 .hero .burst b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--brush);font-weight:400;
   font-size:clamp(17px,1.7vw,23px);line-height:1;color:var(--frame);text-transform:uppercase;padding:0 18%}
-.hero .kicker{align-self:flex-start;margin-bottom:10px;font-family:var(--brush);font-size:20px;color:var(--frame);text-decoration:none;letter-spacing:.03em;
+.hero .kicker{align-self:flex-start;margin-bottom:8px;font-family:var(--brush);font-size:20px;color:var(--frame);text-decoration:none;letter-spacing:.03em;
   background:var(--yellow);border:3px solid var(--frame);border-radius:10px;padding:2px 12px;transform:rotate(-2deg);box-shadow:3px 3px 0 var(--frame)}
 .hero .kicker:hover{background:#fff}
-.hero.mini{min-height:230px}
-.hero.mini h1 .name{font-size:clamp(46px,5.4vw,80px)}
+.hero.mini{min-height:250px}
+.hero.mini h1 .name{font-size:clamp(42px,5vw,74px)}
 .hero.mini .who{height:118%;right:30%}
 
 .btn{display:inline-flex;align-items:center;gap:12px;background:var(--yellow);color:var(--frame);text-decoration:none;
@@ -195,17 +195,26 @@ main{min-width:0}
 .mine-arrow.prev{left:-12px}.mine-arrow.next{right:-12px}
 .mine-arrow:disabled{opacity:0;pointer-events:none}
 
-/* ---------- the bottom of every page: the town's skyline cut out against the page, standing on a black base
-   that meets the sidebar, so the page sits in a cartoon frame. One of the gang peeks up and says the line on the ribbon. ---------- */
-.townband{position:relative;margin-top:46px;color:#fff}
-.townband .sky{position:relative;height:160px;background:url(img/skyline.svg) left bottom/1600px 160px repeat-x}
-.townband .who{position:absolute;left:18px;bottom:-4px;z-index:2;height:150px;width:auto;max-width:none;filter:drop-shadow(3px 0 0 #05060b)}
-.townband .ribbon{position:absolute;left:168px;bottom:56px;z-index:3;margin:0;padding:20px 104px 26px 122px;background:url(img/ribbon.svg) 0 0/100% 100% no-repeat;
-  color:var(--frame);font-family:var(--script);font-size:clamp(19px,1.9vw,26px);line-height:1.1;white-space:nowrap;transform:rotate(-1.5deg);
+/* ---------- the skyline frame: the town's rooftops, cut out against the page, stay along the bottom of the screen
+   while the page scrolls behind them. With the black sidebar it makes a complete comic frame. One of the gang
+   peeks up and says the line on the ribbon. It is only a picture: taps go straight through it. ---------- */
+:root{--sky-h:112px}
+html{scroll-padding-bottom:calc(var(--sky-h) + 16px)}   /* so a jump to a section, or the keyboard, never lands behind it */
+.skyframe{position:fixed;left:0;right:0;bottom:0;z-index:25;height:var(--sky-h);pointer-events:none;
+  background:url(img/skyline.svg) left bottom/auto 100% repeat-x}
+@media (min-width:881px){body:has(> .side) .skyframe{left:var(--side-w)}}
+.skyframe .who{position:absolute;left:14px;bottom:-8px;height:122px;width:auto;max-width:none;filter:drop-shadow(3px 0 0 #05060b)}
+.skyframe .ribbon{position:absolute;left:136px;bottom:30px;margin:0;padding:17px 92px 22px 108px;background:url(img/ribbon.svg) 0 0/100% 100% no-repeat;
+  color:var(--frame);font-family:var(--script);font-size:clamp(17px,1.55vw,22px);line-height:1.1;white-space:nowrap;transform:rotate(-1.5deg);
   filter:drop-shadow(3px 3px 0 rgba(0,0,0,.3))}
-.townband .comet{position:absolute;right:5%;bottom:70px;width:130px;height:auto;z-index:2}
-.townband footer{margin:0;padding:14px 24px 22px;border:0;background:var(--night);color:rgba(255,255,255,.8);font-size:15.5px;line-height:1.55}
-.townband footer a,.townband footer .tips-again{color:var(--yellow)}
+.skyframe .comet{position:absolute;right:4%;bottom:46px;width:104px;height:auto}
+/* the black base at the very end of the page: the small print, running on under the rooftops */
+.basefoot{margin:46px 0 0;padding:18px 24px calc(var(--sky-h) + 8px);border:0;background:var(--night);color:rgba(255,255,255,.8);font-size:15.5px;line-height:1.55}
+.basefoot a,.basefoot .tips-again{color:var(--yellow)}
+.basefoot .say{display:none;margin:0 0 10px;font-family:var(--script);font-size:20px;color:var(--yellow)}
+/* a caption box, for a page's opening words */
+.caption{margin:0 0 4px;padding:10px 16px 11px;max-width:74ch;background:#fff;border:3px solid var(--frame);border-radius:12px 5px 13px 6px / 6px 13px 5px 12px;
+  box-shadow:4px 4px 0 var(--frame);font-size:18px;line-height:1.4}
 
 /* tier sections */
 .tiers{display:grid;grid-template-columns:1fr 1fr;gap:20px}
@@ -443,9 +452,10 @@ footer{margin-top:26px;padding:18px 4px 8px;border-top:4px dotted var(--frame);f
 }
 @media (max-width:880px){
   .stepcard{min-height:430px}
-  .townband .who{height:130px}
-  .townband .ribbon{left:140px;font-size:21px}
-  .townband .comet{width:100px;right:2%}
+  :root{--sky-h:92px}
+  .skyframe .who{height:98px}
+  .skyframe .ribbon{left:108px;bottom:22px;font-size:18px;padding:14px 78px 18px 92px}
+  .skyframe .comet{width:84px;bottom:36px}
   .side{position:sticky;top:0;bottom:auto;width:auto;flex-direction:row;align-items:center;overflow:visible}
   .side .brand{flex:none;padding:10px 12px;font-size:17px;border-bottom:0;border-right:1px solid rgba(255,255,255,.16)}
   .side nav{flex-direction:row;overflow-x:auto;scrollbar-width:none;padding:6px 4px}
@@ -457,7 +467,7 @@ footer{margin-top:26px;padding:18px 4px 8px;border-top:4px dotted var(--frame);f
   .page{padding:14px 16px 0}
   .hero{grid-template-columns:minmax(0,1fr);min-height:0}
   .hero::before{background:linear-gradient(180deg,rgba(18,58,168,.9) 0%,rgba(24,80,190,.7) 55%,rgba(24,80,190,.15) 100%)}
-  .hero .art{min-height:210px}
+  .hero .art{min-height:190px}
   .hero .who{right:auto;left:50%;transform:translateX(-50%);height:110%}
   .hero .who.flip{transform:translateX(-50%) scaleX(-1)}
   .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -471,13 +481,17 @@ footer{margin-top:26px;padding:18px 4px 8px;border-top:4px dotted var(--frame);f
   .desk .mascot{height:110px;right:10px;top:8px}
   .desk:has(.mascot) .desk-head{padding-right:96px}
   .setup .mascot{display:none}
-  .townband .sky{height:140px}
-  .townband .who{height:104px;left:6px}
-  .townband .ribbon{left:96px;right:8px;bottom:44px;white-space:normal;font-size:17px;line-height:1.15;padding:27px 50px 29px 70px;transform:rotate(-1deg)}
-  .townband .comet{display:none}
+  :root{--sky-h:64px}
+  .skyframe .who{height:70px;left:6px;bottom:-6px}
+  .skyframe .ribbon,.skyframe .comet{display:none}
+  .basefoot .say{display:block}
   body{font-size:17.5px}
-  .hero .copy{padding:22px 18px 18px}
-  .hero .burst{width:120px}
+  .hero .copy{padding:18px 16px 14px}
+  .hero .burst{width:100px;right:6px;top:6px}
+  .hero .art{min-height:160px}
+  .hero .verbs{margin-top:12px}
+  .hero .tag{font-size:17px}
+  .hero .tag br{display:none}   /* the two set lines are for wide screens; a phone wraps the words where they fit */
   .steps{grid-template-columns:minmax(0,1fr)}
   .stepcard .art{min-height:170px}
   .tpls{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -490,5 +504,5 @@ footer{margin-top:26px;padding:18px 4px 8px;border-top:4px dotted var(--frame);f
   .desk,.setup{padding:22px 18px 24px}
   .levels{grid-template-columns:minmax(0,1fr);gap:6px}
 }
-@media print{body{padding-left:0 !important}.side,.townband{display:none !important}}
+@media print{body{padding-left:0 !important}.side,.skyframe{display:none !important}.basefoot{padding-bottom:18px}}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none !important;animation:none !important}}

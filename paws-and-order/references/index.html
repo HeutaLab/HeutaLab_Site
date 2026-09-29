@@ -9,30 +9,41 @@
 <link rel="stylesheet" href="../pound.css">
 <style>
   .how{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-  .how button{all:unset;box-sizing:border-box;cursor:pointer;overflow:hidden;padding:0 0 16px;border:3px solid var(--frame);background:#fff;border-radius:16px 22px 14px 20px;font-size:18px;line-height:1.35;font-family:var(--serif);box-shadow:3px 3px 0 var(--frame)}
-  .how button:hover{background:var(--panel-2)}
-  .how button.on{background:var(--yellow)}
-  .how b{display:block;font-family:var(--brush);font-weight:400;color:var(--ink);font-size:26px;line-height:1;margin-bottom:6px;padding:0 16px}
+  .how button{all:unset;position:relative;box-sizing:border-box;cursor:pointer;overflow:hidden;padding:0 0 16px;border:4px solid var(--frame);border-radius:var(--wobble);
+    background:radial-gradient(rgba(0,0,0,.12) 1.5px,transparent 2px) 0 0/10px 10px,var(--c);font-size:17.5px;line-height:1.35;font-family:var(--serif);
+    box-shadow:5px 5px 0 var(--frame);transition:transform .1s,box-shadow .1s}
+  .how button:nth-child(1){--c:#ffd23f}.how button:nth-child(2){--c:#5ec8f2}.how button:nth-child(3){--c:#ff9a3c}.how button:nth-child(4){--c:#b18cff}
+  .how button:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--frame)}
+  .how button.on{transform:translate(-3px,-3px);box-shadow:8px 8px 0 var(--frame)}
+  .how button.on::after{content:"You\2019re here";position:absolute;right:8px;top:8px;z-index:2;padding:.5em .7em .25em;background:#fff;border:3px solid var(--frame);border-radius:999px;
+    font-family:var(--brush);font-size:13px;line-height:1;text-transform:uppercase;box-shadow:2px 2px 0 var(--frame)}
+  .how b{display:block;font-family:var(--brush);font-weight:400;color:var(--ink);font-size:25px;line-height:1;margin-bottom:6px;padding:0 16px;text-transform:uppercase}
   .how .mt{display:block;padding:0 16px}
-  .how .mpic{display:block;position:relative;aspect-ratio:16/9;margin-bottom:12px;border-bottom:3px solid var(--frame);background:#ddd center/cover no-repeat;overflow:hidden}
+  .how .mpic{display:block;position:relative;aspect-ratio:16/9;margin-bottom:12px;border-bottom:4px solid var(--frame);background:#ddd center/cover no-repeat;overflow:hidden}
   .how .mpic img{position:absolute;bottom:-4%;width:auto;max-width:none;transform:translateX(-50%);filter:drop-shadow(2px 3px 0 rgba(0,0,0,.35))}
   .how button.on .mpic{border-bottom-color:var(--frame)}
   .how button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
-  .controls{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin-top:18px;padding:18px 20px}
-  .controls h4{font-family:var(--brush);font-weight:400;font-size:22px;margin:0 0 8px}
-  .stage{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);margin-top:18px;background:#fff}
-  .ref-fig{margin:0;background:var(--panel-2);border-right:3px solid var(--frame);display:flex;flex-direction:column}
-  .ref-fig .imgbox{flex:1;display:flex;align-items:center;justify-content:center;min-height:320px;padding:14px}
-  .ref-fig img{max-height:560px;width:auto;max-width:100%;object-fit:contain;border:3px solid var(--frame);border-radius:12px;background:#fff}
-  .ref-fig figcaption{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-top:3px solid var(--frame);font-family:var(--label);font-size:17px;color:var(--ink-dim)}
+  .controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px 28px;margin-top:22px;padding:16px 20px 18px;border-width:4px;box-shadow:6px 6px 0 var(--frame)}
+  .controls h4{display:flex;align-items:center;gap:8px;font-family:var(--brush);font-weight:400;font-size:22px;letter-spacing:.03em;text-transform:uppercase;margin:0 0 10px}
+  .controls h4::before{content:"";width:24px;height:24px;flex:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l2.9 6 6.6.8-4.9 4.5 1.3 6.5L12 17l-5.9 3.3 1.3-6.5L2.5 9.3l6.6-.8z' fill='%23ffd23f' stroke='%23141414' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat}
+  .stage{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);margin-top:22px;background:#fff;border-width:4px;box-shadow:6px 6px 0 var(--frame)}
+  .ref-fig{margin:0;background:radial-gradient(rgba(0,0,0,.12) 1.6px,transparent 2px) 0 0/10px 10px,#5ec8f2;border-right:4px solid var(--frame);display:flex;flex-direction:column}
+  .ref-fig .imgbox{flex:1;display:flex;align-items:center;justify-content:center;min-height:320px;padding:26px 22px}
+  .ref-fig img{max-height:540px;width:auto;max-width:100%;object-fit:contain;padding:10px;border:3px solid var(--frame);border-radius:4px;background:#fff;
+    box-shadow:6px 6px 0 var(--frame);transform:rotate(-1.2deg)}
+  .ref-fig figcaption{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-top:4px solid var(--frame);background:var(--yellow);
+    font-family:var(--brush);font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:var(--frame)}
   .shuffle{font-size:15px;padding:7px 12px}
   .ref-qs{padding:22px 24px 24px}
-  .ref-qs h2{font-family:var(--brush);font-weight:400;font-size:clamp(28px,3vw,40px);margin:0;line-height:1;transform:rotate(-2deg);transform-origin:left}
+  .ref-qs h2{font-family:var(--brush);font-weight:400;font-size:clamp(28px,3vw,40px);margin:0;line-height:1;transform:rotate(-2deg);transform-origin:left;
+    color:var(--yellow);-webkit-text-stroke:6px var(--frame);paint-order:stroke fill;text-shadow:4px 4px 0 var(--frame)}
   .ref-qs .blurb{margin:12px 0 4px;font-size:19px}
   .ref-qs .modehint{margin:0 0 14px;font-size:17px;color:var(--ink-dim)}
-  .qs{list-style:none;margin:0;padding:0}
-  .qs li{padding:10px 0;border-top:2px dashed var(--frame)}
-  .qs .q{display:block;font-family:var(--script);font-size:20px;margin-bottom:4px}
+  .qs{list-style:none;margin:0;padding:0;counter-reset:q}
+  .qs li{padding:11px 0;border-top:2px dashed var(--frame);counter-increment:q}
+  .qs .q{display:flex;align-items:center;gap:10px;font-family:var(--script);font-size:20px;margin-bottom:5px}
+  .qs .q::before{content:counter(q);width:30px;height:30px;box-sizing:border-box;flex:none;display:flex;align-items:center;justify-content:center;padding-top:.3em;
+    background:var(--yellow);border:2.5px solid var(--frame);border-radius:50%;font-family:var(--brush);font-size:16px;line-height:1}
   .qs .a{margin:0;font-size:19px;line-height:1.4}
   .qs .reveal{background:#fff;border:2px dashed var(--frame);border-radius:999px;color:var(--ink);font-family:var(--label);font-size:16px;padding:4px 14px;cursor:pointer}
   .qs .reveal:hover{background:var(--yellow)}
@@ -49,7 +60,8 @@
   .box .rebuild{background:none;border:0;color:var(--ink-dim);font-family:var(--label);font-size:16px;cursor:pointer;text-decoration:underline}
   .btn.ghost{background:#fff;color:var(--ink)}
   @media (max-width:1100px){.how{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media (max-width:880px){.stage{grid-template-columns:minmax(0,1fr)}.ref-fig{border-right:0;border-bottom:3px solid var(--frame)}.ref-fig img{max-height:420px}}
+  @media (max-width:880px){.stage{grid-template-columns:minmax(0,1fr)}.ref-fig{border-right:0;border-bottom:4px solid var(--frame)}.ref-fig img{max-height:420px}
+    .controls{grid-template-columns:minmax(0,1fr)}}
   @media (max-width:600px){.ref-qs{padding:20px 18px}.ref-fig .imgbox{min-height:220px;padding:10px}}
 </style>
 </head>
@@ -78,7 +90,8 @@
     <div class="copy">
       <a class="kicker" href="../">Paws &amp; Order</a>
       <h1><span class="name">Look Closely</span></h1>
-      <p class="tag">Look first. Then prompt.<br>The words you find here become your prompt!</p>
+      <div class="verbs">See<span>&middot;</span>Spot<span>&middot;</span>Describe<span>&middot;</span>Prompt</div>
+      <p class="tag">Look first, then prompt! Pick a picture and a level, <br>and the words you find here become your prompt.</p>
     </div>
     <div class="art">
       <img class="who" src="../img/stickers/nettle/examining.webp" alt="" width="300" height="400">
@@ -126,17 +139,16 @@
     </main>
 </div>
 
-<div class="townband">
-  <div class="sky" aria-hidden="true">
-    <img class="who" src="../img/stickers/flash/face-nosy.webp" alt="" width="200" height="220">
-    <p class="ribbon">Every picture is a clue. Look again!</p>
-    <svg class="comet" viewBox="0 0 150 100"><path d="M8 94C40 80 72 56 98 34" fill="none" stroke="#ffd23f" stroke-width="10" stroke-linecap="round" opacity=".35"/><path d="M26 86C52 72 76 54 98 34" fill="none" stroke="#ffd23f" stroke-width="5" stroke-linecap="round" opacity=".7"/><path d="M112 6l6 14 15 1-11 10 4 15-14-8-13 8 3-15-11-10 15-1z" fill="#ffd23f" stroke="#141414" stroke-width="3.5" stroke-linejoin="round"/></svg>
-  </div>
-  <footer>
-      Every picture here was drawn for this site. Your answers stay in this browser. Sending to the prompt helper just carries them over to the next page.
-      Part of <a href="/">HeutaLab</a>.
-    </footer>
+<div class="skyframe" aria-hidden="true">
+  <img class="who" src="../img/stickers/flash/face-nosy.webp" alt="" width="200" height="220">
+  <p class="ribbon">Every picture is a clue. Look again!</p>
+  <svg class="comet" viewBox="0 0 150 100"><path d="M8 94C40 80 72 56 98 34" fill="none" stroke="#ffd23f" stroke-width="10" stroke-linecap="round" opacity=".35"/><path d="M26 86C52 72 76 54 98 34" fill="none" stroke="#ffd23f" stroke-width="5" stroke-linecap="round" opacity=".7"/><path d="M112 6l6 14 15 1-11 10 4 15-14-8-13 8 3-15-11-10 15-1z" fill="#ffd23f" stroke="#141414" stroke-width="3.5" stroke-linejoin="round"/></svg>
 </div>
+<footer class="basefoot">
+  <p class="say">Every picture is a clue. Look again!</p>
+  Every picture here was drawn for this site. Your answers stay in this browser. Sending to the prompt helper just carries them over to the next page.
+      Part of <a href="/">HeutaLab</a>.
+</footer>
 <script type="module">
 import THEME from '../theme.js';
 

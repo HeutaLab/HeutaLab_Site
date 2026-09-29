@@ -8,33 +8,67 @@
 <meta name="description" content="Build your own comic page: add your pictures, then captions, speech balloons and sound effects.">
 <link rel="stylesheet" href="../pound.css">
 <style>
-  .tools{margin-top:0;padding:14px 18px}
-  .tools .grp{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
-  .tools h4{font-family:var(--brush);font-weight:400;font-size:20px;color:var(--ink);margin:0 6px 0 0}
-  .tools .lvl-note{margin:8px 0 0;font-size:17px;color:var(--ink-dim)}
-  .tools .pill{padding:6px 14px;font-size:17px}
+  /* choosing the page: three picture cards, coloured like the home page's cards; the chosen one is lifted and marked */
+  .tools{margin:20px 0 0}
+  .lvlcards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .tools .pill.lvlcard{all:unset;position:relative;box-sizing:border-box;display:flex;flex-direction:column;cursor:pointer;overflow:hidden;padding:0 0 14px;
+    border:4px solid var(--frame);border-radius:var(--wobble);background:radial-gradient(rgba(0,0,0,.12) 1.5px,transparent 2px) 0 0/10px 10px,var(--c);
+    box-shadow:5px 5px 0 var(--frame);font-family:var(--serif);font-size:16.5px;line-height:1.3;color:var(--ink);transition:transform .1s,box-shadow .1s}
+  .lvlcard:nth-child(1){--c:#5ec8f2}.lvlcard:nth-child(2){--c:#ffd23f}.lvlcard:nth-child(3){--c:#b18cff}
+  .tools .pill.lvlcard:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--frame)}
+  .tools .pill.lvlcard.active{transform:translate(-3px,-3px);box-shadow:8px 8px 0 var(--frame)}
+  .tools .pill.lvlcard.active::after{content:"Chosen";position:absolute;right:8px;top:8px;z-index:2;padding:.5em .7em .25em;background:#fff;border:3px solid var(--frame);
+    border-radius:999px;font-family:var(--brush);font-size:13px;line-height:1;text-transform:uppercase;box-shadow:2px 2px 0 var(--frame)}
+  .tools .pill.lvlcard:focus-visible{outline:4px solid var(--focus);outline-offset:3px}
+  .lvlcard b{display:block;padding:0 14px;margin-bottom:4px;font-family:var(--brush);font-weight:400;font-size:22px;line-height:1;text-transform:uppercase}
+  .lvlcard .lt{display:block;padding:0 14px}
+  .lpic{position:relative;display:block;height:136px;margin-bottom:12px;border-bottom:4px solid var(--frame);background:#fff6dc;overflow:hidden}
+  .lpic i{position:absolute;display:block;border:2.5px solid var(--frame);background:#ddd center/cover no-repeat;overflow:hidden}
+  .lpic i img{position:absolute;left:50%;bottom:-6%;height:92%;width:auto;max-width:none;transform:translateX(-50%)}
+  .lpic.book i{left:24%;right:24%;top:10px;height:60%}
+  .lpic.book em{position:absolute;left:24%;height:5px;background:#9f9072;border-radius:3px}
+  .lpic.book em:nth-of-type(1){right:24%;bottom:32px}.lpic.book em:nth-of-type(2){right:32%;bottom:21px}.lpic.book em:nth-of-type(3){right:44%;bottom:10px}
+  .lpic.grid4{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:5px;padding:9px 20%}
+  .lpic.grid4 i{position:relative}
+  .lpic.super i:nth-child(1){left:14%;top:9px;width:38%;height:56%;transform:skewX(-7deg)}
+  .lpic.super i:nth-child(2){left:52%;right:14%;top:9px;height:56%;transform:skewX(-7deg)}
+  .lpic.super i:nth-child(3){left:14%;right:14%;bottom:9px;height:30%}
+  .lpic.super i.ink{filter:grayscale(1) contrast(1.5)}
+  .lpic .pow{position:absolute;right:4%;top:24%;z-index:2;width:30%;aspect-ratio:1.1;display:flex;align-items:center;justify-content:center;padding-top:.3em;
+    background:url(../img/burst-y.svg) 0 0/100% 100% no-repeat;font-family:var(--brush);font-size:14px;line-height:1;text-transform:uppercase;filter:drop-shadow(2px 2px 0 rgba(20,20,20,.8))}
+  .tools .lvl-note{margin:14px 0 0;font-size:17px;color:var(--ink)}
   .btn.ghost{background:transparent;color:var(--ink);box-shadow:none;border:1px solid var(--frame)}
   .btn.ghost:hover{border-color:var(--ink);color:var(--ink);background:transparent}
   .btn.small{font-size:16px;padding:6px 14px}
   .btn:disabled,.pill:disabled{opacity:.35;cursor:not-allowed}
 
-  .workbench{margin-top:18px;border:3px solid var(--frame);border-radius:18px 24px 16px 22px;background:
-    radial-gradient(rgba(0,0,0,.08) 1.2px,transparent 1.6px) 0 0/14px 14px,var(--panel-2)}
+  .workbench{margin-top:20px;border:4px solid var(--frame);border-radius:var(--wobble);box-shadow:6px 6px 0 var(--frame);background:
+    radial-gradient(rgba(0,0,0,.12) 1.4px,transparent 1.8px) 0 0/12px 12px,#5ec8f2}
   #bench{display:flex;justify-content:center;padding:22px 16px}
 
   /* The dock: every tool lives along the bottom of the screen and changes with what is chosen
      (the page, a panel, or a box). At the top it would shove the page down mid-tap, and it would scroll away. */
   .dock{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px 18px;
-    padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:#fff6dc;border-top:4px solid #111;box-shadow:0 -6px 0 rgba(0,0,0,.08)}
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:var(--night);color:#fff}
+  /* the rooftops stand on the dock (hidden while a tray is open above it); they are only a picture, so taps go through them */
+  body{--roof:74px}
+  .dock::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:var(--roof);pointer-events:none;
+    background:url(../img/skyline.svg) left bottom/auto 100% repeat-x}
+  body.tray-open .dock::before{display:none}
   .dock .sg{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
-  .dock .sg > b{font-family:var(--script);font-weight:400;font-size:17px;color:var(--ink);margin-right:4px;position:relative}
+  .dock .sg > b{font-family:var(--script);font-weight:400;font-size:17px;color:#fff6dc;margin-right:4px;position:relative}
   .dock .pill{padding:5px 12px;font-size:16px;position:relative}
-  .dock .sw{width:26px;height:26px;border-radius:50%;border:2px solid var(--frame);cursor:pointer;padding:0}
-  .dock .sw.active{outline:2px solid var(--blue);outline-offset:2px;border-color:#000}
-  .dock .what{font-family:var(--brush);color:var(--ink);font-size:20px;margin-right:2px}
-  .dock .more,.dock .note{font-size:16px;color:var(--ink-dim)}
-  .dock label.zoom{font-size:12.5px;font-style:italic;color:var(--ink-dim);display:flex;align-items:center;gap:6px}
-  .dock input[type=range]{accent-color:var(--ink);width:120px}
+  .dock .sw{width:26px;height:26px;border-radius:50%;border:2px solid #fff;cursor:pointer;padding:0}
+  .dock .sw.active{outline:3px solid var(--yellow);outline-offset:2px}
+  .dock .what{font-family:var(--brush);color:var(--yellow);font-size:20px;margin-right:2px}
+  .dock .more,.dock .note{font-size:16px;color:rgba(255,255,255,.75)}
+  .dock label.zoom{font-size:12.5px;font-style:italic;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:6px}
+  .dock input[type=range]{accent-color:var(--yellow);width:120px}
+  .dock .btn.ghost,.dock .btn.ghost:hover{background:#fff;color:var(--ink);border:2px solid var(--frame)}
+  .dock .btn:disabled{opacity:.5}
+  /* no skyline hovering over this page: the rooftops stand on the dock, so the black base runs on under them */
+  .basefoot{padding-bottom:calc(var(--roof) + 14px)}
+  .basefoot .say{display:block}
   .dock .undo{margin-left:6px}
   .stylebtn{display:inline-flex;align-items:center;gap:10px;background:var(--yellow);color:#15120a;border:3px solid #111;border-radius:999px;padding:5px 12px 4px 14px;cursor:pointer;position:relative;
     font-family:var(--label);font-size:17px;box-shadow:3px 3px 0 #111}
@@ -219,6 +253,8 @@
     .sheet-title:empty::before,.prose-title:empty::before,.it-text:empty::before{content:none}   /* placeholders stay on screen */
   }
 
+  @media (max-width:700px){.lvlcards{gap:8px}.lpic{height:84px;margin-bottom:8px}.lvlcard b{font-size:15px;padding:0 8px}.lvlcard .lt{display:none}
+    .tools .pill.lvlcard{padding-bottom:10px}.tools .pill.lvlcard.active::after{font-size:10px;right:4px;top:4px}body{--roof:52px}}
   @media (max-width:600px){.workbench{margin-left:-16px;margin-right:-16px}#bench{padding:12px 8px}
     .dock{flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:6px;padding:8px 10px calc(8px + env(safe-area-inset-bottom))}
     .dock .what{display:none}
@@ -255,7 +291,8 @@
     <div class="copy">
       <a class="kicker" href="../">Paws &amp; Order</a>
       <h1><span class="name">Comic Maker</span></h1>
-      <p class="tag">Your pictures. Your words.<br>Build your page, panel by panel!</p>
+      <div class="verbs">Plan<span>&middot;</span>Place<span>&middot;</span>Write<span>&middot;</span>Share</div>
+      <p class="tag">Your pictures, the gang and your words. <br>Build your page, panel by panel!</p>
     </div>
     <div class="art">
       <img class="who" src="../img/stickers/mabel/gadget.webp" alt="" width="300" height="400">
@@ -265,16 +302,19 @@
 
 
     <main id="main">
-      <p class="sub-intro">Add the pictures you made with your AI tool (or borrow ours), put stickers of the gang on top if you like, then tell the story in words. Your pictures never leave this device, and your page saves itself in this browser as you go.</p>
+      <p class="caption">Add the pictures you made with your AI tool (or borrow ours), put stickers of the gang on top if you like, then tell the story in words. Your pictures never leave this device, and your page saves itself in this browser as you go.</p>
 
-      <section class="tools frame panel" aria-label="Level">
-        <div class="grp">
-          <h4>Level</h4>
-          <div class="pillrow" id="levelRow">
-            <button class="pill" data-val="prose">Storybook</button>
-            <button class="pill" data-val="medium">Four panels</button>
-            <button class="pill" data-val="advanced">Super maker</button>
-          </div>
+      <section class="tools" aria-label="Choose your page">
+        <div class="lvlcards" id="levelRow">
+          <button type="button" class="pill lvlcard" data-val="prose">
+            <span class="lpic book" aria-hidden="true"><i style="background-image:url(../img/thumbs/treehouse.webp)"><img src="../img/stickers/mabel/standing.webp" alt=""></i><em></em><em></em><em></em></span>
+            <b>Storybook</b><span class="lt">One picture and a few sentences under it.</span></button>
+          <button type="button" class="pill lvlcard" data-val="medium">
+            <span class="lpic grid4" aria-hidden="true"><i style="background-image:url(../img/thumbs/police-pound.webp)"><img src="../img/stickers/nettle/standing.webp" alt=""></i><i style="background-image:url(../img/thumbs/doughnut-factory.webp)"><img src="../img/stickers/grumbleton/doughnut-theft.webp" alt=""></i><i style="background-image:url(../img/thumbs/harbour.webp)"><img src="../img/stickers/barnaby/waving.webp" alt=""></i><i style="background-image:url(../img/thumbs/milkshake-bar.webp)"><img src="../img/stickers/nana/waving.webp" alt=""></i></span>
+            <b>Four panels</b><span class="lt">Four pictures, with captions and speech.</span></button>
+          <button type="button" class="pill lvlcard" data-val="advanced">
+            <span class="lpic super" aria-hidden="true"><i style="background-image:url(../img/thumbs/funfair.webp)"><img src="../img/stickers/flash/running.webp" alt=""></i><i class="ink" style="background-image:url(../img/thumbs/rain-soaked-street.webp)"><img src="../img/stickers/nettle/examining.webp" alt=""></i><i style="background-image:url(../img/thumbs/moon-base.webp)"><img src="../img/stickers/mabel/gadget.webp" alt=""></i><span class="pow">Pow!</span></span>
+            <b>Super maker</b><span class="lt">Page styles, stickers and sound effects.</span></button>
         </div>
         <p class="lvl-note" id="levelNote"></p>
       </section>
@@ -287,19 +327,13 @@
     </main>
 </div>
 
-<div class="townband">
-  <div class="sky" aria-hidden="true">
-    <img class="who" src="../img/stickers/mabel/face-delighted.webp" alt="" width="200" height="220">
-    <p class="ribbon">The best bit is always in the last panel!</p>
-    <svg class="comet" viewBox="0 0 150 100"><path d="M8 94C40 80 72 56 98 34" fill="none" stroke="#ffd23f" stroke-width="10" stroke-linecap="round" opacity=".35"/><path d="M26 86C52 72 76 54 98 34" fill="none" stroke="#ffd23f" stroke-width="5" stroke-linecap="round" opacity=".7"/><path d="M112 6l6 14 15 1-11 10 4 15-14-8-13 8 3-15-11-10 15-1z" fill="#ffd23f" stroke="#141414" stroke-width="3.5" stroke-linejoin="round"/></svg>
-  </div>
-  <footer>
-      The library pictures were drawn for this site.
+<footer class="basefoot">
+  <p class="say">The best bit is always in the last panel!</p>
+  The library pictures were drawn for this site.
       Pictures you upload stay in this browser on this device: nothing is sent anywhere.
       Part of <a href="/">HeutaLab</a>.
       <button type="button" class="tips-again" id="tipsAgain">Show the tips again</button>
-    </footer>
-</div>
+</footer>
 
 <dialog class="lib" id="libDlg">
   <div class="lib-head"><h3>Pick a picture</h3><button class="btn ghost small" id="libClose">Close</button></div>
@@ -1294,7 +1328,9 @@ import THEME from '../theme.js';
     if (!stk.hidden && stk.dataset.shows !== stkWho) { stk.innerHTML = stkTrayHTML(); stk.dataset.shows = stkWho; }   // not data-who: the tabs use that
     tray.style.bottom = stk.style.bottom = dock.offsetHeight + 'px';
     stk.querySelectorAll('[data-stk]').forEach(x => x.classList.toggle('on', !!cs && x.dataset.stk === cs.src));
-    document.body.style.paddingBottom = (dock.offsetHeight + openTrayH() + 24) + 'px';
+    const trayOpen = !tray.hidden || !stk.hidden;
+    document.body.classList.toggle('tray-open', trayOpen);   // the rooftops on the dock step aside for a tray
+    document.body.style.paddingBottom = (dock.offsetHeight + (trayOpen ? openTrayH() + 24 : 0)) + 'px';
     renderCard(dock.offsetHeight);
   }
 
