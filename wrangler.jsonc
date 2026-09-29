@@ -22,10 +22,13 @@
     "not_found_handling": "404-page"
   },
   // The Precinct's rate limits (requests per 60 seconds). The whole room may
-  // share one venue IP, so the per-IP limit is a flood guard, not a per-person one.
+  // share one venue IP, so the per-IP limits are flood guards, not per-person
+  // ones: SESSION = AI requests per browser, IP = brief/compare requests per
+  // IP, CODE_CHECKS = code checks per browser, CODE_IP = code checks per IP.
   "ratelimits": [
     { "name": "PRECINCT_SESSION_LIMIT", "namespace_id": "4101", "simple": { "limit": 8, "period": 60 } },
     { "name": "PRECINCT_IP_LIMIT", "namespace_id": "4102", "simple": { "limit": 200, "period": 60 } },
-    { "name": "PRECINCT_CODE_FAILS", "namespace_id": "4103", "simple": { "limit": 20, "period": 60 } }
+    { "name": "PRECINCT_CODE_CHECKS", "namespace_id": "4103", "simple": { "limit": 12, "period": 60 } },
+    { "name": "PRECINCT_CODE_IP", "namespace_id": "4104", "simple": { "limit": 600, "period": 60 } }
   ]
 }

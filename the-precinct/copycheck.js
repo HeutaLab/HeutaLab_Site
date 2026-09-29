@@ -1,12 +1,14 @@
 // The Precinct compare check, step A: is the "description of the result"
 // really the attendee's prompt pasted back? Runs in the Worker before any
 // API call, so a copy costs nothing. No user text is stored or logged.
+// words() is also the one word counter: the page and worker.js both use it,
+// so a minimum word count means the same thing on both sides.
 
 // Word 3-gram Jaccard at or above this means "the same text". Chosen from
-// the samples in copycheck.test.mjs: a genuine description scores about 0.01
-// and a paraphrase from memory 0.09, while the prompt with a word changed in
-// every other phrase, or pasted with extra text around it, still scores
-// 0.49 to 0.51. Change it here and re-run the tests.
+// the samples in precinct-api/copycheck.test.mjs: a genuine description
+// scores about 0.01 and a paraphrase from memory 0.09, while the prompt
+// with a word changed in every other phrase, or pasted with extra text
+// around it, still scores 0.49 to 0.51. Change it here and re-run the tests.
 export const COPY_THRESHOLD = 0.45;
 
 // Phrases that belong in a prompt (instructions to a tool), not in a

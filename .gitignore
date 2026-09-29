@@ -6,3 +6,11 @@
 # bundles linked from the legacy posts exist nowhere else.
 *.zip
 !assets/**/*.zip
+
+# Private notes and big raw files: kept out of git as well as the deploy
+PRECINCT-HANDOFF.md
+the-precinct/HANDOFF-POINTER.md
+blog/ziOLCZUy
+blog/zihkbkKH
+blog/21cl-midjourney-images/
+.wrangler/

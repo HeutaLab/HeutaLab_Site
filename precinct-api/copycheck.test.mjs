@@ -1,8 +1,8 @@
-// Run with: node --test precinct-api/*.test.mjs
+// Run with: node --test precinct-api/*.test.mjs  (the module lives in the-precinct/)
 // The samples below are what COPY_THRESHOLD was chosen from.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { checkCopy, jaccard, normalise, instructionPhrases, COPY_THRESHOLD } from "./copycheck.mjs";
+import { checkCopy, jaccard, normalise, instructionPhrases, COPY_THRESHOLD } from "../the-precinct/copycheck.js";
 
 const PROMPT = "A heavy-set police commissioner in his sixties, jowly face and a permanent scowl, standing under a single streetlamp on a rain-soaked 1940s city street at night. Three-piece suit under a long belted trench coat, grey fedora with a dark band, hands deep in his coat pockets. 1940s film noir comic book, black and white ink illustration with fine hatching. Limited palette: black ink and grey tones with a single yellow accent on the streetlamp glow, no other colours. No text, no captions, no speech balloons.";
 

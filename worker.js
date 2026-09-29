@@ -7,17 +7,20 @@
 //   WORKSHOP_CODE      - the original passcode. It still works, and unlocks
 //                        every level (the facilitator's master code).
 //   LEVEL_CODES        - optional: the codes announced from the stage, as
-//                        JSON, e.g. {"ROOKIE-RAIN": 1, "BADGE-SMOKE": 2,
-//                        "CITY-HALL": 3}. A code unlocks its level and all
-//                        lower ones.
-// Optional plain var: SESSION_CAP (requests per person, default 30).
+//                        JSON, e.g. {"RAIN-LAMP-47": 1, "BADGE-SMOKE-82": 2,
+//                        "CITY-HALL-19": 3}. A code unlocks its level and all
+//                        lower ones. Make codes long (two words and a
+//                        number): the guessing limits have to stay loose
+//                        enough for a whole room on one venue IP, so a long
+//                        code is what stops guessing.
+// Optional plain var: SESSION_CAP (AI requests per person, default 30).
 //
 // The API is the gatekeeper: the level is checked from the code on every
 // request, never taken from the page. No attendee text is stored or logged;
 // only counts and error codes.
 
 import THEME from "./the-precinct/theme.js";
-import { checkCopy } from "./precinct-api/copycheck.mjs";
+import { checkCopy, words } from "./the-precinct/copycheck.js";
 
 const API = "/the-precinct/api/";
 const MODEL = "claude-opus-5";
@@ -39,7 +42,7 @@ export default {
 
     if (url.pathname.startsWith(API)) {
       const route = url.pathname.slice(API.length);
-      const handler = { brief: handleBrief, compare: handleCompare, code: handleCode }[route];
+      const handler = ROUTES.get(route);
       if (!handler) return json({ error: "Not found" }, 404);
       if (request.method !== "POST") return json({ error: "POST only" }, 405);
       let body;
@@ -57,18 +60,25 @@ export default {
   },
 };
 
+// A Map, not an object literal: a lookup like obj["constructor"] would find
+// Object.prototype's properties and treat them as a match.
+const ROUTES = new Map([["brief", handleBrief], ["compare", handleCompare], ["code", handleCode]]);
+
+// Own keys only, for the plain-object tables (TIER_LEVEL, THEME.palettes).
+const has = (obj, key) => typeof key === "string" && Object.hasOwn(obj, key);
+
 // ---------- codes, levels and limits ----------
 
-let levelCodesCache = { raw: null, map: {} };
+let levelCodesCache = { raw: null, map: new Map() };
 function levelCodes(env) {
   const raw = env.LEVEL_CODES || "";
   if (raw !== levelCodesCache.raw) {
-    let map = {};
+    const map = new Map();
     try {
       const parsed = raw ? JSON.parse(raw) : {};
       for (const [k, v] of Object.entries(parsed)) {
         const n = Math.round(Number(v));
-        if (k.trim() && n >= 1) map[k.trim().toLowerCase()] = Math.min(n, 3);
+        if (k.trim() && n >= 1) map.set(k.trim().toLowerCase(), Math.min(n, 3));
       }
     } catch {
       console.error("LEVEL_CODES is not valid JSON");
@@ -83,7 +93,7 @@ function levelFor(code, env) {
   if (typeof code !== "string" || !code.trim()) return 0;
   const c = code.trim().toLowerCase();
   if (env.WORKSHOP_CODE && c === env.WORKSHOP_CODE.trim().toLowerCase()) return 3;
-  return levelCodes(env)[c] || 0;
+  return levelCodes(env).get(c) || 0;
 }
 
 const ipOf = (request) => request.headers.get("cf-connecting-ip") || "local";
@@ -100,45 +110,47 @@ async function limited(binding, key) {
   }
 }
 
-// An IP that has sent too many wrong codes is refused for a minute, even with a
-// right one, so a correct guess can't be told apart from a wrong one.
-const blockedIps = new Map();
-function ipBlocked(ip) {
-  const until = blockedIps.get(ip);
-  if (until && until > Date.now()) return true;
-  if (until) blockedIps.delete(ip);
-  return false;
-}
+const sessionOf = (body, request) =>
+  typeof body.session === "string" && /^[A-Za-z0-9-]{8,64}$/.test(body.session) ? body.session : "ip-" + ipOf(request);
 
-async function checkCode(body, request, env) {
-  const ip = ipOf(request);
-  if (ipBlocked(ip)) return { error: json({ error: "Too many wrong codes from here. Wait a minute, then try again." }, 429) };
+// The level a code unlocks, or an error response.
+function checkCode(body, env) {
   if (!env.WORKSHOP_CODE && !env.LEVEL_CODES) return { error: json({ error: "Server not configured (no workshop code set)" }, 500) };
   const level = levelFor(body.code, env);
-  if (!level) {
-    if (await limited(env.PRECINCT_CODE_FAILS, ip)) blockedIps.set(ip, Date.now() + 60000);
-    return { error: json({ error: "Wrong workshop code" }, 401) };
-  }
+  if (!Number.isInteger(level) || level < 1 || level > 3) return { error: json({ error: "Wrong workshop code." }, 401) };
   return { level };
 }
 
-// Everything that calls the AI goes through here: code, level, rate limits, cap.
-async function admit(body, request, env, url) {
-  const ip = ipOf(request);
-  if (await limited(env.PRECINCT_IP_LIMIT, ip)) {
+// Code checks are counted BEFORE the code is looked at, so once a limit is hit
+// a right code and a wrong one get the same answer. Per browser the limit is
+// tight; per IP it is loose, because a whole room may share one venue IP and
+// type a new code at the same moment. Long codes do the rest.
+async function guardCodeCheck(body, request, env) {
+  if (await limited(env.PRECINCT_CODE_CHECKS, sessionOf(body, request)) || await limited(env.PRECINCT_CODE_IP, ipOf(request))) {
+    return json({ error: "Too many code checks. Wait a minute, then try again." }, 429);
+  }
+  return null;
+}
+
+// Brief and compare requests: a flood guard per IP, then the code and its level.
+async function admit(body, request, env) {
+  if (await limited(env.PRECINCT_IP_LIMIT, ipOf(request))) {
     return { error: json({ error: "The desk is swamped right now. Give it a minute and try again." }, 429) };
   }
-  const { level, error } = await checkCode(body, request, env);
-  if (error) return { error };
+  return checkCode(body, env);
+}
 
-  const session = typeof body.session === "string" && /^[A-Za-z0-9-]{8,64}$/.test(body.session) ? body.session : "ip-" + ip;
+// Charged only when a request is about to call the AI, so a locked tier or a
+// pasted-back prompt costs nobody their share.
+async function charge(body, request, env, url) {
+  const session = sessionOf(body, request);
   if (await limited(env.PRECINCT_SESSION_LIMIT, session)) {
-    return { error: json({ error: "Easy, detective. That's a lot of requests in a minute. Look at what you have, then try again shortly." }, 429) };
+    return json({ error: "Easy, detective. That's a lot of requests in a minute. Look at what you have, then try again shortly." }, 429);
   }
   if (await overCap(env, url, session)) {
-    return { error: json({ error: "You've used this browser's share of the desk for this session. Work with what you have, or ask your facilitator." }, 429) };
+    return json({ error: "You've used this browser's share of the desk for this session. Work with what you have, or ask your facilitator." }, 429);
   }
-  return { level };
+  return null;
 }
 
 // A per-person running total, kept in the data centre's cache for six hours.
@@ -168,15 +180,13 @@ async function sha256(text) {
 
 // One Messages API call with structured output. Returns { data } or { fail }
 // where fail is a short code (timeout, http_529, refusal, ...). Never logs text.
-async function callClaude(env, { system, user, schema, effort, maxTokens, timeoutMs, signal }) {
+async function callClaude(env, { system, user, schema, effort, maxTokens, timeoutMs }) {
   if (!env.ANTHROPIC_API_KEY) return { fail: "no_key" };
-  const signals = [AbortSignal.timeout(timeoutMs)];
-  if (signal) signals.push(signal);
   let res;
   try {
     res = await fetch(env.ANTHROPIC_API_URL || ANTHROPIC_URL, {
       method: "POST",
-      signal: AbortSignal.any(signals),
+      signal: AbortSignal.timeout(timeoutMs),
       headers: {
         "x-api-key": env.ANTHROPIC_API_KEY,
         "anthropic-version": "2023-06-01",
@@ -195,7 +205,7 @@ async function callClaude(env, { system, user, schema, effort, maxTokens, timeou
       }),
     });
   } catch (e) {
-    return { fail: e && (e.name === "TimeoutError" || e.name === "AbortError") ? (signal && signal.aborted ? "aborted" : "timeout") : "network_" + ((e && e.name) || "Error") };
+    return { fail: e && (e.name === "TimeoutError" || e.name === "AbortError") ? "timeout" : "network_" + ((e && e.name) || "Error") };
   }
   if (!res.ok) {
     let type = "";
@@ -223,12 +233,29 @@ function logFail(route, fail) {
   console.error(JSON.stringify({ route, fail }));
 }
 
-const countWords = (t) => (String(t || "").trim().match(/\S+/g) || []).length;
+// Setup faults that must be fixed before a session (no key, a refused key, a
+// model that doesn't exist) are shown as errors: a stock answer would hide
+// them. Everything else, including the API turning requests down mid-workshop
+// (credit or spend limit used up), still gets the stock answer so the room
+// keeps working; needsFacilitator() adds a note so someone notices.
+const isHardSetup = (fail) => fail === "no_key" || /^http_(401|403|404)/.test(fail);
+const needsFacilitator = (fail) => /^http_4/.test(fail) && !/^http_(408|409|429)/.test(fail);
+
+function setupError(fail) {
+  console.error(JSON.stringify({ setup: fail }));
+  if (fail === "no_key") return json({ error: "The desk isn\u2019t set up yet (no AI key). Tell your facilitator." }, 500);
+  if (/^http_(401|403)/.test(fail)) return json({ error: "The desk\u2019s AI key was refused. Tell your facilitator." }, 502);
+  return json({ error: "The AI service turned the request down. Tell your facilitator." }, 502);
+}
+
+const countWords = (t) => words(t).length;
 
 // ---------- POST /the-precinct/api/code ----------
 
 async function handleCode(body, request, env) {
-  const { level, error } = await checkCode(body, request, env);
+  const limitedResponse = await guardCodeCheck(body, request, env);
+  if (limitedResponse) return limitedResponse;
+  const { level, error } = checkCode(body, env);
   if (error) return error;
   return json({ level, name: THEME.game.find((g) => g.level === level).name });
 }
@@ -247,9 +274,9 @@ async function handleBrief(body, request, env, url) {
   const validSubjects = ["character", "setting"];
 
   if (!validPlatforms.includes(platform)) return json({ error: "Unknown platform" }, 400);
-  if (!TIER_LEVEL[tier]) return json({ error: "Unknown tier" }, 400);
+  if (!has(TIER_LEVEL, tier)) return json({ error: "Unknown tier" }, 400);
   if (!validSubjects.includes(subject)) return json({ error: "Unknown subject" }, 400);
-  if (!THEME.palettes[palette]) return json({ error: "Unknown palette" }, 400);
+  if (!has(THEME.palettes, palette)) return json({ error: "Unknown palette" }, 400);
   const castIds = THEME.cast.map((c) => c.id);
   if (cast.length > 2 || !cast.every((id) => castIds.includes(id))) return json({ error: "Unknown character" }, 400);
   if (!idea || typeof idea !== "string" || idea.trim().length < 3) {
@@ -261,11 +288,37 @@ async function handleBrief(body, request, env, url) {
   }
   if (attempt.length > 1500) return json({ error: "Keep your description under 1500 characters" }, 400);
 
-  const admitted = await admit(body, request, env, url);
+  const admitted = await admit(body, request, env);
   if (admitted.error) return admitted.error;
   if (TIER_LEVEL[tier] > admitted.level) {
     const g = THEME.game.find((x) => x.tier === tier);
     return json({ error: g.name + " is still locked. Your facilitator will give out the next code when the room is ready.", level: admitted.level }, 403);
+  }
+  const charged = await charge(body, request, env, url);
+  if (charged) return charged;
+
+  // Round 1: the gate reads the description first. It runs before the brief,
+  // not alongside it, so a description that gets questions costs no brief.
+  if (round === 1) {
+    const gate = await callClaude(env, {
+      system: GATE_SYSTEM, user: `Subject type: ${subject}\nThe teacher's description:\n${attempt}`, schema: GATE_SCHEMA,
+      effort: "low", maxTokens: 2000, timeoutMs: TIMEOUT_MS.gate,
+    });
+    if (gate.fail) {
+      // The gate is a nudge: if it can't answer, the brief goes through (and
+      // a setup problem shows up there as an error).
+      logFail("gate", gate.fail);
+    } else {
+      const covered = gate.data.covered || {};
+      const missing = ["see", "details", "world"].filter((k) => covered[k] !== true);
+      if (missing.length) {
+        let questions = (Array.isArray(gate.data.questions) ? gate.data.questions : [])
+          .filter((q) => typeof q === "string" && q.trim()).slice(0, 2);
+        // Never block with nothing to act on.
+        if (!questions.length) questions = missing.slice(0, 2).map((k) => THEME.gateQuestions[k]);
+        return json({ gate: true, questions, attempt });
+      }
+    }
   }
 
   const castUsed = subject === "character" ? cast : [];
@@ -279,40 +332,17 @@ async function handleBrief(body, request, env, url) {
     `Attendee's idea, in their own words: ${idea.trim()}`,
   ].join("\n");
 
-  // Round 1 runs the gate and the brief side by side, so a description that
-  // passes costs no extra wait; the brief is abandoned if the gate asks questions.
-  const briefAbort = new AbortController();
-  const briefCall = callClaude(env, {
+  const brief = await callClaude(env, {
     system: buildSystemPrompt(), user: briefUser, schema: BRIEF_SCHEMA,
     // medium, not the default high: a room of attendees is waiting on
     // each reply, and a prompt suggestion doesn't need deep thought.
-    effort: "medium", maxTokens: 8000, timeoutMs: TIMEOUT_MS.brief, signal: briefAbort.signal,
+    effort: "medium", maxTokens: 8000, timeoutMs: TIMEOUT_MS.brief,
   });
-
-  if (round === 1) {
-    const gate = await callClaude(env, {
-      system: GATE_SYSTEM, user: `Subject type: ${subject}\nThe teacher's description:\n${attempt}`, schema: GATE_SCHEMA,
-      effort: "low", maxTokens: 2000, timeoutMs: TIMEOUT_MS.gate,
-    });
-    if (gate.fail) {
-      // The gate is a nudge: if it can't answer, the brief goes through.
-      logFail("gate", gate.fail);
-    } else {
-      const covered = gate.data.covered || {};
-      const allCovered = covered.see && covered.details && covered.world;
-      if (!allCovered) {
-        briefAbort.abort();
-        briefCall.catch(() => {});
-        return json({ gate: true, covered, questions: (gate.data.questions || []).slice(0, 2), attempt });
-      }
-    }
-  }
-
-  const brief = await briefCall;
   if (brief.fail) {
     logFail("brief", brief.fail);
     if (brief.fail === "refusal") return json({ error: "The AI declined that one. Try rewording your idea." }, 422);
-    return json({ ...stockBrief(subject, tier, palette, castUsed), fallback: true, attempt });
+    if (isHardSetup(brief.fail)) return setupError(brief.fail);
+    return json({ ...stockBrief(subject, tier, palette, castUsed), fallback: true, setup: needsFacilitator(brief.fail), attempt });
   }
   return json({ ...brief.data, attempt });
 }
@@ -370,7 +400,7 @@ async function handleCompare(body, request, env, url) {
   if ([prompt, description, reference].some((t) => t.length > 3000)) return json({ error: "Keep each box under 3000 characters." }, 400);
   if (brief && JSON.stringify(brief).length > 8000) return json({ error: "Bad request body" }, 400);
 
-  const admitted = await admit(body, request, env, url);
+  const admitted = await admit(body, request, env);
   if (admitted.error) return admitted.error;
   // The reference description is a Commissioner (level 3) step.
   if (admitted.level < 3) reference = "";
@@ -380,14 +410,18 @@ async function handleCompare(body, request, env, url) {
   if (copy.copied) {
     return json({ copied: true, message: "This matches your prompt almost word for word, so there is nothing to compare yet. Give your tool the image and ask it to describe only what it sees, not your prompt, then paste that here." });
   }
-  if (reference && checkCopy(reference, prompt, brief).copied) {
-    return json({ copied: true, message: "The reference description matches your prompt almost word for word. Give your tool the reference picture on its own and ask it to describe only what it sees, then paste that in." });
-  }
+  // A reference description that matches the prompt is not blocked: building
+  // the prompt from the tool's reading of the reference is a fair way to work.
+  const promptFromReference = !!reference && checkCopy(reference, prompt, brief).copied;
+
+  const charged = await charge(body, request, env, url);
+  if (charged) return charged;
 
   const user = [
     "THE PROMPT THEY USED:\n" + prompt,
     "THE TOOL'S DESCRIPTION OF THE RESULT IMAGE:\n" + description,
     reference ? "THE TOOL'S DESCRIPTION OF THE REFERENCE PICTURE THEY WERE AIMING FOR:\n" + reference : "",
+    promptFromReference ? "Note: the prompt appears to be built from the reference description, so the gap between the reference and result descriptions is the main thing to compare." : "",
     copy.phrases.length >= 2 ? "Note: the result description contains prompt-style instruction phrases (" + copy.phrases.map((p) => '"' + p + '"').join(", ") + "). It may be the prompt reworded rather than a description of the image." : "",
   ].filter(Boolean).join("\n\n");
 
@@ -397,7 +431,9 @@ async function handleCompare(body, request, env, url) {
   });
   if (out.fail) {
     logFail("compare", out.fail);
-    return json({ fallback: true, checklist: THEME.compareChecklist });
+    if (out.fail === "refusal") return json({ error: "The AI declined that one. Try pasting the description again, or check it by eye with the six steps above." }, 422);
+    if (isHardSetup(out.fail)) return setupError(out.fail);
+    return json({ fallback: true, setup: needsFacilitator(out.fail), checklist: THEME.compareChecklist });
   }
   const d = out.data, cap = (a, n) => (Array.isArray(a) ? a.filter((x) => typeof x === "string").slice(0, n) : []);
   return json({

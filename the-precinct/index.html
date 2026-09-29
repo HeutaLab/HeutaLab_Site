@@ -162,7 +162,7 @@
             <p class="intro">Three levels, one code each. Your facilitator announces the next code when the room is ready. Type it here; this browser remembers it.</p>
           </div>
           <div class="lock">
-            <input id="code" type="password" placeholder="Workshop code" autocomplete="off" aria-label="Workshop code">
+            <input id="code" type="password" placeholder="Workshop code" autocomplete="off" enterkeyhint="go" aria-label="Workshop code">
             <span class="status" id="codeStatus" aria-live="polite">not checked yet</span>
           </div>
         </div>
@@ -225,7 +225,7 @@
 
         <div class="result" id="result">
           <h3>Your briefing</h3>
-          <p class="stock" id="stockNote" hidden><b>From the files</b>The desk is swamped, so this is a stock brief, not one written for your idea. Make it yours: swap in your own words before you paste it.</p>
+          <p class="stock" id="stockNote" hidden><b>From the files</b>The desk is swamped, so this is a stock brief, not one written for your idea. Make it yours: swap in your own words before you paste it.<span class="setup-note" id="setupNote" hidden> Tell your facilitator: the desk&rsquo;s AI account needs attention.</span></p>
           <div class="pair">
             <div class="yours"><div class="label">Your description</div><p id="attemptEcho"></p></div>
             <div class="theirs">
@@ -325,6 +325,7 @@
 
 <script type="module">
 import THEME from '/the-precinct/theme.js';
+import { words } from '/the-precinct/copycheck.js';
 
 (function(){
   const API = "/the-precinct/api/";
@@ -406,10 +407,15 @@ import THEME from '/the-precinct/theme.js';
     levelIntro.textContent = g ? g.intro : '';
   }
 
-  let codeTimer = null, codeSeq = 0;
+  // The code is checked on Enter or when the box loses focus, never mid-typing:
+  // half-typed codes would count as wrong ones, and the checks are limited per
+  // venue IP, which the whole room may share.
+  let codeSeq = 0, sentCode = null;
   async function verifyCode(){
     const code = codeInput.value.trim();
-    if (!code) { setStatus('not checked yet'); applyLevel(0); return; }
+    if (!code) { sentCode = null; setStatus('not checked yet'); applyLevel(0); return; }
+    if (code === sentCode) return;   // Enter and the change event both fire; check once
+    sentCode = code;
     const seq = ++codeSeq;
     setStatus('checking...');
     try {
@@ -417,16 +423,18 @@ import THEME from '/the-precinct/theme.js';
       if (seq !== codeSeq) return;
       if (res.ok) { setStatus(data.name + ' unlocked', 'ok'); applyLevel(data.level); }
       else if (res.status === 401) { setStatus('wrong code', 'bad'); applyLevel(0); }
-      else setStatus(data.error ? 'try again in a minute' : 'could not check', 'bad');
-    } catch (e) { if (seq === codeSeq) setStatus('offline?', 'bad'); }
+      else { sentCode = null; setStatus(res.status === 429 ? 'try again in a minute' : 'could not check', 'bad'); }
+    } catch (e) { if (seq === codeSeq) { sentCode = null; setStatus('offline?', 'bad'); } }
   }
   const savedCode = store.get('precinct_code');
   if (savedCode) codeInput.value = savedCode;
   codeInput.addEventListener('input', () => {
     store.set('precinct_code', codeInput.value);
-    clearTimeout(codeTimer);
-    codeTimer = setTimeout(verifyCode, 700);
+    sentCode = null;
+    setStatus(codeInput.value.trim() ? 'press Enter to check' : 'not checked yet');
   });
+  codeInput.addEventListener('change', verifyCode);
+  codeInput.addEventListener('keydown', e => { if (e.key === 'Enter') verifyCode(); });
 
   function wireRow(id, key){
     document.getElementById(id).querySelectorAll('.pill').forEach(btn => {
@@ -493,7 +501,7 @@ import THEME from '/the-precinct/theme.js';
 
   const attempt = document.getElementById('attempt');
   const attemptCount = document.getElementById('attemptCount');
-  const wordsIn = t => (t.trim().match(/\S+/g) || []).length;
+  const wordsIn = t => words(t).length;   // the same counter the Worker uses
   function countAttempt(){
     const n = wordsIn(attempt.value);
     attemptCount.textContent = n + (n === 1 ? ' word' : ' words') + (n < ATTEMPT_MIN ? ', ' + (ATTEMPT_MIN - n) + ' to go' : '');
@@ -540,6 +548,7 @@ import THEME from '/the-precinct/theme.js';
     anchorBlock.innerHTML = '';
     promptBlocks.innerHTML = '';
     stockNote.hidden = !data.fallback;
+    document.getElementById('setupNote').hidden = !data.setup;
     attemptEcho.textContent = data.attempt || attempt.value.trim();
 
     if (data.anchor && data.anchor.trim()) {
@@ -651,7 +660,8 @@ import THEME from '/the-precinct/theme.js';
     if (d.copied) {
       html = '<p class="copied"><b>Same words back</b>' + esc(d.message) + '</p>';
     } else if (d.fallback) {
-      html = '<p class="stock"><b>The desk is swamped</b>It could not read this in time. Check these yourself, one at a time:</p>'
+      html = '<p class="stock"><b>The desk is swamped</b>It could not read this in time. Check these yourself, one at a time:'
+        + (d.setup ? ' <span class="setup-note">Tell your facilitator: the desk&rsquo;s AI account needs attention.</span>' : '') + '</p>'
         + '<ul class="checklist">' + d.checklist.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul>'
         + '<p class="closer">Change one thing and run it again.</p>';
     } else {
@@ -696,6 +706,9 @@ import THEME from '/the-precinct/theme.js';
   // Show the last known level straight away, then ask the Worker what the saved code really unlocks.
   applyLevel(level);
   if (codeInput.value.trim()) verifyCode();
+  // The browser may have restored the boxes' contents on reload or Back.
+  countAttempt();
+  ideaCount.textContent = idea.value.length;
 
   // A description sent over from the References page, so nobody types it twice.
   // It is the attendee's own looking, so it goes in the description box.

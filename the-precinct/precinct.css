@@ -381,3 +381,4 @@
     .hero .script{font-size:22px;right:14px;top:12px}
   }
   @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  .setup-note{display:block;margin-top:6px;color:var(--yellow)}

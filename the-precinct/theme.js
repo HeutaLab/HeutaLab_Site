@@ -274,6 +274,14 @@ export default {
     },
   },
 
+  // The desk's questions for each part of a description, used only if the AI
+  // flags a part as missing but sends no questions of its own.
+  gateQuestions: {
+    see: 'What is actually in the picture: who or what, and what are they doing?',
+    details: 'Look closer: what are they wearing or holding, and what is on their face?',
+    world: 'Step back: where is this, and what time of day or weather does it feel like?',
+  },
+
   // What the compare check falls back to when the AI can't answer in time.
   compareChecklist: [
     'Style: does it still look like 1940s ink, or has it gone modern, glossy or cartoon?',

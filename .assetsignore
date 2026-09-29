@@ -21,3 +21,6 @@ blog/21cl-midjourney-images
 
 # The Precinct: Worker-only modules and their tests
 precinct-api
+# Empty leftover zips from preparing the Precinct images (0 bytes, unlinked)
+blog/21cl-images-bundle.zip
+blog/21cl-midjourney-images.zip
