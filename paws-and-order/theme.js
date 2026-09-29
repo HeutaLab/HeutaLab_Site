@@ -382,7 +382,7 @@ export default {
       ['arms-crossed', 'Arms crossed', 32], ['stomping', 'Stomping', 45], ['cup-of-tea', 'Cup of tea', 37],
       ['face-smirk', 'Lazy smirk', 27], ['face-glower', 'Sulky glower', 28], ['face-grin', 'Sneaky grin', 26],
       ['face-tantrum', 'Roaring tantrum', 24], ['face-kind', 'Flicker of kindness', 28], ['walkie-talkie', 'Walkie-talkie', 8],
-      ['lollipop', 'Lollipop', 14], ['braces', 'Red braces', 13],
+      ['lollipop', 'Lollipop', 9], ['braces', 'Red braces', 13],
     ] },
     { who: 'Chief Grumbleton', dir: 'grumbleton', items: [
       ['standing', 'Standing', 40], ['side', 'Side on', 30], ['walking-away', 'Walking away', 39],
