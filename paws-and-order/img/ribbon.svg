@@ -1,12 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 96" preserveAspectRatio="none">
-  <!-- A yellow ribbon banner: two folded tails behind a gently waving band, and speed lines off each end. -->
-  <g stroke="#141414" stroke-width="4" stroke-linejoin="round">
-    <path d="M22 34 66 30 66 86 26 90 42 62z" fill="#e2b41f"/>
-    <path d="M618 30 574 26 574 82 614 86 598 58z" fill="#e2b41f"/>
-    <path d="M66 86 52 74 66 70z M574 82 588 70 574 66z" fill="#8a6a0c"/>
-    <path d="M52 20C150 8 240 26 330 16S520 6 588 16L592 70C500 62 420 80 320 72S140 64 48 76z" fill="#ffd23f"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 110" preserveAspectRatio="none">
+  <g fill="none" stroke="#141414" stroke-width="7" stroke-linejoin="round">
+    <path d="M652 30 704 24 684 55 706 86 654 80z" vector-effect="non-scaling-stroke"/>
+    <path d="M78 22C260 10 470 30 656 18L664 86C470 98 262 80 72 92L76 70 14 84 74 44z" vector-effect="non-scaling-stroke"/>
   </g>
-  <g stroke="#141414" stroke-width="4" stroke-linecap="round">
-    <path d="M4 44h12M2 56h14M6 68h10M624 40h12M626 52h12M622 64h12"/>
-  </g>
+  <path d="M652 30 704 24 684 55 706 86 654 80z" fill="#e2b41f"/>
+  <path d="M656 76 666 88 664 70z" fill="#8a6a0c"/>
+  <path d="M78 22C260 10 470 30 656 18L664 86C470 98 262 80 72 92L76 70 14 84 74 44z" fill="#ffd23f"/>
+  <g stroke="#141414" stroke-width="4" stroke-linecap="round"><path d="M96 44h16M92 56h22M96 68h16M622 40h16M618 52h22M622 64h16" vector-effect="non-scaling-stroke"/></g>
 </svg>

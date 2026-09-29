@@ -9,10 +9,14 @@
 <link rel="stylesheet" href="../pound.css">
 <style>
   .how{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-  .how button{all:unset;box-sizing:border-box;cursor:pointer;padding:14px 16px 16px;border:3px solid var(--frame);background:#fff;border-radius:16px 22px 14px 20px;font-size:18px;line-height:1.35;font-family:var(--serif);box-shadow:3px 3px 0 var(--frame)}
+  .how button{all:unset;box-sizing:border-box;cursor:pointer;overflow:hidden;padding:0 0 16px;border:3px solid var(--frame);background:#fff;border-radius:16px 22px 14px 20px;font-size:18px;line-height:1.35;font-family:var(--serif);box-shadow:3px 3px 0 var(--frame)}
   .how button:hover{background:var(--panel-2)}
   .how button.on{background:var(--yellow)}
-  .how b{display:block;font-family:var(--brush);font-weight:400;color:var(--ink);font-size:26px;line-height:1;margin-bottom:6px}
+  .how b{display:block;font-family:var(--brush);font-weight:400;color:var(--ink);font-size:26px;line-height:1;margin-bottom:6px;padding:0 16px}
+  .how .mt{display:block;padding:0 16px}
+  .how .mpic{display:block;position:relative;aspect-ratio:16/9;margin-bottom:12px;border-bottom:3px solid var(--frame);background:#ddd center/cover no-repeat;overflow:hidden}
+  .how .mpic img{position:absolute;bottom:-4%;width:auto;max-width:none;transform:translateX(-50%);filter:drop-shadow(2px 3px 0 rgba(0,0,0,.35))}
+  .how button.on .mpic{border-bottom-color:var(--frame)}
   .how button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
   .controls{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin-top:18px;padding:18px 20px}
   .controls h4{font-family:var(--brush);font-weight:400;font-size:22px;margin:0 0 8px}
@@ -120,17 +124,18 @@
       </section>
 
     </main>
-  <div class="townband">
-    <div class="night" aria-hidden="true">
-      <img class="who" src="../img/stickers/flash/face-nosy.webp" alt="" width="200" height="220">
-      <p class="ribbon">Every picture is a clue. Look again!</p>
-      <svg class="comet" viewBox="0 0 150 100"><path d="M8 94C40 80 72 56 98 34" fill="none" stroke="#ffd23f" stroke-width="10" stroke-linecap="round" opacity=".35"/><path d="M26 86C52 72 76 54 98 34" fill="none" stroke="#ffd23f" stroke-width="5" stroke-linecap="round" opacity=".7"/><path d="M112 6l6 14 15 1-11 10 4 15-14-8-13 8 3-15-11-10 15-1z" fill="#ffd23f" stroke="#141414" stroke-width="3.5" stroke-linejoin="round"/></svg>
-    </div>
-    <footer>
-        Every picture here was drawn for this site. Your answers stay in this browser. Sending to the prompt helper just carries them over to the next page.
-        Part of <a href="/">HeutaLab</a>.
-      </footer>
+</div>
+
+<div class="townband">
+  <div class="sky" aria-hidden="true">
+    <img class="who" src="../img/stickers/flash/face-nosy.webp" alt="" width="200" height="220">
+    <p class="ribbon">Every picture is a clue. Look again!</p>
+    <svg class="comet" viewBox="0 0 150 100"><path d="M8 94C40 80 72 56 98 34" fill="none" stroke="#ffd23f" stroke-width="10" stroke-linecap="round" opacity=".35"/><path d="M26 86C52 72 76 54 98 34" fill="none" stroke="#ffd23f" stroke-width="5" stroke-linecap="round" opacity=".7"/><path d="M112 6l6 14 15 1-11 10 4 15-14-8-13 8 3-15-11-10 15-1z" fill="#ffd23f" stroke="#141414" stroke-width="3.5" stroke-linejoin="round"/></svg>
   </div>
+  <footer>
+      Every picture here was drawn for this site. Your answers stay in this browser. Sending to the prompt helper just carries them over to the next page.
+      Part of <a href="/">HeutaLab</a>.
+    </footer>
 </div>
 <script type="module">
 import THEME from '../theme.js';
@@ -149,7 +154,17 @@ import THEME from '../theme.js';
   const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 
   // ---- controls built from the theme ----
-  $('howRow').innerHTML = MODE_IDS.map(m => '<button type="button" data-mode="' + m + '"><b>' + esc(MODES[m].label) + '</b>' + esc(MODES[m].card) + '</button>').join('');
+  // Each mode card has a picture: one of the gang in a place, in the spirit of the mode.
+  const MODE_PICS = {
+    demo:    { place: 'pound-office', gang: [['nettle/pointing', 50, 88]] },
+    guide:   { place: 'duck-pond-park', gang: [['nettle/standing', 30, 80], ['vivi/standing', 70, 88]] },
+    create:  { place: 'library', gang: [['nettle/examining', 50, 84]] },
+    explore: { place: 'funfair', gang: [['flash/running', 50, 84]] },
+  };
+  const modePic = m => { const p = MODE_PICS[m]; if (!p) return '';
+    return '<span class="mpic" aria-hidden="true" style="background-image:url(../img/thumbs/' + p.place + '.webp)">'
+      + p.gang.map(([s, x, h]) => '<img src="../img/stickers/' + s + '.webp" alt="" style="left:' + x + '%;height:' + h + '%">').join('') + '</span>'; };
+  $('howRow').innerHTML = MODE_IDS.map(m => '<button type="button" data-mode="' + m + '">' + modePic(m) + '<b>' + esc(MODES[m].label) + '</b><span class="mt">' + esc(MODES[m].card) + '</span></button>').join('');
   $('modeRow').innerHTML = MODE_IDS.map(m => '<button class="pill" data-val="' + m + '">' + esc(MODES[m].label) + '<small>' + esc(MODES[m].sub.toLowerCase()) + '</small></button>').join('');
   $('levelRow').innerHTML = Object.entries(LEVELS).map(([id, L]) => '<button class="pill" data-val="' + id + '">' + esc(L.name) + '<small>' + esc(L.short) + '</small></button>').join('');
   $('castPickRow').innerHTML = THEME.cast.map(c => '<button class="pill" data-val="' + c.id + '">' + esc(c.short) + '<small>' + esc(c.role.replace(/^The /, '').toLowerCase()) + '</small></button>').join('');
