@@ -124,6 +124,10 @@
   .it-sticker.flip img{transform:scaleX(-1)}
   .it-sticker .rs-h{top:auto;bottom:-1.2cqw;right:-1.2cqw;width:2.6cqw;height:2.6cqw;min-width:18px;min-height:18px;border-radius:50%;transform:none;cursor:nwse-resize}
   .it-sticker.sel{outline:.3cqw dashed var(--blue);outline-offset:.4cqw}
+  /* A sticker kept inside the frame lives in its panel, with the picture: clipped to the panel's shape and under its frame.
+     While it is chosen, a see-through twin over the page shows the parts the frame hides and carries the handles. */
+  .pnl-inner > .it-sticker{z-index:2}
+  .it-sticker.ghost img{opacity:.4}
   .pnl-inner{position:relative;width:100%;height:100%;overflow:hidden;background:#fff;touch-action:none}
   .edge{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:4}
   .edge .hl{fill:none;stroke:none;stroke-width:1.4}
@@ -574,12 +578,12 @@ import THEME from '../theme.js';
     S.last = JSON.parse(JSON.stringify(L));
   }
 
-  function itemHTML(it, j, on){
+  function itemHTML(it, j, on, ghost){
     if (it.type === 'sticker') {
-      const s = STICKERS.get(it.src);
-      return '<div class="it it-sticker' + (it.flip ? ' flip' : '') + (on ? ' sel' : '') + '" data-j="' + j + '" style="left:' + it.x + '%;top:' + it.y + '%;width:' + it.w + '%'
+      const s = STICKERS.get(it.src), ink = S.level !== 'prose' && look().ink;
+      return '<div class="it it-sticker' + (it.flip ? ' flip' : '') + (on ? ' sel' : '') + (ghost ? ' ghost' : '') + '" data-j="' + j + '" style="left:' + it.x + '%;top:' + it.y + '%;width:' + it.w + '%'
         + (it.rot ? ';transform:rotate(' + it.rot + 'deg)' : '') + '">'
-        + '<img src="' + stickerSrc(it) + '" alt="' + esc(s ? s.who + ', ' + s.label.toLowerCase() : 'A sticker') + '" draggable="false">'
+        + '<img src="' + stickerSrc(it) + '" alt="' + esc(s ? s.who + ', ' + s.label.toLowerCase() : 'A sticker') + '" draggable="false"' + (ink ? ' style="filter:' + ink + '"' : '') + '>'
         + '<span class="rs-h" title="Drag to make it bigger or smaller"></span>'
         + '<span class="rot-h" title="Drag to tilt it (hold Shift for steps of 15°)">&#8635;</span>'
         + '<span class="it-ctl"><button type="button" data-act="flip" title="Face the other way" aria-label="Face the other way">&#8646;</button>'
@@ -718,10 +722,12 @@ import THEME from '../theme.js';
 
   // The layers over panel i: its stickers (stk), or its words and the picture's turn handle. Both cover the panel's box.
   function layerHTML(poly, i, stk){
-    const b = bbox(poly), items = S.panels[i].items, mine = it => (it.type === 'sticker') === stk;
+    const b = bbox(poly), items = S.panels[i].items;
     const on = sel.p === i && (!stk || (sel.it != null && items[sel.it] && items[sel.it].type === 'sticker'));
+    // the sticker layer holds the stickers that pop out, and the chosen in-frame sticker's twin; the word layer the rest
+    const mine = (it, j) => stk ? it.type === 'sticker' && (!it.clip || (sel.p === i && sel.it === j)) : it.type !== 'sticker';
     return '<div class="pnl wl' + (stk ? ' sl' : '') + (on ? ' sel' : '') + '" data-i="' + i + '" style="left:' + b.x + '%;top:' + (b.y / PAGE_H * 100) + '%;width:' + b.w + '%;height:' + (b.h / PAGE_H * 100) + '%"><div class="pnl-inner">'
-      + items.map((it, j) => mine(it) ? itemHTML(it, j, sel.p === i && sel.it === j) : '').join('')
+      + items.map((it, j) => mine(it, j) ? itemHTML(it, j, sel.p === i && sel.it === j, stk && it.clip) : '').join('')
       + (!stk && sel.p === i && sel.it == null && S.panels[i].img ? protHTML(poly, b) : '') + '</div></div>';
   }
 
@@ -761,6 +767,7 @@ import THEME from '../theme.js';
         return '<div class="pnl' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '" style="left:' + b.x + '%;top:' + (b.y / PAGE_H * 100) + '%;width:' + b.w + '%;height:' + (b.h / PAGE_H * 100) + '%">'
           + '<div class="pnl-inner" style="clip-path:polygon(' + clip + ')">'
           + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + picStyle(i) + '">' : empty(sel.p === i))
+          + S.panels[i].items.map((it, j) => it.type === 'sticker' && it.clip ? itemHTML(it, j, false) : '').join('')
           + '<svg class="edge" viewBox="0 0 ' + b.w + ' ' + b.h + '" preserveAspectRatio="none" aria-hidden="true">'
           + framesOf(lk, i).map(([w, c]) => '<polygon points="' + pts + '" fill="none" stroke="' + c + '" stroke-width="' + 2 * w + '" stroke-linejoin="round"/>'
             + '<polygon points="' + pts2 + '" fill="none" stroke="' + c + '" stroke-width="' + 0.9 * w + '" stroke-linejoin="round" opacity=".6"/>').join('')
@@ -944,9 +951,10 @@ import THEME from '../theme.js';
     }
     const it = S.panels[drag.i].items[drag.j];
     if (drag.kind === 'item') {
-      it.x = Math.max(-10, Math.min(95, drag.ix + px));
-      it.y = Math.max(-10, Math.min(95, drag.iy + py));
-      drag.el.style.left = it.x + '%'; drag.el.style.top = it.y + '%';
+      const lo = it.type === 'sticker' ? -200 : -10;
+      it.x = Math.max(lo, Math.min(95, drag.ix + px));
+      it.y = Math.max(lo, Math.min(95, drag.iy + py));
+      twins(drag).forEach(el => { el.style.left = it.x + '%'; el.style.top = it.y + '%'; });
     } else if (drag.kind === 'rot') {
       // Turn by as much as the pointer has swung round the centre. It clicks to level and upright within 4°;
       // Shift gives steps of 15°.
@@ -956,7 +964,7 @@ import THEME from '../theme.js';
       if (e.shiftKey || Math.abs(a - Math.round(a / q) * q) < 4) a = Math.round(a / q) * q;
       it[drag.rkey] = Math.round(a);
       if (drag.rkey === 'tilt') { drag.el.querySelector('.it-text').style.transform = 'rotate(' + it.tilt + 'deg)'; placeRot(drag.el); }
-      else drag.el.style.transform = it.rot ? 'rotate(' + it.rot + 'deg)' : '';
+      else twins(drag).forEach(el => { el.style.transform = it.rot ? 'rotate(' + it.rot + 'deg)' : ''; });
     } else if (drag.kind === 'tip') {
       const [lx, ly] = unturn(dx, dy, it.rot);
       it.tip = { x: drag.tip.x + lx / drag.cq, y: drag.tip.y + ly / drag.cq };
@@ -964,10 +972,12 @@ import THEME from '../theme.js';
     } else {
       const [lo, hi] = it.type === 'sticker' ? [5, 150] : [10, 100];
       it.fw = true; it.w = Math.max(lo, Math.min(hi, drag.w0 + unturn(dx, dy, it.rot)[0] / drag.box.width * 100));
-      drag.el.style.maxWidth = ''; drag.el.style.width = it.w + '%';   // the ResizeObserver redraws the balloon
+      twins(drag).forEach(el => { el.style.maxWidth = ''; el.style.width = it.w + '%'; });   // the ResizeObserver redraws the balloon
     }
     placeTip();
   }, { passive: false });
+  // Every element showing item j of panel i: one, or two for an in-frame sticker while it is chosen.
+  const twins = d => [...bench.querySelectorAll('.pnl[data-i="' + d.i + '"] .it[data-j="' + d.j + '"]')];
   // A screen movement, in a box's own directions once the box is tilted by deg.
   function unturn(dx, dy, deg){
     if (!deg) return [dx, dy];
@@ -1023,7 +1033,8 @@ import THEME from '../theme.js';
     else if (e.key.startsWith('Arrow')) {
       e.preventDefault(); checkpoint();
       const st = e.shiftKey ? 3 : 0.5, ax = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
-      it.x = Math.max(-10, Math.min(95, it.x + ax[0] * st)); it.y = Math.max(-10, Math.min(95, it.y + ax[1] * st));
+      const lo = it.type === 'sticker' ? -200 : -10;
+      it.x = Math.max(lo, Math.min(95, it.x + ax[0] * st)); it.y = Math.max(lo, Math.min(95, it.y + ax[1] * st));
       save(); render();
     }
     else if (mod && k === 'd') { e.preventDefault(); duplicate(sel.p, sel.it); }
@@ -1174,6 +1185,8 @@ import THEME from '../theme.js';
     return '<span class="what">' + esc(s ? s.who : 'Sticker') + '</span>'
       + grp('Sticker', pill('sflip', 'Face the other way &#8646;', { on: it.flip }) + pill('sborder', 'White border', { on: !it.plain, title: 'A white edge round it, like a real sticker' })
         + pill('swap', 'Change it', { on: stkTrayOpen(), exp: stkTrayOpen(), title: 'Pick another pose, face or thing to put in its place' }))
+      + grp('Frame', pill('sclip', 'Inside the frame', { v: 1, on: !!it.clip, title: 'The panel crops it, like a close-up: the parts outside the frame are hidden' })
+        + pill('sclip', 'Pop out', { v: 0, on: !it.clip, title: 'Let it burst out over the frame' }))
       + grp('Size', pill('ssize', 'Smaller', { v: 0.8 }) + pill('ssize', 'Bigger', { v: 1.25 }) + '<span class="note">or drag the yellow dot</span>')
       + grp('Layer', pill('sfront', 'Bring to front', { title: 'Put it in front of the other stickers in this panel' }))
       + (it.rot ? grp('Tilt', '<span class="note">' + it.rot + '°</span><button type="button" class="pill" data-style="rot" data-v="0">Straighten</button>') : '');
@@ -1321,11 +1334,12 @@ import THEME from '../theme.js';
       }
       case 'about': cardOpen = !cardOpen; return render();
       case 'swap': { const cs = chosenSticker(); if (cs) stkWho = cs.src.split('/')[0]; stkOpen = !stkOpen; sfxOpen = false; return render(); }
-      case 'sflip': case 'sborder': case 'ssize': case 'sfront': {
+      case 'sflip': case 'sborder': case 'ssize': case 'sfront': case 'sclip': {
         const cur = chosenSticker(); if (!cur) return;
         checkpoint();
         if (b.dataset.cmd === 'sflip') cur.flip = !cur.flip;
         if (b.dataset.cmd === 'sborder') cur.plain = !cur.plain;
+        if (b.dataset.cmd === 'sclip') { if (v === '1') cur.clip = true; else delete cur.clip; markSeen('stickerclip'); }
         if (b.dataset.cmd === 'ssize') { const w = Math.max(5, Math.min(150, Math.round(cur.w * +v))); cur.x += (cur.w - w) / 2; cur.w = w; }   // about its middle
         if (b.dataset.cmd === 'sfront') { const items = S.panels[sel.p].items; items.push(items.splice(sel.it, 1)[0]); sel.it = items.length - 1; }
         save(); return render();
@@ -1408,6 +1422,8 @@ import THEME from '../theme.js';
       title: 'Stickers', text: 'Tap a sticker to put it in this panel. Pick a place from our library first and the gang can stand in it.' },
     { id: 'stickersize', at: 'rs', when: () => !!chosenSticker(),
       title: 'Make it fit', text: 'Drag the sticker to move it, and the yellow dot in its corner to make it bigger or smaller. ⇆ turns it to face the other way.' },
+    { id: 'stickerclip', at: 'dock', when: () => { const s = chosenSticker(); return !!s && seen('stickersize') && !s.clip; },
+      title: 'Too big for the panel?', text: 'Press Inside the frame and the panel crops it, like a close-up. Make it big and slide it until the face fills the shot.' },
     { id: 'tail', at: 'tail', when: () => { const it = chosenItem(); return it && hasTail(it) && it.tail !== 'none'; },
       title: 'Point the tail', text: 'Drag the yellow dot to whoever is talking. The yellow bar makes the box wider or narrower.' },
     { id: 'rotate', at: 'rot', when: () => !!chosenItem(),
@@ -1562,9 +1578,14 @@ import THEME from '../theme.js';
   }
 
   // A sticker, about its middle as the page turns and flips it; its height follows the picture.
-  function drawSticker(ctx, it, im, px, py, pw, ph){
+  function drawSticker(ctx, it, im, px, py, pw, ph, ink){
     if (!im) return;
     const w = pw * it.w / 100, h = w * im.height / im.width;
+    if (ink) {   // inked on a canvas of its own, as the pictures are
+      const oc = document.createElement('canvas');
+      oc.width = Math.max(1, Math.round(w)); oc.height = Math.max(1, Math.round(h));
+      oc.getContext('2d').drawImage(im, 0, 0, oc.width, oc.height); inkBW(oc); im = oc;
+    }
     ctx.save();
     ctx.translate(px + pw * it.x / 100 + w / 2, py + ph * it.y / 100 + h / 2);
     if (it.rot) ctx.rotate(it.rot * Math.PI / 180);
@@ -1605,12 +1626,16 @@ import THEME from '../theme.js';
       } else {
         const H = W * 1.5, lk = look(); c.width = W; c.height = H;
         ctx.fillStyle = lk.page; ctx.fillRect(0, 0, W, H);
+        const stk = lk.panels.flatMap((poly, i) => S.panels[i].items.filter(it => it.type === 'sticker'));
+        const stkIms = new Map(await Promise.all([...new Set(stk.map(stickerSrc))].map(async u => [u, await loadImg(u)])));
         lk.panels.forEach((poly, i) => {
           const P0 = poly.map(([x, y]) => [x * cq, y * cq]), b = bbox(P0), path = new Path2D(), path2 = new Path2D();
           const trace = (pa, pts) => { pts.forEach(([x, y], k) => k ? pa.lineTo(x * cq, y * cq) : pa.moveTo(x * cq, y * cq)); pa.closePath(); };
           trace(path, wob(poly, i)); trace(path2, wob(poly, i + 37));
           ctx.save(); ctx.clip(path);
           drawCover(ctx, ims[i], S.panels[i].fit, b.x, b.y, b.w, b.h, lk.ink);
+          // in-frame stickers: clipped with the picture, under the frame
+          S.panels[i].items.forEach(it => { if (it.type === 'sticker' && it.clip) drawSticker(ctx, it, stkIms.get(stickerSrc(it)), b.x, b.y, b.w, b.h, lk.ink); });
           // frames: twice the width, clipped to the panel, so only the inner half shows (as on the page)
           framesOf(lk, i).forEach(([w, col]) => { ctx.strokeStyle = col; ctx.lineJoin = 'round'; ctx.lineWidth = 2 * w * cq; ctx.stroke(path);
             ctx.save(); ctx.globalAlpha = 0.6; ctx.lineWidth = 0.9 * w * cq; ctx.stroke(path2); ctx.restore(); });
@@ -1621,9 +1646,7 @@ import THEME from '../theme.js';
         // then stickers and words, unclipped as on the page so they can burst out of their panels: all the stickers first,
         // so every caption and balloon sits on top of them
         const boxes = lk.panels.map(poly => bbox(poly.map(([x, y]) => [x * cq, y * cq])));
-        const stk = boxes.flatMap((b, i) => S.panels[i].items.filter(it => it.type === 'sticker'));
-        const stkIms = new Map(await Promise.all([...new Set(stk.map(stickerSrc))].map(async u => [u, await loadImg(u)])));
-        boxes.forEach((b, i) => S.panels[i].items.forEach(it => { if (it.type === 'sticker') drawSticker(ctx, it, stkIms.get(stickerSrc(it)), b.x, b.y, b.w, b.h); }));
+        boxes.forEach((b, i) => S.panels[i].items.forEach(it => { if (it.type === 'sticker' && !it.clip) drawSticker(ctx, it, stkIms.get(stickerSrc(it)), b.x, b.y, b.w, b.h, lk.ink); }));
         boxes.forEach((b, i) => S.panels[i].items.forEach(it => { if (it.type !== 'sticker') drawItem(ctx, it, b.x, b.y, b.w, b.h); }));
       }
       const blob = await new Promise(r => c.toBlob(r, 'image/png'));
