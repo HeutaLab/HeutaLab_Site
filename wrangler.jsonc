@@ -25,6 +25,8 @@
   // share one venue IP, so the per-IP limits are flood guards, not per-person
   // ones: SESSION = AI requests per browser, IP = brief/compare requests per
   // IP, CODE_CHECKS = code checks per browser, CODE_IP = code checks per IP.
+  // LOG_IP = usage-log rows per IP (a brake so a flood can't use up the
+  // account's daily D1 writes, which Glenn's other apps share).
   // SESSION_CAP: AI requests per browser per six hours (read by worker.js).
   // Change it here: a deploy resets vars to this file.
   "vars": { "SESSION_CAP": "30" },
@@ -32,6 +34,12 @@
     { "name": "PRECINCT_SESSION_LIMIT", "namespace_id": "4101", "simple": { "limit": 8, "period": 60 } },
     { "name": "PRECINCT_IP_LIMIT", "namespace_id": "4102", "simple": { "limit": 200, "period": 60 } },
     { "name": "PRECINCT_CODE_CHECKS", "namespace_id": "4103", "simple": { "limit": 12, "period": 60 } },
-    { "name": "PRECINCT_CODE_IP", "namespace_id": "4104", "simple": { "limit": 600, "period": 60 } }
+    { "name": "PRECINCT_CODE_IP", "namespace_id": "4104", "simple": { "limit": 600, "period": 60 } },
+    { "name": "PRECINCT_LOG_IP", "namespace_id": "4105", "simple": { "limit": 120, "period": 60 } }
+  ],
+  // The Precinct's usage log: one row per desk request, no attendee text.
+  // Table and example queries: precinct-api/usage.sql, usage-queries.sql.
+  "d1_databases": [
+    { "binding": "USAGE", "database_name": "precinct-usage", "database_id": "f6573073-54ca-4e61-a07b-b8974cd20edf" }
   ]
 }

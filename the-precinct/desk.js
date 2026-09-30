@@ -9,6 +9,8 @@ import THEME from "./theme.js";
 import { checkCopy, words } from "./copycheck.js";
 
 export const TIER_LEVEL = { basic: 1, medium: 2, advanced: 3 };
+export const PLATFORMS = ["gemini", "chatgpt", "copilot", "midjourney", "nanobanana"];
+export const SUBJECTS = ["character", "setting"];
 export const ATTEMPT_MIN_WORDS = 15;
 export const DESCRIPTION_MIN_WORDS = 8;
 // How long each call may take before the desk falls back to its files.
@@ -19,9 +21,10 @@ export const TIMEOUT_MS = { gate: 10000, compare: 10000, brief: 25000 };
 const DEFAULT_WHO = "a hard-bitten detective in his forties, stubbled jaw, a rumpled trench coat and a battered fedora";
 
 // From this moment (midnight in Bangkok) the shared desk on Glenn's key closes
-// and everyone uses their own AI key. The Worker refuses shared requests from
-// then on even if the page's clock is wrong.
-export const PERSONAL_KEYS_FROM = "2026-11-07T00:00:00+07:00";
+// and everyone uses their own AI key: a full week after the workshop (31 Oct
+// to 1 Nov), so the desk is open to the end of Sunday 8 November. The Worker
+// refuses shared requests from then on even if the page's clock is wrong.
+export const PERSONAL_KEYS_FROM = "2026-11-09T00:00:00+07:00";
 export const sharedDeskOpen = (now = Date.now()) => now < Date.parse(PERSONAL_KEYS_FROM);
 
 // Own keys only, for the plain-object tables (TIER_LEVEL, THEME.palettes).
@@ -37,11 +40,9 @@ export function readBrief(body) {
   const palette = body.palette || THEME.defaultPalette;
   const cast = Array.isArray(body.cast) ? body.cast : [];
   const attempt = typeof body.attempt === "string" ? body.attempt.trim() : "";
-  const validPlatforms = ["gemini", "chatgpt", "copilot", "midjourney", "nanobanana"];
-  const validSubjects = ["character", "setting"];
-  if (!validPlatforms.includes(platform)) return { error: "Unknown platform" };
+  if (!PLATFORMS.includes(platform)) return { error: "Unknown platform" };
   if (!has(TIER_LEVEL, tier)) return { error: "Unknown tier" };
-  if (!validSubjects.includes(subject)) return { error: "Unknown subject" };
+  if (!SUBJECTS.includes(subject)) return { error: "Unknown subject" };
   if (!has(THEME.palettes, palette)) return { error: "Unknown palette" };
   const castIds = THEME.cast.map((c) => c.id);
   if (cast.length > 2 || !cast.every((id) => castIds.includes(id))) return { error: "Unknown character" };

@@ -18,12 +18,14 @@
 // each deploy resets vars to what wrangler.jsonc says.
 //
 // The API is the gatekeeper: the level is checked from the code on every
-// request, never taken from the page. No attendee text is stored or logged;
-// only counts and error codes.
+// request, never taken from the page. No attendee text is stored or logged:
+// the usage log (D1 database precinct-usage, binding USAGE, see
+// precinct-api/usage.sql) keeps one row per request of fixed choices,
+// outcomes and timings only.
 
 import THEME from "./the-precinct/theme.js";
 import {
-  TIER_LEVEL, TIMEOUT_MS, sharedDeskOpen, readBrief, gateRequest, gateOutcome, briefRequest,
+  TIER_LEVEL, TIMEOUT_MS, PLATFORMS, SUBJECTS, sharedDeskOpen, readBrief, gateRequest, gateOutcome, briefRequest,
   readCompare, compareStepA, compareRequest, cleanCompare, stockBrief,
 } from "./the-precinct/desk.js";
 
@@ -34,18 +36,20 @@ const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const DEFAULT_SESSION_CAP = 30;
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
     if (url.pathname.startsWith(API)) {
       const route = url.pathname.slice(API.length);
+      // Own-key requests are reported here, before and after the desk closes.
+      if (route === "ping") return handlePing(request, env, ctx);
       const handler = ROUTES.get(route);
       if (!handler) return json({ error: "Not found" }, 404);
       if (request.method !== "POST") return json({ error: "POST only" }, 405);
-      // From 7 November 2026 the shared desk is closed: attendees use their own
+      // From 9 November 2026 the shared desk is closed: attendees use their own
       // AI key from the page, and Glenn's key is not used even if still set.
       if (!sharedDeskOpen()) {
-        return json({ error: "The shared desk closed on 7 November 2026. Add your own AI key on the API key page (heutalab.com/the-precinct/key/) to keep going.", personal: true }, 410);
+        return json({ error: "The shared desk closed on 9 November 2026. Add your own AI key on the API key page (heutalab.com/the-precinct/key/) to keep going.", personal: true }, 410);
       }
       let body;
       try {
@@ -54,7 +58,12 @@ export default {
         return json({ error: "Bad request body" }, 400);
       }
       if (!body || typeof body !== "object") return json({ error: "Bad request body" }, 400);
-      return handler(body, request, env, url);
+      // The handler fills in what the row should say (level, choices, outcome).
+      const ev = { via: "desk", route, provider: route === "code" ? null : "anthropic", session: sessionIdOf(body) };
+      const started = Date.now();
+      const res = await handler(body, request, env, url, ev);
+      logEvent(env, ctx, request, { ...ev, outcome: ev.outcome || OUTCOMES.get(res.status) || "http_" + res.status, ms: Date.now() - started });
+      return res;
     }
 
     // Everything else: serve the static site as before.
@@ -112,8 +121,10 @@ async function limited(binding, key) {
   }
 }
 
-const sessionOf = (body, request) =>
-  typeof body.session === "string" && /^[A-Za-z0-9-]{8,64}$/.test(body.session) ? body.session : "ip-" + ipOf(request);
+// The page's random browser id, or null if it sent none that looks right.
+const sessionIdOf = (body) =>
+  typeof body.session === "string" && /^[A-Za-z0-9-]{8,64}$/.test(body.session) ? body.session : null;
+const sessionOf = (body, request) => sessionIdOf(body) || "ip-" + ipOf(request);
 
 // The level a code unlocks, or an error response.
 function checkCode(body, env) {
@@ -149,12 +160,13 @@ async function admit(body, request, env) {
 
 // Charged only when a request is about to call the AI, so a locked tier or a
 // pasted-back prompt costs nobody their share.
-async function charge(body, request, env, url) {
+async function charge(body, request, env, url, ev) {
   const session = sessionOf(body, request);
   if (await limited(env.PRECINCT_SESSION_LIMIT, session)) {
     return json({ error: "Easy, detective. That\u2019s a lot of requests in a minute. Look at what you have, then try again shortly." }, 429);
   }
   if (await overCap(env, url, session)) {
+    ev.outcome = "capped";
     return json({ error: "You\u2019ve used this browser\u2019s share of the desk for this session. Work with what you have, or ask your facilitator." }, 429);
   }
   return null;
@@ -164,16 +176,22 @@ async function charge(body, request, env, url) {
 // It is a courtesy cap, not a lock: the session id comes from the page.
 async function overCap(env, url, session) {
   const cap = Number(env.SESSION_CAP) || DEFAULT_SESSION_CAP;
+  return overCount(url, "_cap/" + await sha256(session), cap, 21600);
+}
+
+// Adds one to a running total in the data centre's cache, unless it has
+// already reached cap: then it answers true. If the cache is unavailable the
+// count is skipped (answers false); the rate limits still apply.
+async function overCount(url, name, cap, maxAge) {
   if (typeof caches === "undefined") return false;
   try {
-    const hash = await sha256(session);
-    const key = new Request(url.origin + API + "_cap/" + hash);
+    const key = new Request(url.origin + API + name);
     const hit = await caches.default.match(key);
     const used = hit ? Number(await hit.text()) || 0 : 0;
     if (used >= cap) return true;
-    await caches.default.put(key, new Response(String(used + 1), { headers: { "cache-control": "max-age=21600" } }));
+    await caches.default.put(key, new Response(String(used + 1), { headers: { "cache-control": "max-age=" + maxAge } }));
   } catch {
-    // If the cache is unavailable the cap is skipped; the rate limits still apply.
+    // Fall through: not counted.
   }
   return false;
 }
@@ -181,6 +199,83 @@ async function overCap(env, url, session) {
 async function sha256(text) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+// ---------- the usage log ----------
+
+// One row per desk request in D1 (columns in precinct-api/usage.sql). It is
+// written after the answer has gone, so it never slows the desk, and a write
+// that fails is dropped. The account's daily D1 writes are shared with Glenn's
+// other apps, so two brakes stop a flood from using them up: a per-IP rate
+// limit (PRECINCT_LOG_IP) and a daily cap per data centre. A workshop day
+// writes a few hundred rows.
+const LOG_DAILY_CAP = 5000;
+const LOG_COLUMNS = ["at", "via", "route", "outcome", "ms", "who", "level", "provider", "platform", "tier",
+  "subject", "palette", "cast_ids", "round", "example", "reference"];
+const OUTCOMES = new Map([[200, "ok"], [400, "bad_request"], [401, "wrong_code"], [403, "locked"],
+  [422, "refused"], [429, "limited"], [500, "not_set_up"], [502, "ai_error"]]);
+const CAST_IDS = THEME.cast.map((c) => c.id);
+
+function logEvent(env, ctx, request, row) {
+  if (!env.USAGE || !ctx) return;
+  ctx.waitUntil(writeRow(env, request, row).catch(() => {}));
+}
+
+async function writeRow(env, request, row) {
+  if (await limited(env.PRECINCT_LOG_IP, ipOf(request))) return;
+  const at = new Date().toISOString();
+  if (await overCount(new URL(request.url), "_log/" + at.slice(0, 10), LOG_DAILY_CAP, 90000)) return;
+  // The page's browser id is random already; the hash keeps it out of the log too.
+  const who = row.session ? (await sha256(row.session)).slice(0, 16) : null;
+  const values = { ...row, at, who };
+  await env.USAGE.prepare("INSERT INTO events (" + LOG_COLUMNS.join(", ") + ") VALUES (" + LOG_COLUMNS.map(() => "?").join(", ") + ")")
+    .bind(...LOG_COLUMNS.map((c) => values[c] ?? null)).run();
+}
+
+// The fixed choices on a brief, checked against the desk's own lists, so a
+// row can only ever hold one of them (or nothing). Never any free text.
+function choiceFields(src) {
+  const cast = Array.isArray(src.cast) ? src.cast.filter((id) => CAST_IDS.includes(id)).slice(0, 2) : [];
+  return {
+    platform: PLATFORMS.includes(src.platform) ? src.platform : null,
+    tier: has(TIER_LEVEL, src.tier) ? src.tier : null,
+    subject: SUBJECTS.includes(src.subject) ? src.subject : null,
+    palette: has(THEME.palettes, src.palette) ? src.palette : null,
+    cast_ids: cast.length ? cast.join(",") : null,
+    round: src.round === 1 || src.round === 2 ? src.round : null,
+    example: typeof src.example === "boolean" ? Number(src.example) : null,
+  };
+}
+
+// ---------- POST /the-precinct/api/ping ----------
+
+// A request on the attendee's own key goes from their browser straight to
+// Google, OpenAI or Anthropic and never reaches this Worker, so the page
+// reports that it happened: which step, which service, the fixed choices, the
+// outcome and how long it took. No text. It keeps working after the shared
+// desk closes. Always answers 204, so a page never waits on it or retries.
+const OWN_PROVIDERS = ["gemini", "openai", "anthropic"];
+async function handlePing(request, env, ctx) {
+  const done = () => new Response(null, { status: 204, headers: { "cache-control": "no-store" } });
+  if (request.method !== "POST" || Number(request.headers.get("content-length")) > 2000) return done();
+  let p;
+  try {
+    const text = await request.text();
+    if (text.length > 2000) return done();
+    p = JSON.parse(text);
+  } catch {
+    return done();
+  }
+  if (!p || typeof p !== "object" || !["brief", "compare"].includes(p.route)) return done();
+  const ms = Math.round(Number(p.ms));
+  logEvent(env, ctx, request, {
+    via: "own", route: p.route, session: sessionIdOf(p),
+    outcome: typeof p.outcome === "string" && /^[a-z0-9_]{1,24}$/.test(p.outcome) ? p.outcome : "other",
+    ms: ms >= 0 && ms <= 600000 ? ms : null,
+    provider: OWN_PROVIDERS.includes(p.provider) ? p.provider : null,
+    ...(p.route === "brief" ? choiceFields(p) : { reference: typeof p.reference === "boolean" ? Number(p.reference) : null }),
+  });
+  return done();
 }
 
 // ---------- the AI call ----------
@@ -257,27 +352,30 @@ function setupError(fail) {
 
 // ---------- POST /the-precinct/api/code ----------
 
-async function handleCode(body, request, env) {
+async function handleCode(body, request, env, url, ev) {
   const limitedResponse = await guardCodeCheck(body, request, env);
   if (limitedResponse) return limitedResponse;
   const { level, error } = checkCode(body, env);
   if (error) return error;
+  ev.level = level;
   return json({ level, name: THEME.game.find((g) => g.level === level).name });
 }
 
 // ---------- POST /the-precinct/api/brief ----------
 
-async function handleBrief(body, request, env, url) {
+async function handleBrief(body, request, env, url, ev) {
   const b = readBrief(body);
   if (b.error) return json(b, 400);
+  Object.assign(ev, choiceFields({ ...b, cast: b.castUsed }));
 
   const admitted = await admit(body, request, env);
   if (admitted.error) return admitted.error;
+  ev.level = admitted.level;
   if (TIER_LEVEL[b.tier] > admitted.level) {
     const g = THEME.game.find((x) => x.tier === b.tier);
     return json({ error: g.name + " is still locked. Your facilitator will give out the next code when the room is ready.", level: admitted.level }, 403);
   }
-  const charged = await charge(body, request, env, url);
+  const charged = await charge(body, request, env, url, ev);
   if (charged) return charged;
 
   const started = Date.now();
@@ -293,7 +391,10 @@ async function handleBrief(body, request, env, url) {
       logFail("gate", gate.fail);
     } else {
       const asks = gateOutcome(gate.data);
-      if (asks) return json({ gate: true, questions: asks.questions, attempt: b.attempt });
+      if (asks) {
+        ev.outcome = "questions";
+        return json({ gate: true, questions: asks.questions, attempt: b.attempt });
+      }
     }
   }
 
@@ -304,6 +405,7 @@ async function handleBrief(body, request, env, url) {
     logFail("brief", brief.fail);
     if (brief.fail === "refusal") return json({ error: "The AI declined that one. Try rewording your idea." }, 422);
     if (isHardSetup(brief.fail)) return setupError(brief.fail);
+    ev.outcome = "fallback";
     return json({ ...stockBrief(b.subject, b.tier, b.palette, b.castUsed), fallback: true, setup: needsFacilitator(brief.fail), attempt: b.attempt });
   }
   return json({ ...brief.data, attempt: b.attempt });
@@ -311,7 +413,7 @@ async function handleBrief(body, request, env, url) {
 
 // ---------- POST /the-precinct/api/compare ----------
 
-async function handleCompare(body, request, env, url) {
+async function handleCompare(body, request, env, url, ev) {
   // Checked once with level 3 so an oversized reference box is still refused
   // before the code is looked at; the real level is applied after admit().
   const pre = readCompare(body, 3);
@@ -320,11 +422,16 @@ async function handleCompare(body, request, env, url) {
   const admitted = await admit(body, request, env);
   if (admitted.error) return admitted.error;
   const c = readCompare(body, admitted.level);
+  ev.level = admitted.level;
+  ev.reference = c.reference ? 1 : 0;
 
   const a = compareStepA(c);
-  if (a.copied) return json(a);
+  if (a.copied) {
+    ev.outcome = "copied";
+    return json(a);
+  }
 
-  const charged = await charge(body, request, env, url);
+  const charged = await charge(body, request, env, url, ev);
   if (charged) return charged;
 
   const out = await callClaude(env, compareRequest(c, a));
@@ -332,6 +439,7 @@ async function handleCompare(body, request, env, url) {
     logFail("compare", out.fail);
     if (out.fail === "refusal") return json({ error: "The AI declined that one. Try pasting the description again, or check it by eye with the six steps above." }, 422);
     if (isHardSetup(out.fail)) return setupError(out.fail);
+    ev.outcome = "fallback";
     return json({ fallback: true, setup: needsFacilitator(out.fail), checklist: THEME.compareChecklist });
   }
   return json(cleanCompare(out.data));

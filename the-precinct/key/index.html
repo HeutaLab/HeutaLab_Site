@@ -121,7 +121,7 @@
       </section>
 
       <footer>
-        Your key and what you type at the desk go from this browser to the AI service you chose (Google, OpenAI or Anthropic) under that service&rsquo;s terms. Nothing is sent to or kept by heutalab.com.
+        Your key and what you type at the desk go from this browser to the AI service you chose (Google, OpenAI or Anthropic) under that service&rsquo;s terms. Neither ever reaches heutalab.com. The page only tells heutalab.com that a request happened: the step, the service, the choices you picked, whether it worked and how long it took.
         Part of the <a href="/">HeutaLab</a> AIFE workshop materials: &ldquo;Human Creativity, AI Precision&rdquo;.
       </footer>
     </main>
@@ -139,7 +139,7 @@ import { PROVIDERS, loadKey, saveKey, forgetKey, maskKey, testKey, failureMessag
 
   $('whenNote').textContent = personalKeysNeeded()
     ? 'The shared workshop desk has closed, so the desk needs your own key to work.'
-    : 'Optional until 7 November 2026: workshop attendees can use the workshop code instead. From 7 November the desk needs your own key.';
+    : 'Optional until 9 November 2026: workshop attendees can use the workshop code instead. From 9 November the desk needs your own key.';
 
   function renderProviders(){
     $('providerRow').innerHTML = Object.entries(PROVIDERS).map(([id, p]) =>

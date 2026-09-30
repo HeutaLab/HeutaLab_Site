@@ -327,7 +327,7 @@
       <footer>
         The artwork here comes from Glenn Malcolm&rsquo;s own 2023 Midjourney noir comic.
         <a href="/blog/21cl-bkk-ai-is-not-taking-our-jobs-quite-the-opposite-midjourney-generative-art/">Read how it was made</a>.
-        Your description, your idea, and the prompt and descriptions you paste into the compare check go to a Cloudflare Worker for this site and then to Anthropic&rsquo;s API. Your workshop code is checked by the Worker only. Nothing you type is kept on the server or shown to anyone else; this browser remembers your code, your level and your last brief. If you add your own AI key, the key and what you type go straight from this browser to that service (Google, OpenAI or Anthropic) and never to this site.
+        Your description, your idea, and the prompt and descriptions you paste into the compare check go to a Cloudflare Worker for this site and then to Anthropic&rsquo;s API. Your workshop code is checked by the Worker only. Nothing you type is kept on the server or shown to anyone else; this browser remembers your code, your level and your last brief. If you add your own AI key, the key and what you type go straight from this browser to that service (Google, OpenAI or Anthropic) and never to this site. Either way, the site counts each request: the step, your level, the image tool, palette and characters you picked, whether it worked, how long it took, and a random number for this browser. Never what you type, your code or your key.
         Part of the <a href="/">HeutaLab</a> AIFE workshop materials: &ldquo;Human Creativity, AI Precision&rdquo;.
       </footer>
 
@@ -372,7 +372,7 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
 
   // ---- the attendee's own AI key ----
   // With a key saved (any time) or once personal keys are needed (from
-  // 7 November 2026), the desk calls the AI straight from this browser and
+  // 9 November 2026), the desk calls the AI straight from this browser and
   // the workshop code and levels step aside: every level is open.
   const personalOnly = personalKeysNeeded();
   const ownKey = loadKey();
@@ -383,7 +383,7 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
   async function ownRequest(route, payload){
     const answer = (status, data) => ({ res: { ok: status === 200, status }, data });
     if (!ownKey) return answer(428, { error: 'Add your own AI key on the API key page first.' });
-    const failed = fail => answer(fail === 'refusal' ? 422 : 502, { error: failureMessage(fail, ownKey.provider) });
+    const failed = fail => answer(fail === 'refusal' ? 422 : 502, { error: failureMessage(fail, ownKey.provider), fail });
     if (route === 'brief') {
       const b = readBrief(payload);
       if (b.error) return answer(400, b);
@@ -411,7 +411,28 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
     if (isTransient(out.fail)) return answer(200, { fallback: true, own: true, checklist: THEME.compareChecklist });
     return failed(out.fail);
   }
-  const send = (route, payload) => usingOwnKey ? ownRequest(route, payload) : post(route, payload);
+
+  // An own-key request never passes through heutalab.com, so the page tells
+  // the site's usage log that one happened: the step, the AI service, the
+  // fixed choices (image tool, level, palette, characters), the outcome and
+  // how long it took. None of the attendee's words, and never the key.
+  async function ownRequestLogged(route, payload){
+    const started = Date.now();
+    const out = await ownRequest(route, payload);
+    const { res, data } = out;
+    if (res.status !== 428) {
+      const outcome = data.gate ? 'questions' : data.copied ? 'copied' : data.fallback ? 'fallback' : res.ok ? 'ok'
+        : data.fail === 'refusal' ? 'refused' : data.fail || (res.status === 400 ? 'bad_request' : 'error');
+      const choices = route === 'brief'
+        ? { platform: payload.platform, tier: payload.tier, subject: payload.subject, palette: payload.palette, cast: payload.cast, round: payload.round, example: payload.example }
+        : { reference: !!payload.reference };
+      try {
+        navigator.sendBeacon(API + 'ping', JSON.stringify({ route, outcome, ms: Date.now() - started, provider: ownKey.provider, session, ...choices }));
+      } catch (e) {}
+    }
+    return out;
+  }
+  const send = (route, payload) => usingOwnKey ? ownRequestLogged(route, payload) : post(route, payload);
 
   // The banner and the key line.
   const banner = document.getElementById('keyBanner');
