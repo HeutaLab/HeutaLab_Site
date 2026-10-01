@@ -208,20 +208,61 @@ export default {
   // facilitator announces from the stage. worker.js checks the code on every
   // request; the page only uses these for names and intros. `setting` holds
   // the task and intro shown when the attendee picks Setting instead of Character.
+  // `sum` and `learn` are the short lines in the home page's Levels box.
   game: [
     { level: 1, tier: 'basic', name: 'Rookie', task: 'One character portrait.',
+      sum: 'One picture.', learn: 'Learn to control a character.',
       intro: 'Rookie: one face, one case. A single portrait, lit like it matters.',
       setting: { task: 'One empty room.',
         intro: 'Rookie: one room, no witnesses. An empty place, lit like something just happened there.' } },
     { level: 2, tier: 'medium', name: 'Detective', task: 'The same face in a room.',
+      sum: 'Character + location.', learn: 'Learn to keep things consistent.',
       intro: 'Detective: same face, new room. The anchor paragraph goes in word for word, every time, or the face walks off the job.',
       setting: { task: 'Two rooms, one building.',
         intro: 'Detective: two rooms, one building. The anchor paragraph goes in word for word, or the walls stop matching.' } },
     { level: 3, tier: 'advanced', name: 'Commissioner', task: 'A three-panel shot list.',
+      sum: 'Several panels.', learn: 'Learn to direct a complete scene.',
       intro: 'Commissioner: three panels, one story. Work out the shots with an AI as your partner before anything gets drawn. The pictures are optional; the plan is not.',
       setting: { task: 'One street, three shots.',
         intro: 'Commissioner: one street, three shots. Plan the camera with an AI partner first: same time of day, same weather, same palette in every frame.' } },
   ],
+
+  // The guided route on the home page: five cases. Each of the first four runs
+  // the briefing desk at one level (`tier`) with one subject; `swap` lets a
+  // case take a setting instead of a character. `ref` is the picture to study
+  // (`refSetting` once the case is switched to a setting). Case 05 is the
+  // compare check on its own, for any prompt.
+  cases: [
+    { n: 1, key: 'character', tab: 'Character', title: 'Build your character', tier: 'basic', subject: 'character', ref: 'cop',
+      about: 'One character, one portrait.' },
+    { n: 2, key: 'location', tab: 'Location', title: 'Create a location', tier: 'basic', subject: 'setting', ref: 'office',
+      about: 'One empty room, lit like something just happened there.' },
+    { n: 3, key: 'scene', tab: 'Scene', title: 'Direct a scene', tier: 'medium', subject: 'character', swap: true,
+      ref: 'blonde-yellow', refSetting: 'rain-street', about: 'The same face in a new room.' },
+    { n: 4, key: 'page', tab: 'Page', title: 'Build your comic page', tier: 'advanced', subject: 'character', swap: true,
+      ref: 'detective-car', refSetting: 'sunset-street', about: 'Three panels, one story, then the page.' },
+    { n: 5, key: 'review', tab: 'Review', title: 'Compare & fix',
+      about: 'Put any result next to its prompt. What drifted?' },
+  ],
+
+  // The steps inside a case, in order. A setting case has no "who" step.
+  caseSteps: [
+    ['look', 'Study the reference'],
+    ['who', 'Choose a character'],
+    ['palette', 'Choose a palette'],
+    ['notice', 'Write what you notice'],
+    ['brief', 'Get your brief'],
+    ['make', 'Make the image'],
+    ['compare', 'Compare it'],
+  ],
+
+  // What to look for in the reference picture, by subject.
+  lookFor: {
+    character: ['Clothing and accessories', 'Facial features and expression', 'Lighting, colour and mood',
+      'Setting and background details', 'What makes this character interesting?'],
+    setting: ['What kind of place is it?', 'Furniture, objects and materials', 'Lighting, colour and mood',
+      'Time of day and weather', 'Is anyone there, or is it empty?'],
+  },
 
   // What the desk hands out when the AI is busy or down: stock briefs from the
   // files, one per tier and subject. {palette} becomes the palette phrase and
