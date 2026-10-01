@@ -492,10 +492,10 @@ export default {
     { who: 'Vera Sinclair', dir: 'vera', items: [
       ['standing', 'Standing', 29], ['side', 'Side on', 22], ['walking-away', 'Walking away', 27],
       ['hand-on-hip', 'Hand on hip', 34], ['whispering', 'Whispering', 29], ['coffee', 'With a coffee', 29],
-      ['face-glance', 'Sideways glance', 32, 'face'], ['face-knowing', 'Knowing smile', 33, 'face'], ['face-eyebrow', 'Raised eyebrow', 34, 'face'],
-      ['face-alarmed', 'Alarmed', 34, 'face'], ['face-sad', 'Sad', 36, 'face'], ['face-laughing', 'Laughing', 36, 'face'],
-      ['earrings', 'Pearl earrings', 15, 'thing'], ['gloves', 'Evening gloves', 19, 'thing'], ['stole', 'Fur stole', 23, 'thing'],
-      ['lipstick', 'Lipstick', 15, 'thing'], ['clutch', 'Clutch bag', 24, 'thing'], ['coffee-cup', 'Coffee cup', 22, 'thing'],
+      ['face-glance', 'Sideways glance', 33, 'face'], ['face-knowing', 'Knowing smile', 32, 'face'], ['face-eyebrow', 'Raised eyebrow', 33, 'face'],
+      ['face-alarmed', 'Alarmed', 34, 'face'], ['face-sad', 'Sad', 34, 'face'], ['face-laughing', 'Laughing', 34, 'face'],
+      ['earrings', 'Pearl earrings', 15, 'thing'], ['gloves', 'Evening gloves', 15, 'thing'], ['stole', 'Fur stole', 21, 'thing'],
+      ['lipstick', 'Lipstick', 16, 'thing'], ['clutch', 'Clutch bag', 23, 'thing'], ['coffee-cup', 'Coffee cup', 22, 'thing'],
     ] },
     { who: 'Hattie Cole', dir: 'hattie', items: [
       ['standing', 'Standing', 29], ['side', 'Side on', 27], ['walking-away', 'Walking away', 30],
