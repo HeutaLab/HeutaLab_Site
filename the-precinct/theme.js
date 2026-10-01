@@ -50,7 +50,7 @@ export default {
     {
       id: 'rookie', name: 'Patrolman Tommy Doyle', short: 'Tommy Doyle', role: 'The Rookie', tag: 'The one who saw',
       story: 'Three weeks on the job. He saw Frank Rourke do something on Vance’s orders and has told no one, because he doesn’t know who is safe to tell. He keeps crossing paths with Hattie Cole.',
-      look: 'a patrolman in his early twenties, fresh-faced and clean-shaven with freckles across his nose and cheeks, short fair hair, a dark peaked police cap with a plain shield badge, a dark uniform buttoned to the collar with a small star on each collar point, a wary sideways glance',
+      look: 'a patrolman in his early twenties, fresh-faced and clean-shaven with freckles across his nose and cheeks, short fair hair, a dark peaked police cap with a plain shield badge, a dark uniform buttoned to the collar with a small star on each collar point, a plain leather belt, a wary sideways glance',
       img: IMG + 'ref/tommy-card.jpg',
     },
     {
@@ -141,7 +141,7 @@ export default {
     'vera-card':     ['A woman with shoulder-length platinum-blonde waves, pearl earrings and a black evening gown, looking back over her shoulder with a knowing smile', 'character', 'femme'],
     'rourke-card':   ['A huge muscular man in shirtsleeves, braces and a loosened tie, teeth bared around a matchstick, glaring out of the dark', 'character', 'disillusioned'],
     'hattie-card':   ['A woman in a wide-brimmed black hat and a pale trench coat, glancing back over her shoulder, a notebook and pen in her gloved hands', 'character', 'reporter'],
-    'tommy-card':    ['A young freckled patrolman in a peaked cap and a dark uniform with a star on each collar point, glancing sideways by a lit wall', 'character', 'rookie'],
+    'tommy-card':    ['A young freckled patrolman in a peaked cap and a dark uniform with a star on each collar point, standing square and glancing sideways', 'character', 'rookie'],
     'charlotte-card':['A woman in her fifties with pinned-up hair and glasses on a chain, a dark dress with a white collar and a stepped brooch, arms folded', 'character', 'owner'],
     'ziggurat':      ['An empty Art Deco café at night: leather booths, a chrome counter with round stools, stepped glass lamps, a chevron floor and rain outside the windows', 'setting'],
     'rourke-front':  ['A huge muscular man in shirtsleeves and braces, a holster at his side and a jacket over his shoulder, scowling', 'character', 'disillusioned'],
