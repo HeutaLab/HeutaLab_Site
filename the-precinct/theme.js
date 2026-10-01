@@ -166,6 +166,7 @@ export default {
     'novak-street':     ['A man in a dark suit, a fedora and round glasses stands under a street lamp on a wet street, looking back over his shoulder', 'character', 'detective'],
     'hattie-docks':     ['A woman in a wide-brimmed hat and a belted trench coat walks along a foggy quay with a notebook, glancing aside at a warehouse', 'character', 'reporter'],
     'tommy-steps':      ['A young patrolman stands on the rainy steps of a police station, one hand on the stone rail, looking uneasily to one side', 'character', 'rookie'],
+    'vera-ziggurat':    ['A woman with platinum-blonde waves, a choker and long pale gloves sits alone in a café booth, chin on her hand and a coffee cup in front of her, watching the door', 'character', 'femme'],
     'rourke-rage':   ['A stubbled man snarling with rage, a matchstick clamped in his teeth', 'character', 'disillusioned'],
     'rourke-sheet':  ['A character sheet for Frank Rourke: front, side and back views, and five expressions from lazy smirk to flicker of conscience', 'character', 'disillusioned'],
     'cop-badge':     ['A square-jawed man in a hat with a badge on his coat, light flaring behind him', 'character', 'detective'],
@@ -413,7 +414,7 @@ export default {
   // Pictures offered in the comic builder's library.
   // The places come first: they are the ones the stickers are drawn to stand in.
   library: ['ziggurat','ziggurat-outside','precinct-steps','squad-room','commissioners-office','interview-room','newsroom','alley','street-corner','docks',
-    'vance-office','rourke-interview','novak-street','hattie-docks','tommy-steps',
+    'vance-office','rourke-interview','novak-street','hattie-docks','tommy-steps','vera-ziggurat',
     'chief','hat-woman','cop','bar','blonde-green','blonde-yellow','rain-street','office','sunset-street',
     'cop-badge','lamp-man','houses','teal-woman','detective-car',
     'walking-rain','hat-green','novak-card','vance-card','rourke-card','vera-card','hattie-card','tommy-card','charlotte-card',
