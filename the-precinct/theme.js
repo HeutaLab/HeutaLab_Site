@@ -142,8 +142,6 @@ export default {
     'rain-street':   ['A rain-soaked town street at night: a parked car, a streetlamp and a figure in a doorway', 'setting'],
     'office':        ['An empty office with desks, filing cabinets and a city skyline through the windows', 'setting'],
     'sunset-street': ['A city street at sunset with lit windows, street lamps and a parked black car', 'setting'],
-    'fedora':        ['A stern man in a fedora and trench coat, close-up', 'character', 'commissioner'],
-    'boss':          ['A heavy-set man with slicked-back hair in a suit, glaring', 'character'],
     'novak-card':    ['A young man in round wire-rimmed glasses and a dark fedora, dark suit and tie, a badge on his jacket, a glow of light behind him', 'character', 'detective'],
     'vance-card':    ['A heavy-set older man in a fedora and belted trench coat over a three-piece suit, hands in his pockets, staring coldly out of the dark', 'character', 'commissioner'],
     'vera-card':     ['A woman with shoulder-length platinum-blonde waves, pearl earrings and a black evening gown, looking back over her shoulder with a knowing smile', 'character', 'femme'],
@@ -162,19 +160,13 @@ export default {
     'alley':                ['A wet cobbled alley at night between brick buildings: a fire escape, a back door under a caged lamp, bins, crates and a steaming grate', 'setting'],
     'street-corner':        ['A rainy city street at night: a tall street lamp, a parked sedan, shopfronts with awnings, a telephone box and towers in the mist', 'setting'],
     'docks':                ['A foggy quay at night: a wooden warehouse with one wall lamp, crates and rope, iron bollards, a cargo crane and the hull of a ship', 'setting'],
-    'rourke-front':  ['A huge muscular man in shirtsleeves and braces, a holster at his side and a jacket over his shoulder, scowling', 'character', 'disillusioned'],
-    'rourke-snarl':  ['Close-up of a dark-haired man baring his teeth around a cigarette, face half in shadow', 'character', 'disillusioned'],
     'rourke-rage':   ['A stubbled man snarling with rage, a matchstick clamped in his teeth', 'character', 'disillusioned'],
     'rourke-sheet':  ['A character sheet for Frank Rourke: front, side and back views, and five expressions from lazy smirk to flicker of conscience', 'character', 'disillusioned'],
     'cop-badge':     ['A square-jawed man in a hat with a badge on his coat, light flaring behind him', 'character', 'detective'],
     'lamp-man':      ['A man in a suit under a street lamp against a yellow sky', 'character', 'detective'],
-    'blue-man':      ['A man in a dark coat looking back down a blue night street', 'character'],
     'houses':        ['A street of old houses under a yellow sky, a man walking and a parked car', 'setting'],
-    'green-city':    ['A man on a balcony with a green-tinted city skyline behind him', 'setting'],
-    'walking-woman': ['A woman in a yellow coat walking past parked cars at dusk', 'character'],
     'teal-woman':    ['A woman with long wavy hair in teal and blue tones, looking sideways', 'character'],
     'detective-car': ['A detective in a fedora glancing back at a sedan on a rainy street', 'character', 'detective'],
-    'sunset-man':    ['A man in a hat and coat against a red-orange sunset', 'character'],
     'walking-rain':  ['A man walking alone along a wet pavement in blue rain', 'setting'],
     'hat-green':     ['A man in a fedora and tie under city lights, in green tones', 'character'],
   },
@@ -415,10 +407,10 @@ export default {
   // Pictures offered in the comic builder's library.
   // The places come first: they are the ones the stickers are drawn to stand in.
   library: ['ziggurat','ziggurat-outside','precinct-steps','squad-room','commissioners-office','interview-room','newsroom','alley','street-corner','docks',
-    'chief','hat-woman','cop','bar','blonde-green','blonde-yellow','rain-street','office','sunset-street','fedora','boss',
-    'cop-badge','lamp-man','blue-man','houses','green-city','walking-woman','teal-woman','detective-car','sunset-man',
+    'chief','hat-woman','cop','bar','blonde-green','blonde-yellow','rain-street','office','sunset-street',
+    'cop-badge','lamp-man','houses','teal-woman','detective-car',
     'walking-rain','hat-green','novak-card','vance-card','rourke-card','vera-card','hattie-card','tommy-card','charlotte-card',
-    'rourke-front','rourke-snarl','rourke-rage','rourke-sheet'],
+    'rourke-rage','rourke-sheet'],
 
   // Colours for captions, balloons, thoughts and sound effects in the comic builder, taken from the palettes above.
   // fill: the box (or a sound effect's letters); text: the words; line: the outline.

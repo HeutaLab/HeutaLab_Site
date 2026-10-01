@@ -382,6 +382,8 @@ import THEME from '/the-precinct/theme.js';
   function migrate(){
     // Pages from before styles had a layout (grid6, splash...); styles bring their own panels now.
     if (!STYLE_KEYS_ORDER.includes(S.style)) S.style = 'williamson';
+    // A library picture that has since been taken off the site: the panel goes back to empty, its words and stickers stay.
+    S.panels.concat(S.prose).forEach(p => { if (p.img && p.img.lib && !LIB.includes(p.img.lib)) p.img = null; });
     S.panels.forEach(p => p.items.forEach(it => {
       if ((it.type === 'speech' || it.type === 'thought') && !it.tip) {
         it.tip = { x: it.tail === 'br' ? 8 : -8, y: it.type === 'speech' ? 5.5 : 7 };
