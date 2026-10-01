@@ -523,7 +523,7 @@ import THEME from '/the-precinct/theme.js';
 import { words } from '/the-precinct/copycheck.js';
 import {
   readBrief, gateRequest, gateOutcome, briefRequest,
-  readCompare, compareStepA, compareRequest, cleanCompare, stockBrief,
+  readCompare, compareStepA, compareRequest, cleanCompare, stockBrief, cleanBrief,
 } from '/the-precinct/desk.js';
 import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, personalKeysNeeded } from '/the-precinct/providers.js';
 
@@ -607,8 +607,9 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
       }
       // Your own key isn't queuing behind a room, so it gets a longer budget.
       const brief = await askAI(ownKey, briefRequest(b, Math.max(8000, 45000 - (Date.now() - started))));
-      if (brief.data) return answer(200, { ...brief.data, attempt: b.attempt });
-      if (isTransient(brief.fail)) return answer(200, { ...stockBrief(b.subject, b.tier, b.palette, b.castUsed, b.placeUsed), fallback: true, own: true, attempt: b.attempt });
+      const tidy = brief.data && cleanBrief(brief.data, b.tier);
+      if (tidy && tidy.prompts.length) return answer(200, { ...tidy, attempt: b.attempt });
+      if (tidy || isTransient(brief.fail)) return answer(200, { ...stockBrief(b.subject, b.tier, b.palette, b.castUsed, b.placeUsed), fallback: true, own: true, attempt: b.attempt });
       return failed(brief.fail);
     }
     const c = readCompare(payload, 3);

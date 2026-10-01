@@ -43,7 +43,7 @@ async function desk() {
     const sent = JSON.parse(init.body);
     const out = sent.system.startsWith("You are the desk sergeant")
       ? { covered: { see: true, details: true, world: true }, questions: ["a?", "b?"] }
-      : { anchor: "stand-in anchor", prompts: ["stand-in prompt"], why_this_works: "w", platform_notes: "n", watch_for: "f" };
+      : { anchor: "stand-in anchor", prompts: ["A stand-in prompt, long enough to count as a real one."], why_this_works: "w", platform_notes: "n", watch_for: "f" };
     return new Response(JSON.stringify({ stop_reason: "end_turn", content: [{ type: "text", text: JSON.stringify(out) }] }));
   };
   const env = { WORKSHOP_CODE: "local-test-code-1", ANTHROPIC_API_KEY: "k" };

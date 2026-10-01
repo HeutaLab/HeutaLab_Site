@@ -26,7 +26,7 @@
 import THEME from "./the-precinct/theme.js";
 import {
   TIER_LEVEL, TIMEOUT_MS, PLATFORMS, SUBJECTS, sharedDeskOpen, readBrief, gateRequest, gateOutcome, briefRequest,
-  readCompare, compareStepA, compareRequest, cleanCompare, stockBrief,
+  readCompare, compareStepA, compareRequest, cleanCompare, stockBrief, cleanBrief,
 } from "./the-precinct/desk.js";
 
 const API = "/the-precinct/api/";
@@ -408,7 +408,13 @@ async function handleBrief(body, request, env, url, ev) {
     ev.outcome = "fallback";
     return json({ ...stockBrief(b.subject, b.tier, b.palette, b.castUsed, b.placeUsed), fallback: true, setup: needsFacilitator(brief.fail), attempt: b.attempt });
   }
-  return json({ ...brief.data, attempt: b.attempt });
+  const tidy = cleanBrief(brief.data, b.tier);
+  if (!tidy.prompts.length) {   // nothing usable came back: the files answer, as for a slow reply
+    logFail("brief", "no_prompts");
+    ev.outcome = "fallback";
+    return json({ ...stockBrief(b.subject, b.tier, b.palette, b.castUsed, b.placeUsed), fallback: true, attempt: b.attempt });
+  }
+  return json({ ...tidy, attempt: b.attempt });
 }
 
 // ---------- POST /the-precinct/api/compare ----------

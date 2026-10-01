@@ -15,7 +15,7 @@ globalThis.fetch = async (url, init) => {
   if (aiDown) return new Response(JSON.stringify({ error: { type: "overloaded_error" } }), { status: 529 });
   const out = body.system.startsWith("You are the desk sergeant")
     ? { covered: { see: true, details: true, world: true }, questions: ["a?", "b?"] }
-    : { anchor: "A", prompts: ["p1", "p2"], why_this_works: "w", platform_notes: "n", watch_for: "f" };
+    : { anchor: "A", prompts: ["The character stands by the door, looking back.", "The character sits at the table, writing a note."], why_this_works: "w", platform_notes: "n", watch_for: "f" };
   return new Response(JSON.stringify({ stop_reason: "end_turn", content: [{ type: "text", text: JSON.stringify(out) }] }));
 };
 

@@ -15,9 +15,11 @@ export const ATTEMPT_MIN_WORDS = 15;
 export const DESCRIPTION_MIN_WORDS = 8;
 // How long each call may take before the desk falls back to its files.
 // The gate and compare checks run at low effort and get 10 s each. The brief
-// (medium effort, several prompts) gets 25 s, shared with the gate on round 1:
-// the brief has whatever the gate left, and never less than 5 s.
-export const TIMEOUT_MS = { gate: 10000, compare: 10000, brief: 25000 };
+// (medium effort, several prompts) gets 40 s, shared with the gate on round 1:
+// the brief has whatever the gate left, and never less than 5 s. It was 25 s
+// until a live run on 1 Oct 2026 took 19 to 22 s for a brief with a place in
+// it, which left a round-1 brief (gate first) too close to a stock answer.
+export const TIMEOUT_MS = { gate: 10000, compare: 10000, brief: 40000 };
 const DEFAULT_WHO = "a hard-bitten detective in his forties, stubbled jaw, a rumpled trench coat and a battered fedora";
 
 // From this moment (midnight in Bangkok) the shared desk on Glenn's key closes
@@ -99,6 +101,22 @@ export const briefRequest = (b, timeoutMs) => ({
   // reply, and a prompt suggestion doesn't need deep thought.
   effort: "medium", maxTokens: 8000, timeoutMs,
 });
+
+// Tidies a brief from the AI before anyone sees it. The schema can't say how
+// many prompts or what goes in them, and a live run once came back with a
+// stray note in the list and "[ANCHOR]" written at the start of each prompt
+// (the page puts the anchor in front itself). Anything in the list that is not
+// a prompt is dropped, and basic and medium keep their one and two.
+export function cleanBrief(data, tier) {
+  const d = data && typeof data === "object" ? data : {};
+  let prompts = (Array.isArray(d.prompts) ? d.prompts : [])
+    .filter((p) => typeof p === "string")
+    .map((p) => p.replace(/\[\s*anchor\s*\][\s:,.+-]*/gi, "").trim())
+    .filter((p) => countWords(p) >= 6);
+  if (tier === "basic") prompts = prompts.slice(0, 1);
+  if (tier === "medium") prompts = prompts.slice(0, 2);
+  return { ...d, anchor: typeof d.anchor === "string" ? d.anchor.trim() : "", prompts };
+}
 
 // ---------- the compare check ----------
 
@@ -297,6 +315,7 @@ PALETTE RULES (the palette line in the request is the attendee's choice; honour 
 
 CAST RULES (when the request names cast members):
 - Each character has a fixed look. Put it into the prompt near word for word: it is the only thing keeping the character recognisable from one picture to the next. For medium and advanced tiers it belongs in the anchor.
+- A fixed look can end with a pose or an expression (hands in his pockets, arms folded, a glance over her shoulder). In an anchor, keep the face, the hair, the clothes and the things they carry, and leave that pose or expression to the individual prompts, so no shot contradicts the anchor.
 - Never swap looks between characters, and keep the two detectives visibly different: Edward Novak is young, clean-shaven and neat, and the only one in round steel-rimmed glasses; Sergeant Frank Rourke is older and hugely muscular, in shirtsleeves, braces and a shoulder holster, and always on the edge of rage.
 - Use the names in why_this_works and the other notes, but keep them out of the image prompt itself: image models don't know these characters, and a name in the prompt invites lettering on the picture. In the prompt, describe the character by their fixed look.
 - With two characters in an advanced request, let their relationship drive the staging (who looks at whom, who stands in whose shadow), but show it; never write it as text in the image.
@@ -325,6 +344,8 @@ SUBJECT KNOWLEDGE:
 - setting: emphasise empty of people (state this explicitly regardless of platform), a wide establishing shot, and for medium/advanced, load-bearing continuity details (window shape, ceiling material, light fixtures, time of day/weather) that should repeat verbatim across prompts.
 
 WRITING: British spelling in the notes. No em-dashes anywhere, in the prompts or the notes: use a colon, comma or full stop.
+
+THE PROMPT LIST: every item in "prompts" is a complete prompt, ready to paste. Never put a note, a label or a placeholder in the list. For medium and advanced tiers do not repeat the anchor in a prompt and do not write "[ANCHOR]": the page puts the anchor in front of each prompt itself, so a prompt holds only what changes.
 
 OUTPUT FORMAT: a JSON object with these fields. Fill every field; only "anchor" may be an empty string, and only for the basic tier. The three notes are what attendees learn from, so never leave them blank:
 {
