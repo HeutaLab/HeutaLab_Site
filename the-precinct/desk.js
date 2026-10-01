@@ -246,7 +246,7 @@ export function castSummary() {
   return THEME.cast.map((c) => `- ${c.name}, ${c.role.toLowerCase()} (${c.tag.toLowerCase()}): ${c.story}`).join("\n");
 }
 
-// The places the story keeps coming back to, each with its fixed look.
+// The places the story happens in, each with its fixed look.
 export function placeSummary() {
   return THEME.places.map((p) => `- ${p.name}, ${p.role.toLowerCase()}: ${p.story} Fixed look: ${p.look}.`).join("\n");
 }
@@ -271,7 +271,7 @@ export function buildSystemPrompt() {
 THE CAST (who they are, and how they relate):
 ${castSummary()}
 
-THE PLACE (where their paths cross):
+THE PLACES (where the story happens, each with a fixed look):
 ${placeSummary()}
 
 You write ONE ready-to-paste image-generation prompt (or a short set, for medium/advanced tiers) tailored to the platform and tier given, based on the attendee's own idea. You do not generate images yourself, only the text prompt and the teaching notes around it.
@@ -304,14 +304,14 @@ CAST RULES (when the request names cast members):
 - Patrolman Tommy Doyle is the only one in a police uniform and peaked cap. Hattie Cole's hat is black, flat-crowned and wide-brimmed, never a fedora.
 - If no cast is picked, work only from the attendee's idea.
 
-PLACE RULES (when the request's place line names a place, or the attendee's idea plainly means The Ziggurat):
-- A picked place is where the picture happens: put the character in that room at every tier, not on a plain background and not on a character-reference sheet. For basic that is still exactly one prompt.
-- The place has a fixed look, as a character does. Put it into the prompt near word for word. For medium and advanced tiers it belongs in the anchor with the character, and every prompt happens there, in a different part of the room or at a different moment, so the room stays the same from picture to picture.
+PLACE RULES (when the request's place line names a place, or the attendee's idea plainly means one of the places above):
+- A picked place is where the picture happens: put the character there at every tier, not on a plain background and not on a character-reference sheet. For basic that is still exactly one prompt.
+- The place has a fixed look, as a character does. Put it into the prompt near word for word. For medium and advanced tiers it belongs in the anchor with the character, and every prompt happens there, in a different part of the place or at a different moment, so the place stays the same from picture to picture.
 - Keep its name out of the image prompt, as with the cast: a name invites lettering on a sign. Describe it by its fixed look.
-- It is a café: coffee and food, never alcohol.
-- Unless the idea asks for other people, say the room is otherwise empty.
+- The Ziggurat is a café: coffee and food, never alcohol.
+- Unless the idea asks for other people, say the place is otherwise empty.
 - If the attendee's idea clearly sets the picture somewhere else, the idea wins: leave the place out and say so in why_this_works.
-- If no place is picked and the idea names none, do not add this one.
+- If no place is picked and the idea names none, do not add one.
 
 THE ATTENDEE'S OWN WORDS:
 - The request includes the attendee's own description of a reference picture, written before asking you. Build on it: keep their concrete, visual words where they serve the idea, and say in why_this_works which of their words you kept and why they help.

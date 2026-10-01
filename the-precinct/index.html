@@ -225,8 +225,14 @@
         <section class="stepp" data-step="who" hidden>
           <p class="where">On The Precinct</p>
           <h3 tabindex="-1"><span class="n"></span>Choose a character</h3>
-          <p class="lead">Seven characters, one story: four inside the precinct, three outside it, and the caf&eacute; where their paths cross. Pick who you&rsquo;re drawing, and choose the caf&eacute; too if that is where they are. Their <strong>look</strong> goes into every prompt word for word: it&rsquo;s what keeps them recognisable from picture to picture. <span id="whoNote"></span></p>
+          <p class="lead">Seven characters, one story: four inside the precinct and three outside it. Pick who you&rsquo;re drawing. Their <strong>look</strong> goes into every prompt word for word: it&rsquo;s what keeps them recognisable from picture to picture. <span id="whoNote"></span></p>
           <div class="cast-grid" id="castGrid"></div>
+          <div class="places" id="places">
+            <h4>Choose a place <span>Optional</span></h4>
+            <p>Ten places from the story. Choose one and your picture happens there: its <strong>look</strong> goes into the prompt word for word, just as a character&rsquo;s does. Choose it again to take it off.</p>
+            <div class="place-grid" id="placeGrid"></div>
+            <div class="place-look" id="placeLook" hidden></div>
+          </div>
           <div class="relations" id="relations"></div>
           <p class="ready" id="whoReady" aria-live="polite"></p>
           <div class="acts"><button type="button" class="link back" data-back>&larr; Back</button><button type="button" class="btn red" data-next>Next <span class="arr">&rarr;</span> <span class="to"></span></button></div>
@@ -684,16 +690,13 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
     + (c.arc ? '<p class="arc"><b>His arc</b>' + c.arc.map(esc).join(' &rarr; ') + '</p>' : '')
     + '<div class="look"><b>Their look, every time</b><span>' + esc(c.look) + '</span>'
     + '<button type="button" class="btn ghost small" data-copylook="' + c.id + '">Copy look</button></div></div></article>').join('')
-    // The place sits with the cast: choose it as well as a character, and the picture happens there.
-    + THEME.places.map(p =>
-    '<article class="case place" id="place-' + p.id + '" data-place="' + p.id + '"><span class="chosen">✓ Chosen</span><img class="noir" src="' + p.img + '" alt="" loading="lazy">'
-    + '<button type="button" class="btn small pick" data-pickplace="' + p.id + '" aria-pressed="false" aria-label="Choose ' + esc(p.name) + ' as the place">Choose</button>'
-    + '<div class="case-text"><span class="case-tag">' + esc(p.role) + ' · ' + esc(p.tag.toLowerCase()) + '</span><h4>' + esc(p.name) + '</h4><p>' + esc(p.story) + '</p>'
-    + '<div class="look"><b>Its look, every time</b><span>' + esc(p.look) + '</span>'
-    + '<button type="button" class="btn ghost small" data-copyplace="' + p.id + '">Copy look</button></div>'
-    + '<p class="put">Choose it along with a character, and your picture happens here.</p></div></article>').join('')
     + '<article class="case own" id="cast-own"><div><h4>A character of my own</h4><p>Leave the cast out and draw someone new. Your own description carries their look.</p></div>'
     + '<span class="chosen">✓ Chosen</span><button type="button" class="btn small pick" data-pick="own" aria-pressed="false">Choose</button></article>';
+  // The places: small cards to choose from. The chosen one's story and look show underneath.
+  $('placeGrid').innerHTML = THEME.places.map(p =>
+    '<article class="spot" id="place-' + p.id + '" data-place="' + p.id + '"><span class="chosen">✓ Chosen</span><img class="noir" src="' + p.thumb + '" alt="" loading="lazy" width="600" height="400">'
+    + '<b>' + esc(p.name) + '</b><small>' + esc(p.tag) + '</small>'
+    + '<button type="button" class="btn small pick" data-pickplace="' + p.id + '" aria-pressed="false" aria-label="Choose ' + esc(p.name) + ' as the place">Choose</button></article>').join('');
   $('relations').innerHTML = '<b>Who wants what</b>' + THEME.relations.map(([a, verb, b, tail]) =>
     '<span class="rel"><em>' + esc(castName(a)) + '</em> ' + esc(verb) + ' <em>' + esc(castName(b)) + '</em>' + (tail ? ' ' + esc(tail) : '') + '</span>').join('');
   $('palGrid').innerHTML = Object.entries(THEME.palettes).map(([id, p]) =>
@@ -850,20 +853,28 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
   const maxCast = () => state.tier === 'advanced' || (!state.tier && pendingTier === 'advanced') ? 2 : 1;
   function syncWho(){
     state.cast = state.cast.slice(-maxCast());
-    document.querySelectorAll('#castGrid .case:not(.place)').forEach(card => {
+    document.querySelectorAll('#castGrid .case').forEach(card => {
       const id = card.dataset.id, on = id ? state.cast.includes(id) : (own && !state.cast.length);
       card.classList.toggle('picked', on);
       const b = card.querySelector('.pick');
       b.setAttribute('aria-pressed', String(on));
       b.textContent = on ? '✓ Chosen' : 'Choose';
     });
-    document.querySelectorAll('#castGrid .case.place').forEach(card => {
+    document.querySelectorAll('#placeGrid .spot').forEach(card => {
       const on = card.dataset.place === state.place;
       card.classList.toggle('picked', on);
       const b = card.querySelector('.pick');
       b.setAttribute('aria-pressed', String(on));
       b.textContent = on ? '✓ Chosen' : 'Choose';
     });
+    const pl = state.place && THEME.places.find(p => p.id === state.place), box = $('placeLook');
+    box.hidden = !pl;
+    if (pl && box.dataset.shows !== pl.id) {
+      box.innerHTML = '<span class="case-tag">' + esc(pl.role) + ' · ' + esc(pl.tag.toLowerCase()) + '</span><h5>' + esc(pl.name) + '</h5><p>' + esc(pl.story) + '</p>'
+        + '<div class="look"><b>Its look, every time</b><span>' + esc(pl.look) + '</span>'
+        + '<button type="button" class="btn ghost small" data-copyplace="' + pl.id + '">Copy look</button></div>';
+      box.dataset.shows = pl.id;
+    }
     whoNote.textContent = maxCast() === 2 ? 'Pick up to two for a Commissioner sequence.' : 'Pick one.';
     const at = state.place ? ' Place: ' + placeName(state.place) + '.' : '';
     whoReady.textContent = state.cast.length ? (state.cast.length > 1 ? 'Characters ready: ' : 'Character ready: ') + state.cast.map(castName).join(' and ') + '.' + at
@@ -871,13 +882,7 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
       : state.place ? 'Place ready: ' + placeName(state.place) + '. Now choose who is there.' : '';
   }
   $('castGrid').addEventListener('click', e => {
-    const pick = e.target.closest('[data-pick]'), copy = e.target.closest('[data-copylook]'), place = e.target.closest('[data-copyplace]');
-    const pickPlace = e.target.closest('[data-pickplace]');
-    if (pickPlace) {
-      const id = pickPlace.dataset.pickplace;
-      state.place = state.place === id ? null : id;
-      syncWho(); stash();
-    }
+    const pick = e.target.closest('[data-pick]'), copy = e.target.closest('[data-copylook]');
     if (pick) {
       const id = pick.dataset.pick;
       if (id === 'own') { own = state.cast.length ? true : !own; state.cast = []; }
@@ -886,7 +891,15 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
       setDone('who', state.cast.length > 0 || own);
     }
     if (copy) copyText(THEME.cast.find(c => c.id === copy.dataset.copylook).look, copy, copy.closest('.case').querySelector('.look span'));
-    if (place) copyText(THEME.places.find(p => p.id === place.dataset.copyplace).look, place, place.closest('.case').querySelector('.look span'));
+  });
+  $('places').addEventListener('click', e => {
+    const pick = e.target.closest('[data-pickplace]'), copy = e.target.closest('[data-copyplace]');
+    if (pick) {
+      const id = pick.dataset.pickplace;
+      state.place = state.place === id ? null : id;
+      syncWho(); stash();
+    }
+    if (copy) copyText(THEME.places.find(p => p.id === copy.dataset.copyplace).look, copy, copy.closest('.look').querySelector('span'));
   });
 
   wireRow('platformRow', 'platform', v => { J.platform = v; saveJ(); });

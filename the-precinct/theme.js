@@ -61,22 +61,78 @@ export default {
     },
   ],
 
-  // The place where their paths cross. Like a character, it has a fixed `look`
-  // to repeat word for word, so the room stays the same from picture to picture.
+  // The places the story happens in. Like a character, each has a fixed `look` to repeat
+  // word for word, so the place stays the same from picture to picture. `img` is the full
+  // picture; `thumb` is the small one on the "Choose a place" cards.
   places: [
     {
       id: 'ziggurat', name: 'The Ziggurat', role: 'The café', tag: 'Where their paths cross',
       story: 'An Art Deco café near the precinct, open all night. Everyone ends up here sooner or later, and Lottie Woning sees them all come and go.',
       look: 'a long narrow Art Deco café at night, a stepped ceiling in three tiers, a doorway framed by stepped ziggurat pilasters, black leather booths with chrome-edged tables along a wall of tall square-paned windows, a curved chrome-edged counter with a row of round chrome stools, frosted glass pendant lamps in stepped tiers hanging low, a black-and-white terrazzo floor in a chevron pattern, rain and street lamps outside',
-      img: IMG + 'ref/ziggurat.jpg',
+      img: IMG + 'ref/ziggurat.jpg', thumb: IMG + 'places/ziggurat.jpg',
       // Where a character can be in this room, for the stock briefs (two shots at medium, three at advanced).
+      // A place with no shots of its own gets the general ones in stockBriefs.
       shots: {
         medium: ['The character sits alone in a booth by the window, hands round a cup, a lamp hanging low overhead.',
                  'The character stands at the counter with one hand on a stool, looking towards the door.'],
         advanced: ['Panel 1, wide establishing shot: the whole room seen from the door, the character small at the far end of the counter.',
                    'Panel 2, medium shot: the character in a booth by the window, looking up as someone comes in.',
-                   'Panel 3, close-up: the character’s face half in shadow under a hanging lamp, eyes on the door.'],
+                   'Panel 3, close-up: the character\u2019s face half in shadow under a hanging lamp, eyes on the door.'],
       },
+    },
+    {
+      id: 'ziggurat-outside', name: 'Outside The Ziggurat', role: 'The café, from the street', tag: 'Where you can watch the door',
+      story: 'The corner where the café’s windows light the wet pavement. From across the street you can see who goes in, and who they sit with.',
+      look: 'the outside of an Art Deco café on a street corner at night, a stepped ziggurat front rising above the door, a blank sign band over the doorway, tall square-paned windows glowing on both streets, slim wall lamps beside the door, a tall street lamp on the corner, wet pavement shining with reflections, rain',
+      img: IMG + 'ref/ziggurat-outside.jpg', thumb: IMG + 'places/ziggurat-outside.jpg',
+    },
+    {
+      id: 'precinct-steps', name: 'The precinct steps', role: 'The police station', tag: 'Where everyone is seen',
+      story: 'The front of the station. Everyone who works for Harlan Vance climbs these steps, and anyone watching from the street can see who comes and goes.',
+      look: 'the front of a stone police station at night, a wide flight of stone steps, heavy double doors under a stone arch with a lamp above them, a round globe lamp on a stone pedestal at each side of the steps, tall barred windows, iron railings along the pavement, wet paving, rain falling',
+      img: IMG + 'ref/precinct-steps.jpg', thumb: IMG + 'places/precinct-steps.jpg',
+    },
+    {
+      id: 'squad-room', name: 'The squad room', role: 'The detectives’ office', tag: 'Where the work is done',
+      story: 'Where Edward Novak and Frank Rourke have their desks. After hours, one lamp is usually still on.',
+      look: 'a detectives’ office at night, rows of wooden desks with swivel chairs and typewriters, a wall of filing cabinets, a ceiling fan, venetian blinds on tall windows with the city skyline beyond, a door with a frosted glass panel at the back, one desk lamp left on, a polished floor',
+      img: IMG + 'ref/squad-room.jpg', thumb: IMG + 'places/squad-room.jpg',
+    },
+    {
+      id: 'commissioners-office', name: 'The Commissioner’s office', role: 'The boss’s room', tag: 'Where the orders come from',
+      story: 'Harlan Vance runs the precinct from behind this desk. People are sent for; nobody drops in.',
+      look: 'a large wood-panelled office at night, a wide heavy desk with a domed desk lamp and a black telephone, a high-backed leather chair behind it and two leather chairs in front, a patterned rug, venetian blinds on two tall windows with the city skyline beyond, a tall bookcase, a door with a frosted glass panel',
+      img: IMG + 'ref/commissioners-office.jpg', thumb: IMG + 'places/commissioners-office.jpg',
+    },
+    {
+      id: 'interview-room', name: 'The interview room', role: 'A room in the precinct', tag: 'Where the questions are asked',
+      story: 'A table, a few chairs and one lamp. Frank Rourke does his asking here.',
+      look: 'a small bare room at night, a plain table and wooden chairs in the middle, one metal lamp hanging low over the table, tiled walls, a window with venetian blinds and the city beyond, a radiator under the window, a door with a frosted glass panel, a dark tiled floor',
+      img: IMG + 'ref/interview-room.jpg', thumb: IMG + 'places/interview-room.jpg',
+    },
+    {
+      id: 'newsroom', name: 'The newsroom', role: 'The newspaper office', tag: 'Where the story gets written',
+      story: 'The paper’s office after hours, when Hattie Cole has the night desk and the typewriters to herself.',
+      look: 'a newspaper office at night, long rows of desks each with a typewriter and a telephone, stacks of newspapers tied with string, hanging lamps with metal shades, a round wall clock, tall windows with the night city beyond, loose paper and waste bins on the floor',
+      img: IMG + 'ref/newsroom.jpg', thumb: IMG + 'places/newsroom.jpg',
+    },
+    {
+      id: 'alley', name: 'The alley', role: 'A back alley', tag: 'Where nobody is watching',
+      story: 'A back way between brick walls, with one lamp over a door. A place for a quiet word, or for seeing something you shouldn’t.',
+      look: 'a narrow alley between brick buildings at night, an iron fire escape zigzagging up one wall, a back door up three steps with a single caged lamp above it, metal bins and wooden crates along the wall, wet cobblestones, steam rising from a grate, the lit street far away at the end',
+      img: IMG + 'ref/alley.jpg', thumb: IMG + 'places/alley.jpg',
+    },
+    {
+      id: 'street-corner', name: 'The street corner', role: 'A street in the rain', tag: 'Where paths cross by chance',
+      story: 'A lamp, a parked car and a telephone box. Hattie Cole and Tommy Doyle keep running into each other on corners like this.',
+      look: 'a city street corner at night in the rain, a tall lamp post, a parked 1940s sedan at the kerb, dark shopfronts with awnings, a telephone box, wet paving shining with reflections, tall towers fading into mist',
+      img: IMG + 'ref/street-corner.jpg', thumb: IMG + 'places/street-corner.jpg',
+    },
+    {
+      id: 'docks', name: 'The docks', role: 'The waterfront', tag: 'Where the trail leads',
+      story: 'A warehouse, a crane and a ship in the fog. A long way from the precinct, and a good place to keep something out of sight.',
+      look: 'a waterfront quay at night in fog, a long wooden warehouse with sliding doors and a single lamp on its wall, stacked crates and coiled rope, iron bollards along the edge, a cargo crane and the dark hull of a ship beyond, wet planks',
+      img: IMG + 'ref/docks.jpg', thumb: IMG + 'places/docks.jpg',
     },
   ],
 
@@ -324,7 +380,7 @@ export default {
   // files, one per tier and subject. {palette} becomes the palette phrase and
   // {who} (or {Who}, capitalised) the picked character's look (or DEFAULT_WHO in desk.js).
   // `placed` takes over when a place is picked too: {where} is the place's look,
-  // and at medium and advanced its prompts are the place's own `shots`.
+  // and at medium and advanced its prompts are the place's own `shots`, if it has any.
   stockBriefs: {
     character: {
       basic: {
@@ -335,8 +391,8 @@ export default {
         watch_for: 'Check the colours first: any colour outside your palette means the palette line was ignored.',
         placed: {
           prompts: ['{Who}, seen from the waist up, one clear expression. The setting: {where}. 1940s film noir comic book, black and white ink illustration with fine hatching and one hard light from the upper left. Limited palette: {palette}. No text, no signs, no captions, no speech balloons, no other people.'],
-          why_this_works: 'Era, medium and one named light source do most of the work: without them, image tools drift to a modern colour comic. The room is described in the same words every time, so it can come back in your next picture.',
-          watch_for: 'Check the room against its look: did the details you named arrive, or did the tool draw a room of its own?',
+          why_this_works: 'Era, medium and one named light source do most of the work: without them, image tools drift to a modern colour comic. The place is described in the same words every time, so it can come back in your next picture.',
+          watch_for: 'Check the place against its look: did the details you named arrive, or did the tool draw a place of its own?',
         },
       },
       medium: {
@@ -348,8 +404,10 @@ export default {
         watch_for: 'Put the two pictures side by side: is it the same face and the same coat, or a stranger in similar clothes?',
         placed: {
           anchor: '1940s film noir comic book, black and white ink illustration with fine hatching. {Who}. The setting: {where}. Limited palette: {palette}. No text, no signs, no captions, no speech balloons, no other people.',
-          why_this_works: 'The anchor carries the character, the room and the style, so paste it word for word into both prompts. Each prompt changes only where the character is in the room.',
-          watch_for: 'Put the two pictures side by side: is it the same face in the same room, or a stranger somewhere similar?',
+          prompts: ['The character stands in the middle of the place, facing the viewer, lit from one side.',
+                    'The character is seen from further back, at the far end of the place, turning to look over one shoulder.'],
+          why_this_works: 'The anchor carries the character, the place and the style, so paste it word for word into both prompts. Each prompt changes only where the character is.',
+          watch_for: 'Put the two pictures side by side: is it the same face in the same place, or a stranger somewhere similar?',
         },
       },
       advanced: {
@@ -362,7 +420,10 @@ export default {
         watch_for: 'Check the three panels read in order without words: can someone else tell you what happened?',
         placed: {
           anchor: '1940s film noir comic book, black and white ink illustration with fine hatching, strong single light source. {Who}. The setting: {where}. Limited palette: {palette}. No text, no signs, no captions, no speech balloons.',
-          why_this_works: 'A shot list moves the camera closer each panel (wide, medium, close) while the anchor keeps the character, the room and the palette fixed. Plan the story first with an AI partner; these three shots are only a starting skeleton.',
+          prompts: ['Panel 1, wide establishing shot: the whole place, the character small in the distance.',
+                    'Panel 2, medium shot: the character in the middle of the place, turning to look at something off to one side.',
+                    'Panel 3, close-up: the character\u2019s face half in shadow, the place soft behind.'],
+          why_this_works: 'A shot list moves the camera closer each panel (wide, medium, close) while the anchor keeps the character, the place and the palette fixed. Plan the story first with an AI partner; these three shots are only a starting skeleton.',
         },
       },
     },

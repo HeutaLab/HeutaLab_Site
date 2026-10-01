@@ -5,6 +5,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../worker.js";
 import { stockBrief } from "../the-precinct/desk.js";
+import THEME from "../the-precinct/theme.js";
 
 const env = { WORKSHOP_CODE: "harness-code-77", ANTHROPIC_API_KEY: "k" };
 let sent = [], aiDown = false;
@@ -81,10 +82,32 @@ test("with the AI down, the stock brief is set in the place", async () => {
   assert.ok(none.prompts[0].includes("wide wooden desk") && !none.anchor.includes("The setting"));
 });
 
-test("no stock brief leaves a {token} unfilled", () => {
-  for (const tier of ["basic", "medium", "advanced"]) for (const subject of ["character", "setting"]) {
-    const b = stockBrief(subject, tier, "yellow", [], subject === "character" ? "ziggurat" : null);
-    assert.doesNotMatch(JSON.stringify(b), /\{\w+\}/, subject + " " + tier);
-    assert.ok(!("placed" in b));
+test("every place has what the desk and the page need", () => {
+  assert.equal(THEME.places.length, 10);
+  assert.equal(new Set(THEME.places.map((p) => p.id)).size, 10);
+  for (const p of THEME.places) for (const k of ["id", "name", "role", "tag", "story", "look", "img", "thumb"]) assert.ok(p[k], p.id + " " + k);
+});
+
+test("every place is accepted and reaches the AI with its own look", async () => {
+  for (const p of THEME.places) {
+    const r = await brief({ place: p.id });
+    assert.equal(r.status, 200, p.id);
+    assert.ok(r.user.includes("Place in this picture: " + p.name + ", "), p.id);
+    assert.ok(r.user.includes("Fixed look: " + p.look + "."), p.id);
+  }
+});
+
+test("no stock brief leaves a {token} unfilled, for any place", () => {
+  const counts = { basic: 1, medium: 2, advanced: 3 };
+  for (const tier of ["basic", "medium", "advanced"]) {
+    for (const place of [null, ...THEME.places.map((p) => p.id)]) {
+      const b = stockBrief("character", tier, "yellow", ["rookie"], place);
+      assert.doesNotMatch(JSON.stringify(b), /\{\w+\}/, tier + " " + place);
+      assert.equal(b.prompts.length, counts[tier], tier + " " + place);
+      assert.ok(!("placed" in b));
+      if (place) assert.ok((tier === "basic" ? b.prompts[0] : b.anchor).includes(THEME.places.find((p) => p.id === place).look), tier + " " + place);
+    }
+    const s = stockBrief("setting", tier, "yellow", [], null);
+    assert.doesNotMatch(JSON.stringify(s), /\{\w+\}/, "setting " + tier);
   }
 });
