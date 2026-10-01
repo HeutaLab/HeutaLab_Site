@@ -152,6 +152,16 @@ export default {
     'tommy-card':    ['A young freckled patrolman in a peaked cap and a dark uniform with a star on each collar point, standing square and glancing sideways', 'character', 'rookie'],
     'charlotte-card':['A woman in her fifties with pinned-up hair and glasses on a chain, a dark dress with a white collar and a stepped brooch, arms folded', 'character', 'owner'],
     'ziggurat':      ['An empty Art Deco café at night: leather booths, a chrome counter with round stools, stepped glass lamps, a chevron floor and rain outside the windows', 'setting'],
+    // Places drawn to stand the cast's stickers in: black and white ink, empty, seen from standing height.
+    'ziggurat-outside':     ['An Art Deco café on a rainy street corner at night: a stepped front above its door, tall lit windows and a street lamp', 'setting'],
+    'precinct-steps':       ['The front of a stone police station at night in the rain: wide steps, an arched doorway with double doors, a globe lamp on each side and barred windows', 'setting'],
+    'squad-room':           ['An empty detectives’ office at night: desks with typewriters, a wall of filing cabinets, a ceiling fan, blinds over a skyline window and one desk lamp left on', 'setting'],
+    'commissioners-office': ['A wood-panelled office at night: a wide desk with a lamp and a telephone, a leather chair, two visitor chairs on a rug, and blinds over a skyline window', 'setting'],
+    'interview-room':       ['A bare room at night: a table and three chairs under one hanging lamp, tiled walls, a closed door and blinds over a window', 'setting'],
+    'newsroom':             ['A deserted newspaper office at night: rows of desks with typewriters, stacks of newspapers, hanging lamps, a wall clock and tall skyline windows', 'setting'],
+    'alley':                ['A wet cobbled alley at night between brick buildings: a fire escape, a back door under a caged lamp, bins, crates and a steaming grate', 'setting'],
+    'street-corner':        ['A rainy city street at night: a tall street lamp, a parked sedan, shopfronts with awnings, a telephone box and towers in the mist', 'setting'],
+    'docks':                ['A foggy quay at night: a wooden warehouse with one wall lamp, crates and rope, iron bollards, a cargo crane and the hull of a ship', 'setting'],
     'rourke-front':  ['A huge muscular man in shirtsleeves and braces, a holster at his side and a jacket over his shoulder, scowling', 'character', 'disillusioned'],
     'rourke-snarl':  ['Close-up of a dark-haired man baring his teeth around a cigarette, face half in shadow', 'character', 'disillusioned'],
     'rourke-rage':   ['A stubbled man snarling with rage, a matchstick clamped in his teeth', 'character', 'disillusioned'],
@@ -403,9 +413,11 @@ export default {
   ],
 
   // Pictures offered in the comic builder's library.
-  library: ['chief','hat-woman','cop','bar','blonde-green','blonde-yellow','rain-street','office','sunset-street','fedora','boss',
+  // The places come first: they are the ones the stickers are drawn to stand in.
+  library: ['ziggurat','ziggurat-outside','precinct-steps','squad-room','commissioners-office','interview-room','newsroom','alley','street-corner','docks',
+    'chief','hat-woman','cop','bar','blonde-green','blonde-yellow','rain-street','office','sunset-street','fedora','boss',
     'cop-badge','lamp-man','blue-man','houses','green-city','walking-woman','teal-woman','detective-car','sunset-man',
-    'walking-rain','hat-green','novak-card','vance-card','rourke-card','vera-card','hattie-card','tommy-card','charlotte-card','ziggurat',
+    'walking-rain','hat-green','novak-card','vance-card','rourke-card','vera-card','hattie-card','tommy-card','charlotte-card',
     'rourke-front','rourke-snarl','rourke-rage','rourke-sheet'],
 
   // Colours for captions, balloons, thoughts and sound effects in the comic builder, taken from the palettes above.
