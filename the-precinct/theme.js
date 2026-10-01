@@ -450,4 +450,39 @@ export default {
     ['The office', ['RING RING!', 'CLACK CLACK', 'TICK TOCK', 'SHHH…', 'DING!']],
     ['Night', ['DRIP… DRIP…', 'PITTER PAT', 'BOOM!', 'HOOT', 'ZZZ']],
   ],
+
+  // Stickers for the comic builder: the cast cut out of their pose sheets. Each item is
+  // [file, label, default width in % of the panel, kind]; kind is 'face' or 'thing', and a pose when left out.
+  // The files are img/stickers/<dir>/<file>.webp (see-through) and <file>-b.webp (white border).
+  stickers: [
+    { who: 'Harlan Vance', dir: 'vance', items: [
+      ['standing', 'Standing', 36], ['side', 'Side on', 28], ['walking-away', 'Walking away', 34],
+      ['pointing', 'Pointing', 35], ['arms-folded', 'Arms folded', 36], ['on-the-phone', 'On the telephone', 36],
+    ] },
+    { who: 'Edward Novak', dir: 'novak', items: [
+      ['standing', 'Standing', 28], ['side', 'Side on', 18], ['walking-away', 'Walking away', 31],
+      ['showing-badge', 'Showing his badge', 31], ['crouching', 'Crouching to look', 42], ['hurrying', 'Hurrying', 37],
+    ] },
+    { who: 'Frank Rourke', dir: 'rourke', items: [
+      ['standing', 'Standing', 36], ['side', 'Side on', 21], ['walking-away', 'Walking away', 33],
+      ['arms-folded', 'Arms folded', 36], ['jabbing', 'Jabbing a finger', 38], ['fist', 'Fist in his palm', 37],
+    ] },
+    { who: 'Vera Sinclair', dir: 'vera', items: [
+      ['standing', 'Standing', 31], ['side', 'Side on', 24], ['walking-away', 'Walking away', 28],
+      ['hand-on-hip', 'Hand on hip', 34], ['whispering', 'Whispering', 27], ['coffee', 'With a coffee', 28],
+    ] },
+    { who: 'Hattie Cole', dir: 'hattie', items: [
+      ['standing', 'Standing', 29], ['side', 'Side on', 27], ['walking-away', 'Walking away', 30],
+      ['asking', 'Asking a question', 36], ['hurrying', 'Hurrying', 38], ['taking-picture', 'Taking a picture', 35],
+    ] },
+    { who: 'Tommy Doyle', dir: 'tommy', items: [
+      ['standing', 'Standing', 29], ['side', 'Side on', 18], ['walking-away', 'Walking away', 32],
+      ['saluting', 'Saluting', 34], ['blowing-whistle', 'Blowing his whistle', 39], ['with-torch', 'With a torch', 35],
+    ] },
+    { who: 'Charlotte', dir: 'charlotte', items: [
+      ['standing', 'Standing', 27], ['side', 'Side on', 24], ['walking-away', 'Walking away', 27],
+      ['pouring', 'Pouring coffee', 33], ['tray', 'Carrying a tray', 30], ['polishing', 'Polishing a cup', 30],
+    ] },
+  ],
+  stickerPath: (dir, file, border) => IMG + 'stickers/' + dir + '/' + file + (border ? '-b' : '') + '.webp',
 };

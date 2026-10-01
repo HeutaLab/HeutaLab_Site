@@ -85,6 +85,15 @@
   .tray button:hover{border-color:var(--paper-hi)}
   .tray .own{grid-column:1/-1;order:-1;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--ink-dim)}
   .tray .own button{font-family:var(--label);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+  /* the sticker tray: the cast cut out of their sheets, one row of thumbnails per character */
+  .tray.stk{grid-template-columns:1fr}
+  .tray.stk .w button{width:78px;height:104px;padding:4px;background:#1b2526;display:flex;align-items:center;justify-content:center}
+  .tray.stk .w button.on{border-color:var(--yellow);outline:2px solid var(--yellow)}
+  .tray.stk .w img{max-width:100%;max-height:100%;pointer-events:none}
+  .tray.stk .who{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .tray.stk .who button{flex:none;display:flex;align-items:center;gap:8px;font-family:var(--label);font-size:12px;letter-spacing:.12em;text-transform:uppercase;line-height:1;padding:3px 12px 3px 3px}
+  .tray.stk .who button[aria-selected=true]{background:var(--yellow);border-color:var(--yellow);color:#14110c}
+  .tray.stk .who img{width:34px;height:34px;object-fit:cover;object-position:50% 0;background:#1b2526;pointer-events:none}   /* the top of the standing figure: head and shoulders */
 
   /* one-time tips: each tool is introduced once, then the browser remembers */
   .tip{position:fixed;z-index:50;width:min(280px,calc(100vw - 24px));background:var(--paper-hi);color:var(--ink-p);padding:12px 14px 10px;box-shadow:6px 6px 0 #000;
@@ -124,6 +133,18 @@
   .sheet .pnl.wl.sel{z-index:11}
   .sheet .pnl.wl > .pnl-inner{overflow:visible;background:none;pointer-events:none}
   .sheet .pnl.wl .it{pointer-events:auto}
+  /* Stickers get a layer of their own under the words (a caption or a balloon always sits on top of a character),
+     over the pictures and the title. A chosen sticker comes up top for a moment, so its handles can be reached. */
+  .sheet .pnl.wl.sl{z-index:9}
+  .sheet .pnl.wl.sl.sel{z-index:12}
+  .it-sticker img{display:block;width:100%;height:auto;pointer-events:none;-webkit-user-drag:none}
+  .it-sticker.flip img{transform:scaleX(-1)}
+  .it-sticker .rs-h{top:auto;bottom:-1.2cqw;right:-1.2cqw;width:2.6cqw;height:2.6cqw;min-width:18px;min-height:18px;border-radius:50%;transform:none;cursor:nwse-resize}
+  .it-sticker.sel{outline:.3cqw dashed var(--yellow);outline-offset:.4cqw}
+  /* A sticker kept inside the frame lives in its panel, with the picture: clipped to the panel's shape and under its frame.
+     While it is chosen, a see-through twin over the page shows the parts the frame hides and carries the handles. */
+  .pnl-inner > .it-sticker{z-index:2}
+  .it-sticker.ghost img{opacity:.4}
   .pnl-inner{position:relative;width:100%;height:100%;overflow:hidden;background:#222;touch-action:none}
   .edge{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:4}
   .edge .hl{fill:none;stroke:none;stroke-width:1.4}
@@ -208,6 +229,7 @@
     .pframe{break-inside:avoid}
     .pframe.sel .pnl-inner{outline:none}
     .edge .hl{stroke:none !important}
+    .it-sticker.sel{outline:none}
     .pnl-empty{visibility:hidden}
     .pnl-inner{background:#fff}   /* an empty panel prints as a white frame to draw in, not a block of ink */
     .sheet-title:empty::before,.prose-title:empty::before,.it-text:empty::before{content:none}   /* placeholders stay on screen */
@@ -312,6 +334,7 @@
 </dialog>
 <input type="file" id="fileIn" accept="image/*" hidden>
 <div class="tray" id="sfxBank" hidden aria-label="Sound effects"></div>
+<div class="tray stk" id="stkTray" hidden aria-label="Stickers"></div>
 <div class="dock" id="dock" role="toolbar" aria-label="Builder tools"></div>
 <div class="tip" id="tip" hidden role="status"></div>
 <div class="scard" id="styleCard" hidden role="dialog" aria-label="About this page style"></div>
@@ -326,7 +349,7 @@ import THEME from '/the-precinct/theme.js';
   // ---------- data ----------
   const LEVEL_NOTES = {
     prose: 'Prose: write it like a storybook. One picture, a paragraph underneath. Get the story straight before you think about panels.',
-    medium: 'Medium: four panels. Give each one a caption box for the narrator and a speech balloon for a character, and point the balloon at whoever is talking.',
+    medium: 'Medium: four panels. Give each one a caption box for the narrator and a speech balloon for a character, and point the balloon at whoever is talking. No picture of your character? Add a sticker of the cast.',
     advanced: 'Advanced: press Style to give the whole page the look of a comics era, place captions, speech, thoughts and sound effects anywhere, give every box its own shape, colour and lettering, and frame each picture with drag and zoom.',
   };
   const LIB = THEME.library.map(THEME.refPath);
@@ -339,6 +362,11 @@ import THEME from '/the-precinct/theme.js';
   // Item fields: x, y, w in % of the panel; w is a cap on the width unless fw (fixed width) is set;
   // s scales the text; tip is the tail's point in cqw from the balloon's bottom centre; tail:'none' hides it.
   const SIZES = [0.8, 1, 1.3, 1.7];
+  // Stickers: 'dir/file' -> its entry in THEME.stickers. A sticker item is { type: 'sticker', src, x, y, w, fw: true },
+  // plus flip (faces the other way), plain (no white border) and rot. Its height follows the picture.
+  const STICKERS = new Map();
+  THEME.stickers.forEach(g => g.items.forEach(([file, label, w, kind]) => STICKERS.set(g.dir + '/' + file, { dir: g.dir, file, label, w, kind: kind || 'pose', who: g.who })));
+  const stickerSrc = it => { const s = STICKERS.get(it.src); return s ? THEME.stickerPath(s.dir, s.file, !it.plain) : ''; };
   const PH = { caption: 'Meanwhile, at the precinct...', speech: 'Type what they say', thought: 'What are they thinking?', sfx: 'Type a sound' };
   const blank = () => ({ img: null, fit: { x: 50, y: 50, z: 1 }, items: [] });
   const fresh = () => ({
@@ -464,6 +492,7 @@ import THEME from '/the-precinct/theme.js';
     thought: { shape: 'cloud', color: 'white',  font: 'comic', s: 1 },
     caption: { shape: 'rect',  color: 'yellow', font: 'comic', s: 1 },
     sfx:     { color: 'yellow', tilt: -8, s: 1 },
+    sticker: {},
   };
   const STYLE_KEYS = ['shape', 'color', 'font', 's', 'tilt'];
   // Room inside each shape, in cqw [across, down], so the words clear the outline.
@@ -570,7 +599,18 @@ import THEME from '/the-precinct/theme.js';
     S.last = JSON.parse(JSON.stringify(L));
   }
 
-  function itemHTML(it, j, on){
+  function itemHTML(it, j, on, ghost){
+    if (it.type === 'sticker') {
+      const s = STICKERS.get(it.src), ink = S.level !== 'prose' && look().ink;
+      return '<div class="it it-sticker' + (it.flip ? ' flip' : '') + (on ? ' sel' : '') + (ghost ? ' ghost' : '') + '" data-j="' + j + '" style="left:' + it.x + '%;top:' + it.y + '%;width:' + it.w + '%'
+        + (it.rot ? ';transform:rotate(' + it.rot + 'deg)' : '') + '">'
+        + '<img src="' + stickerSrc(it) + '" alt="' + esc(s ? s.who + ', ' + s.label.toLowerCase() : 'A sticker') + '" draggable="false"' + (ink ? ' style="filter:' + ink + '"' : '') + '>'
+        + '<span class="rs-h" title="Drag to make it bigger or smaller"></span>'
+        + '<span class="rot-h" title="Drag to tilt it (hold Shift for steps of 15°)">&#8635;</span>'
+        + '<span class="it-ctl"><button type="button" data-act="flip" title="Face the other way" aria-label="Face the other way">&#8646;</button>'
+        + '<button type="button" data-act="dup" title="Duplicate" aria-label="Duplicate">&#x2750;</button>'
+        + '<button type="button" data-act="del" title="Delete" aria-label="Delete">&times;</button></span></div>';
+    }
     const c = colourOf(it);
     let css, extra = '';
     if (it.type === 'sfx') {
@@ -701,6 +741,17 @@ import THEME from '/the-precinct/theme.js';
     ? '<div class="pnl-empty"><span class="picks"><button type="button" data-pick="up">Upload</button><button type="button" data-pick="lib">Library</button></span><small>or paste or drop a picture here</small></div>'
     : '<div class="pnl-empty"><b>+</b>Tap to add a picture</div>';
 
+  // The layers over panel i: its stickers (stk), or its words and the picture's turn handle. Both cover the panel's box.
+  function layerHTML(poly, i, stk){
+    const b = bbox(poly), items = S.panels[i].items;
+    const on = sel.p === i && (!stk || (sel.it != null && items[sel.it] && items[sel.it].type === 'sticker'));
+    // the sticker layer holds the stickers that pop out, and the chosen in-frame sticker's twin; the word layer the rest
+    const mine = (it, j) => stk ? it.type === 'sticker' && (!it.clip || (sel.p === i && sel.it === j)) : it.type !== 'sticker';
+    return '<div class="pnl wl' + (stk ? ' sl' : '') + (on ? ' sel' : '') + '" data-i="' + i + '" style="left:' + b.x + '%;top:' + (b.y / PAGE_H * 100) + '%;width:' + b.w + '%;height:' + (b.h / PAGE_H * 100) + '%"><div class="pnl-inner">'
+      + items.map((it, j) => mine(it, j) ? itemHTML(it, j, sel.p === i && sel.it === j, stk && it.clip) : '').join('')
+      + (!stk && sel.p === i && sel.it == null && S.panels[i].img ? protHTML(poly, b) : '') + '</div></div>';
+  }
+
   async function render(){
     document.querySelectorAll('#levelRow .pill').forEach(b => b.classList.toggle('active', b.dataset.val === S.level));
     $('levelNote').textContent = LEVEL_NOTES[S.level];
@@ -708,7 +759,7 @@ import THEME from '/the-precinct/theme.js';
     if (sel.p != null && sel.p >= list.length) sel = { p: null, it: null };
     if (sel.it != null && (S.level === 'prose' || !S.panels[sel.p].items[sel.it])) sel.it = null;
     const chosen = sel.it != null && S.panels[sel.p].items[sel.it];
-    if (chosen && chosen.type === 'sfx') sfxOpen = true;   // so the words are there to swap
+    if (chosen && chosen.type === 'sfx') { sfxOpen = true; stkOpen = false; }   // so the words are there to swap
     renderDock();
 
     const srcs = await Promise.all(list.map(p => urlFor(p.img)));
@@ -736,20 +787,17 @@ import THEME from '/the-precinct/theme.js';
         return '<div class="pnl' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '" style="left:' + b.x + '%;top:' + (b.y / PAGE_H * 100) + '%;width:' + b.w + '%;height:' + (b.h / PAGE_H * 100) + '%">'
           + '<div class="pnl-inner" style="clip-path:polygon(' + clip + ')">'
           + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + picStyle(i) + '">' : empty(sel.p === i))
+          + S.panels[i].items.map((it, j) => it.type === 'sticker' && it.clip ? itemHTML(it, j, false) : '').join('')
           + '<svg class="edge" viewBox="0 0 ' + b.w + ' ' + b.h + '" preserveAspectRatio="none" aria-hidden="true">'
           + framesOf(lk, i).map(([w, c]) => '<polygon points="' + pts + '" fill="none" stroke="' + c + '" stroke-width="' + 2 * w + '"/>').join('')
           + '<polygon class="hl" points="' + pts + '"/></svg>'
           + '</div></div>';
       }).join('')
-      + lk.panels.map((poly, i) => {
-        const b = bbox(poly);
-        return '<div class="pnl wl' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '" style="left:' + b.x + '%;top:' + (b.y / PAGE_H * 100) + '%;width:' + b.w + '%;height:' + (b.h / PAGE_H * 100) + '%"><div class="pnl-inner">'
-          + S.panels[i].items.map((it, j) => itemHTML(it, j, sel.p === i && sel.it === j)).join('')
-          + (sel.p === i && sel.it == null && S.panels[i].img ? protHTML(poly, b) : '') + '</div></div>';
-      }).join('') + '</div>';
+      + lk.panels.map((poly, i) => layerHTML(poly, i, true)).join('')
+      + lk.panels.map((poly, i) => layerHTML(poly, i, false)).join('') + '</div>';
     fitTitle();
     ro.disconnect();
-    bench.querySelectorAll('.it').forEach(el => { el.classList.contains('it-sfx') ? placeRot(el) : drawBox(el); ro.observe(el.querySelector('.it-text')); });
+    bench.querySelectorAll('.it:not(.it-sticker)').forEach(el => { el.classList.contains('it-sfx') ? placeRot(el) : drawBox(el); ro.observe(el.querySelector('.it-text')); });
     showTip();
   }
 
@@ -801,6 +849,7 @@ import THEME from '/the-precinct/theme.js';
       if (act.dataset.act === 'dup') return duplicate(p, j);
       checkpoint();
       if (act.dataset.act === 'del') { S.panels[p].items.splice(j, 1); sel.it = null; }
+      if (act.dataset.act === 'flip') { it.flip = !it.flip; markSeen('stickersize'); }
       if (act.dataset.act === 'tail') {
         if (it.tail === 'none') { delete it.tail; if (!it.tip) it.tip = Object.assign({}, DEFAULTS[it.type].tip); }
         else it.tail = 'none';
@@ -877,7 +926,7 @@ import THEME from '/the-precinct/theme.js';
       // A sound effect turns its word (tilt); a caption or balloon turns the whole box (rot). Either way about its centre.
       d.rkey = it.type === 'sfx' ? 'tilt' : 'rot'; d.r0 = st(it, d.rkey) || 0;
       if (d.kind === 'rot') {
-        const r = d.el.querySelector('.it-text').getBoundingClientRect(); d.cx = r.left + r.width / 2; d.cy = r.top + r.height / 2;
+        const r = (d.el.querySelector('.it-text') || d.el).getBoundingClientRect(); d.cx = r.left + r.width / 2; d.cy = r.top + r.height / 2;
         d.a0 = Math.atan2(e.clientY - d.cy, e.clientX - d.cx) * 180 / Math.PI;
       }
     }
@@ -921,9 +970,10 @@ import THEME from '/the-precinct/theme.js';
     }
     const it = S.panels[drag.i].items[drag.j];
     if (drag.kind === 'item') {
-      it.x = Math.max(-10, Math.min(95, drag.ix + px));
-      it.y = Math.max(-10, Math.min(95, drag.iy + py));
-      drag.el.style.left = it.x + '%'; drag.el.style.top = it.y + '%';
+      const lo = it.type === 'sticker' ? -200 : -10;
+      it.x = Math.max(lo, Math.min(95, drag.ix + px));
+      it.y = Math.max(lo, Math.min(95, drag.iy + py));
+      twins(drag).forEach(el => { el.style.left = it.x + '%'; el.style.top = it.y + '%'; });
     } else if (drag.kind === 'rot') {
       // Turn by as much as the pointer has swung round the centre. It clicks to level and upright within 4°;
       // Shift gives steps of 15°.
@@ -933,17 +983,20 @@ import THEME from '/the-precinct/theme.js';
       if (e.shiftKey || Math.abs(a - Math.round(a / q) * q) < 4) a = Math.round(a / q) * q;
       it[drag.rkey] = Math.round(a);
       if (drag.rkey === 'tilt') { drag.el.querySelector('.it-text').style.transform = 'rotate(' + it.tilt + 'deg)'; placeRot(drag.el); }
-      else drag.el.style.transform = it.rot ? 'rotate(' + it.rot + 'deg)' : '';
+      else twins(drag).forEach(el => { el.style.transform = it.rot ? 'rotate(' + it.rot + 'deg)' : ''; });
     } else if (drag.kind === 'tip') {
       const [lx, ly] = unturn(dx, dy, it.rot);
       it.tip = { x: drag.tip.x + lx / drag.cq, y: drag.tip.y + ly / drag.cq };
       drawBox(drag.el);
     } else {
-      it.fw = true; it.w = Math.max(10, Math.min(100, drag.w0 + unturn(dx, dy, it.rot)[0] / drag.box.width * 100));
-      drag.el.style.maxWidth = ''; drag.el.style.width = it.w + '%';   // the ResizeObserver redraws the balloon
+      const [lo, hi] = it.type === 'sticker' ? [5, 150] : [10, 100];
+      it.fw = true; it.w = Math.max(lo, Math.min(hi, drag.w0 + unturn(dx, dy, it.rot)[0] / drag.box.width * 100));
+      twins(drag).forEach(el => { el.style.maxWidth = ''; el.style.width = it.w + '%'; });   // the ResizeObserver redraws the balloon
     }
     placeTip();
   }, { passive: false });
+  // Every element showing item j of panel i: one, or two for an in-frame sticker while it is chosen.
+  const twins = d => [...bench.querySelectorAll('.pnl[data-i="' + d.i + '"] .it[data-j="' + d.j + '"]')];
   // A screen movement, in a box's own directions once the box is tilted by deg.
   function unturn(dx, dy, deg){
     if (!deg) return [dx, dy];
@@ -956,7 +1009,9 @@ import THEME from '/the-precinct/theme.js';
     if (d.kind === 'trot') d.el.classList.remove('turning');
     if (d.moved) {
       save();
-      if (d.kind === 'tip' || d.kind === 'width') { markSeen('tail'); showTip(); }   // they found the handles
+      const dit = d.j != null && S.panels[d.i] && S.panels[d.i].items[d.j];
+      if (d.kind === 'width' && dit && dit.type === 'sticker') { markSeen('stickersize'); showTip(); }
+      else if (d.kind === 'tip' || d.kind === 'width') { markSeen('tail'); showTip(); }   // they found the handles
       if (d.kind === 'rot' || d.kind === 'prot' || d.kind === 'trot') { markSeen('rotate'); render(); }                          // the style bar shows the new angle
       return;
     }
@@ -967,7 +1022,8 @@ import THEME from '/the-precinct/theme.js';
     checkpoint(); S.titleRot = 0; save(); render();
   });
   function editItem(el){
-    const t = el.querySelector('.it-text'); t.focus();
+    const t = el.querySelector('.it-text'); if (!t) return;   // a sticker has no words
+    t.focus();
     const r = document.createRange(); r.selectNodeContents(t); r.collapse(false);
     const s = getSelection(); s.removeAllRanges(); s.addRange(r);
   }
@@ -996,7 +1052,8 @@ import THEME from '/the-precinct/theme.js';
     else if (e.key.startsWith('Arrow')) {
       e.preventDefault(); checkpoint();
       const st = e.shiftKey ? 3 : 0.5, ax = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
-      it.x = Math.max(-10, Math.min(95, it.x + ax[0] * st)); it.y = Math.max(-10, Math.min(95, it.y + ax[1] * st));
+      const lo = it.type === 'sticker' ? -200 : -10;
+      it.x = Math.max(lo, Math.min(95, it.x + ax[0] * st)); it.y = Math.max(lo, Math.min(95, it.y + ax[1] * st));
       save(); render();
     }
     else if (mod && k === 'd') { e.preventDefault(); duplicate(sel.p, sel.it); }
@@ -1125,9 +1182,36 @@ import THEME from '/the-precinct/theme.js';
     });
   }
 
+  // A new sticker lands near the top and a little in from the left (things in the middle), the next one along from it.
+  function addSticker(src){
+    const s = STICKERS.get(src);
+    if (!s || sel.p == null || S.level === 'prose') return;
+    checkpoint();
+    const items = S.panels[sel.p].items, n = items.filter(x => x.type === 'sticker').length;
+    items.push({ type: 'sticker', src, w: s.w, fw: true, x: Math.max(0, Math.min(100 - s.w, 8 + (n % 3) * 26)), y: s.kind === 'thing' ? 50 : 14 });
+    sel.it = items.length - 1;
+    stkOpen = false;   // the tray would hide the page; Change it opens it again to swap
+    save(); render();
+  }
+
   // The style bar (shown in the dock while a box is chosen): shape, colour, lettering (or tilt) and size.
   const KIND = { speech: 'Speech balloon', thought: 'Thought bubble', caption: 'Caption box', sfx: 'Sound effect' };
+  function stickerBar(it){
+    const s = STICKERS.get(it.src);
+    const pill = (cmd, label, o = {}) => '<button type="button" class="pill' + (o.on ? ' active' : '') + '" data-cmd="' + cmd + '"' + (o.v != null ? ' data-v="' + o.v + '"' : '')
+      + (o.title ? ' title="' + o.title + '"' : '') + (o.exp != null ? ' aria-expanded="' + o.exp + '"' : '') + '>' + label + '</button>';
+    const grp = (label, inner) => '<div class="sg" role="group" aria-label="' + label + '"><b>' + label + '</b>' + inner + '</div>';
+    return '<span class="what">' + esc(s ? s.who : 'Sticker') + '</span>'
+      + grp('Sticker', pill('sflip', 'Face the other way &#8646;', { on: it.flip }) + pill('sborder', 'White border', { on: !it.plain, title: 'A white edge round it, like a real sticker' })
+        + pill('swap', 'Change it', { on: stkTrayOpen(), exp: stkTrayOpen(), title: 'Pick another pose, face or thing to put in its place' }))
+      + grp('Frame', pill('sclip', 'Inside the frame', { v: 1, on: !!it.clip, title: 'The panel crops it, like a close-up: the parts outside the frame are hidden' })
+        + pill('sclip', 'Pop out', { v: 0, on: !it.clip, title: 'Let it burst out over the frame' }))
+      + grp('Size', pill('ssize', 'Smaller', { v: 0.8 }) + pill('ssize', 'Bigger', { v: 1.25 }) + '<span class="note">or drag the yellow dot</span>')
+      + grp('Layer', pill('sfront', 'Bring to front', { title: 'Put it in front of the other stickers in this panel' }))
+      + (it.rot ? grp('Tilt', '<span class="note">' + it.rot + '°</span><button type="button" class="pill" data-style="rot" data-v="0">Straighten</button>') : '');
+  }
   function styleHTML(it){
+    if (it.type === 'sticker') return stickerBar(it);
     const grp = (label, key, opts, css) => '<div class="sg" role="group" aria-label="' + label + '"><b>' + label + '</b>'
       + opts.map(([v, l]) => '<button type="button" class="pill' + (st(it, key) === v ? ' active' : '') + '" data-style="' + key + '" data-v="' + v + '"'
         + (css ? ' style="' + css(v) + '"' : '') + '>' + l + '</button>').join('') + '</div>';
@@ -1152,13 +1236,17 @@ import THEME from '/the-precinct/theme.js';
   }
 
   // ---------- the dock: page tools, then panel tools, then box styles, as each is chosen ----------
-  const ADD_NAMES = { caption: 'Caption box', speech: 'Speech balloon', thought: 'Thought bubble', sfx: 'Sound effect' };
+  const ADD_NAMES = { caption: 'Caption box', speech: 'Speech balloon', thought: 'Thought bubble', sfx: 'Sound effect', sticker: 'Sticker' };
   const NEW = '<i class="new">NEW</i>';
   let exporting = false, shownGroups = [];
   const chosenItem = () => sel.it != null && S.level !== 'prose' && S.panels[sel.p] && S.panels[sel.p].items[sel.it];
   // Add waits until the panel has a picture (or already has words): picture first, then the story.
   const addReady = () => sel.p != null && S.level !== 'prose' && !chosenItem() && (S.panels[sel.p].img || S.panels[sel.p].items.length > 0);
   const bankOpen = () => sfxOpen && addReady() && S.level === 'advanced';
+  // The sticker tray stays open while a sticker is chosen, so tapping another one swaps it.
+  const chosenSticker = () => { const it = chosenItem(); return it && it.type === 'sticker' ? it : null; };
+  const stkTrayOpen = () => stkOpen && S.level !== 'prose' && sel.p != null && (addReady() || !!chosenSticker());
+  const openTrayH = () => { const t = [$('sfxBank'), $('stkTray')].find(x => !x.hidden); return t ? t.offsetHeight : 0; };
   function renderDock(){
     const b = (cmd, label, o = {}) => '<button type="button" class="' + (o.cls || 'pill') + (o.on ? ' active' : '') + '" data-cmd="' + cmd + '"'
       + (o.v != null ? ' data-v="' + o.v + '"' : '') + (o.id ? ' id="' + o.id + '"' : '') + (o.off ? ' disabled' : '')
@@ -1176,8 +1264,9 @@ import THEME from '/the-precinct/theme.js';
             + (p.fit.r ? '<span class="note">' + p.fit.r + '°</span>' + b('straighten', 'Straighten') : '') + b('clear', 'Remove')
             + '<label class="zoom">Zoom <input type="range" id="zoom" min="1" max="3" step="0.05" value="' + p.fit.z + '"></label>'
           : b('upload', 'Upload') + b('lib', 'From our library') + '<span class="note">or paste (Ctrl/&#8984;+V) or drop a picture on the panel</span>'));
-      if (addReady()) h += g('add', '<b>Add</b>' + (S.level === 'advanced' ? ['caption', 'speech', 'thought', 'sfx'] : ['caption', 'speech'])
-        .map(k => b('add', ADD_NAMES[k], { v: k, isNew: !seen('n:' + k), on: k === 'sfx' && bankOpen(), exp: k === 'sfx' ? bankOpen() : null })).join(''));
+      if (addReady()) h += g('add', '<b>Add</b>' + (S.level === 'advanced' ? ['caption', 'speech', 'thought', 'sfx', 'sticker'] : ['caption', 'speech', 'sticker'])
+        .map(k => { const tray = k === 'sfx' ? bankOpen() : k === 'sticker' ? stkTrayOpen() : null;
+          return b('add', ADD_NAMES[k], { v: k, isNew: !seen('n:' + k), on: !!tray, exp: tray }); }).join(''));
       done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this panel (Esc)&#10;&#10;Keyboard, with a panel chosen:&#10;Ctrl/&#8984;+V: paste a picture you have copied&#10;Ctrl + scroll, or pinch on a trackpad: zoom the picture&#10;[ and ]: turn the picture&#10;Ctrl/&#8984;+Z: undo, Shift+Ctrl/&#8984;+Z: redo' });
     } else {
       h = '<span class="what">Page</span>'
@@ -1196,10 +1285,13 @@ import THEME from '/the-precinct/theme.js';
     const ids = [...dock.querySelectorAll('[data-g]')].map(x => x.dataset.g);
     dock.querySelectorAll('[data-g]').forEach(x => { if (!shownGroups.includes(x.dataset.g)) x.classList.add('arrive'); });
     shownGroups = ids;
-    const tray = $('sfxBank');
+    const tray = $('sfxBank'), stk = $('stkTray'), cs = chosenSticker();
     tray.hidden = !bankOpen();
-    tray.style.bottom = dock.offsetHeight + 'px';
-    document.body.style.paddingBottom = (dock.offsetHeight + (tray.hidden ? 0 : tray.offsetHeight) + 24) + 'px';
+    stk.hidden = !tray.hidden || !stkTrayOpen();
+    if (!stk.hidden && stk.dataset.shows !== stkWho) { stk.innerHTML = stkTrayHTML(); stk.dataset.shows = stkWho; }   // not data-who: the tabs use that
+    tray.style.bottom = stk.style.bottom = dock.offsetHeight + 'px';
+    stk.querySelectorAll('[data-stk]').forEach(x => x.classList.toggle('on', !!cs && x.dataset.stk === cs.src));
+    document.body.style.paddingBottom = (dock.offsetHeight + openTrayH() + 24) + 'px';
     renderCard(dock.offsetHeight);
   }
 
@@ -1248,7 +1340,8 @@ import THEME from '/the-precinct/theme.js';
       case 'clear': checkpoint(); panelList()[sel.p].img = null; save(); return render();
       case 'add':
         markSeen('n:' + v); markSeen('add');
-        if (v === 'sfx') { sfxOpen = !sfxOpen; return render(); }
+        if (v === 'sfx') { sfxOpen = !sfxOpen; stkOpen = false; return render(); }
+        if (v === 'sticker') { stkOpen = !stkOpen; sfxOpen = false; return render(); }
         return addItem(v, null, true);
       case 'style': {
         markSeen('n:style');
@@ -1259,6 +1352,17 @@ import THEME from '/the-precinct/theme.js';
         return render();
       }
       case 'about': cardOpen = !cardOpen; return render();
+      case 'swap': { const cs = chosenSticker(); if (cs) stkWho = cs.src.split('/')[0]; stkOpen = !stkOpen; sfxOpen = false; return render(); }
+      case 'sflip': case 'sborder': case 'ssize': case 'sfront': case 'sclip': {
+        const cur = chosenSticker(); if (!cur) return;
+        checkpoint();
+        if (b.dataset.cmd === 'sflip') cur.flip = !cur.flip;
+        if (b.dataset.cmd === 'sborder') cur.plain = !cur.plain;
+        if (b.dataset.cmd === 'sclip') { if (v === '1') cur.clip = true; else delete cur.clip; markSeen('stickerclip'); }
+        if (b.dataset.cmd === 'ssize') { const w = Math.max(5, Math.min(150, Math.round(cur.w * +v))); cur.x += (cur.w - w) / 2; cur.w = w; }   // about its middle
+        if (b.dataset.cmd === 'sfront') { const items = S.panels[sel.p].items; items.push(items.splice(sel.it, 1)[0]); sel.it = items.length - 1; }
+        save(); return render();
+      }
       case 'png': sel = NONE(); render(); return exportPNG();
       case 'print': sel = NONE(); return render().then(() => print());
       case 'reset':
@@ -1288,6 +1392,33 @@ import THEME from '/the-precinct/theme.js';
     addItem('sfx', w, !w);
   });
 
+  // Stickers: a tray of the cast above the dock. A sticker goes into the chosen panel, or swaps the chosen sticker
+  // (keeping its place, and its size in step with the new one's).
+  // One character at a time: a row of the cast to choose from, then that character's stickers.
+  let stkOpen = false, stkWho = THEME.stickers[0].dir;
+  function stkTrayHTML(){
+    const g = THEME.stickers.find(x => x.dir === stkWho) || THEME.stickers[0];
+    return '<div class="own"><span>Pick a character, then tap a sticker to add it to the chosen panel. With a sticker chosen, tapping another one swaps it.</span></div>'
+      + '<div class="who" role="tablist" aria-label="Characters">' + THEME.stickers.map(x => '<button type="button" role="tab" aria-selected="' + (x === g) + '" data-who="' + esc(x.dir) + '">'
+        + '<img src="' + THEME.stickerPath(x.dir, x.items[0][0], true) + '" alt="">' + esc(x.who) + '</button>').join('') + '</div>'
+      + '<div class="w" role="tabpanel" aria-label="' + esc(g.who) + '">' + g.items.map(([file, label]) => '<button type="button" data-stk="' + esc(g.dir + '/' + file) + '" title="' + esc(label) + '" aria-label="' + esc(g.who + ': ' + label) + '">'
+        + '<img src="' + THEME.stickerPath(g.dir, file, true) + '" alt=""></button>').join('') + '</div>';
+  }
+  $('stkTray').addEventListener('click', e => {
+    const wb = e.target.closest('[data-who]');
+    if (wb) { stkWho = wb.dataset.who; return renderDock(); }
+    const b = e.target.closest('[data-stk]'); if (!b || sel.p == null) return;
+    markSeen('stickers');
+    const cur = chosenSticker(), next = STICKERS.get(b.dataset.stk);
+    if (cur && next) {
+      checkpoint();
+      const was = STICKERS.get(cur.src);
+      if (was) cur.w = Math.max(5, Math.min(150, Math.round(cur.w * next.w / was.w)));
+      cur.src = b.dataset.stk; save(); render(); return;
+    }
+    addSticker(b.dataset.stk);
+  });
+
   // ---------- one-time tips: each tool is introduced once, and the browser remembers ----------
   const SEEN = 'precinct-builder-seen';
   let seenSet;
@@ -1306,6 +1437,12 @@ import THEME from '/the-precinct/theme.js';
       title: 'Bring a picture in', text: 'Upload one, pick from our library, or copy a picture in ChatGPT, Gemini or Copilot and paste it here with Ctrl/⌘+V.' },
     { id: 'add', at: 'dock', when: addReady,
       title: 'Now tell the story', text: 'Add a caption box for the narrator and a speech balloon for whoever is talking. Drag the picture to frame it.' },
+    { id: 'stickers', at: 'tray', when: () => stkTrayOpen() && !chosenSticker(),
+      title: 'Stickers', text: 'Tap a sticker to put it in this panel. Pick a place from our library first and the cast can stand in it.' },
+    { id: 'stickersize', at: 'rs', when: () => !!chosenSticker(),
+      title: 'Make it fit', text: 'Drag the sticker to move it, and the yellow dot in its corner to make it bigger or smaller. ⇆ turns it to face the other way.' },
+    { id: 'stickerclip', at: 'dock', when: () => { const s = chosenSticker(); return !!s && seen('stickersize') && !s.clip; },
+      title: 'Too big for the panel?', text: 'Press Inside the frame and the panel crops it, like a close-up. Make it big and slide it until the face fills the shot.' },
     { id: 'tail', at: 'tail', when: () => { const it = chosenItem(); return it && hasTail(it) && it.tail !== 'none'; },
       title: 'Point the tail', text: 'Drag the yellow dot to whoever is talking. The yellow bar makes the box wider or narrower.' },
     { id: 'rotate', at: 'rot', when: () => !!chosenItem(),
@@ -1329,8 +1466,8 @@ import THEME from '/the-precinct/theme.js';
   function placeTip(){
     const el = $('tip'); if (!tipNow || el.hidden) return;
     el.className = 'tip'; el.style.top = el.style.bottom = '';
-    const dockH = $('dock').offsetHeight, tray = $('sfxBank'), trayH = tray.hidden ? 0 : tray.offsetHeight;
-    const dot = { tail: '.it.sel .tip-h', rot: '.it.sel .rot-h' }[tipNow.at] && bench.querySelector({ tail: '.it.sel .tip-h', rot: '.it.sel .rot-h' }[tipNow.at]);
+    const dockH = $('dock').offsetHeight, trayH = openTrayH();
+    const handle = { tail: '.it.sel .tip-h', rot: '.it.sel .rot-h', rs: '.it.sel .rs-h' }[tipNow.at], dot = handle && bench.querySelector(handle);
     if (dot) {
       const r = dot.getBoundingClientRect(), w = el.offsetWidth;
       const left = Math.max(12, Math.min(r.left + r.width / 2 - 28, innerWidth - w - 12));
@@ -1459,6 +1596,23 @@ import THEME from '/the-precinct/theme.js';
     ctx.restore();
   }
 
+  // A sticker, about its middle as the page turns and flips it; its height follows the picture.
+  function drawSticker(ctx, it, im, px, py, pw, ph, ink){
+    if (!im) return;
+    const w = pw * it.w / 100, h = w * im.height / im.width;
+    if (ink) {   // inked on a canvas of its own, as the pictures are
+      const oc = document.createElement('canvas');
+      oc.width = Math.max(1, Math.round(w)); oc.height = Math.max(1, Math.round(h));
+      oc.getContext('2d').drawImage(im, 0, 0, oc.width, oc.height); inkBW(oc); im = oc;
+    }
+    ctx.save();
+    ctx.translate(px + pw * it.x / 100 + w / 2, py + ph * it.y / 100 + h / 2);
+    if (it.rot) ctx.rotate(it.rot * Math.PI / 180);
+    if (it.flip) ctx.scale(-1, 1);
+    ctx.drawImage(im, -w / 2, -h / 2, w, h);
+    ctx.restore();
+  }
+
   async function exportPNG(){
     exporting = true; renderDock();
     try {
@@ -1491,22 +1645,26 @@ import THEME from '/the-precinct/theme.js';
       } else {
         const H = W * 1.5, lk = look(); c.width = W; c.height = H;
         ctx.fillStyle = lk.page; ctx.fillRect(0, 0, W, H);
+        const stk = lk.panels.flatMap((poly, i) => S.panels[i].items.filter(it => it.type === 'sticker'));
+        const stkIms = new Map(await Promise.all([...new Set(stk.map(stickerSrc))].map(async u => [u, await loadImg(u)])));
         lk.panels.forEach((poly, i) => {
           const P = poly.map(([x, y]) => [x * cq, y * cq]), b = bbox(P), path = new Path2D();
           P.forEach(([x, y], k) => k ? path.lineTo(x, y) : path.moveTo(x, y)); path.closePath();
           ctx.save(); ctx.clip(path);
           drawCover(ctx, ims[i], S.panels[i].fit, b.x, b.y, b.w, b.h, lk.ink);
+          // in-frame stickers: clipped with the picture, under the frame
+          S.panels[i].items.forEach(it => { if (it.type === 'sticker' && it.clip) drawSticker(ctx, it, stkIms.get(stickerSrc(it)), b.x, b.y, b.w, b.h, lk.ink); });
           // frames: twice the width, clipped to the panel, so only the inner half shows (as on the page)
           framesOf(lk, i).forEach(([w, col]) => { ctx.lineWidth = 2 * w * cq; ctx.strokeStyle = col; ctx.lineJoin = 'miter'; ctx.stroke(path); });
           ctx.restore();
         });
         // the title goes on last: in the Image style a picture fills the page underneath it
         if (S.title.trim()) drawTitle(ctx, S.title.toUpperCase(), Object.assign({}, lk.title, { rotate: titleTurn() }), cq, H);
-        // words last and unclipped, as on the page, so they can burst out of their panels
-        lk.panels.forEach((poly, i) => {
-          const b = bbox(poly.map(([x, y]) => [x * cq, y * cq]));
-          S.panels[i].items.forEach(it => drawItem(ctx, it, b.x, b.y, b.w, b.h));
-        });
+        // then stickers and words, unclipped as on the page so they can burst out of their panels: all the stickers first,
+        // so every caption and balloon sits on top of them
+        const boxes = lk.panels.map(poly => bbox(poly.map(([x, y]) => [x * cq, y * cq])));
+        boxes.forEach((b, i) => S.panels[i].items.forEach(it => { if (it.type === 'sticker' && !it.clip) drawSticker(ctx, it, stkIms.get(stickerSrc(it)), b.x, b.y, b.w, b.h, lk.ink); }));
+        boxes.forEach((b, i) => S.panels[i].items.forEach(it => { if (it.type !== 'sticker') drawItem(ctx, it, b.x, b.y, b.w, b.h); }));
       }
       const blob = await new Promise(r => c.toBlob(r, 'image/png'));
       const a = document.createElement('a');
