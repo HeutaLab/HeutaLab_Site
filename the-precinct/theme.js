@@ -48,11 +48,10 @@ export default {
       img: IMG + 'ref/hattie-card.jpg',
     },
     {
-      // The picture is a stand-in (the old `cop` reference) until Glenn's new portrait arrives.
       id: 'rookie', name: 'Patrolman Tommy Doyle', short: 'Tommy Doyle', role: 'The Rookie', tag: 'The one who saw',
       story: 'Three weeks on the job. He saw Frank Rourke do something on Vance’s orders and has told no one, because he doesn’t know who is safe to tell. He keeps crossing paths with Hattie Cole.',
-      look: 'a patrolman in his early twenties, fresh-faced and clean-shaven, a peaked police cap with a plain shield badge, a crisp dark uniform buttoned to the collar with a plain star on each collar point, shoulders squared, a wary sideways glance',
-      img: IMG + 'ref/cop.jpg',
+      look: 'a patrolman in his early twenties, fresh-faced and clean-shaven with freckles across his nose and cheeks, short fair hair, a dark peaked police cap with a plain shield badge, a dark uniform buttoned to the collar with a small star on each collar point, a wary sideways glance',
+      img: IMG + 'ref/tommy-card.jpg',
     },
     {
       id: 'owner', name: 'Charlotte Van Der Woning', short: 'Charlotte', role: 'The Owner', tag: 'The one who hears',
@@ -128,7 +127,7 @@ export default {
   refs: {
     'chief':         ['A heavy-set police chief in a fedora and long trench coat, hands in his pockets, scowling', 'character', 'commissioner'],
     'hat-woman':     ['A woman in a black wide-brimmed hat glancing over her shoulder against a yellow sky', 'character', 'reporter'],
-    'cop':           ['A uniformed police officer in a peaked cap with a badge and a star on his collar', 'character', 'rookie'],
+    'cop':           ['A uniformed police officer in a peaked cap with a badge and a star on his collar', 'character'],
     'bar':           ['A woman with waved hair in a café booth facing a man in a dark suit, two men watching behind', 'character'],
     'blonde-green':  ['Close-up of a blonde woman with dark lipstick, eyes lowered, in green tones', 'character'],
     'blonde-yellow': ['A blonde woman in a yellow jacket looking down, lit buildings behind her', 'character'],
@@ -142,6 +141,7 @@ export default {
     'vera-card':     ['A woman with shoulder-length platinum-blonde waves, pearl earrings and a black evening gown, looking back over her shoulder with a knowing smile', 'character', 'femme'],
     'rourke-card':   ['A huge muscular man in shirtsleeves, braces and a loosened tie, teeth bared around a matchstick, glaring out of the dark', 'character', 'disillusioned'],
     'hattie-card':   ['A woman in a wide-brimmed black hat and a pale trench coat, glancing back over her shoulder, a notebook and pen in her gloved hands', 'character', 'reporter'],
+    'tommy-card':    ['A young freckled patrolman in a peaked cap and a dark uniform with a star on each collar point, glancing sideways by a lit wall', 'character', 'rookie'],
     'charlotte-card':['A woman in her fifties with pinned-up hair and glasses on a chain, a dark dress with a white collar and a stepped brooch, arms folded', 'character', 'owner'],
     'ziggurat':      ['An empty Art Deco café at night: leather booths, a chrome counter with round stools, stepped glass lamps, a chevron floor and rain outside the windows', 'setting'],
     'rourke-front':  ['A huge muscular man in shirtsleeves and braces, a holster at his side and a jacket over his shoulder, scowling', 'character', 'disillusioned'],
@@ -381,7 +381,7 @@ export default {
   // Pictures offered in the comic builder's library.
   library: ['chief','hat-woman','cop','bar','blonde-green','blonde-yellow','rain-street','office','sunset-street','fedora','boss',
     'cop-badge','lamp-man','blue-man','houses','green-city','walking-woman','teal-woman','detective-car','sunset-man',
-    'walking-rain','hat-green','novak-card','vance-card','rourke-card','vera-card','hattie-card','charlotte-card','ziggurat',
+    'walking-rain','hat-green','novak-card','vance-card','rourke-card','vera-card','hattie-card','tommy-card','charlotte-card','ziggurat',
     'rourke-front','rourke-snarl','rourke-rage','rourke-sheet'],
 
   // Colours for captions, balloons, thoughts and sound effects in the comic builder, taken from the palettes above.
