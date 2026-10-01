@@ -41,18 +41,14 @@
   .five li + li .arrow{position:absolute;left:-27px;top:74px;width:24px;height:16px;fill:none;stroke:var(--red-hi);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
   .five .n{position:absolute;left:11px;top:11px;width:30px;height:34px;background:var(--red);color:#fff;font-family:var(--label);font-weight:700;
     font-size:20px;display:grid;place-items:center;border-radius:4px;transform:rotate(-4deg);box-shadow:1px 2px 0 rgba(0,0,0,.35)}
-  .five .ico{display:block;width:44px;height:44px;margin:0 auto 2px;fill:none;stroke:var(--ink-p);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-  .five .ico .f{fill:var(--ink-p);stroke:none}
+  /* each step's picture: an inked illustration cut out of its paper, sitting straight on the card */
+  .five .art{display:block;width:86%;height:150px;margin:6px auto 8px;object-fit:contain}
   .five h3{font-family:var(--label);font-weight:700;font-size:26px;letter-spacing:.04em;text-transform:uppercase;margin:0 0 4px;line-height:1.05}
   .five h3 a{color:inherit;text-decoration:none}
   .five h3 a::after{content:"";position:absolute;inset:0;z-index:1}
   .five li:hover h3{color:var(--red-deep)}
-  .five p{margin:0 0 10px;font-size:13px;line-height:1.4;min-height:2.8em}
-  .five .pic{aspect-ratio:16/11;overflow:hidden;border:2px solid var(--ink-p);background:#0d1819;display:grid;grid-auto-flow:column;grid-auto-columns:1fr}
-  .five .pic img{width:100%;height:100%;object-fit:cover}
-  .five .pic img + img{border-left:2px solid var(--ink-p)}
-  .five .pic svg{width:100%;height:100%}
-  .five .at{display:inline-block;margin:9px 0 0;font-family:var(--script);font-weight:600;font-size:19px;text-transform:uppercase;letter-spacing:.05em;line-height:1;transform:rotate(-3deg)}
+  .five p{margin:0 0 8px;font-size:13px;line-height:1.4;min-height:2.8em}
+  .five .at{display:inline-block;margin:2px 0 0;font-family:var(--script);font-weight:600;font-size:19px;text-transform:uppercase;letter-spacing:.05em;line-height:1;transform:rotate(-3deg)}
   .five .away .at{color:var(--red-deep)}
 
   /* ---------- the case file ---------- */
@@ -429,7 +425,7 @@
     .five{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
     .five li{transform:none !important}
     .five li:first-child{grid-column:1 / -1}
-    .five li:first-child .pic{aspect-ratio:16/8}
+    .five .art{height:120px}
     .five .arrow{display:none}
     .five h3{font-size:22px}
     .view{grid-template-columns:84px minmax(0,1fr) auto;gap:12px;padding-right:12px}
