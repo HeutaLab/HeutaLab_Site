@@ -3,60 +3,73 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b0f0f">
+<meta name="theme-color" content="#0a0e0f">
 <title>Comic Builder: The Precinct</title>
 <meta name="description" content="Build your own noir comic page: add your pictures, then captions, speech balloons and sound effects, at prose, medium or advanced level.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Knewave&family=Oswald:wght@300;400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&family=Comic+Neue:wght@700&family=Special+Elite&display=swap">
+<!-- The page chrome uses Oswald, Special Elite, Courier Prime and Caveat. Knewave, Libre Baskerville and Comic Neue are the comic page's own lettering. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Knewave&family=Oswald:wght@300;400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&family=Comic+Neue:wght@700&family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap">
 <link rel="stylesheet" href="/the-precinct/precinct.css">
 <style>
-  .tools{margin-top:0;padding:14px 18px}
-  .tools .grp{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
-  .tools h4{font-family:var(--label);font-weight:500;font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--yellow);margin:0 6px 0 0}
-  .tools .lvl-note{margin:8px 0 0;font-size:13px;color:var(--ink-dim)}
+  /* how it works: three steps on a note */
+  .howto{margin-top:6px;padding:20px 26px 16px}
+  .howto ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 30px;counter-reset:h}
+  .howto li{counter-increment:h;position:relative;padding-left:44px;font-size:13.5px;line-height:1.45}
+  .howto li::before{content:counter(h);position:absolute;left:0;top:1px;width:30px;height:34px;background:var(--red);color:#fff;font-family:var(--label);
+    font-weight:700;font-size:20px;display:grid;place-items:center;border-radius:4px;transform:rotate(-4deg);box-shadow:1px 2px 0 rgba(0,0,0,.35)}
+  .howto b{display:block;font-family:var(--label);font-weight:700;font-size:17px;letter-spacing:.05em;text-transform:uppercase;line-height:1.15;margin-bottom:3px}
+  .howto p{margin:14px 0 0;padding-top:12px;border-top:1.5px dashed var(--rule-p);font-size:13.5px}
+
+  .tools{margin-top:22px;padding:14px 20px 15px}
+  .tools .grp{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+  .tools h4{font-family:var(--label);font-weight:600;font-size:13px;letter-spacing:.18em;text-transform:uppercase;margin:0 6px 0 0}
+  .tools .lvl-note{margin:9px 0 0;font-size:13.5px}
   .tools .pill{padding:7px 12px;font-size:12.5px}
-  .btn.ghost{background:transparent;color:var(--ink);box-shadow:none;border:1px solid var(--frame)}
-  .btn.ghost:hover{border-color:var(--yellow);color:var(--yellow);background:transparent}
-  .btn.small{font-size:11.5px;padding:7px 12px}
   .btn:disabled,.pill:disabled{opacity:.35;cursor:not-allowed}
 
-  .workbench{margin-top:18px;background:
+  .workbench{margin-top:22px;border:1px solid var(--frame);background:
     repeating-linear-gradient(45deg,rgba(255,255,255,.015) 0 10px,transparent 10px 20px),var(--panel)}
   #bench{display:flex;justify-content:center;padding:22px 16px}
 
   /* The dock: every tool lives along the bottom of the screen and changes with what is chosen
      (the page, a panel, or a box). At the top it would shove the page down mid-tap, and it would scroll away. */
   .dock{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px 18px;
-    padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(11,15,15,.97);border-top:1px solid var(--yellow);box-shadow:0 -8px 24px rgba(0,0,0,.5)}
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(10,14,15,.97);color:var(--ink);border-top:3px solid var(--red);box-shadow:0 -8px 24px rgba(0,0,0,.5)}
   .dock .sg{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
-  .dock .sg > b{font-family:var(--label);font-weight:500;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--yellow);margin-right:4px;position:relative}
-  .dock .pill{padding:6px 10px;font-size:12px;position:relative}
+  .dock .sg > b{font-family:var(--label);font-weight:600;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--paper-lo);margin-right:4px;position:relative}
+  .dock .pill{padding:6px 10px;font-size:12px;position:relative;background:var(--panel-2);border:1px solid var(--frame);color:var(--ink)}
+  .dock .pill:hover{background:var(--panel-2);border-color:var(--paper)}
+  .dock .pill.active{background:var(--paper-hi);border-color:var(--paper-hi);color:var(--ink-p)}
   .dock .sw{width:26px;height:26px;border-radius:50%;border:2px solid var(--frame);cursor:pointer;padding:0}
-  .dock .sw.active{outline:2px solid var(--yellow);outline-offset:2px;border-color:#000}
-  .dock .what{font-family:var(--brush);color:var(--ink);font-size:18px;text-transform:uppercase;margin-right:2px}
-  .dock .more,.dock .note{font-size:12.5px;font-style:italic;color:var(--ink-dim)}
-  .dock label.zoom{font-size:12.5px;font-style:italic;color:var(--ink-dim);display:flex;align-items:center;gap:6px}
-  .dock input[type=range]{accent-color:var(--yellow);width:120px}
+  .dock .sw.active{outline:2px solid var(--paper-hi);outline-offset:2px;border-color:#000}
+  .dock .what{font-family:var(--label);font-weight:700;color:var(--ink);font-size:16px;letter-spacing:.08em;text-transform:uppercase;margin-right:2px}
+  .dock .more,.dock .note{font-size:12.5px;color:var(--ink-dim)}
+  .dock label.zoom{font-size:12.5px;color:var(--ink-dim);display:flex;align-items:center;gap:6px}
+  .dock input[type=range]{accent-color:var(--red-hi);width:120px}
   .dock .undo{margin-left:6px}
-  .stylebtn{display:inline-flex;align-items:center;gap:10px;background:var(--yellow);color:#15120a;border:0;padding:7px 12px 7px 14px;cursor:pointer;position:relative;
-    font-family:var(--label);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;box-shadow:3px 3px 0 #000}
-  .stylebtn .n{font-size:10px;background:#15120a;color:var(--yellow);border-radius:9px;padding:2px 7px;letter-spacing:.08em}
+  .dock :focus-visible,.tray :focus-visible,dialog.lib :focus-visible{outline-color:var(--yellow)}
+  .stylebtn{display:inline-flex;align-items:center;gap:10px;background:var(--paper-hi);color:var(--ink-p);border:0;padding:7px 12px 7px 14px;cursor:pointer;position:relative;
+    font-family:var(--label);font-weight:600;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;box-shadow:3px 3px 0 #000;white-space:nowrap;flex:none}
+  .stylebtn:hover{background:#fff}
+  .stylebtn .n{font-size:10px;background:var(--ink-p);color:var(--paper-hi);border-radius:9px;padding:2px 7px;letter-spacing:.08em}
 
   /* the note about a page style, shown when the style changes */
-  .scard{position:fixed;z-index:45;left:50%;transform:translateX(-50%);width:min(460px,calc(100vw - 24px));background:var(--panel);border:1px solid var(--yellow);
+  .scard{position:fixed;z-index:45;left:50%;transform:translateX(-50%);width:min(460px,calc(100vw - 24px));background:var(--paper-hi);color:var(--ink-p);border:2px solid var(--ink-p);
     box-shadow:6px 6px 0 #000;padding:14px 16px 12px;animation:pop .3s ease-out}
   .scard[hidden]{display:none}
-  .scard .era{font-family:var(--label);letter-spacing:.2em;text-transform:uppercase;color:var(--yellow);font-size:11px}
-  .scard h3{font-family:var(--brush);font-weight:400;color:var(--ink);font-size:24px;line-height:1.05;margin:2px 0 8px;text-transform:uppercase}
-  .scard p{margin:0 0 10px;font-size:14px;color:var(--ink)}
-  .scard h4{font-family:var(--label);font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--yellow);font-size:11px;margin:10px 0 6px}
-  .scard .prompt{background:var(--bg);border:1px solid var(--frame);padding:8px 10px;font-style:italic;font-size:13.5px;color:var(--ink)}
+  .scard .era{font-family:var(--label);font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--red-deep);font-size:11px}
+  .scard h3{font-family:var(--slab);font-weight:400;font-size:24px;line-height:1.1;margin:3px 0 8px;text-shadow:.5px 0 0 currentColor}
+  .scard p{margin:0 0 10px;font-size:14px}
+  .scard h4{font-family:var(--label);font-weight:600;letter-spacing:.18em;text-transform:uppercase;font-size:11px;margin:10px 0 6px}
+  .scard .prompt{background:#fbf8ee;border:1.5px solid var(--ink-p2);padding:8px 10px;font-size:13.5px}
   .scard .row{display:flex;gap:8px;align-items:center;margin-top:10px}
-  .scard small{font-size:12px;color:var(--ink-dim)}
-  .scard .x{position:absolute;top:8px;right:10px;background:none;border:0;color:var(--ink-dim);font-size:22px;line-height:1;cursor:pointer}
+  .scard .row .btn{flex:none}
+  .scard small{font-size:12px;color:var(--ink-p2)}
+  .scard .x{position:absolute;top:8px;right:10px;background:none;border:0;color:var(--ink-p2);font-size:22px;line-height:1;cursor:pointer}
+  .scard :focus-visible{outline-color:var(--ink-p)}
   @media (max-width:600px){.scard{max-height:55vh;overflow:auto}}
-  .new{position:absolute;top:-9px;right:-9px;background:var(--danger);color:#fff;font-family:var(--label);font-style:normal;font-size:9px;letter-spacing:.12em;
+  .new{position:absolute;top:-9px;right:-9px;background:var(--red);color:#fff;font-family:var(--label);font-style:normal;font-size:9px;letter-spacing:.12em;
     padding:2px 5px;border-radius:8px;line-height:1.2;pointer-events:none;animation:pop .5s ease-out}
   .arrive{animation:arrive .4s ease-out both}
   @keyframes arrive{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
@@ -64,23 +77,24 @@
 
   /* sound-effect words: a tray that opens just above the dock */
   .tray{position:fixed;left:0;right:0;z-index:39;max-height:38vh;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px 18px;
-    padding:12px 16px;background:#0f1414;border-top:1px solid var(--frame)}
+    padding:12px 16px;background:#0d1213;color:var(--ink);border-top:1px solid var(--frame)}
   .tray[hidden]{display:none}
   .tray p{margin:0 0 6px;font-family:var(--label);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim)}
   .tray .w{display:flex;flex-wrap:wrap;gap:6px}
-  .tray button{font-family:var(--brush);font-size:17px;line-height:1;padding:6px 9px 4px;background:transparent;color:var(--yellow);border:1px solid var(--frame);cursor:pointer}
-  .tray button:hover{border-color:var(--yellow)}
+  .tray button{font-family:var(--brush);font-size:17px;line-height:1;padding:6px 9px 4px;background:transparent;color:var(--paper-hi);border:1px solid var(--frame);cursor:pointer}
+  .tray button:hover{border-color:var(--paper-hi)}
   .tray .own{grid-column:1/-1;order:-1;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--ink-dim)}
   .tray .own button{font-family:var(--label);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
 
   /* one-time tips: each tool is introduced once, then the browser remembers */
-  .tip{position:fixed;z-index:50;width:min(280px,calc(100vw - 24px));background:var(--yellow);color:#15120a;padding:12px 14px 10px;box-shadow:6px 6px 0 #000;
-    font-size:14px;line-height:1.4;animation:pop .3s ease-out}
+  .tip{position:fixed;z-index:50;width:min(280px,calc(100vw - 24px));background:var(--paper-hi);color:var(--ink-p);padding:12px 14px 10px;box-shadow:6px 6px 0 #000;
+    border-left:4px solid var(--red);font-size:14px;line-height:1.4;animation:pop .3s ease-out}
   .tip[hidden]{display:none}
-  .tip b{font-family:var(--label);letter-spacing:.14em;text-transform:uppercase;font-size:11px;display:block;margin-bottom:4px}
-  .tip button{margin-top:8px;font-family:var(--label);font-size:11px;letter-spacing:.14em;text-transform:uppercase;background:transparent;color:#15120a;
-    border:1.5px solid #15120a;padding:4px 10px;cursor:pointer}
-  .tip::after{content:"";position:absolute;left:var(--ax,28px);width:14px;height:14px;background:var(--yellow);transform:rotate(45deg)}
+  .tip b{font-family:var(--label);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:11.5px;display:block;margin-bottom:4px;color:var(--red-deep)}
+  .tip button{margin-top:8px;font-family:var(--label);font-weight:600;font-size:11px;letter-spacing:.14em;text-transform:uppercase;background:var(--ink-p);color:var(--paper-hi);
+    border:0;padding:5px 11px;cursor:pointer}
+  .tip button:focus-visible{outline-color:var(--red)}
+  .tip::after{content:"";position:absolute;left:var(--ax,28px);width:14px;height:14px;background:var(--paper-hi);transform:rotate(45deg)}
   .tip.down::after{bottom:-7px}
   .tip.up::after{top:-7px}
   .tips-again{background:none;border:0;padding:0;color:var(--yellow);text-decoration:underline;cursor:pointer;font:inherit}
@@ -168,13 +182,13 @@
   .addframe:hover{border-color:#111;color:#111}
 
   /* library picker */
-  dialog.lib{width:min(920px,calc(100vw - 32px));max-height:86vh;background:var(--panel);color:var(--ink);border:1px solid var(--frame);padding:0}
-  dialog.lib::backdrop{background:rgba(0,0,0,.7)}
+  dialog.lib{width:min(920px,calc(100vw - 32px));max-height:86vh;background:var(--panel);color:var(--ink);border:2px solid var(--paper);padding:0}
+  dialog.lib::backdrop{background:rgba(0,0,0,.75)}
   .lib-head{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--frame)}
-  .lib-head h3{margin:0;font-family:var(--brush);font-weight:400;color:var(--yellow);font-size:24px;text-transform:uppercase}
+  .lib-head h3{margin:0;font-family:var(--label);font-weight:700;font-size:20px;letter-spacing:.08em;text-transform:uppercase}
   .lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;padding:16px 18px;overflow:auto;max-height:calc(86vh - 70px)}
   .lib-grid button{padding:0;border:1px solid var(--frame);background:#000;cursor:pointer;aspect-ratio:1/1;overflow:hidden}
-  .lib-grid button:hover{border-color:var(--yellow)}
+  .lib-grid button:hover{border-color:var(--paper-hi)}
   .lib-grid img{width:100%;height:100%;object-fit:cover}
 
   .notice{margin:12px 0 0;font-size:13px;color:var(--ink-dim)}
@@ -185,9 +199,9 @@
   @media print{
     html,body{background:#fff !important}
     body{padding:0 !important}
-    .hero,.side,.tools,.notice,footer,.rule,.sub-intro,.it-ctl,.tip-h,.rs-h,.rot-h,.prot-h,.ttl-h,.rm,.addframe,.dock,.tray,.tip,.scard{display:none !important}
-    .layout{display:block;margin:0}.page{padding:0;margin:0;max-width:none}
-    .workbench,#bench{padding:0;background:none;margin:0}
+    .masthead,.skip,.howto,.tools,.notice,footer,.it-ctl,.tip-h,.rs-h,.rot-h,.prot-h,.ttl-h,.rm,.addframe,.dock,.tray,.tip,.scard{display:none !important}
+    .page{padding:0;margin:0;max-width:none}
+    .workbench,#bench{padding:0;background:none;margin:0;border:0}
     .sheet{box-shadow:none;width:auto;height:calc(100vh - 1mm);max-width:100%;margin:0 auto;break-inside:avoid;
       -webkit-print-color-adjust:exact;print-color-adjust:exact}
     .prose-page{box-shadow:none;width:100%;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -199,7 +213,9 @@
     .sheet-title:empty::before,.prose-title:empty::before,.it-text:empty::before{content:none}   /* placeholders stay on screen */
   }
 
-  @media (max-width:600px){.workbench{margin-left:-16px;margin-right:-16px}#bench{padding:12px 8px}
+  @media (max-width:880px){.howto ol{grid-template-columns:minmax(0,1fr)}}
+  @media (max-width:600px){.workbench{margin-left:-16px;margin-right:-16px;border-left:0;border-right:0}#bench{padding:12px 8px}
+    .howto{padding:18px 18px 14px}
     .dock{flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:6px;padding:8px 10px calc(8px + env(safe-area-inset-bottom))}
     .dock .what{display:none}
     .dock .sg{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:9px 9px 2px 0;margin-top:-7px}
@@ -221,74 +237,73 @@
       <feFuncB type="table" tableValues="0.055 0.22 0.42 0.27 0.70"/>
     </feComponentTransfer>
   </filter>
+  <filter id="worn" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" seed="7" result="n"/>
+    <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -5 3.7" result="m"/>
+    <feComposite in="SourceGraphic" in2="m" operator="in"/>
+  </filter>
 </svg>
+
+<a class="skip" href="#bench">Skip to your page</a>
 
 <div class="page">
 
-  <header class="hero mini frame">
-    <div class="copy">
-      <a class="kicker" href="/the-precinct/">The Precinct</a>
-      <h1><span class="name">Comic builder</span></h1>
-      <p class="tag">Your pictures. Your words.<br>Build the page panel by panel.</p>
-    </div>
-    <div class="art">
-      <img class="noir" src="/the-precinct/img/card-story.jpg" alt="" width="640" height="465">
-      <div class="script" aria-hidden="true"><span>Real stories.</span><span>Your panels.</span></div>
-    </div>
-  </header>
-
-  <div class="layout">
-
-    <aside class="side">
+  <div class="masthead mini">
+    <img class="art noir" src="/the-precinct/img/card-story.jpg" alt="" width="640" height="465">
+    <header class="top">
+      <p class="brand"><a class="logo" href="/the-precinct/"><span class="the">The</span><span class="name">Precinct</span><span class="strap">AI comics. Real ideas.</span></a></p>
       <nav aria-label="The Precinct">
-        <a href="/the-precinct/"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
-        <a href="/the-precinct/#brief"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>Get a brief</a>
-        <a href="/the-precinct/references/"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>References</a>
-        <a href="/the-precinct/builder/" class="on" aria-current="page"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg>Comic builder</a>
-        <a href="/the-precinct/#cast"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.3-7 8-7s7 2.5 8 7"/></svg>The cast</a>
-        <a href="/the-precinct/#settings"><svg viewBox="0 0 24 24"><path d="M3 21V9l5-3v15M8 21V4l8 3v14M16 21V11l5 2v8M2 21h20"/></svg>Settings</a>
-        <a href="/the-precinct/#palettes"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.3-1.2-1.6-1.2-2.8 0-1 .8-1.4 1.8-1.4H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg>Palettes</a>
-        <a href="/the-precinct/#compare"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="16"/><rect x="13" y="4" width="8" height="16"/></svg>Compare</a>
-        <a href="/the-precinct/#resources"><svg viewBox="0 0 24 24"><path d="M3 5c3-1 6-1 9 1 3-2 6-2 9-1v14c-3-1-6-1-9 1-3-2-6-2-9-1z"/><path d="M12 6v14"/></svg>Resources</a>
-        <a href="/the-precinct/key/"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/></svg>API key</a>
-        <a href="/" class="home-link"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg>HeutaLab</a>
+        <a href="/the-precinct/#cases">The cases</a>
+        <a href="/the-precinct/references/">References</a>
+        <a href="/the-precinct/builder/" aria-current="page">Comic builder</a>
+        <a href="/the-precinct/#teachers">Teachers</a>
+        <a href="/the-precinct/#about">About</a>
+        <a class="out" href="/">HeutaLab</a>
       </nav>
-      <blockquote>&ldquo;The truth is always in the last panel.&rdquo;<cite>THE PRECINCT</cite></blockquote>
-      <a class="whois" href="/about/cv/">
-        <b>Who&rsquo;s behind this?</b>
-        Glenn Malcolm: technology &amp; learning curriculum designer, subject leader and international schools consultant. HeutaLab is his home for practical EdTech tools, ideas and training for teachers, leaders and parents.
-        <span>Glenn&rsquo;s CV &rarr;</span>
-      </a>
-    </aside>
-
-    <main>
-      <p class="sub-intro">Add the pictures you made with Gemini, ChatGPT, Copilot or Nano Banana (or borrow ours), then tell the story in words. Your pictures never leave this device, and your page saves itself in this browser as you go.</p>
-
-      <section class="tools frame panel" aria-label="Level">
-        <div class="grp">
-          <h4>Level</h4>
-          <div class="pillrow" id="levelRow">
-            <button class="pill" data-val="prose">Prose</button>
-            <button class="pill" data-val="medium">Medium</button>
-            <button class="pill" data-val="advanced">Advanced</button>
-          </div>
-        </div>
-        <p class="lvl-note" id="levelNote"></p>
-      </section>
-      <p class="notice" id="notice" hidden></p>
-
-      <section class="workbench">
-        <div id="bench"></div>
-      </section>
-
-      <footer>
-        Library pictures are panels from Glenn Malcolm&rsquo;s own 2023 Midjourney noir comic.
-        Pictures you upload stay in this browser on this device: nothing is sent anywhere.
-        Part of the <a href="/">HeutaLab</a> AIFE workshop materials: &ldquo;Human Creativity, AI Precision&rdquo;.
-        <button type="button" class="tips-again" id="tipsAgain">Show the tips again</button>
-      </footer>
-    </main>
+      <a class="cta-line" href="/the-precinct/#cases" id="topStart"><span class="lab">Start a case</span> <span class="arr">&rarr;</span></a>
+    </header>
+    <div class="pagehead paper tape">
+      <p class="where">Back at The Precinct</p>
+      <h1>Comic builder</h1>
+      <p>Your pictures. Your words. Build the page panel by panel.</p>
+    </div>
+    <p class="tagline" aria-hidden="true">Real stories. Your panels.</p>
   </div>
+
+  <main id="main">
+    <section class="howto paper b" aria-label="How the builder works">
+      <ol>
+        <li><b>Bring your pictures in</b>Tap a panel, then upload a picture you made in your AI image tool, paste one you have copied, drop one on the panel, or borrow one of ours.</li>
+        <li><b>Tell the story</b>A paragraph under each picture at Prose. Captions and speech balloons at Medium. Thoughts and sound effects too at Advanced.</li>
+        <li><b>Keep it</b>Download the page as a picture, or print it. It also saves itself in this browser as you go.</li>
+      </ol>
+      <p>Your pictures never leave this device. A picture isn&rsquo;t right yet? <a href="/the-precinct/#compare">Go back and compare it</a>. No pictures yet? <a href="/the-precinct/#cases">Start a case</a>.</p>
+    </section>
+
+    <section class="tools paper" aria-label="Level">
+      <div class="grp">
+        <h4 id="levelLabel">Level</h4>
+        <div class="pillrow" id="levelRow" role="group" aria-labelledby="levelLabel">
+          <button type="button" class="pill" data-val="prose">Prose</button>
+          <button type="button" class="pill" data-val="medium">Medium</button>
+          <button type="button" class="pill" data-val="advanced">Advanced</button>
+        </div>
+      </div>
+      <p class="lvl-note" id="levelNote"></p>
+    </section>
+    <p class="notice" id="notice" hidden></p>
+
+    <section class="workbench">
+      <div id="bench"></div>
+    </section>
+  </main>
+
+  <footer>
+    Library pictures are panels from Glenn Malcolm&rsquo;s own 2023 Midjourney noir comic.
+    Pictures you upload stay in this browser on this device: nothing is sent anywhere.
+    Part of the <a href="/">HeutaLab</a> AIFE workshop materials: &ldquo;Human Creativity, AI Precision&rdquo;.
+    <button type="button" class="tips-again" id="tipsAgain">Show the tips again</button>
+  </footer>
 </div>
 
 <dialog class="lib" id="libDlg">
@@ -301,6 +316,7 @@
 <div class="tip" id="tip" hidden role="status"></div>
 <div class="scard" id="styleCard" hidden role="dialog" aria-label="About this page style"></div>
 
+<script src="/the-precinct/top.js" defer></script>
 <script type="module">
 import THEME from '/the-precinct/theme.js';
 

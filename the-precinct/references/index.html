@@ -3,67 +3,79 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b0f0f">
+<meta name="theme-color" content="#0a0e0f">
 <title>References: The Precinct</title>
 <meta name="description" content="Look before you prompt: describe a noir reference picture at basic, medium or advanced level, then send your description to the briefing desk.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Knewave&family=Oswald:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Special+Elite&family=Courier+Prime:wght@400;700&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Caveat:wght@600&display=swap">
 <link rel="stylesheet" href="/the-precinct/precinct.css">
 <style>
-  .how{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-  .how button{all:unset;box-sizing:border-box;cursor:pointer;padding:14px 16px 16px;border:1px solid var(--frame);background:var(--panel);font-size:13px;line-height:1.5;transition:border-color .15s}
-  .how button:hover{border-color:var(--yellow)}
-  .how button.on{border-color:var(--yellow);background:var(--panel-2)}
-  .how b{display:block;font-family:var(--brush);font-weight:400;color:var(--yellow);font-size:24px;line-height:1;margin-bottom:6px;text-transform:uppercase}
-  .how button:focus-visible{outline:2px solid var(--yellow)}
+  /* the four ways in: see it done, work it together, your turn, any picture */
+  .how{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin-top:6px}
+  .how button{all:unset;box-sizing:border-box;position:relative;isolation:isolate;cursor:pointer;padding:16px 16px 18px;color:var(--ink-p);
+    font-size:13px;line-height:1.45;filter:drop-shadow(0 5px 7px rgba(0,0,0,.5))}
+  .how button::before{content:"";position:absolute;inset:0;z-index:-1;clip-path:var(--torn-a);
+    background:var(--grain),linear-gradient(172deg,var(--paper-hi) 0%,var(--paper) 45%,var(--paper-lo) 100%)}
+  .how button:nth-child(even)::before{clip-path:var(--torn-b)}
+  .how button:nth-child(odd){transform:rotate(-.6deg)}
+  .how button:nth-child(even){transform:rotate(.6deg)}
+  .how b{display:block;font-family:var(--label);font-weight:700;font-size:23px;letter-spacing:.05em;line-height:1;margin-bottom:7px;text-transform:uppercase}
+  .how button:hover b{color:var(--red-deep)}
+  .how button.on b{color:var(--red)}
+  .how button.on::after{content:"\2713\00a0 You\2019re here";position:absolute;top:-9px;right:12px;background:var(--red);color:#fff;
+    font-family:var(--label);font-weight:600;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px}
+  .how button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
 
-  .controls{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin-top:18px}
-  .controls h4{font-family:var(--label);font-weight:500;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--yellow);margin:0 0 10px}
-  .pill small{font-weight:400;letter-spacing:.06em;text-transform:none;font-family:var(--serif);font-style:italic;margin-left:6px;opacity:.8}
-
-  .stage{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);margin-top:18px}
-  .ref-fig{margin:0;background:#050707;border-right:1px solid var(--frame);display:flex;flex-direction:column}
-  .ref-fig .imgbox{flex:1;display:flex;align-items:center;justify-content:center;min-height:320px;padding:14px}
-  .ref-fig img{max-height:560px;width:auto;max-width:100%;object-fit:contain;box-shadow:0 0 0 1px var(--frame)}
-  .ref-fig figcaption{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--frame);
-    font-family:var(--label);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim)}
-  .shuffle{font-size:11.5px;padding:7px 12px}
-
-  .ref-qs{padding:22px 24px 24px}
-  .ref-qs h2{font-family:var(--brush);font-weight:400;color:var(--yellow);font-size:clamp(28px,3vw,38px);margin:0;line-height:1;text-transform:uppercase;transform:rotate(-2deg);transform-origin:left;text-shadow:2px 2px 0 #000}
-  .ref-qs .blurb{margin:12px 0 4px;font-size:14px}
-  .ref-qs .modehint{margin:0 0 14px;font-size:13px;color:var(--ink-dim);font-style:italic}
-  .qs{list-style:none;margin:0;padding:0}
-  .qs li{padding:10px 0;border-top:1px solid rgba(52,64,62,.6)}
-  .qs .q{display:block;font-family:var(--label);font-weight:500;letter-spacing:.12em;text-transform:uppercase;font-size:12.5px;color:var(--yellow);margin-bottom:4px}
-  .qs .a{margin:0;font-size:14px;line-height:1.5}
-  .qs .reveal{background:none;border:1px dashed var(--frame);color:var(--ink-dim);font-family:var(--label);letter-spacing:.12em;text-transform:uppercase;font-size:11.5px;padding:5px 10px;cursor:pointer}
-  .qs .reveal:hover{color:var(--yellow);border-color:var(--yellow)}
-  .qs input{width:100%;background:var(--bg);border:1px solid var(--frame);color:var(--ink);padding:8px 10px;font-family:var(--serif);font-size:14px}
-  .qs input:focus{outline:2px solid var(--yellow)}
-  .revealall{margin-top:8px}
-  .castpick{margin-top:16px;padding-top:14px;border-top:1px solid rgba(52,64,62,.6)}
-  .castpick .q{display:block;font-family:var(--label);font-weight:500;letter-spacing:.12em;text-transform:uppercase;font-size:12.5px;color:var(--yellow);margin-bottom:8px}
-  .castpick .pill{padding:7px 12px;font-size:12.5px}
+  /* the picture and its questions, on one sheet */
+  .looking{margin-top:32px;padding:22px 28px 28px}
+  .controls{display:flex;flex-wrap:wrap;gap:14px 44px;padding-bottom:18px;margin-bottom:22px;border-bottom:1.5px dashed var(--rule-p)}
+  .controls .field{margin:0}
+  .stage{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:28px;align-items:start}
+  .ref-fig{margin:0;background:#070a0a;border:2px solid var(--ink-p);display:flex;flex-direction:column}
+  .ref-fig .imgbox{display:flex;align-items:center;justify-content:center;min-height:320px}
+  .ref-fig img{max-height:560px;width:auto;max-width:100%;object-fit:contain}
+  .ref-fig figcaption{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;background:var(--ink-p);color:var(--paper);
+    font-family:var(--label);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase}
   .castag{color:var(--yellow)}
+  .shuffle{font-size:11.5px;padding:6px 10px;background:transparent;color:var(--paper);box-shadow:inset 0 0 0 1.5px currentColor}
+  .shuffle:hover{background:rgba(255,255,255,.12)}
+  .shuffle:focus-visible{outline-color:var(--yellow)}
 
-  .box{margin-top:18px;padding-top:16px;border-top:1px dashed var(--frame)}
-  .box label{display:block;font-family:var(--label);font-weight:500;letter-spacing:.16em;text-transform:uppercase;font-size:12.5px;color:var(--yellow);margin-bottom:8px}
+  .ref-qs h2{font-family:var(--slab);font-weight:400;font-size:clamp(26px,2.8vw,34px);line-height:1.1;margin:0;text-shadow:.5px 0 0 currentColor}
+  .ref-qs .blurb{margin:10px 0 4px;font-size:14.5px}
+  .ref-qs .modehint{margin:0 0 14px;font-size:13px;color:var(--ink-p2)}
+  .qs{list-style:none;margin:0;padding:0}
+  .qs li{padding:10px 0;border-top:1.5px dashed var(--rule-p)}
+  .qs .q,.castpick .q{display:block;font-family:var(--label);font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:12.5px;margin-bottom:5px}
+  .qs .a{margin:0;font-size:14px;line-height:1.5}
+  .qs .reveal{background:var(--paper-hi);border:1.5px dashed var(--ink-p2);color:var(--ink-p);font-family:var(--label);letter-spacing:.12em;text-transform:uppercase;font-size:11.5px;padding:5px 10px;cursor:pointer}
+  .qs .reveal:hover{border-style:solid}
+  .qs input{width:100%;background:var(--paper-hi);border:1.5px solid var(--ink-p2);color:var(--ink-p);padding:8px 10px;font:14px/1.4 var(--type)}
+  .revealall{margin-top:8px}
+  .castpick{margin-top:16px;padding-top:14px;border-top:1.5px dashed var(--rule-p)}
+  .castpick .q{margin-bottom:8px}
+  .castpick .pill{padding:7px 12px;font-size:12.5px}
+
+  .box{margin-top:18px;padding-top:16px;border-top:1.5px dashed var(--rule-p)}
+  .box label{display:block;font-family:var(--label);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:12.5px;margin-bottom:8px}
   .box .rowbtns{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
-  .box .rebuild{background:none;border:0;color:var(--ink-dim);font-family:var(--label);letter-spacing:.1em;text-transform:uppercase;font-size:11.5px;cursor:pointer;text-decoration:underline}
-  .box .rebuild:hover{color:var(--yellow)}
-  .btn.ghost{background:transparent;color:var(--ink);box-shadow:none;border:1px solid var(--frame)}
-  .btn.ghost:hover{border-color:var(--yellow);color:var(--yellow);background:transparent}
+  .box .rebuild{background:none;border:0;color:var(--ink-p2);font-family:var(--label);letter-spacing:.1em;text-transform:uppercase;font-size:11.5px;cursor:pointer;text-decoration:underline}
+  .box .rebuild:hover{color:var(--red-deep)}
 
-  @media (max-width:1100px){.how{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:1040px){.how{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media (max-width:880px){
     .stage{grid-template-columns:minmax(0,1fr)}
-    .ref-fig{border-right:0;border-bottom:1px solid var(--frame)}
     .ref-fig img{max-height:420px}
-    .controls{grid-template-columns:minmax(0,1fr)}
   }
-  @media (max-width:600px){.ref-qs{padding:20px 18px}.ref-fig .imgbox{min-height:220px;padding:10px}}
+  @media (max-width:600px){
+    .how{gap:14px}
+    .how button{transform:none !important}
+    .how b{font-size:20px}
+    .looking{padding:18px 16px 22px}
+    .ref-fig .imgbox{min-height:220px}
+    .box .rowbtns .btn{flex:1 1 100%}
+  }
 </style>
 </head>
 <body id="top">
@@ -77,62 +89,56 @@
       <feFuncB type="table" tableValues="0.055 0.22 0.42 0.27 0.70"/>
     </feComponentTransfer>
   </filter>
+  <filter id="worn" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" seed="7" result="n"/>
+    <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -5 3.7" result="m"/>
+    <feComposite in="SourceGraphic" in2="m" operator="in"/>
+  </filter>
 </svg>
+
+<a class="skip" href="#main">Skip to the pictures</a>
 
 <div class="page">
 
-  <header class="hero mini frame">
-    <div class="copy">
-      <a class="kicker" href="/the-precinct/">The Precinct</a>
-      <h1><span class="name">References</span></h1>
-      <p class="tag">Look first. Then prompt.<br>The words you find here become your brief.</p>
-    </div>
-    <div class="art">
-      <img class="noir" src="/the-precinct/img/femme.jpg" alt="" width="575" height="355">
-      <div class="script" aria-hidden="true"><span>What do</span><span>you see?</span></div>
-    </div>
-  </header>
-
-  <div class="layout">
-
-    <aside class="side">
+  <div class="masthead mini">
+    <img class="art noir" src="/the-precinct/img/femme.jpg" alt="" width="575" height="355">
+    <header class="top">
+      <p class="brand"><a class="logo" href="/the-precinct/"><span class="the">The</span><span class="name">Precinct</span><span class="strap">AI comics. Real ideas.</span></a></p>
       <nav aria-label="The Precinct">
-        <a href="/the-precinct/"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
-        <a href="/the-precinct/#brief"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>Get a brief</a>
-        <a href="/the-precinct/references/" class="on" aria-current="page"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>References</a>
-        <a href="/the-precinct/builder/"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg>Comic builder</a>
-        <a href="/the-precinct/#cast"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.3-7 8-7s7 2.5 8 7"/></svg>The cast</a>
-        <a href="/the-precinct/#settings"><svg viewBox="0 0 24 24"><path d="M3 21V9l5-3v15M8 21V4l8 3v14M16 21V11l5 2v8M2 21h20"/></svg>Settings</a>
-        <a href="/the-precinct/#palettes"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.3-1.2-1.6-1.2-2.8 0-1 .8-1.4 1.8-1.4H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg>Palettes</a>
-        <a href="/the-precinct/#compare"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="16"/><rect x="13" y="4" width="8" height="16"/></svg>Compare</a>
-        <a href="/the-precinct/#resources"><svg viewBox="0 0 24 24"><path d="M3 5c3-1 6-1 9 1 3-2 6-2 9-1v14c-3-1-6-1-9 1-3-2-6-2-9-1z"/><path d="M12 6v14"/></svg>Resources</a>
-        <a href="/the-precinct/key/"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/></svg>API key</a>
-        <a href="/" class="home-link"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg>HeutaLab</a>
+        <a href="/the-precinct/#cases">The cases</a>
+        <a href="/the-precinct/references/" aria-current="page">References</a>
+        <a href="/the-precinct/builder/">Comic builder</a>
+        <a href="/the-precinct/#teachers">Teachers</a>
+        <a href="/the-precinct/#about">About</a>
+        <a class="out" href="/">HeutaLab</a>
       </nav>
-      <blockquote>&ldquo;Every picture is a witness. Ask it the right questions.&rdquo;<cite>THE PRECINCT</cite></blockquote>
-      <a class="whois" href="/about/cv/">
-        <b>Who&rsquo;s behind this?</b>
-        Glenn Malcolm: technology &amp; learning curriculum designer, subject leader and international schools consultant. HeutaLab is his home for practical EdTech tools, ideas and training for teachers, leaders and parents.
-        <span>Glenn&rsquo;s CV &rarr;</span>
-      </a>
-    </aside>
+      <a class="cta-line" href="/the-precinct/#cases" id="topStart"><span class="lab">Start a case</span> <span class="arr">&rarr;</span></a>
+    </header>
+    <div class="pagehead paper tape">
+      <p class="where">On The Precinct</p>
+      <h1>References</h1>
+      <p>Look first. Then prompt. The words you find here become your brief.</p>
+    </div>
+    <p class="tagline" aria-hidden="true">What do you see?</p>
+  </div>
 
-    <main>
+  <main id="main">
 
-      <section class="how" aria-label="How this works" id="howRow"></section>
+    <section class="how" aria-label="How this works" id="howRow"></section>
 
-      <section class="controls frame panel">
-        <div>
-          <h4>Level</h4>
-          <div class="pillrow" id="levelRow"></div>
+    <section class="looking folder">
+      <div class="controls">
+        <div class="field">
+          <h4 id="levelLabel">Level</h4>
+          <div class="pillrow" id="levelRow" role="group" aria-labelledby="levelLabel"></div>
         </div>
-        <div>
-          <h4>Mode</h4>
-          <div class="pillrow" id="modeRow"></div>
+        <div class="field">
+          <h4 id="modeLabel">Mode</h4>
+          <div class="pillrow" id="modeRow" role="group" aria-labelledby="modeLabel"></div>
         </div>
-      </section>
+      </div>
 
-      <section class="stage frame" aria-live="polite">
+      <div class="stage" aria-live="polite">
         <figure class="ref-fig">
           <div class="imgbox"><img id="refImg" src="" alt=""></div>
           <figcaption><span id="refCap"></span><button type="button" class="btn shuffle" id="shuffleBtn" hidden>Shuffle <span class="arr">&#x21bb;</span></button></figcaption>
@@ -142,11 +148,11 @@
           <p class="blurb" id="lensBlurb"></p>
           <p class="modehint" id="modeHint"></p>
           <ol class="qs" id="qs"></ol>
-          <button type="button" class="btn ghost revealall" id="revealAll" hidden>Reveal all</button>
+          <button type="button" class="btn ghost small revealall" id="revealAll" hidden>Reveal all</button>
 
           <div class="castpick" id="castPick" hidden>
-            <span class="q">Could this be one of the cast?</span>
-            <div class="pillrow" id="castPickRow"></div>
+            <span class="q" id="castPickLabel">Could this be one of the cast?</span>
+            <div class="pillrow" id="castPickRow" role="group" aria-labelledby="castPickLabel"></div>
           </div>
 
           <div class="box">
@@ -160,18 +166,20 @@
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <footer>
-        Every reference here is a panel from Glenn Malcolm&rsquo;s own 2023 Midjourney noir comic, shown in its original colours.
-        Your answers stay in this browser. Sending to the briefing desk just carries them over to the next page.
-        Part of the <a href="/">HeutaLab</a> AIFE workshop materials: &ldquo;Human Creativity, AI Precision&rdquo;.
-      </footer>
+  </main>
 
-    </main>
-  </div>
+  <footer>
+    Every reference here is a panel from Glenn Malcolm&rsquo;s own 2023 Midjourney noir comic, shown in its original colours.
+    Your answers stay in this browser. Sending to the briefing desk just carries them over to your case on the home page.
+    Part of the <a href="/">HeutaLab</a> AIFE workshop materials: &ldquo;Human Creativity, AI Precision&rdquo;.
+  </footer>
+
 </div>
 
+<script src="/the-precinct/top.js" defer></script>
 <script type="module">
 import THEME from '/the-precinct/theme.js';
 
@@ -190,9 +198,9 @@ import THEME from '/the-precinct/theme.js';
 
   // ---- controls built from the theme ----
   $('howRow').innerHTML = MODE_IDS.map(m => '<button type="button" data-mode="' + m + '"><b>' + esc(MODES[m].label) + '</b>' + esc(MODES[m].card) + '</button>').join('');
-  $('modeRow').innerHTML = MODE_IDS.map(m => '<button class="pill" data-val="' + m + '">' + esc(MODES[m].label) + '<small>' + esc(MODES[m].sub.toLowerCase()) + '</small></button>').join('');
-  $('levelRow').innerHTML = Object.entries(LEVELS).map(([id, L]) => '<button class="pill" data-val="' + id + '">' + esc(L.name) + '<small>' + esc(L.short) + '</small></button>').join('');
-  $('castPickRow').innerHTML = THEME.cast.map(c => '<button class="pill" data-val="' + c.id + '">' + esc(c.short) + '<small>' + esc(c.role.replace(/^The /, '').toLowerCase()) + '</small></button>').join('');
+  $('modeRow').innerHTML = MODE_IDS.map(m => '<button type="button" class="pill" data-val="' + m + '">' + esc(MODES[m].label) + '<small>' + esc(MODES[m].sub.toLowerCase()) + '</small></button>').join('');
+  $('levelRow').innerHTML = Object.entries(LEVELS).map(([id, L]) => '<button type="button" class="pill" data-val="' + id + '">' + esc(L.name) + '<small>' + esc(L.short) + '</small></button>').join('');
+  $('castPickRow').innerHTML = THEME.cast.map(c => '<button type="button" class="pill" data-val="' + c.id + '">' + esc(c.short) + '<small>' + esc(c.role.replace(/^The /, '').toLowerCase()) + '</small></button>').join('');
 
   function currentRef(){
     const L = LEVELS[state.level];
@@ -237,6 +245,13 @@ import THEME from '/the-precinct/theme.js';
     $('descCount').textContent = desc.value.length;
   }
 
+  // The chosen pill or card says so to a screen reader as well as to the eye.
+  const mark = (sel, cls, isOn) => document.querySelectorAll(sel).forEach(b => {
+    const on = isOn(b);
+    b.classList.toggle(cls, on);
+    b.setAttribute('aria-pressed', String(on));
+  });
+
   function render(){
     const L = LEVELS[state.level], ref = currentRef(), model = modelAnswers();
     img.src = THEME.refPath(ref);
@@ -263,7 +278,7 @@ import THEME from '/the-precinct/theme.js';
 
     // Only your own readings of a character picture ask which cast member it is.
     $('castPick').hidden = !(isCharacter() && (state.mode === 'create' || state.mode === 'explore'));
-    document.querySelectorAll('#castPickRow .pill').forEach(b => b.classList.toggle('active', b.dataset.val === who));
+    mark('#castPickRow .pill', 'active', b => b.dataset.val === who);
 
     $('descLabel').textContent = state.mode === 'demo' ? 'Put together, ready for the briefing desk'
       : state.mode === 'guide' ? 'What the group has revealed so far' : 'Your description, ready for the briefing desk';
@@ -271,9 +286,9 @@ import THEME from '/the-precinct/theme.js';
     $('rebuildBtn').hidden = true;
     setDesc(assemble());
 
-    document.querySelectorAll('#levelRow .pill').forEach(b => b.classList.toggle('active', b.dataset.val === state.level));
-    document.querySelectorAll('#modeRow .pill').forEach(b => b.classList.toggle('active', b.dataset.val === state.mode));
-    document.querySelectorAll('.how button').forEach(b => b.classList.toggle('on', b.dataset.mode === state.mode));
+    mark('#levelRow .pill', 'active', b => b.dataset.val === state.level);
+    mark('#modeRow .pill', 'active', b => b.dataset.val === state.mode);
+    mark('.how button', 'on', b => b.dataset.mode === state.mode);
   }
 
   function shuffle(){
