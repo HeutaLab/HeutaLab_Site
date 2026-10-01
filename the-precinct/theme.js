@@ -468,8 +468,10 @@ export default {
   // The files are img/stickers/<dir>/<file>.webp (see-through) and <file>-b.webp (white border).
   stickers: [
     { who: 'Harlan Vance', dir: 'vance', items: [
-      ['standing', 'Standing', 36], ['side', 'Side on', 28], ['walking-away', 'Walking away', 34],
-      ['pointing', 'Pointing', 35], ['arms-folded', 'Arms folded', 36], ['on-the-phone', 'On the telephone', 36],
+      ['standing', 'Standing', 35], ['side', 'Side on', 24], ['walking-away', 'Walking away', 32],
+      ['pointing', 'Pointing', 37], ['arms-folded', 'Arms folded', 36], ['on-the-phone', 'On the telephone', 36],
+      ['face-stare', 'Cold stare', 38, 'face'], ['face-scowl', 'Scowl', 38, 'face'], ['face-smug', 'Smug smile', 37, 'face'],
+      ['face-shouting', 'Shouting', 37, 'face'], ['face-suspicious', 'Suspicious', 38, 'face'], ['face-caught', 'Caught off guard', 38, 'face'],
       ['fedora', 'Fedora', 24, 'thing'], ['telephone', 'Telephone', 22, 'thing'], ['case-file', 'Case file', 23, 'thing'],
       ['envelope', 'Envelope', 25, 'thing'], ['pocket-watch', 'Pocket watch', 19, 'thing'], ['stamp', 'Rubber stamp', 23, 'thing'],
     ] },
