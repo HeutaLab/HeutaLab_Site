@@ -225,7 +225,7 @@
         <section class="stepp" data-step="who" hidden>
           <p class="where">On The Precinct</p>
           <h3 tabindex="-1"><span class="n"></span>Choose a character</h3>
-          <p class="lead">Four characters, one story. Pick who you&rsquo;re drawing. Their <strong>look</strong> goes into every prompt word for word: it&rsquo;s what keeps them recognisable from picture to picture. <span id="whoNote"></span></p>
+          <p class="lead">Seven characters, one story: four inside the precinct, three outside it, and the caf&eacute; where their paths cross. Pick who you&rsquo;re drawing. Their <strong>look</strong> goes into every prompt word for word: it&rsquo;s what keeps them recognisable from picture to picture. <span id="whoNote"></span></p>
           <div class="cast-grid" id="castGrid"></div>
           <div class="relations" id="relations"></div>
           <p class="ready" id="whoReady" aria-live="polite"></p>
@@ -473,12 +473,16 @@
     <a href="/apps/"><b>More from HeutaLab</b>Classroom apps: LoopLab, PlanBench, Sage Stage and more, for teachers and learners of 5&ndash;13.<span>See the apps &rarr;</span></a>
     <div class="castdl">
       <b>The cast, ready to use</b>
-      <p>All four characters in the site&rsquo;s yellow palette, as square PNGs for your slides, storyboards or reference sheets. Match them with each character&rsquo;s look from &ldquo;Choose a character&rdquo; in Case 01.</p>
+      <p>All seven characters and The Ziggurat in the site&rsquo;s yellow palette, as PNGs for your slides, storyboards or reference sheets. Match them with each one&rsquo;s look from &ldquo;Choose a character&rdquo; in Case 01.</p>
       <div class="castdl-grid">
         <a href="img/cast/harlan-vance-yellow.png" download><img class="noir" src="img/ref/vance-card.jpg" alt="Commissioner Harlan Vance" loading="lazy" width="900" height="900"><span>Harlan Vance &darr;</span></a>
         <a href="img/cast/edward-novak-yellow.png" download><img class="noir" src="img/ref/novak-card.jpg" alt="Edward Novak" loading="lazy" width="900" height="900"><span>Edward Novak &darr;</span></a>
         <a href="img/cast/frank-rourke-yellow.png" download><img class="noir" src="img/ref/rourke-card.jpg" alt="Sergeant Frank Rourke" loading="lazy" width="900" height="900"><span>Frank Rourke &darr;</span></a>
         <a href="img/cast/vera-sinclair-yellow.png" download><img class="noir" src="img/ref/vera-card.jpg" alt="Vera Sinclair" loading="lazy" width="800" height="800"><span>Vera Sinclair &darr;</span></a>
+        <a href="img/cast/hattie-cole-yellow.png" download><img class="noir" src="img/ref/hattie-card.jpg" alt="Hattie Cole" loading="lazy" width="900" height="900"><span>Hattie Cole &darr;</span></a>
+        <a href="img/cast/tommy-doyle-yellow.png" download><img class="noir" src="img/ref/cop.jpg" alt="Patrolman Tommy Doyle" loading="lazy" width="900" height="891"><span>Tommy Doyle &darr;</span></a>
+        <a href="img/cast/charlotte-van-der-woning-yellow.png" download><img class="noir" src="img/ref/charlotte-card.jpg" alt="Charlotte Van Der Woning" loading="lazy" width="900" height="900"><span>Charlotte Van Der Woning &darr;</span></a>
+        <a href="img/cast/the-ziggurat-yellow.png" download><img class="noir" src="img/ref/ziggurat.jpg" alt="The Ziggurat, an Art Deco caf&eacute;" loading="lazy" width="900" height="600"><span>The Ziggurat &darr;</span></a>
       </div>
     </div>
   </section>
@@ -678,10 +682,17 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
     + (c.arc ? '<p class="arc"><b>His arc</b>' + c.arc.map(esc).join(' &rarr; ') + '</p>' : '')
     + '<div class="look"><b>Their look, every time</b><span>' + esc(c.look) + '</span>'
     + '<button type="button" class="btn ghost small" data-copylook="' + c.id + '">Copy look</button></div></div></article>').join('')
+    // The place sits with the cast: nothing to choose, only a look to copy into an idea.
+    + THEME.places.map(p =>
+    '<article class="case place" id="place-' + p.id + '"><img class="noir" src="' + p.img + '" alt="" loading="lazy">'
+    + '<button type="button" class="btn small pick" data-copyplace="' + p.id + '">Copy its look</button>'
+    + '<div class="case-text"><span class="case-tag">' + esc(p.role) + ' · ' + esc(p.tag.toLowerCase()) + '</span><h4>' + esc(p.name) + '</h4><p>' + esc(p.story) + '</p>'
+    + '<div class="look"><b>Its look, every time</b><span>' + esc(p.look) + '</span></div>'
+    + '<p class="put">Paste it into your idea to put a character here.</p></div></article>').join('')
     + '<article class="case own" id="cast-own"><div><h4>A character of my own</h4><p>Leave the cast out and draw someone new. Your own description carries their look.</p></div>'
     + '<span class="chosen">✓ Chosen</span><button type="button" class="btn small pick" data-pick="own" aria-pressed="false">Choose</button></article>';
-  $('relations').innerHTML = '<b>Who wants what</b>' + THEME.relations.map(([a, verb, b]) =>
-    '<span class="rel"><em>' + esc(castName(a)) + '</em> ' + esc(verb) + ' <em>' + esc(castName(b)) + '</em></span>').join('');
+  $('relations').innerHTML = '<b>Who wants what</b>' + THEME.relations.map(([a, verb, b, tail]) =>
+    '<span class="rel"><em>' + esc(castName(a)) + '</em> ' + esc(verb) + ' <em>' + esc(castName(b)) + '</em>' + (tail ? ' ' + esc(tail) : '') + '</span>').join('');
   $('palGrid').innerHTML = Object.entries(THEME.palettes).map(([id, p]) =>
     '<button type="button" class="pill pal' + (id === state.palette ? ' active' : '') + '" data-val="' + id + '"><span class="chosen">✓ Chosen</span><img src="' + p.sample + '" alt="" loading="lazy">'
     + '<span class="txt"><b><i class="dot-c" style="background:' + p.dot + '"></i>' + esc(p.label) + '</b>' + esc(p.note) + '</span></button>').join('');
@@ -835,7 +846,7 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
   const maxCast = () => state.tier === 'advanced' || (!state.tier && pendingTier === 'advanced') ? 2 : 1;
   function syncWho(){
     state.cast = state.cast.slice(-maxCast());
-    document.querySelectorAll('#castGrid .case').forEach(card => {
+    document.querySelectorAll('#castGrid .case:not(.place)').forEach(card => {
       const id = card.dataset.id, on = id ? state.cast.includes(id) : (own && !state.cast.length);
       card.classList.toggle('picked', on);
       const b = card.querySelector('.pick');
@@ -847,7 +858,7 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
       : own ? 'Character ready: one of your own.' : '';
   }
   $('castGrid').addEventListener('click', e => {
-    const pick = e.target.closest('[data-pick]'), copy = e.target.closest('[data-copylook]');
+    const pick = e.target.closest('[data-pick]'), copy = e.target.closest('[data-copylook]'), place = e.target.closest('[data-copyplace]');
     if (pick) {
       const id = pick.dataset.pick;
       if (id === 'own') { own = state.cast.length ? true : !own; state.cast = []; }
@@ -856,6 +867,7 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
       setDone('who', state.cast.length > 0 || own);
     }
     if (copy) copyText(THEME.cast.find(c => c.id === copy.dataset.copylook).look, copy, copy.closest('.case').querySelector('.look span'));
+    if (place) copyText(THEME.places.find(p => p.id === place.dataset.copyplace).look, place, place.closest('.case').querySelector('.look span'));
   });
 
   wireRow('platformRow', 'platform', v => { J.platform = v; saveJ(); });

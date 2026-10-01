@@ -10,10 +10,10 @@ export default {
   name: 'The Precinct',
   houseStyle: 'Al Williamson, 1940s film noir comic book, black and white ink illustration',
 
-  // The four characters. `name` is what the site calls them everywhere; `short`
-  // fits a button; `role` is the part they play. `look` is the fixed description
-  // attendees repeat in every prompt: it keeps a character recognisable picture
-  // to picture.
+  // The seven characters: four inside the precinct, then three outside it.
+  // `name` is what the site calls them everywhere; `short` fits a button;
+  // `role` is the part they play. `look` is the fixed description attendees
+  // repeat in every prompt: it keeps a character recognisable picture to picture.
   cast: [
     {
       id: 'commissioner', name: 'Commissioner Harlan Vance', short: 'Harlan Vance', role: 'The Commissioner', tag: 'The villain',
@@ -41,14 +41,50 @@ export default {
       look: 'a woman in her thirties, shoulder-length platinum-blonde hair in soft 1940s waves, a beauty mark on her cheek, dark lipstick and arched brows, pearl drop earrings, a long black sleeveless evening gown, long pale evening gloves, a black fur stole over one arm, black heels, a cool sideways glance',
       img: IMG + 'ref/vera-card.jpg',
     },
+    {
+      id: 'reporter', name: 'Hattie Cole', short: 'Hattie Cole', role: 'The Reporter', tag: 'The one who asks',
+      story: 'New at the paper and handed the stories nobody wants. She thinks Harlan Vance is the one that gets her off the night desk, and she has seen Vera Sinclair at The Ziggurat.',
+      look: 'a woman in her late twenties, warm brown skin, dark hair pinned in rolled curls at the nape, dark lipstick and arched brows, a black flat-crowned hat with a wide brim and a dark band, a pale belted trench coat with the collar turned up, black leather gloves, a small notebook and a pen in her hands, a sharp glance back over her shoulder',
+      img: IMG + 'ref/hattie-card.jpg',
+    },
+    {
+      // The picture is a stand-in (the old `cop` reference) until Glenn's new portrait arrives.
+      id: 'rookie', name: 'Patrolman Tommy Doyle', short: 'Tommy Doyle', role: 'The Rookie', tag: 'The one who saw',
+      story: 'Three weeks on the job. He saw Frank Rourke do something on Vance’s orders and has told no one, because he doesn’t know who is safe to tell. He keeps crossing paths with Hattie Cole.',
+      look: 'a patrolman in his early twenties, fresh-faced and clean-shaven, a peaked police cap with a plain shield badge, a crisp dark uniform buttoned to the collar with a plain star on each collar point, shoulders squared, a wary sideways glance',
+      img: IMG + 'ref/cop.jpg',
+    },
+    {
+      id: 'owner', name: 'Charlotte Van Der Woning', short: 'Charlotte', role: 'The Owner', tag: 'The one who hears',
+      story: 'She owns The Ziggurat and has poured coffee for every cop in the precinct for twenty years. She knows who sat with Vera Sinclair, and she is deciding whether saying so is worth the trouble.',
+      look: 'a woman in her fifties, grey-streaked dark hair pinned up in neat rolls, thin wire-rimmed glasses on a fine chain, a dark tailored dress with a wide white collar and a stepped geometric brooch at the throat, arms folded, chin up, a level look that gives nothing away',
+      img: IMG + 'ref/charlotte-card.jpg',
+    },
+  ],
+
+  // The place where their paths cross. Like a character, it has a fixed `look`
+  // to repeat word for word, so the room stays the same from picture to picture.
+  places: [
+    {
+      id: 'ziggurat', name: 'The Ziggurat', role: 'The café', tag: 'Where their paths cross',
+      story: 'An Art Deco café near the precinct, open all night. Everyone ends up here sooner or later, and Charlotte Van Der Woning sees them all come and go.',
+      look: 'a long narrow Art Deco café at night, a stepped ceiling in three tiers, a doorway framed by stepped ziggurat pilasters, black leather booths with chrome-edged tables along a wall of tall square-paned windows, a curved chrome-edged counter with a row of round chrome stools, frosted glass pendant lamps in stepped tiers hanging low, a black-and-white terrazzo floor in a chevron pattern, rain and street lamps outside',
+      img: IMG + 'ref/ziggurat.jpg',
+    },
   ],
 
   // Who wants what from whom, shown under the cast so nobody mixes them up.
+  // An optional fourth part finishes the line ("... at The Ziggurat").
   relations: [
     ['commissioner', 'uses', 'disillusioned'],
     ['disillusioned', 'is in love with', 'femme'],
     ['femme', 'admires', 'disillusioned'],
     ['femme', 'wants', 'detective'],
+    ['reporter', 'is digging into', 'commissioner'],
+    ['reporter', 'saw', 'femme', 'at The Ziggurat'],
+    ['rookie', 'has questioned', 'owner'],
+    ['owner', 'knows who sat with', 'femme'],
+    ['reporter', 'keeps running into', 'rookie'],
   ],
 
   // Monochrome plus at most one accent family. `phrase` goes into prompts near verbatim.
@@ -91,9 +127,9 @@ export default {
   // pictures that fit one) the cast member it could stand in for.
   refs: {
     'chief':         ['A heavy-set police chief in a fedora and long trench coat, hands in his pockets, scowling', 'character', 'commissioner'],
-    'hat-woman':     ['A woman in a black wide-brimmed hat glancing over her shoulder against a yellow sky', 'character'],
-    'cop':           ['A uniformed police officer in a peaked cap with a badge and a star on his collar', 'character'],
-    'bar':           ['A woman with waved hair in a bar booth facing a man in a dark suit, two men watching behind', 'character'],
+    'hat-woman':     ['A woman in a black wide-brimmed hat glancing over her shoulder against a yellow sky', 'character', 'reporter'],
+    'cop':           ['A uniformed police officer in a peaked cap with a badge and a star on his collar', 'character', 'rookie'],
+    'bar':           ['A woman with waved hair in a café booth facing a man in a dark suit, two men watching behind', 'character'],
     'blonde-green':  ['Close-up of a blonde woman with dark lipstick, eyes lowered, in green tones', 'character'],
     'blonde-yellow': ['A blonde woman in a yellow jacket looking down, lit buildings behind her', 'character'],
     'rain-street':   ['A rain-soaked town street at night: a parked car, a streetlamp and a figure in a doorway', 'setting'],
@@ -105,6 +141,9 @@ export default {
     'vance-card':    ['A heavy-set older man in a fedora and belted trench coat over a three-piece suit, hands in his pockets, staring coldly out of the dark', 'character', 'commissioner'],
     'vera-card':     ['A woman with shoulder-length platinum-blonde waves, pearl earrings and a black evening gown, looking back over her shoulder with a knowing smile', 'character', 'femme'],
     'rourke-card':   ['A huge muscular man in shirtsleeves, braces and a loosened tie, teeth bared around a matchstick, glaring out of the dark', 'character', 'disillusioned'],
+    'hattie-card':   ['A woman in a wide-brimmed black hat and a pale trench coat, glancing back over her shoulder, a notebook and pen in her gloved hands', 'character', 'reporter'],
+    'charlotte-card':['A woman in her fifties with pinned-up hair and glasses on a chain, a dark dress with a white collar and a stepped brooch, arms folded', 'character', 'owner'],
+    'ziggurat':      ['An empty Art Deco café at night: leather booths, a chrome counter with round stools, stepped glass lamps, a chevron floor and rain outside the windows', 'setting'],
     'rourke-front':  ['A huge muscular man in shirtsleeves and braces, a holster at his side and a jacket over his shoulder, scowling', 'character', 'disillusioned'],
     'rourke-snarl':  ['Close-up of a dark-haired man baring his teeth around a cigarette, face half in shadow', 'character', 'disillusioned'],
     'rourke-rage':   ['A stubbled man snarling with rage, a matchstick clamped in his teeth', 'character', 'disillusioned'],
@@ -162,7 +201,7 @@ export default {
         jewellery: 'Small drop earrings.',
         angle: 'Eye level, a medium shot over the man’s shoulder, so we sit in on the conversation.',
         lighting: 'Pendant lamps overhead: soft light on her face, his half in shadow.',
-        background: 'A booth in a bar or diner, a window partition, two men in suits watching.' }],
+        background: 'A booth in a café or diner, a window partition, two men in suits watching.' }],
       guide: ['blonde-green', {
         hair: 'Long blonde waves falling past the shoulders, parted to one side.',
         clothing: 'A green jacket with a wide lapel.',
@@ -238,7 +277,7 @@ export default {
     { n: 2, key: 'location', tab: 'Location', title: 'Create a location', tier: 'basic', subject: 'setting', ref: 'office',
       about: 'One empty room, lit like something just happened there.' },
     { n: 3, key: 'scene', tab: 'Scene', title: 'Direct a scene', tier: 'medium', subject: 'character', swap: true,
-      ref: 'blonde-yellow', refSetting: 'rain-street', about: 'The same face in a new room.' },
+      ref: 'blonde-yellow', refSetting: 'ziggurat', about: 'The same face in a new room.' },
     { n: 4, key: 'page', tab: 'Page', title: 'Build your comic page', tier: 'advanced', subject: 'character', swap: true,
       ref: 'detective-car', refSetting: 'sunset-street', about: 'Three panels, one story, then the page.' },
     { n: 5, key: 'review', tab: 'Review', title: 'Compare & fix',
@@ -342,7 +381,8 @@ export default {
   // Pictures offered in the comic builder's library.
   library: ['chief','hat-woman','cop','bar','blonde-green','blonde-yellow','rain-street','office','sunset-street','fedora','boss',
     'cop-badge','lamp-man','blue-man','houses','green-city','walking-woman','teal-woman','detective-car','sunset-man',
-    'walking-rain','hat-green','novak-card','vance-card','rourke-card','vera-card','rourke-front','rourke-snarl','rourke-rage','rourke-sheet'],
+    'walking-rain','hat-green','novak-card','vance-card','rourke-card','vera-card','hattie-card','charlotte-card','ziggurat',
+    'rourke-front','rourke-snarl','rourke-rage','rourke-sheet'],
 
   // Colours for captions, balloons, thoughts and sound effects in the comic builder, taken from the palettes above.
   // fill: the box (or a sound effect's letters); text: the words; line: the outline.

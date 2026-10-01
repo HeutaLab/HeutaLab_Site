@@ -230,6 +230,11 @@ export function castSummary() {
   return THEME.cast.map((c) => `- ${c.name}, ${c.role.toLowerCase()} (${c.tag.toLowerCase()}): ${c.story}`).join("\n");
 }
 
+// The places the story keeps coming back to, each with its fixed look.
+export function placeSummary() {
+  return THEME.places.map((p) => `- ${p.name}, ${p.role.toLowerCase()}: ${p.story} Fixed look: ${p.look}.`).join("\n");
+}
+
 // Structured outputs hold the reply to this shape, so no regex-extracting JSON from prose.
 export const BRIEF_SCHEMA = {
   type: "object",
@@ -249,6 +254,9 @@ export function buildSystemPrompt() {
 
 THE CAST (who they are, and how they relate):
 ${castSummary()}
+
+THE PLACE (where their paths cross):
+${placeSummary()}
 
 You write ONE ready-to-paste image-generation prompt (or a short set, for medium/advanced tiers) tailored to the platform and tier given, based on the attendee's own idea. You do not generate images yourself, only the text prompt and the teaching notes around it.
 
@@ -277,7 +285,14 @@ CAST RULES (when the request names cast members):
 - Use the names in why_this_works and the other notes, but keep them out of the image prompt itself: image models don't know these characters, and a name in the prompt invites lettering on the picture. In the prompt, describe the character by their fixed look.
 - With two characters in an advanced request, let their relationship drive the staging (who looks at whom, who stands in whose shadow), but show it; never write it as text in the image.
 - Keep everything suitable for a room of teachers: tension and menace, no gore.
+- Patrolman Tommy Doyle is the only one in a police uniform and peaked cap. Hattie Cole's hat is black, flat-crowned and wide-brimmed, never a fedora.
 - If no cast is picked, work only from the attendee's idea.
+
+PLACE RULES (when the attendee's idea or description names The Ziggurat, or plainly means it):
+- The place has a fixed look, as a character does. Put it into the prompt near word for word; for medium and advanced tiers it belongs in the anchor, so the room stays the same from picture to picture.
+- Keep its name out of the image prompt, as with the cast: a name invites lettering on a sign. Describe it by its fixed look.
+- It is a café: coffee and food, never alcohol.
+- If the idea names no place, do not add this one.
 
 THE ATTENDEE'S OWN WORDS:
 - The request includes the attendee's own description of a reference picture, written before asking you. Build on it: keep their concrete, visual words where they serve the idea, and say in why_this_works which of their words you kept and why they help.
