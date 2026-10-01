@@ -406,7 +406,7 @@ async function handleBrief(body, request, env, url, ev) {
     if (brief.fail === "refusal") return json({ error: "The AI declined that one. Try rewording your idea." }, 422);
     if (isHardSetup(brief.fail)) return setupError(brief.fail);
     ev.outcome = "fallback";
-    return json({ ...stockBrief(b.subject, b.tier, b.palette, b.castUsed), fallback: true, setup: needsFacilitator(brief.fail), attempt: b.attempt });
+    return json({ ...stockBrief(b.subject, b.tier, b.palette, b.castUsed, b.placeUsed), fallback: true, setup: needsFacilitator(brief.fail), attempt: b.attempt });
   }
   return json({ ...brief.data, attempt: b.attempt });
 }

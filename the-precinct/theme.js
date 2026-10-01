@@ -69,6 +69,14 @@ export default {
       story: 'An Art Deco café near the precinct, open all night. Everyone ends up here sooner or later, and Charlotte Van Der Woning sees them all come and go.',
       look: 'a long narrow Art Deco café at night, a stepped ceiling in three tiers, a doorway framed by stepped ziggurat pilasters, black leather booths with chrome-edged tables along a wall of tall square-paned windows, a curved chrome-edged counter with a row of round chrome stools, frosted glass pendant lamps in stepped tiers hanging low, a black-and-white terrazzo floor in a chevron pattern, rain and street lamps outside',
       img: IMG + 'ref/ziggurat.jpg',
+      // Where a character can be in this room, for the stock briefs (two shots at medium, three at advanced).
+      shots: {
+        medium: ['The character sits alone in a booth by the window, hands round a cup, a lamp hanging low overhead.',
+                 'The character stands at the counter with one hand on a stool, looking towards the door.'],
+        advanced: ['Panel 1, wide establishing shot: the whole room seen from the door, the character small at the far end of the counter.',
+                   'Panel 2, medium shot: the character in a booth by the window, looking up as someone comes in.',
+                   'Panel 3, close-up: the character’s face half in shadow under a hanging lamp, eyes on the door.'],
+      },
     },
   ],
 
@@ -305,7 +313,9 @@ export default {
 
   // What the desk hands out when the AI is busy or down: stock briefs from the
   // files, one per tier and subject. {palette} becomes the palette phrase and
-  // {who} (or {Who}, capitalised) the picked character's look (or DEFAULT_WHO in worker.js).
+  // {who} (or {Who}, capitalised) the picked character's look (or DEFAULT_WHO in desk.js).
+  // `placed` takes over when a place is picked too: {where} is the place's look,
+  // and at medium and advanced its prompts are the place's own `shots`.
   stockBriefs: {
     character: {
       basic: {
@@ -314,6 +324,11 @@ export default {
         why_this_works: 'Era, medium and one named light source do most of the work: without them, image tools drift to a modern colour comic. The plain background keeps the tool from inventing a scene around your character.',
         platform_notes: 'Gemini needs the "no text, no captions" line most; ChatGPT and Copilot follow it more readily but may need "flat ink illustration, not digital painting".',
         watch_for: 'Check the colours first: any colour outside your palette means the palette line was ignored.',
+        placed: {
+          prompts: ['{Who}, seen from the waist up, one clear expression. The setting: {where}. 1940s film noir comic book, black and white ink illustration with fine hatching and one hard light from the upper left. Limited palette: {palette}. No text, no signs, no captions, no speech balloons, no other people.'],
+          why_this_works: 'Era, medium and one named light source do most of the work: without them, image tools drift to a modern colour comic. The room is described in the same words every time, so it can come back in your next picture.',
+          watch_for: 'Check the room against its look: did the details you named arrive, or did the tool draw a room of its own?',
+        },
       },
       medium: {
         anchor: '1940s film noir comic book, black and white ink illustration with fine hatching. {Who}. Limited palette: {palette}. No text, no captions, no speech balloons.',
@@ -322,6 +337,11 @@ export default {
         why_this_works: 'The anchor carries the character and the style, so paste it word for word into both prompts. Each prompt adds only the room (an office, a diner), which is the one thing that should change.',
         platform_notes: 'On ChatGPT, upload the first picture back in before the second prompt; on Gemini, stay in the same chat so it can hold details.',
         watch_for: 'Put the two pictures side by side: is it the same face and the same coat, or a stranger in similar clothes?',
+        placed: {
+          anchor: '1940s film noir comic book, black and white ink illustration with fine hatching. {Who}. The setting: {where}. Limited palette: {palette}. No text, no signs, no captions, no speech balloons, no other people.',
+          why_this_works: 'The anchor carries the character, the room and the style, so paste it word for word into both prompts. Each prompt changes only where the character is in the room.',
+          watch_for: 'Put the two pictures side by side: is it the same face in the same room, or a stranger somewhere similar?',
+        },
       },
       advanced: {
         anchor: '1940s film noir comic book, black and white ink illustration with fine hatching, strong single light source. {Who}. Limited palette: {palette}. No text, no captions, no speech balloons.',
@@ -331,6 +351,10 @@ export default {
         why_this_works: 'A shot list moves the camera closer each panel (wide, medium, close) while the anchor keeps the character and palette fixed. Plan the story first with an AI partner; these three shots are only a starting skeleton.',
         platform_notes: 'Midjourney holds a character best with an image reference or --seed; the free chat tools need the anchor pasted in full every time.',
         watch_for: 'Check the three panels read in order without words: can someone else tell you what happened?',
+        placed: {
+          anchor: '1940s film noir comic book, black and white ink illustration with fine hatching, strong single light source. {Who}. The setting: {where}. Limited palette: {palette}. No text, no signs, no captions, no speech balloons.',
+          why_this_works: 'A shot list moves the camera closer each panel (wide, medium, close) while the anchor keeps the character, the room and the palette fixed. Plan the story first with an AI partner; these three shots are only a starting skeleton.',
+        },
       },
     },
     setting: {

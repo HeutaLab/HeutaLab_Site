@@ -225,7 +225,7 @@
         <section class="stepp" data-step="who" hidden>
           <p class="where">On The Precinct</p>
           <h3 tabindex="-1"><span class="n"></span>Choose a character</h3>
-          <p class="lead">Seven characters, one story: four inside the precinct, three outside it, and the caf&eacute; where their paths cross. Pick who you&rsquo;re drawing. Their <strong>look</strong> goes into every prompt word for word: it&rsquo;s what keeps them recognisable from picture to picture. <span id="whoNote"></span></p>
+          <p class="lead">Seven characters, one story: four inside the precinct, three outside it, and the caf&eacute; where their paths cross. Pick who you&rsquo;re drawing, and choose the caf&eacute; too if that is where they are. Their <strong>look</strong> goes into every prompt word for word: it&rsquo;s what keeps them recognisable from picture to picture. <span id="whoNote"></span></p>
           <div class="cast-grid" id="castGrid"></div>
           <div class="relations" id="relations"></div>
           <p class="ready" id="whoReady" aria-live="polite"></p>
@@ -523,7 +523,7 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
 
 (function(){
   const API = "/the-precinct/api/";
-  const state = { platform:null, subject:null, palette:THEME.defaultPalette, tier:null, cast:[] };
+  const state = { platform:null, subject:null, palette:THEME.defaultPalette, tier:null, cast:[], place:null };
   const TIER_LEVEL = { basic:1, medium:2, advanced:3 };
   const ATTEMPT_MIN = 15;
   const $ = id => document.getElementById(id);
@@ -602,7 +602,7 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
       // Your own key isn't queuing behind a room, so it gets a longer budget.
       const brief = await askAI(ownKey, briefRequest(b, Math.max(8000, 45000 - (Date.now() - started))));
       if (brief.data) return answer(200, { ...brief.data, attempt: b.attempt });
-      if (isTransient(brief.fail)) return answer(200, { ...stockBrief(b.subject, b.tier, b.palette, b.castUsed), fallback: true, own: true, attempt: b.attempt });
+      if (isTransient(brief.fail)) return answer(200, { ...stockBrief(b.subject, b.tier, b.palette, b.castUsed, b.placeUsed), fallback: true, own: true, attempt: b.attempt });
       return failed(brief.fail);
     }
     const c = readCompare(payload, 3);
@@ -656,6 +656,8 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
   }
   const validCast = id => THEME.cast.some(c => c.id === id);
   const castName = id => THEME.cast.find(c => c.id === id).name;
+  const validPlace = id => THEME.places.some(p => p.id === id);
+  const placeName = id => THEME.places.find(p => p.id === id).name;
 
   // Copies words, says so on the button, and resolves true if it worked. With
   // no clipboard access it selects the words instead, ready for Ctrl+C.
@@ -682,13 +684,14 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
     + (c.arc ? '<p class="arc"><b>His arc</b>' + c.arc.map(esc).join(' &rarr; ') + '</p>' : '')
     + '<div class="look"><b>Their look, every time</b><span>' + esc(c.look) + '</span>'
     + '<button type="button" class="btn ghost small" data-copylook="' + c.id + '">Copy look</button></div></div></article>').join('')
-    // The place sits with the cast: nothing to choose, only a look to copy into an idea.
+    // The place sits with the cast: choose it as well as a character, and the picture happens there.
     + THEME.places.map(p =>
-    '<article class="case place" id="place-' + p.id + '"><img class="noir" src="' + p.img + '" alt="" loading="lazy">'
-    + '<button type="button" class="btn small pick" data-copyplace="' + p.id + '">Copy its look</button>'
+    '<article class="case place" id="place-' + p.id + '" data-place="' + p.id + '"><span class="chosen">✓ Chosen</span><img class="noir" src="' + p.img + '" alt="" loading="lazy">'
+    + '<button type="button" class="btn small pick" data-pickplace="' + p.id + '" aria-pressed="false" aria-label="Choose ' + esc(p.name) + ' as the place">Choose</button>'
     + '<div class="case-text"><span class="case-tag">' + esc(p.role) + ' · ' + esc(p.tag.toLowerCase()) + '</span><h4>' + esc(p.name) + '</h4><p>' + esc(p.story) + '</p>'
-    + '<div class="look"><b>Its look, every time</b><span>' + esc(p.look) + '</span></div>'
-    + '<p class="put">Paste it into your idea to put a character here.</p></div></article>').join('')
+    + '<div class="look"><b>Its look, every time</b><span>' + esc(p.look) + '</span>'
+    + '<button type="button" class="btn ghost small" data-copyplace="' + p.id + '">Copy look</button></div>'
+    + '<p class="put">Choose it along with a character, and your picture happens here.</p></div></article>').join('')
     + '<article class="case own" id="cast-own"><div><h4>A character of my own</h4><p>Leave the cast out and draw someone new. Your own description carries their look.</p></div>'
     + '<span class="chosen">✓ Chosen</span><button type="button" class="btn small pick" data-pick="own" aria-pressed="false">Choose</button></article>';
   $('relations').innerHTML = '<b>Who wants what</b>' + THEME.relations.map(([a, verb, b, tail]) =>
@@ -827,7 +830,7 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
     if (!live) return;
     const w = W();
     for (const k in BOXES) w[k] = BOXES[k].value;
-    w.cast = state.cast.slice(); w.own = own; w.example = attemptIsExample;
+    w.cast = state.cast.slice(); w.own = own; w.place = state.place; w.example = attemptIsExample;
     saveJ();
   }
   function unstash(){
@@ -835,6 +838,7 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
     for (const k in BOXES) BOXES[k].value = typeof w[k] === 'string' ? w[k] : '';
     state.cast = (Array.isArray(w.cast) ? w.cast : []).filter(validCast);
     own = !!w.own;
+    state.place = validPlace(w.place) ? w.place : null;
     attemptIsExample = !!w.example;
   }
   addEventListener('pagehide', () => { stash(); saveNow(); });
@@ -853,12 +857,27 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
       b.setAttribute('aria-pressed', String(on));
       b.textContent = on ? '✓ Chosen' : 'Choose';
     });
+    document.querySelectorAll('#castGrid .case.place').forEach(card => {
+      const on = card.dataset.place === state.place;
+      card.classList.toggle('picked', on);
+      const b = card.querySelector('.pick');
+      b.setAttribute('aria-pressed', String(on));
+      b.textContent = on ? '✓ Chosen' : 'Choose';
+    });
     whoNote.textContent = maxCast() === 2 ? 'Pick up to two for a Commissioner sequence.' : 'Pick one.';
-    whoReady.textContent = state.cast.length ? (state.cast.length > 1 ? 'Characters ready: ' : 'Character ready: ') + state.cast.map(castName).join(' and ') + '.'
-      : own ? 'Character ready: one of your own.' : '';
+    const at = state.place ? ' Place: ' + placeName(state.place) + '.' : '';
+    whoReady.textContent = state.cast.length ? (state.cast.length > 1 ? 'Characters ready: ' : 'Character ready: ') + state.cast.map(castName).join(' and ') + '.' + at
+      : own ? 'Character ready: one of your own.' + at
+      : state.place ? 'Place ready: ' + placeName(state.place) + '. Now choose who is there.' : '';
   }
   $('castGrid').addEventListener('click', e => {
     const pick = e.target.closest('[data-pick]'), copy = e.target.closest('[data-copylook]'), place = e.target.closest('[data-copyplace]');
+    const pickPlace = e.target.closest('[data-pickplace]');
+    if (pickPlace) {
+      const id = pickPlace.dataset.pickplace;
+      state.place = state.place === id ? null : id;
+      syncWho(); stash();
+    }
     if (pick) {
       const id = pick.dataset.pick;
       if (id === 'own') { own = state.cast.length ? true : !own; state.cast = []; }
@@ -1026,6 +1045,7 @@ import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, person
         subject: state.subject,
         palette: state.palette,
         cast: state.subject === 'character' ? state.cast : [],
+        place: state.subject === 'character' ? state.place : null,
         tier: state.tier,
         attempt: attempt.value.trim(),
         example: attemptIsExample,
