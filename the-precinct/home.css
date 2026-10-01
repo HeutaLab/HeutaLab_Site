@@ -350,6 +350,9 @@
   .castdl-grid a{display:block;border:1px solid var(--frame);background:var(--bg);color:var(--ink);text-decoration:none}
   .castdl-grid a:hover{border-color:var(--yellow)}
   .castdl-grid img{width:100%;height:auto;aspect-ratio:1/1;object-fit:cover}
+  .castdl .more{margin-top:22px}
+  .castdl-grid.wide{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .castdl-grid.wide img{aspect-ratio:3/2}
   .castdl-grid span{display:block;margin:0;padding:8px 10px;font-family:var(--label);letter-spacing:.12em;text-transform:uppercase;font-size:11.5px;color:var(--yellow)}
   .strip{display:grid;grid-template-columns:1fr 160px;gap:14px;margin-top:22px}
   .strip .pic{position:relative;overflow:hidden;min-height:150px;border:1px solid var(--frame)}
@@ -454,7 +457,7 @@
     .levels{grid-template-columns:minmax(0,1fr)}
     .teach{padding:22px 16px 24px}
     .res{grid-template-columns:minmax(0,1fr)}
-    .castdl-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .castdl-grid,.castdl-grid.wide{grid-template-columns:repeat(2,minmax(0,1fr))}
     .acts .btn{flex:1 1 100%}
     .acts .back{flex-basis:100%}
   }
