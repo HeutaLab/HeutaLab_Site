@@ -54,7 +54,7 @@ export default {
       img: IMG + 'ref/tommy-card.jpg',
     },
     {
-      id: 'owner', name: 'Charlotte Van Der Woning', short: 'Charlotte', role: 'The Owner', tag: 'The one who hears',
+      id: 'owner', name: 'Lottie Woning', short: 'Lottie Woning', role: 'The Owner', tag: 'The one who hears',
       story: 'She owns The Ziggurat and has poured coffee for every cop in the precinct for twenty years. She knows who sat with Vera Sinclair, and she is deciding whether saying so is worth the trouble.',
       look: 'a woman in her fifties, grey-streaked dark hair pinned up in neat rolls, thin wire-rimmed glasses on a fine chain, a dark tailored dress with a wide white collar and a stepped geometric brooch at the throat, arms folded, chin up, a level look that gives nothing away',
       img: IMG + 'ref/charlotte-card.jpg',
@@ -66,7 +66,7 @@ export default {
   places: [
     {
       id: 'ziggurat', name: 'The Ziggurat', role: 'The café', tag: 'Where their paths cross',
-      story: 'An Art Deco café near the precinct, open all night. Everyone ends up here sooner or later, and Charlotte Van Der Woning sees them all come and go.',
+      story: 'An Art Deco café near the precinct, open all night. Everyone ends up here sooner or later, and Lottie Woning sees them all come and go.',
       look: 'a long narrow Art Deco café at night, a stepped ceiling in three tiers, a doorway framed by stepped ziggurat pilasters, black leather booths with chrome-edged tables along a wall of tall square-paned windows, a curved chrome-edged counter with a row of round chrome stools, frosted glass pendant lamps in stepped tiers hanging low, a black-and-white terrazzo floor in a chevron pattern, rain and street lamps outside',
       img: IMG + 'ref/ziggurat.jpg',
       // Where a character can be in this room, for the stock briefs (two shots at medium, three at advanced).
@@ -160,6 +160,12 @@ export default {
     'alley':                ['A wet cobbled alley at night between brick buildings: a fire escape, a back door under a caged lamp, bins, crates and a steaming grate', 'setting'],
     'street-corner':        ['A rainy city street at night: a tall street lamp, a parked sedan, shopfronts with awnings, a telephone box and towers in the mist', 'setting'],
     'docks':                ['A foggy quay at night: a wooden warehouse with one wall lamp, crates and rope, iron bollards, a cargo crane and the hull of a ship', 'setting'],
+    // The cast in those places: one person, one room or street.
+    'vance-office':     ['A heavy-set man in a fedora and trench coat sits behind a wide desk with his fingers steepled, staring out; a desk lamp and a night skyline through the blinds', 'character', 'commissioner'],
+    'rourke-interview': ['A huge man in shirtsleeves and braces leans on both fists over a table under a hanging lamp, teeth bared', 'character', 'disillusioned'],
+    'novak-street':     ['A man in a dark suit, a fedora and round glasses stands under a street lamp on a wet street, looking back over his shoulder', 'character', 'detective'],
+    'hattie-docks':     ['A woman in a wide-brimmed hat and a belted trench coat walks along a foggy quay with a notebook, glancing aside at a warehouse', 'character', 'reporter'],
+    'tommy-steps':      ['A young patrolman stands on the rainy steps of a police station, one hand on the stone rail, looking uneasily to one side', 'character', 'rookie'],
     'rourke-rage':   ['A stubbled man snarling with rage, a matchstick clamped in his teeth', 'character', 'disillusioned'],
     'rourke-sheet':  ['A character sheet for Frank Rourke: front, side and back views, and five expressions from lazy smirk to flicker of conscience', 'character', 'disillusioned'],
     'cop-badge':     ['A square-jawed man in a hat with a badge on his coat, light flaring behind him', 'character', 'detective'],
@@ -407,6 +413,7 @@ export default {
   // Pictures offered in the comic builder's library.
   // The places come first: they are the ones the stickers are drawn to stand in.
   library: ['ziggurat','ziggurat-outside','precinct-steps','squad-room','commissioners-office','interview-room','newsroom','alley','street-corner','docks',
+    'vance-office','rourke-interview','novak-street','hattie-docks','tommy-steps',
     'chief','hat-woman','cop','bar','blonde-green','blonde-yellow','rain-street','office','sunset-street',
     'cop-badge','lamp-man','houses','teal-woman','detective-car',
     'walking-rain','hat-green','novak-card','vance-card','rourke-card','vera-card','hattie-card','tommy-card','charlotte-card',
@@ -505,7 +512,7 @@ export default {
       ['cap', 'Police cap', 26, 'thing'], ['whistle', 'Whistle', 19, 'thing'], ['torch', 'Torch', 22, 'thing'],
       ['badge', 'Badge', 16, 'thing'], ['notebook', 'Notebook', 19, 'thing'], ['keys', 'Ring of keys', 20, 'thing'],
     ] },
-    { who: 'Charlotte', dir: 'charlotte', items: [
+    { who: 'Lottie Woning', dir: 'charlotte', items: [
       ['standing', 'Standing', 27], ['side', 'Side on', 24], ['walking-away', 'Walking away', 27],
       ['pouring', 'Pouring coffee', 33], ['tray', 'Carrying a tray', 30], ['polishing', 'Polishing a cup', 30],
       ['face-level', 'Level look', 37, 'face'], ['face-eyebrow', 'Raised eyebrow', 37, 'face'], ['face-polite', 'Polite smile', 36, 'face'],
