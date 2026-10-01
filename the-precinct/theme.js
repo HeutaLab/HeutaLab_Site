@@ -38,7 +38,7 @@ export default {
     {
       id: 'femme', name: 'Vera Sinclair', short: 'Vera Sinclair', role: 'The Femme Fatale', tag: 'The one who knows',
       story: 'She admires Frank Rourke, but it is Edward Novak she wants.',
-      look: 'a woman in her thirties, shoulder-length platinum-blonde hair in soft 1940s waves, a beauty mark on her cheek, dark lipstick and arched brows, pearl drop earrings, a long black sleeveless evening gown, long pale evening gloves, a black fur stole over one arm, black heels, a cool sideways glance',
+      look: 'a woman in her thirties, shoulder-length platinum-blonde hair in soft 1940s waves, a beauty mark on her cheek, dark lipstick and arched brows, pearl drop earrings, a thin black ribbon choker, a long black sleeveless evening gown, long pale evening gloves, a black fur stole over one arm, black heels, a cool sideways glance',
       img: IMG + 'ref/vera-card.jpg',
     },
     {
@@ -489,8 +489,8 @@ export default {
       ['note', 'Crumpled note', 20, 'thing'], ['jacket', 'Folded jacket', 26, 'thing'], ['tie', 'Tie', 20, 'thing'],
     ] },
     { who: 'Vera Sinclair', dir: 'vera', items: [
-      ['standing', 'Standing', 31], ['side', 'Side on', 24], ['walking-away', 'Walking away', 28],
-      ['hand-on-hip', 'Hand on hip', 34], ['whispering', 'Whispering', 27], ['coffee', 'With a coffee', 28],
+      ['standing', 'Standing', 29], ['side', 'Side on', 22], ['walking-away', 'Walking away', 27],
+      ['hand-on-hip', 'Hand on hip', 34], ['whispering', 'Whispering', 29], ['coffee', 'With a coffee', 29],
       ['face-glance', 'Sideways glance', 32, 'face'], ['face-knowing', 'Knowing smile', 33, 'face'], ['face-eyebrow', 'Raised eyebrow', 34, 'face'],
       ['face-alarmed', 'Alarmed', 34, 'face'], ['face-sad', 'Sad', 36, 'face'], ['face-laughing', 'Laughing', 36, 'face'],
       ['earrings', 'Pearl earrings', 15, 'thing'], ['gloves', 'Evening gloves', 19, 'thing'], ['stole', 'Fur stole', 23, 'thing'],
