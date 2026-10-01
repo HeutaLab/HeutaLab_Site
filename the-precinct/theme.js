@@ -451,37 +451,63 @@ export default {
     ['Night', ['DRIP… DRIP…', 'PITTER PAT', 'BOOM!', 'HOOT', 'ZZZ']],
   ],
 
-  // Stickers for the comic builder: the cast cut out of their pose sheets. Each item is
+  // Stickers for the comic builder: the cast cut out of their sheets (poses, then faces, then things). Each item is
   // [file, label, default width in % of the panel, kind]; kind is 'face' or 'thing', and a pose when left out.
   // The files are img/stickers/<dir>/<file>.webp (see-through) and <file>-b.webp (white border).
   stickers: [
     { who: 'Harlan Vance', dir: 'vance', items: [
       ['standing', 'Standing', 36], ['side', 'Side on', 28], ['walking-away', 'Walking away', 34],
       ['pointing', 'Pointing', 35], ['arms-folded', 'Arms folded', 36], ['on-the-phone', 'On the telephone', 36],
+      ['fedora', 'Fedora', 24, 'thing'], ['telephone', 'Telephone', 22, 'thing'], ['case-file', 'Case file', 23, 'thing'],
+      ['envelope', 'Envelope', 25, 'thing'], ['pocket-watch', 'Pocket watch', 19, 'thing'], ['stamp', 'Rubber stamp', 23, 'thing'],
     ] },
     { who: 'Edward Novak', dir: 'novak', items: [
       ['standing', 'Standing', 28], ['side', 'Side on', 18], ['walking-away', 'Walking away', 31],
       ['showing-badge', 'Showing his badge', 31], ['crouching', 'Crouching to look', 42], ['hurrying', 'Hurrying', 37],
+      ['face-steady', 'Steady', 37, 'face'], ['face-thinking', 'Thinking', 35, 'face'], ['face-surprised', 'Surprised', 37, 'face'],
+      ['face-determined', 'Determined', 36, 'face'], ['face-worried', 'Worried', 37, 'face'], ['face-smile', 'Smile', 36, 'face'],
+      ['spectacles', 'Spectacles', 23, 'thing'], ['fedora', 'Fedora', 26, 'thing'], ['badge', 'Badge', 15, 'thing'],
+      ['magnifying-glass', 'Magnifying glass', 21, 'thing'], ['torch', 'Torch', 26, 'thing'], ['photograph', 'Photograph', 19, 'thing'],
     ] },
     { who: 'Frank Rourke', dir: 'rourke', items: [
       ['standing', 'Standing', 36], ['side', 'Side on', 21], ['walking-away', 'Walking away', 33],
       ['arms-folded', 'Arms folded', 36], ['jabbing', 'Jabbing a finger', 38], ['fist', 'Fist in his palm', 37],
+      ['face-smirk', 'Lazy smirk', 38, 'face'], ['face-glower', 'Sullen glower', 38, 'face'], ['face-grin', 'Predatory grin', 38, 'face'],
+      ['face-rage', 'Snarling rage', 38, 'face'], ['face-conscience', 'Flicker of conscience', 38, 'face'], ['face-shouting', 'Shouting', 38, 'face'],
+      ['matches', 'Matches', 22, 'thing'], ['handcuffs', 'Handcuffs', 25, 'thing'], ['mug', 'Coffee mug', 19, 'thing'],
+      ['note', 'Crumpled note', 20, 'thing'], ['jacket', 'Folded jacket', 26, 'thing'], ['tie', 'Tie', 20, 'thing'],
     ] },
     { who: 'Vera Sinclair', dir: 'vera', items: [
       ['standing', 'Standing', 31], ['side', 'Side on', 24], ['walking-away', 'Walking away', 28],
       ['hand-on-hip', 'Hand on hip', 34], ['whispering', 'Whispering', 27], ['coffee', 'With a coffee', 28],
+      ['face-glance', 'Sideways glance', 32, 'face'], ['face-knowing', 'Knowing smile', 33, 'face'], ['face-eyebrow', 'Raised eyebrow', 34, 'face'],
+      ['face-alarmed', 'Alarmed', 34, 'face'], ['face-sad', 'Sad', 36, 'face'], ['face-laughing', 'Laughing', 36, 'face'],
+      ['earrings', 'Pearl earrings', 15, 'thing'], ['gloves', 'Evening gloves', 19, 'thing'], ['stole', 'Fur stole', 23, 'thing'],
+      ['lipstick', 'Lipstick', 15, 'thing'], ['clutch', 'Clutch bag', 24, 'thing'], ['coffee-cup', 'Coffee cup', 22, 'thing'],
     ] },
     { who: 'Hattie Cole', dir: 'hattie', items: [
       ['standing', 'Standing', 29], ['side', 'Side on', 27], ['walking-away', 'Walking away', 30],
       ['asking', 'Asking a question', 36], ['hurrying', 'Hurrying', 38], ['taking-picture', 'Taking a picture', 35],
+      ['face-questioning', 'Questioning', 38, 'face'], ['face-sceptical', 'Sceptical', 35, 'face'], ['face-delighted', 'Delighted', 36, 'face'],
+      ['face-shocked', 'Shocked', 38, 'face'], ['face-determined', 'Determined', 38, 'face'], ['face-listening', 'Listening', 38, 'face'],
+      ['hat', 'Hat', 26, 'thing'], ['notebook', 'Notebook', 21, 'thing'], ['camera', 'Press camera', 20, 'thing'],
+      ['typewriter', 'Typewriter', 25, 'thing'], ['newspaper', 'Newspaper', 24, 'thing'], ['photographs', 'Photographs', 20, 'thing'],
     ] },
     { who: 'Tommy Doyle', dir: 'tommy', items: [
       ['standing', 'Standing', 29], ['side', 'Side on', 18], ['walking-away', 'Walking away', 32],
       ['saluting', 'Saluting', 34], ['blowing-whistle', 'Blowing his whistle', 39], ['with-torch', 'With a torch', 35],
+      ['face-wary', 'Wary glance', 36, 'face'], ['face-shock', 'Wide-eyed shock', 34, 'face'], ['face-nervous', 'Nervous', 37, 'face'],
+      ['face-determined', 'Determined', 37, 'face'], ['face-smile', 'Smile', 35, 'face'], ['face-wincing', 'Wincing', 37, 'face'],
+      ['cap', 'Police cap', 26, 'thing'], ['whistle', 'Whistle', 19, 'thing'], ['torch', 'Torch', 22, 'thing'],
+      ['badge', 'Badge', 16, 'thing'], ['notebook', 'Notebook', 19, 'thing'], ['keys', 'Ring of keys', 20, 'thing'],
     ] },
     { who: 'Charlotte', dir: 'charlotte', items: [
       ['standing', 'Standing', 27], ['side', 'Side on', 24], ['walking-away', 'Walking away', 27],
       ['pouring', 'Pouring coffee', 33], ['tray', 'Carrying a tray', 30], ['polishing', 'Polishing a cup', 30],
+      ['face-level', 'Level look', 37, 'face'], ['face-eyebrow', 'Raised eyebrow', 37, 'face'], ['face-polite', 'Polite smile', 36, 'face'],
+      ['face-disapproving', 'Disapproving', 37, 'face'], ['face-surprised', 'Surprised', 37, 'face'], ['face-listening', 'Listening', 37, 'face'],
+      ['coffee-pot', 'Coffee pot', 19, 'thing'], ['cup', 'Cup and saucer', 20, 'thing'], ['pie', 'Slice of pie', 22, 'thing'],
+      ['cash-register', 'Cash register', 23, 'thing'], ['bell', 'Counter bell', 19, 'thing'], ['glasses', 'Glasses', 23, 'thing'],
     ] },
   ],
   stickerPath: (dir, file, border) => IMG + 'stickers/' + dir + '/' + file + (border ? '-b' : '') + '.webp',
