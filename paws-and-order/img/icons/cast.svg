@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-labelledby="title">
+  <title id="title">Cast</title>
+  <g fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="16" cy="10.2" r="4.2"/>
+    <circle cx="7.8" cy="14.1" r="3.2"/>
+    <circle cx="24.2" cy="14.1" r="3.2"/>
+    <path d="M8.1 27.8c.3-5 3-8 7.9-8s7.6 3 7.9 8M2.8 26.2c.2-3.8 1.8-6.1 5-6.1 1.4 0 2.5.4 3.3 1.1M29.2 26.2c-.2-3.8-1.8-6.1-5-6.1-1.4 0-2.5.4-3.3 1.1"/>
+    <path d="M13.8 11.4c1.4.8 2.9.8 4.4 0" stroke-width=".9" opacity=".45"/>
+  </g>
+</svg>
