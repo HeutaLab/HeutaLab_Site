@@ -258,7 +258,9 @@ export function explain(fail, who) {
   if (who === 'teacher') {
     if (fail === 'no_setup') return 'Fill in the key and model first.';
     if (fail === 'http_401' || fail === 'http_403') return 'The AI service refused that key. Check that you copied the whole key, and that it is for the service you chose.';
-    if (fail === 'http_404' || fail === 'http_400') return 'The AI service did not accept that model or those settings. Choose the recommended model, then try again.';
+    if (fail === 'http_404') return 'The AI service does not know that model. Choose the recommended model, then try again.';
+    // Google answers a wrong key with 400, not 401, so this one has to name both.
+    if (fail === 'http_400') return 'The AI service did not accept that key or those settings. Check that you copied the whole key and that it is for the service you chose. If the key is right, choose the recommended model.';
     if (fail === 'http_429') return 'The AI service is busy, or the key has run out of allowance (429). Check the account’s billing, then try again.';
     if (fail === 'timeout') return 'The AI service took too long to answer. Try again.';
     if (fail === 'network') return 'Could not reach the AI service. Check the internet and the address, then try again.';
