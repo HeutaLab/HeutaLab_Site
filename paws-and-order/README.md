@@ -58,4 +58,4 @@ The default model names in `ai.js` have been run against the mock server only, n
 
 ## Child safety
 
-Kid-oriented instructions to the AI, no real people, brands or existing characters, and a word filter on what goes in and what comes back. It is a backstop, not a guarantee: a teacher should still be in the room.
+Kid-oriented instructions to the AI, no real people, brands or existing characters, and a word filter (English only) on what a learner types and on everything the helper writes back. The one thing not filtered on the way in is a description pasted from the image tool, because an honest description of a picture may name something unfriendly; the helper is told not to repeat such a word, and anything it writes that contains one is left out. It is a backstop, not a guarantee: a teacher should still be in the room.

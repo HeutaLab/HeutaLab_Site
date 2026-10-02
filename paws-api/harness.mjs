@@ -112,7 +112,7 @@ globalThis.fetch = async (url, init) => {
     system = body.messages[0].content; user = body.messages[1].content;
     wrap = (text) => ({ choices: [{ message: { role: "assistant", content: text }, finish_reason: "stop" }] });
   }
-  ai.sent.push({ url: String(url), headers: init.headers, system, user, body });
+  ai.sent.push({ url: String(url), headers: init.headers, system, user, body, redirect: init.redirect });
   if (ai.throws) throw ai.throws;
   if (ai.raw !== null) return new Response(ai.raw, { status: ai.status });
   if (ai.status !== 200) return new Response(JSON.stringify({ error: { type: "some_error" } }), { status: ai.status });

@@ -291,3 +291,18 @@ test("the Worker's options: its own timeouts, a failure note, and a test address
   await AI.makeBrief(own(), input(), { base: "http://localhost:1234/v1" });
   assert.equal(sent.at(-1).url, "https://api.anthropic.com/v1/messages");
 });
+
+test("the word filter sees through spacing, look-alike letters and digits, and leaves ordinary words alone", () => {
+  for (const no of ["a gun", "two guns", "k i l l the robot", "k.i.l.l", "ＫＩＬＬ", "ki\u200bll", "k1ll", "s3x", "bloody", "stabbed", "knives", "naked", "whiskey", "a killer whale"]) {
+    assert.equal(AI.unfriendly(no), true, no);
+  }
+  for (const yes of ["a wide shot", "a close-up shot", "skill", "bloodhound", "a shooting star", "whisk the eggs", "a stable", "Essex", "Level 3", "Picture 1, wide shot", "scrap paper", "glass", "peacock", "a drugstore sign", "a b c", ""]) {
+    assert.equal(AI.unfriendly(yes), false, yes);
+  }
+  assert.equal(AI.unfriendly(null), false);
+  // Nothing the site itself says trips it: looks, places, starter prompts, questions.
+  const flagged = [];
+  const walk = (v) => { if (typeof v === "string") { if (AI.unfriendly(v)) flagged.push(v); } else if (Array.isArray(v)) v.forEach(walk); else if (v && typeof v === "object") Object.values(v).forEach(walk); };
+  walk(THEME);
+  assert.deepEqual(flagged, []);
+});

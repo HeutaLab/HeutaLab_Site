@@ -5,7 +5,8 @@
 //   - never the code itself, only a fingerprint of it (an HMAC under a key derived from the
 //     PAWS_VAULT_KEY secret), which is the row's id;
 //   - the AI key, encrypted with AES-256-GCM. The row's encryption key is derived from the
-//     vault secret AND the code, so the database alone, or the secret alone, opens nothing;
+//     vault secret AND the code, so the database alone, or the secret alone, opens nothing.
+//     Whoever holds both can open every key: a code is short enough to find by trying them all;
 //   - a fingerprint of the manage token that lets the teacher end the workshop.
 // Changing PAWS_VAULT_KEY changes every fingerprint, so every code made before stops working
 // (they answer "wrong") and the sweep clears the rows away as they expire.
