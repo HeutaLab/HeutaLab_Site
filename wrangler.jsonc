@@ -10,6 +10,12 @@
   //   npx wrangler secret put ANTHROPIC_API_KEY
   //   npx wrangler secret put WORKSHOP_CODE    (master code: every level)
   //   npx wrangler secret put LEVEL_CODES      (optional, JSON of code -> level)
+  //
+  // Added for Paws & Order (workshop codes made by teachers): the API routes
+  // under /paws-and-order/api/ are handled by paws-api/api.mjs. One secret,
+  // set by hand; how to make it, and the table to create first, are in
+  // paws-api/README.md:
+  //   npx wrangler secret put PAWS_VAULT_KEY   (32 random bytes, base64)
   "name": "hidden-hall-06d6",
   "compatibility_date": "2026-07-01",
   "main": "worker.js",
@@ -18,9 +24,12 @@
     "binding": "ASSETS",
     // Without this, the assets layer answers first and a POST to the API
     // path could get the 404 page instead of reaching worker.js.
-    "run_worker_first": ["/the-precinct/api/*"],
+    "run_worker_first": ["/the-precinct/api/*", "/paws-and-order/api/*"],
     "not_found_handling": "404-page"
   },
+  // Paws & Order's daily tidy (03:17 UTC): erases the encrypted AI key of
+  // every workshop that has finished, and removes rows 30 days after that.
+  "triggers": { "crons": ["17 3 * * *"] },
   // The Precinct's rate limits (requests per 60 seconds). The whole room may
   // share one venue IP, so the per-IP limits are flood guards, not per-person
   // ones: SESSION = AI requests per browser, IP = brief/compare requests per
@@ -29,16 +38,38 @@
   // account's daily D1 writes, which Glenn's other apps share).
   // SESSION_CAP: AI requests per browser per six hours (read by worker.js).
   // Change it here: a deploy resets vars to this file.
-  "vars": { "SESSION_CAP": "30" },
+  //
+  // Paws & Order's rate limits work the same way, with their own counters
+  // (a shared namespace_id would share a counter with The Precinct): a class
+  // shares one school IP, so the per-IP limits are flood guards. SESSION = AI
+  // requests per browser, IP = brief/compare requests per IP, CODE_CHECKS =
+  // code checks per browser, CODE_IP = code checks per IP, SETUP_IP = new
+  // workshop codes per IP (each one tests a teacher's AI key), MANAGE_IP = a
+  // teacher's status/end/level requests per IP. All six must be here: if one
+  // is missing, paws-api/api.mjs answers "not open" instead of running
+  // without it.
+  // PAWS_SESSION_CAP: AI requests per browser per six hours. What an AI key
+  // can be made to spend is bounded by each code's own daily allowance, set
+  // by the teacher who made it (the paws_workshops table), not by these.
+  "vars": { "SESSION_CAP": "30", "PAWS_SESSION_CAP": "40" },
   "ratelimits": [
     { "name": "PRECINCT_SESSION_LIMIT", "namespace_id": "4101", "simple": { "limit": 8, "period": 60 } },
     { "name": "PRECINCT_IP_LIMIT", "namespace_id": "4102", "simple": { "limit": 200, "period": 60 } },
     { "name": "PRECINCT_CODE_CHECKS", "namespace_id": "4103", "simple": { "limit": 12, "period": 60 } },
     { "name": "PRECINCT_CODE_IP", "namespace_id": "4104", "simple": { "limit": 600, "period": 60 } },
-    { "name": "PRECINCT_LOG_IP", "namespace_id": "4105", "simple": { "limit": 120, "period": 60 } }
+    { "name": "PRECINCT_LOG_IP", "namespace_id": "4105", "simple": { "limit": 120, "period": 60 } },
+    { "name": "PAWS_SESSION_LIMIT", "namespace_id": "4111", "simple": { "limit": 8, "period": 60 } },
+    { "name": "PAWS_IP_LIMIT", "namespace_id": "4112", "simple": { "limit": 200, "period": 60 } },
+    { "name": "PAWS_CODE_CHECKS", "namespace_id": "4113", "simple": { "limit": 12, "period": 60 } },
+    { "name": "PAWS_CODE_IP", "namespace_id": "4114", "simple": { "limit": 600, "period": 60 } },
+    { "name": "PAWS_SETUP_IP", "namespace_id": "4115", "simple": { "limit": 5, "period": 60 } },
+    { "name": "PAWS_MANAGE_IP", "namespace_id": "4116", "simple": { "limit": 60, "period": 60 } }
   ],
   // The Precinct's usage log: one row per desk request, no attendee text.
   // Table and example queries: precinct-api/usage.sql, usage-queries.sql.
+  // Paws & Order keeps its workshop codes in the same database, in a table
+  // of its own (paws-api/workshops.sql), reached through this same binding.
+  // It writes nothing to the Precinct's events table and keeps no log.
   "d1_databases": [
     { "binding": "USAGE", "database_name": "precinct-usage", "database_id": "f6573073-54ca-4e61-a07b-b8974cd20edf" }
   ]

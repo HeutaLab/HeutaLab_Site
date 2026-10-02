@@ -28,6 +28,7 @@ import {
   TIER_LEVEL, TIMEOUT_MS, PLATFORMS, SUBJECTS, sharedDeskOpen, readBrief, gateRequest, gateOutcome, briefRequest,
   readCompare, compareStepA, compareRequest, cleanCompare, stockBrief, cleanBrief,
 } from "./the-precinct/desk.js";
+import { PAWS_API, handlePaws, sweepPaws } from "./paws-api/api.mjs";
 
 const API = "/the-precinct/api/";
 const MODEL = "claude-opus-5";
@@ -38,6 +39,9 @@ const DEFAULT_SESSION_CAP = 30;
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+
+    // Paws & Order's API has its own module, codes and limits (paws-api/).
+    if (url.pathname.startsWith(PAWS_API)) return handlePaws(request, env, ctx);
 
     if (url.pathname.startsWith(API)) {
       const route = url.pathname.slice(API.length);
@@ -69,6 +73,9 @@ export default {
     // Everything else: serve the static site as before.
     return env.ASSETS.fetch(request);
   },
+
+  // The daily cron (wrangler.jsonc): Paws & Order clears finished workshop codes.
+  async scheduled(event, env, ctx) { ctx.waitUntil(sweepPaws(env)); },
 };
 
 // A Map, not an object literal: a lookup like obj["constructor"] would find

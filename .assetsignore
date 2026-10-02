@@ -27,3 +27,5 @@ blog/21cl-midjourney-images.zip
 
 # Paws & Order: the mock AI server and tests are not site files
 paws-and-order/dev
+# Paws & Order: Worker-only modules (workshop codes, the word list) and their tests
+paws-api
