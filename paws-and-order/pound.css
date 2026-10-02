@@ -1,5 +1,7 @@
-/* Paws & Order: styles shared by the home page, Look Closely and the Comic Maker.
-   Bright, flat, hand-drawn comic look: thick wobbly outlines, hard shadows, halftone dots. */
+/* Paws & Order: styles shared by every page (home, Look Closely, Make your picture, the Comic Maker,
+   Teachers, Explore) and by the unlinked prompt pack page, which has no sidebar.
+   Bright, flat, hand-drawn comic look: thick wobbly outlines, hard shadows, halftone dots.
+   Page-only styles live in each page's own style block, never here. */
 @import url("fonts/fonts.css");
 
 :root{
@@ -22,6 +24,11 @@
   --danger:#c81e1e;
   --ok:#137a2c;
   --focus:#6d28d9;
+  --focus-dark:#ffd23f;     /* the focus ring on the black sidebar, footer and dock, where purple cannot be seen */
+  --label-ink:#6d28d9;      /* small purple labels: --purple is too pale to read on cream */
+  --st1:#ffd23f;--st2:#5ec8f2;--st3:#ff9a3c;--st4:#b18cff;--st5:#7be08f;   /* the five stage colours, as in theme.js */
+  --bar-h:0px;              /* height of the sticky top bar on a narrow screen */
+  --dock-h:0px;             /* height of the Comic Maker's fixed dock; only that page writes it */
   --brush:"Luckiest Guy","Impact",sans-serif;
   --label:"Patrick Hand","Comic Sans MS",cursive;
   --serif:"Patrick Hand","Comic Sans MS",cursive;
@@ -32,7 +39,8 @@
 }
 *{box-sizing:border-box}
 [hidden]{display:none !important}
-html{scroll-behavior:smooth}
+/* a jump to a section, or the keyboard, never lands under the top bar or behind the Comic Maker's dock */
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--bar-h) + 8px);scroll-padding-bottom:min(calc(var(--dock-h) + 12px), 40vh)}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--ink)}
 body{font-family:var(--serif);font-size:18px;line-height:1.45;
   background:
@@ -40,11 +48,21 @@ body{font-family:var(--serif);font-size:18px;line-height:1.45;
     var(--bg);}
 a{color:#5b21b6}
 img{display:block;max-width:100%}
+/* Focus is always an outline: pencil.js takes border colours and shadows away. Purple on cream, white and yellow;
+   yellow on black; the outline colour, set a little further out, on a stage colour or on blue. A heading that script
+   moves focus to (tabindex="-1") shows the ring as well, however the focus got there. */
 :focus-visible{outline:4px solid var(--focus);outline-offset:2px}
+h1[tabindex="-1"]:focus,h2[tabindex="-1"]:focus,h3[tabindex="-1"]:focus,h4[tabindex="-1"]:focus{outline:4px solid var(--focus);outline-offset:3px}
+.side :focus-visible,.basefoot :focus-visible,.dock :focus-visible,.toolstep :focus-visible,.toolstep [tabindex="-1"]:focus{outline-color:var(--focus-dark)}
+.hero :focus-visible,.stepcard :focus-visible,.pagehead :focus-visible,.onboard :focus-visible,.stagecard :focus-visible,
+.task-head :focus-visible,.task-head [tabindex="-1"]:focus{outline-color:var(--frame);outline-offset:3px}
 .skip{position:absolute;left:-9999px;top:8px;z-index:100;background:var(--yellow);border:3px solid var(--frame);padding:8px 14px;border-radius:10px;color:var(--ink)}
 .skip:focus{left:8px}
+/* words for screen readers only */
+.vh{position:absolute !important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
 
-/* ---------- the sidebar: dark, full height on a wide screen, a scrolling bar along the top on a narrow one ---------- */
+/* ---------- the sidebar: dark, full height on a wide screen with five links; on a narrow one a single top bar
+   whose links wait behind a Menu button (see the 880px block at the end) ---------- */
 :root{--side-w:196px;--night:#101014}
 @media (min-width:881px){body:has(> .side){padding-left:var(--side-w)}}   /* the prompt pack page has no sidebar */
 .side{position:fixed;left:0;top:0;bottom:0;width:var(--side-w);z-index:30;display:flex;flex-direction:column;background:var(--night);color:#fff;overflow-y:auto;scrollbar-width:none}
@@ -53,12 +71,18 @@ img{display:block;max-width:100%}
   border-bottom:1px solid rgba(255,255,255,.16)}
 .side .brand span{display:block}
 .side .brand:hover{color:var(--yellow)}
+.side .side-name,.side .menu-btn{display:none}   /* the narrow bar's name and Menu button */
+.menu-btn{-webkit-appearance:none;appearance:none;background:var(--yellow);color:var(--frame);border:3px solid var(--frame);border-radius:12px 5px 13px 6px / 6px 13px 5px 12px;
+  font-family:var(--brush);font-size:16px;line-height:1;letter-spacing:.05em;text-transform:uppercase;cursor:pointer}
+.menu-btn svg{flex:none;width:20px;height:20px;margin-top:-.28em;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round}
+.menu-btn[aria-expanded="true"]{background:#fff}
 .side nav{display:flex;flex-direction:column;padding:8px 0}
 .side nav a{display:flex;align-items:center;gap:14px;margin:0 8px;padding:11px 10px;color:#fff;text-decoration:none;font-family:var(--label);font-size:18px;line-height:1.1;
   border-bottom:1px solid rgba(255,255,255,.14)}
 .side nav a svg{width:24px;height:24px;flex:none;stroke:currentColor;fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
 .side nav a:hover{background:rgba(255,255,255,.08)}
 .side nav a.on{background:var(--yellow);color:var(--frame);border:3px solid var(--frame);border-radius:12px 5px 13px 6px / 6px 13px 5px 12px;margin:3px 6px;box-shadow:3px 3px 0 #000}
+.side nav a.on:hover{background:#ffe27a}
 .side .side-foot{margin-top:auto;padding:16px 18px 18px;font-family:var(--brush);font-size:18px;letter-spacing:.03em;line-height:1.1}
 .side .side-foot svg{display:block;width:118px;height:auto;margin-bottom:8px;stroke:#fff;fill:none;stroke-width:1.6;stroke-linejoin:round}
 .side .side-foot small{display:block;font-family:var(--label);font-size:15px;letter-spacing:0;color:rgba(255,255,255,.75);margin-top:3px}
@@ -104,7 +128,17 @@ main{min-width:0}
 .btn:hover{background:#ffe27a;transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--frame)}
 .btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--frame)}
 .btn .arr{font-family:system-ui,sans-serif;letter-spacing:0;position:relative;top:-.1em}
-.btn:disabled{opacity:.45;cursor:not-allowed}
+/* a switched-off button is greyed with real colours, never by fading the words */
+.btn:disabled{background:#e6dfc9;color:var(--ink-dim);cursor:not-allowed;transform:none}
+/* the two ends of a Back / Next row: Back is quiet, the way on is green and a size up */
+.btn.back{background:#fff;color:var(--ink)}
+.btn.back:hover{background:var(--panel-2)}
+.btn.go2{background:var(--green);font-size:19px;padding:.7em 1.2em .38em}
+.btn.go2:hover{background:#57dd75}
+/* a main button that is not ready yet: it keeps its colour and still takes a press (which shows what is missing),
+   so the only change is a dashed outline and no lift. Set with aria-disabled="true". */
+.is-off{border-style:dashed;cursor:default}
+.btn.is-off:hover,.btn.is-off:active{transform:none}
 
 /* section heading with rule */
 .rule{display:flex;align-items:center;gap:16px;margin:34px 0 16px;font-family:var(--brush);font-weight:400;
@@ -115,7 +149,7 @@ main{min-width:0}
 .steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
 .stepcard{--band:82px;position:relative;display:flex;flex-direction:column;min-height:470px;overflow:hidden;background:var(--c);border:4px solid var(--frame);
   border-radius:var(--wobble);box-shadow:6px 6px 0 var(--frame)}
-.stepcard:nth-child(1){--c:#ffd23f}.stepcard:nth-child(2){--c:#5ec8f2}.stepcard:nth-child(3){--c:#ff9a3c}.stepcard:nth-child(4){--c:#b18cff}
+.stepcard:nth-child(1){--c:#ffd23f}.stepcard:nth-child(2){--c:#5ec8f2}.stepcard:nth-child(3){--c:#ff9a3c}.stepcard:nth-child(4){--c:#b18cff}.stepcard:nth-child(5){--c:#7be08f}
 /* dots over the card's colour wherever the picture isn't */
 .stepcard::before{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(rgba(0,0,0,.13) 1.6px,transparent 2px) 0 0/10px 10px}
 /* the picture fills the card down to a panel line above the button, so every card ends in its own colour;
@@ -182,6 +216,7 @@ main{min-width:0}
 .mine-row{position:relative}
 .mine{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 24px) / 3);gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:2px 2px 6px}
 .mine::-webkit-scrollbar{display:none}
+.mine.is-empty{display:block}   /* nothing saved yet: one message, not a strip */
 .comic{position:relative;scroll-snap-align:start;display:flex;flex-direction:column;background:#fff;border:3px solid var(--frame);border-radius:8px;box-shadow:3px 3px 0 var(--frame);overflow:hidden}
 .comic a.open{display:block;text-decoration:none;color:var(--ink)}
 .comic .page-pic{display:block;aspect-ratio:2/3;background:#f3eee0 center top/cover no-repeat;border-bottom:3px solid var(--frame)}
@@ -195,23 +230,26 @@ main{min-width:0}
 .mine-arrow.prev{left:-12px}.mine-arrow.next{right:-12px}
 .mine-arrow:disabled{opacity:0;pointer-events:none}
 
-/* ---------- the skyline frame: the town's rooftops, cut out against the page, stay along the bottom of the screen
-   while the page scrolls behind them. With the black sidebar it makes a complete comic frame. One of the gang
-   peeks up and says the line on the ribbon. It is only a picture: taps go straight through it. ---------- */
+/* ---------- the skyline: the town's rooftops, cut out against the page, as a strip at the very end of the page,
+   standing on the black footer. One of the gang peeks up over them and says the line on the ribbon.
+   It is part of the page and scrolls with it. It is never fixed, on any page or screen: a fixed skyline
+   covered buttons and form fields. The strip is a little taller than the rooftops so the head that peeks
+   over them is not cut off, and it clips its own picture so the ribbon can never widen the page. ---------- */
 :root{--sky-h:112px}
-html{scroll-padding-bottom:calc(var(--sky-h) + 16px)}   /* so a jump to a section, or the keyboard, never lands behind it */
-.skyframe{position:fixed;left:0;right:0;bottom:0;z-index:25;height:var(--sky-h);pointer-events:none;
-  background:url(img/skyline.svg) left bottom/auto 100% repeat-x}
-@media (min-width:881px){body:has(> .side) .skyframe{left:var(--side-w)}}
+.skyframe{position:relative;height:calc(var(--sky-h) + 14px);margin:46px 0 0;overflow:hidden;pointer-events:none;
+  background:url(img/skyline.svg) left bottom/auto var(--sky-h) repeat-x}
 .skyframe .who{position:absolute;left:14px;bottom:-8px;height:122px;width:auto;max-width:none;filter:drop-shadow(3px 0 0 #05060b)}
 .skyframe .ribbon{position:absolute;left:136px;bottom:30px;margin:0;padding:17px 92px 22px 108px;background:url(img/ribbon.svg) 0 0/100% 100% no-repeat;
   color:var(--frame);font-family:var(--script);font-size:clamp(17px,1.55vw,22px);line-height:1.1;white-space:nowrap;transform:rotate(-1.5deg);
   filter:drop-shadow(3px 3px 0 rgba(0,0,0,.3))}
 .skyframe .comet{position:absolute;right:4%;bottom:46px;width:104px;height:auto}
-/* the black base at the very end of the page: the small print, running on under the rooftops */
-.basefoot{margin:46px 0 0;padding:18px 24px calc(var(--sky-h) + 8px);border:0;background:var(--night);color:rgba(255,255,255,.8);font-size:15.5px;line-height:1.55}
-.basefoot a,.basefoot .tips-again{color:var(--yellow)}
-.basefoot .say{display:none;margin:0 0 10px;font-family:var(--script);font-size:20px;color:var(--yellow)}
+/* the black base at the very end of the page: the small print */
+.basefoot{margin:46px 0 0;padding:18px 24px calc(18px + env(safe-area-inset-bottom));border:0;background:var(--night);color:rgba(255,255,255,.8);font-size:15.5px;line-height:1.55}
+.skyframe + .basefoot{margin-top:0}
+.basefoot p{margin:0 0 8px;max-width:92ch}
+.basefoot p:last-child{margin-bottom:0}
+.basefoot a,.basefoot .tips-again,.basefoot .linkbtn{color:var(--yellow)}
+.basefoot .say{display:block;margin:0 0 10px;font-family:var(--script);font-size:20px;line-height:1.25;color:var(--yellow)}
 /* a caption box, for a page's opening words */
 .caption{margin:0 0 4px;padding:10px 16px 11px;max-width:74ch;background:#fff;border:3px solid var(--frame);border-radius:12px 5px 13px 6px / 6px 13px 5px 12px;
   box-shadow:4px 4px 0 var(--frame);font-size:18px;line-height:1.4}
@@ -231,7 +269,7 @@ html{scroll-padding-bottom:calc(var(--sky-h) + 16px)}   /* so a jump to a sectio
 .tier p{margin:0;font-size:17px}
 .tier p em{color:var(--ink-dim)}
 .lesson{margin:0 0 14px;padding:12px 14px;background:var(--panel-2);border:3px solid var(--frame);border-radius:10px;font-size:17px}
-.lesson strong{font-family:var(--brush);font-weight:400;letter-spacing:.05em;text-transform:uppercase;font-size:14px;display:block;margin-bottom:3px;color:var(--purple)}
+.lesson strong{font-family:var(--brush);font-weight:400;letter-spacing:.05em;text-transform:uppercase;font-size:14px;display:block;margin-bottom:3px;color:var(--label-ink)}
 
 /* one of the gang peeking over each tool */
 .mascot{position:absolute;z-index:1;height:auto;width:auto;max-width:none;pointer-events:none;filter:drop-shadow(3px 3px 0 rgba(0,0,0,.3))}
@@ -265,17 +303,23 @@ html{scroll-padding-bottom:calc(var(--sky-h) + 16px)}   /* so a jump to a sectio
 .pill:hover{background:var(--panel-2)}
 .pill small{font-family:var(--serif);margin-left:6px;opacity:.75;font-size:15px}
 .pill.active{background:var(--yellow);box-shadow:3px 3px 0 var(--frame);transform:translate(-1px,-1px)}
-.pill.locked{opacity:.5;border-style:dashed}
-textarea,input[type=text],input[type=password],input[type=url],select{width:100%;background:#fffef8;border:3px solid var(--frame);color:var(--ink);
+.pill.locked{border-style:dashed;background:var(--panel-2);color:var(--ink-dim)}   /* locked is a dashed outline and words, never faded text */
+/* Every text field, whatever its type (a field with no type, or type=email, used to come out unstyled).
+   :where() keeps the rule as weak as a bare tag, so a page's own field rules still win. Tick boxes, file pickers,
+   sliders and buttons are not text fields. */
+textarea,select,input:where(:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]):not([type=hidden]):not([type=color]):not([type=button]):not([type=submit]):not([type=reset]):not([type=image])){
+  width:100%;background:#fffef8;border:3px solid var(--frame);color:var(--ink);
   padding:11px 14px;font-size:18px;font-family:var(--serif);line-height:1.4;border-radius:12px}
 textarea{min-height:6.5rem;resize:vertical}
 .count{text-align:right;font-family:var(--label);font-size:15px;color:var(--ink-dim);margin-top:4px}
 .count.ok{color:var(--ok)}
 button.go{margin-top:18px;width:100%;padding:14px;border:3px solid var(--frame);background:var(--green);color:var(--frame);box-shadow:5px 5px 0 var(--frame);
   font-family:var(--brush);font-size:22px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border-radius:14px 6px 16px 7px / 7px 16px 6px 14px}
-button.go:disabled{background:#e6dfc9;color:#8b8371;box-shadow:none;cursor:not-allowed}
+button.go:disabled{background:#e6dfc9;color:var(--ink-dim);box-shadow:none;cursor:not-allowed}
 button.go:not(:disabled):hover{background:#57dd75}
 .error{margin-top:14px;padding:12px 14px;background:#ffe0dc;border:3px solid var(--danger);border-radius:12px;color:#7a1010;font-size:18px}
+/* an error line is in the page, empty, from the start (so a screen reader hears it fill); empty, it takes no room */
+.error:empty{margin:0;padding:0;border:0}
 .spinner{display:inline-block;width:16px;height:16px;border:3px solid rgba(0,0,0,.25);border-top-color:var(--frame);border-radius:50%;
   animation:spin .7s linear infinite;vertical-align:-2px;margin-right:.5rem}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -285,12 +329,12 @@ button.go:not(:disabled):hover{background:#57dd75}
 .result h3{font-family:var(--brush);font-weight:400;text-transform:uppercase;font-size:32px;margin:0 0 14px;transform:rotate(-1.5deg);transform-origin:left;
   color:var(--yellow);-webkit-text-stroke:5px var(--frame);paint-order:stroke fill;text-shadow:3px 3px 0 var(--frame)}
 .block{background:#fffef8;border:3px solid var(--frame);border-radius:12px;padding:14px 16px;margin-bottom:12px;position:relative}
-.block .label{font-family:var(--brush);font-size:14px;letter-spacing:.05em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;padding-right:80px}
+.block .label{font-family:var(--brush);font-size:14px;letter-spacing:.05em;text-transform:uppercase;color:var(--label-ink);margin-bottom:8px;padding-right:80px}
 .block pre{white-space:pre-wrap;word-break:break-word;margin:0;font-family:var(--serif);font-size:18px;line-height:1.5;color:var(--ink)}
 .copybtn{position:absolute;top:10px;right:10px;background:var(--yellow);border:3px solid var(--frame);border-radius:10px;color:var(--frame);font-family:var(--brush);
   font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px 3px;cursor:pointer;box-shadow:2px 2px 0 var(--frame)}
 .note{font-size:18px;line-height:1.45;margin:0 0 10px}
-.note strong{font-family:var(--brush);font-weight:400;letter-spacing:.04em;text-transform:uppercase;font-size:15px;color:var(--purple);margin-right:6px}
+.note strong{font-family:var(--brush);font-weight:400;letter-spacing:.04em;text-transform:uppercase;font-size:15px;color:var(--label-ink);margin-right:6px}
 .friendly{margin:0 0 14px;padding:12px 16px;border:3px solid var(--frame);border-radius:12px;background:#d8f5e0;font-size:18px}
 .friendly b{display:block;font-family:var(--brush);font-weight:400;letter-spacing:.04em;text-transform:uppercase;font-size:15px;margin-bottom:2px}
 
@@ -302,7 +346,7 @@ button.go:not(:disabled):hover{background:#57dd75}
 .levels li span{flex:1;min-width:0}
 .levels li strong{display:block;font-family:var(--brush);font-weight:400;letter-spacing:.04em;text-transform:uppercase;font-size:16px}
 .levels li i{font-style:normal;font-family:var(--label);font-size:14px;color:var(--ink-dim)}
-.levels li.locked{opacity:.5;border-style:dashed}
+.levels li.locked{border-style:dashed;background:var(--panel-2)}
 .levels li.locked b{background:#ddd}
 .level-intro{margin:12px 0 0;padding:10px 14px;border:3px solid var(--frame);border-radius:12px;background:var(--panel-2);font-size:17.5px}
 
@@ -319,7 +363,7 @@ button.go:not(:disabled):hover{background:#57dd75}
 /* your description beside the prompt */
 .pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:14px;align-items:start;margin-bottom:6px}
 .yours{padding:14px 16px;border:3px solid var(--frame);border-radius:12px;background:var(--panel-2)}
-.yours .label{font-family:var(--brush);font-size:14px;letter-spacing:.05em;text-transform:uppercase;color:var(--purple);margin-bottom:8px}
+.yours .label{font-family:var(--brush);font-size:14px;letter-spacing:.05em;text-transform:uppercase;color:var(--label-ink);margin-bottom:8px}
 .yours p{margin:0;font-size:17.5px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
 .checkbtn{margin-top:10px;background:#fff;border:3px solid var(--frame);border-radius:10px;color:var(--ink);font-family:var(--brush);
   font-size:13px;letter-spacing:.05em;text-transform:uppercase;padding:5px 10px 4px;cursor:pointer}
@@ -328,7 +372,7 @@ button.go:not(:disabled):hover{background:#57dd75}
 /* compare check */
 .check{margin-top:16px}
 .ask{margin-top:14px;padding:12px 16px;background:#fffef8;border:3px solid var(--frame);border-radius:12px}
-.ask b{font-family:var(--brush);font-weight:400;letter-spacing:.04em;text-transform:uppercase;font-size:15px;color:var(--purple)}
+.ask b{font-family:var(--brush);font-weight:400;letter-spacing:.04em;text-transform:uppercase;font-size:15px;color:var(--label-ink)}
 .ask p{margin:6px 0 0;font-size:18px}
 .ask-line{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
 .ask q{font-size:19px;color:var(--ink)}
@@ -400,9 +444,9 @@ button.go:not(:disabled):hover{background:#57dd75}
   background:linear-gradient(transparent 58%, var(--yellow) 58%);align-self:flex-start;padding:0 4px}
 .case p{margin:0 0 12px;font-size:17px;line-height:1.35}
 .case .arc{font-size:16px;color:var(--ink-dim)}
-.case .arc b{display:block;font-family:var(--brush);font-weight:400;letter-spacing:.04em;text-transform:uppercase;font-size:13px;color:var(--purple);margin-bottom:2px}
+.case .arc b{display:block;font-family:var(--brush);font-weight:400;letter-spacing:.04em;text-transform:uppercase;font-size:13px;color:var(--label-ink);margin-bottom:2px}
 .look{padding:10px 12px;background:var(--panel-2);border:3px solid var(--frame);border-radius:10px;font-size:16.5px;line-height:1.35}
-.look b{display:block;font-family:var(--brush);font-weight:400;letter-spacing:.04em;text-transform:uppercase;font-size:13px;color:var(--purple);margin-bottom:3px}
+.look b{display:block;font-family:var(--brush);font-weight:400;letter-spacing:.04em;text-transform:uppercase;font-size:13px;color:var(--label-ink);margin-bottom:3px}
 .case-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:12px}
 .btn.small{font-size:13px;padding:.68em .9em .36em}
 .btn.ghost{background:#fff;color:var(--ink)}
@@ -420,6 +464,9 @@ button.go:not(:disabled):hover{background:#57dd75}
 .addchar .pickpic{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .addchar .pickpic img{width:74px;height:74px;object-fit:cover;border:3px solid var(--frame);border-radius:10px;background:var(--panel-2)}
 .addchar input[type=file]{font-size:16px;max-width:100%}
+.addchar label small{font-family:var(--serif);font-size:15px;letter-spacing:0;text-transform:none;color:var(--ink-dim)}
+.addchar > .hint2{margin:12px 0 0}
+.addchar .btn{margin-top:12px}
 
 /* grown-ups: set up the helper */
 .setup{padding:24px 26px 28px}
@@ -428,7 +475,7 @@ button.go:not(:disabled):hover{background:#57dd75}
 .setup .field{margin-bottom:6px}
 .setup .hint{margin:6px 0 0;font-size:16px;color:var(--ink-dim)}
 .setup .check-row{display:flex;gap:10px;align-items:flex-start;margin:14px 0 4px;font-size:18px}
-.setup .check-row input{width:24px;height:24px;margin-top:3px;flex:none;accent-color:var(--purple)}
+.setup .check-row input{width:24px;height:24px;margin-top:3px;flex:none;accent-color:var(--label-ink)}
 .setup .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;align-items:center}
 .setup .result-line{font-size:18px;margin-top:12px;min-height:1.4em}
 .setup .result-line.ok{color:var(--ok)}
@@ -442,7 +489,269 @@ footer{margin-top:26px;padding:18px 4px 8px;border-top:4px dotted var(--frame);f
 
 .setup-note{display:block;margin-top:6px;color:var(--danger)}
 
+/* =====================================================================================================
+   The guided journey: the pieces every page shares. Their markup is in
+   .claude/mockups/paws-journey/snippets/components.html. Every state is a class (is-current, is-done,
+   is-locked, active, is-off) set together with its ARIA attribute, because pencil.js only redraws a
+   border when a class changes. No state is shown by colour alone: each has a tick, a padlock, a badge
+   or words as well.
+   ===================================================================================================== */
+:root{
+  --i-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 13l4 4 10-11' fill='none' stroke='%23141414' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --i-lock:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23141414' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='11' width='14' height='10' rx='2'/%3E%3Cpath d='M8 11V8a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E");
+  --i-away:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 5h10v10M19 5L6 18' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+/* ---------- the slim page header: the page's stage colour, its name and the one h1. It replaces the tall hero
+   so the work starts near the top of the screen. The dots make a background picture, so pencil.js leaves this
+   box its straight outline and hard shadow, like the old hero. ---------- */
+.pagehead{--c:var(--st2);position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;min-height:64px;padding:10px 150px 8px 20px;overflow:hidden;
+  border:4px solid var(--frame);border-radius:var(--wobble);box-shadow:5px 5px 0 var(--frame);
+  background:radial-gradient(rgba(0,0,0,.13) 1.6px,transparent 2px) 0 0/10px 10px,var(--c)}
+.pagehead-kicker{flex:none;margin:0}
+.pagehead-kicker a{display:inline-flex;align-items:center;min-height:32px;padding:4px 12px 1px;background:#fff;color:var(--frame);border:3px solid var(--frame);border-radius:10px;
+  font-family:var(--brush);font-size:15px;line-height:1;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;transform:rotate(-2deg)}
+.pagehead-kicker a:hover{background:var(--yellow)}
+.pagehead h1{flex:1 1 auto;min-width:0;margin:0;padding-top:.14em;font-family:var(--brush);font-weight:400;font-size:clamp(26px,3vw,38px);line-height:1;letter-spacing:.02em;
+  text-transform:uppercase;color:#fff;-webkit-text-stroke:6px var(--frame);paint-order:stroke fill;text-shadow:3px 3px 0 var(--frame)}
+.pagehead p:not(.pagehead-kicker){flex:1 1 100%;margin:0;font-size:16.5px;line-height:1.3;color:var(--ink)}
+.pagehead-art{position:absolute;right:20px;bottom:-24%;height:140%;width:auto;max-width:none;pointer-events:none;filter:drop-shadow(3px 3px 0 rgba(0,0,0,.4))}
+
+/* ---------- the trail: where you are in the five steps. journey.js builds it into <nav id="trail" data-nopencil>,
+   so its outlines stay straight and it never waits for a redraw. Narrow first: one line of words, five round
+   44px steps, the small steps, the note. From 881px the steps share the first line and the note shares the
+   small steps' line; from 1200px each step shows its name. Never sticky, never fixed. ---------- */
+.trail{display:flex;flex-wrap:wrap;align-items:center;gap:0 12px;margin:14px 0 0;font-family:var(--label);font-size:16px;line-height:1.2;color:var(--ink)}
+.trail-now{flex:1 1 100%;margin:0;font-size:17px}
+.trail-now b{font-family:var(--brush);font-weight:400;font-size:16px;letter-spacing:.03em;text-transform:uppercase}
+.trail-list{flex:1 1 100%;display:flex;flex-wrap:wrap;gap:8px;margin:6px 0;padding:0;list-style:none}
+.trail-list li{display:flex}
+.trail-list a,.trail-lock{position:relative;box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:44px;height:44px;
+  background:var(--c,var(--yellow));color:var(--ink);border:3px solid var(--frame);border-radius:999px;text-decoration:none}
+.trail-list a:hover{transform:translateY(-1px)}
+.trail-n{padding-top:.3em;font-family:var(--brush);font-size:20px;line-height:1}
+.trail-t{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+.trail-here{display:none}
+/* the tick or padlock sits on the corner of the round step */
+.trail-i{position:absolute;right:-6px;bottom:-6px;box-sizing:border-box;width:21px;height:21px;padding:2px;background:#fff;border:2px solid var(--frame);border-radius:50%;
+  fill:none;stroke:var(--frame);stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
+.trail-list a .trail-i{display:none}
+.trail-list .is-done a .trail-i{display:block}
+/* current: filled black, with a ring round it */
+.trail-list .is-current a{background:var(--night);color:#fff;box-shadow:0 0 0 2px var(--bg),0 0 0 5px var(--frame)}
+.trail-list .is-current .trail-n{font-size:23px}
+.trail-lock{background:var(--panel-2);color:var(--ink-dim);border-style:dashed}
+.trail-subs{flex:1 1 100%;display:flex;flex-wrap:wrap;gap:4px 6px;margin:4px 0 0;padding:0;list-style:none;font-size:15px}
+.trail-subs:empty{display:none}
+.trail-subs li{padding:2px 9px 1px;border:2px solid transparent;border-radius:999px;color:var(--ink-dim)}
+.trail-subs .is-done{padding-left:25px;color:var(--ink);background:var(--i-tick) 7px 50%/13px 13px no-repeat}
+.trail-subs .is-current{background-color:var(--yellow);border-color:var(--frame);color:var(--ink)}
+.trail-note{flex:1 1 100%;margin:4px 0 0;font-size:15px;line-height:1.3;color:var(--ink-dim)}
+.trail-note.is-ahead{flex:0 1 auto;padding:2px 10px 1px;background:var(--panel-2);border:2px dashed var(--frame);border-radius:10px;color:var(--ink)}
+
+/* ---------- the home page's first screen: what this is, who it is for, how long it takes and the two ways in.
+   The town picture sits behind the right-hand end and Nettle stands in front of it; neither adds height.
+   The sky colour is the picture's own, washed across the words' side so they never sit on the buildings. ---------- */
+.onboard{position:relative;padding:22px 34% 22px 30px;overflow:hidden;border:4px solid var(--frame);border-radius:var(--wobble);box-shadow:6px 6px 0 var(--frame);
+  background:linear-gradient(90deg,#b5dddf 0%,#b5dddf 62%,rgba(181,221,223,0) 80%),#b5dddf url(img/banner.jpg) right bottom/cover no-repeat}
+.onboard-kicker{display:inline-block;margin:0 0 10px;padding:5px 12px 2px;background:var(--yellow);border:3px solid var(--frame);border-radius:10px;
+  font-family:var(--brush);font-size:16px;line-height:1;letter-spacing:.05em;text-transform:uppercase;transform:rotate(-2deg)}
+.onboard h1{margin:0;font-family:var(--brush);font-weight:400;font-size:clamp(34px,4vw,52px);line-height:1;letter-spacing:.01em;text-transform:uppercase;color:var(--yellow);
+  -webkit-text-stroke:7px var(--frame);paint-order:stroke fill;text-shadow:4px 4px 0 var(--frame)}
+.onboard-who{margin:12px 0 0;font-size:19px;line-height:1.25}
+.onboard-line{margin:4px 0 0;font-family:var(--script);font-size:21px;line-height:1.2}
+.onboard-cta{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0 0}
+.onboard-cta .btn{min-height:48px;justify-content:center;font-size:19px;padding:.7em 1.1em .38em}
+.onboard-meta{margin:12px 0 0;font-size:16.5px;line-height:1.3}
+.skills{display:flex;flex-wrap:wrap;gap:6px 8px;margin:12px 0 0;padding:0;list-style:none}
+.skill{padding:4px 11px 3px;background:#fff;border:2px solid var(--frame);border-radius:999px;font-family:var(--label);font-size:15px;line-height:1.2}
+.onboard-art{position:absolute;right:5%;bottom:-3%;height:94%;width:auto;max-width:27%;object-fit:contain;object-position:50% 100%;pointer-events:none;
+  filter:drop-shadow(5px 5px 0 rgba(0,0,0,.45))}
+
+/* ---------- the two ways in under it: learner and teacher ---------- */
+.routes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:22px}
+.route{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:18px 20px 20px;background:#fff;border:4px solid var(--frame);border-radius:var(--wobble2)}
+.route h2{margin:0;font-family:var(--brush);font-weight:400;font-size:24px;line-height:1.05;letter-spacing:.03em;text-transform:uppercase}
+.route p{margin:0;font-size:17.5px;line-height:1.35}
+
+/* ---------- the five stage cards (home, Teachers): number, name, one line, and where the work happens. The colour comes
+   from style="--c:…". The dots are on ::before so the card keeps a flat colour and a pencil outline. A card that can be
+   opened has its link in the heading, stretched over the whole card. ---------- */
+.stagecards{display:flex;flex-wrap:wrap;gap:14px;margin:0;padding:0;list-style:none}
+.stagecard{--c:var(--yellow);position:relative;isolation:isolate;flex:1 1 180px;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:7px;
+  padding:14px 14px 14px;background:var(--c);border:4px solid var(--frame);border-radius:var(--wobble)}
+.stagecard::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:radial-gradient(rgba(0,0,0,.13) 1.6px,transparent 2px) 0 0/10px 10px}
+.stagecard-n{flex:none;box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:46px;height:46px;padding-top:.3em;background:#fff;
+  border:3px solid var(--frame);border-radius:50%;font-family:var(--brush);font-size:25px;line-height:1;transform:rotate(-5deg)}
+.stagecard h3{margin:2px 0 0;font-family:var(--brush);font-weight:400;font-size:20px;line-height:1.05;letter-spacing:.02em;text-transform:uppercase}
+.stagecard h3 a{color:inherit;text-decoration:none}
+.stagecard h3 a::after{content:"";position:absolute;inset:0}
+.stagecard h3 a:hover{text-decoration:underline}
+.stagecard p{margin:0;font-size:16px;line-height:1.3}
+.stagecard .where{margin-top:auto}
+.stagecard-mark{position:absolute;right:8px;top:8px;display:inline-flex;align-items:center;gap:4px;padding:4px 9px 3px;background:#fff;border:2px solid var(--frame);border-radius:999px;
+  font-family:var(--label);font-size:14.5px;line-height:1;pointer-events:none}   /* a press on the badge goes through to the card's link */
+.stagecard-mark svg{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+.stagecard.is-current{transform:translateY(-3px) rotate(-.8deg)}
+.stagecard.is-current .stagecard-mark{background:var(--night);color:#fff}
+.stagecard.is-locked{background:#fffef8;border-style:dashed}
+.stagecard.is-locked::before{display:none}
+.stagecard.is-locked .stagecard-n{background:var(--c)}
+
+/* ---------- the cue chip: whose screen the work happens on. Light for this site; dark, with an arrow out, for the
+   image tool. It goes inside the heading it belongs to. ---------- */
+.where{display:inline-flex;align-items:center;gap:5px;flex:none;padding:5px 11px 4px;background:#fff;color:var(--ink);border:2px solid var(--frame);border-radius:999px;
+  font-family:var(--label);font-size:15px;font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;vertical-align:middle;-webkit-text-stroke:0;text-shadow:none}
+.where.site{background:#fff;color:var(--ink)}
+.where.tool{background:var(--night);color:#fff}
+.where.tool::after{content:"";flex:none;width:12px;height:12px;background:var(--i-away) center/contain no-repeat}
+
+/* ---------- the task: the one thing to do now. A stage page shows one at a time. Its head takes the stage colour
+   (set --c on the page or the task). ---------- */
+.task{margin:18px 0 0;background:#fff;border:4px solid var(--frame);border-radius:var(--wobble)}
+.task-head{padding:14px 22px 10px;background:var(--c,var(--yellow));border-bottom:4px solid var(--frame);border-radius:9px 1px 0 0 / 2px 11px 0 0}
+.task-head h2{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:0;font-family:var(--brush);font-weight:400;font-size:clamp(22px,2.4vw,30px);line-height:1.1;
+  letter-spacing:.02em;text-transform:uppercase}
+.task-head p{margin:6px 0 0;font-size:17px;line-height:1.35}
+.task-body{padding:18px 22px 6px}
+.task-body > :first-child{margin-top:0}
+.task-body h3{margin:22px 0 10px;font-family:var(--brush);font-weight:400;font-size:19px;line-height:1.15;letter-spacing:.03em;text-transform:uppercase}
+.q-rule{font-family:var(--serif);font-size:16px;letter-spacing:0;text-transform:none;color:var(--ink-dim);white-space:nowrap}
+/* Back on the left, the way on at the right, even when there is no Back */
+.stepnav{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:20px 22px 0;padding:16px 0 20px;border-top:3px dashed rgba(20,20,20,.3)}
+.stepnav .go2{margin-left:auto}
+
+/* ---------- a labelled field, its hint and its counter, usable anywhere ---------- */
+.field2{margin:16px 0 0}
+.field2 label,.codebox label{display:block;margin:0 0 6px;font-family:var(--brush);font-weight:400;font-size:16px;line-height:1.15;letter-spacing:.04em;text-transform:uppercase}
+.field2 label small{font-family:var(--serif);font-size:15px;letter-spacing:0;text-transform:none;color:var(--ink-dim)}
+.hint2{margin:0 0 8px;font-size:16.5px;line-height:1.35;color:var(--ink-dim)}
+.count2{margin:5px 0 0;text-align:right;font-family:var(--label);font-size:15.5px;color:var(--ink-dim)}
+.count2.ok{color:var(--ok)}
+
+/* ---------- choices: cards you press. Chosen is yellow with a tick; locked is dashed with a padlock and says why. ---------- */
+.choices{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:12px}
+.choice{position:relative;box-sizing:border-box;display:flex;flex-direction:column;gap:3px;min-width:0;min-height:44px;margin:0;padding:10px 12px 9px;-webkit-appearance:none;appearance:none;
+  background:#fff;color:var(--ink);border:3px solid var(--frame);border-radius:12px 5px 13px 6px / 6px 13px 5px 12px;font-family:var(--serif);font-size:17px;line-height:1.25;text-align:left;cursor:pointer}
+.choice:hover{background:var(--panel-2)}
+.choice img{display:block;width:100%;aspect-ratio:4/3;margin:0 0 5px;object-fit:contain;background:var(--panel-2);border-radius:7px}
+.choice-t{font-family:var(--brush);font-size:16.5px;line-height:1.1;letter-spacing:.03em;text-transform:uppercase}
+.choice > .choice-t:first-child{padding-right:30px}   /* no picture: keep the name clear of the badge */
+.choice-sub{font-size:15.5px;line-height:1.25;color:var(--ink-dim)}
+.choice-tick{display:none;position:absolute;right:6px;top:6px;box-sizing:border-box;width:27px;height:27px;border:2px solid var(--frame);border-radius:50%;background:#fff var(--i-tick) center/15px 15px no-repeat}
+.choice.active{background:var(--yellow)}
+.choice.active:hover{background:#ffe27a}
+.choice.active .choice-tick{display:block}
+.choice.is-locked{background:var(--panel-2);border-style:dashed;cursor:default}
+.choice.is-locked .choice-tick{display:block;background-image:var(--i-lock)}
+
+/* ---------- still to do: what a not-ready button is waiting for, each line with a way to get there ---------- */
+.need{margin:12px 0 0;padding:10px 16px;list-style:none;background:var(--panel-2);border:3px dashed var(--frame);border-radius:12px;font-size:17.5px;line-height:1.35}
+.need li{position:relative;min-height:30px;padding:4px 0 4px 32px}
+.need li::before{content:"";position:absolute;left:0;top:6px;box-sizing:border-box;width:20px;height:20px;background:#fff;border:2.5px solid var(--frame);border-radius:5px}
+.need li.ok::before{background:#fff var(--i-tick) center/13px 13px no-repeat}
+.need .linkbtn{min-height:0;text-align:left}
+
+/* ---------- the workshop code box (built by workshop.js; data-nopencil, so straight outlines and a real shadow) ---------- */
+.codebox{margin:14px 0 0;padding:14px 16px 12px;background:#fff;border:3px solid var(--frame);border-radius:12px;box-shadow:4px 4px 0 var(--frame)}
+.codebox.compact{padding:0;background:none;border:0;box-shadow:none}
+.codebox-row{display:flex;align-items:stretch;gap:10px}
+.codebox-row input{flex:1 1 auto;min-width:0;font-size:20px}
+.codebox-row .btn{flex:none;white-space:nowrap}
+.codebox input[aria-invalid="true"]{border-color:var(--danger);border-style:dashed}
+.codebox-status{margin:8px 0 0;font-size:17px;line-height:1.35}
+.codebox-status:empty{margin:0}
+.codebox .btn[aria-disabled="true"]{cursor:default}
+/* The state class goes on the status line (or on the box): each has its own sign as well as its colour. */
+.codebox-status.is-ok,.codebox-status.is-bad,.codebox-status.is-wait,
+.codebox.is-ok .codebox-status,.codebox.is-bad .codebox-status,.codebox.is-wait .codebox-status{padding-left:28px;background:0 .12em/20px 20px no-repeat}
+.codebox-status.is-ok,.codebox.is-ok .codebox-status{color:var(--ok);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%23137a2c'/%3E%3Cpath d='M6.5 12.5l3.5 3.5 7.5-8' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.codebox-status.is-bad,.codebox.is-bad .codebox-status{color:var(--danger);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%23c81e1e'/%3E%3Cpath d='M12 6v7.5M12 17.6v.4' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E")}
+.codebox-status.is-wait,.codebox.is-wait .codebox-status{color:var(--ink-dim);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9' fill='none' stroke='%235a5140' stroke-width='3' stroke-dasharray='5 5'/%3E%3C/svg%3E")}
+
+/* ---------- now use your image tool: black, because this part happens somewhere else ---------- */
+.toolstep{margin:16px 0 0;padding:20px 24px 22px;background:var(--night);color:#fff;border:4px solid var(--frame);border-radius:var(--wobble)}
+.toolstep h2,.toolstep h3{margin:0 0 12px;font-family:var(--brush);font-weight:400;font-size:clamp(24px,2.6vw,32px);line-height:1.05;letter-spacing:.02em;text-transform:uppercase;color:var(--yellow)}
+.toolstep ol{margin:0;padding:0;list-style:none;counter-reset:toolstep}
+.toolstep li{position:relative;min-height:46px;box-sizing:border-box;padding:8px 0 8px 52px;font-size:20px;line-height:1.3;counter-increment:toolstep}
+.toolstep li::before{content:counter(toolstep);position:absolute;left:0;top:4px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:38px;height:38px;padding-top:.3em;
+  background:var(--yellow);color:var(--frame);border-radius:50%;font-family:var(--brush);font-size:20px;line-height:1}
+.toolstep p{margin:12px 0 0;font-size:17.5px;line-height:1.4;color:rgba(255,255,255,.86)}
+.toolstep a,.toolstep .linkbtn{color:var(--yellow)}
+
+/* ---------- one prompt, shown whole: the shared words tinted and labelled, then this picture's words, then one Copy ---------- */
+.promptbox{margin:14px 0 0;padding:14px 16px;background:#fffef8;border:3px solid var(--frame);border-radius:12px}
+.promptbox h3,.promptbox h4{margin:0 0 8px;font-family:var(--brush);font-weight:400;font-size:15px;line-height:1.15;letter-spacing:.05em;text-transform:uppercase;color:var(--label-ink)}
+.promptbox p{margin:0 0 8px;font-size:18px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.promptbox-shared{padding:8px 12px;background:#efe6ff;border-radius:8px}
+.promptbox-shared b{display:block;margin:0 0 2px;font-family:var(--label);font-weight:400;font-size:15px;line-height:1.2;color:var(--ink-dim)}
+.copybtn2{display:inline-flex;align-items:center;justify-content:center;min-height:38px;margin:2px 0 0;padding:.62em 1em .3em;-webkit-appearance:none;appearance:none;background:var(--yellow);color:var(--frame);
+  border:3px solid var(--frame);border-radius:10px;font-family:var(--brush);font-size:15px;line-height:1;letter-spacing:.05em;text-transform:uppercase;cursor:pointer}
+.copybtn2:hover{background:#ffe27a}
+
+/* ---------- boxed notes: plain, the safety reminder, a note for the teacher ---------- */
+.callout{margin:16px 0 0;padding:12px 16px;background:var(--panel-2);border:3px solid var(--frame);border-radius:12px;font-size:17.5px;line-height:1.4}
+.callout > b:first-child,.callout h3,.callout h4{display:block;margin:0 0 4px;font-family:var(--brush);font-weight:400;font-size:15px;line-height:1.15;letter-spacing:.04em;text-transform:uppercase}
+.callout p{margin:0 0 6px}
+.callout p:last-child{margin-bottom:0}
+.callout.safe{background:#d8f5e0}
+.callout.teach{background:#efe6ff}
+
+/* ---------- a button that looks like a link, tall enough for a finger ---------- */
+.linkbtn{display:inline-flex;align-items:center;min-height:44px;margin:0;padding:0 2px;-webkit-appearance:none;appearance:none;background:none;border:0;border-radius:4px;color:#5b21b6;
+  font:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.side .linkbtn{color:var(--yellow)}
+
+/* ---------- the confirm box (<dialog class="dialog">, opened with showModal) ---------- */
+.dialog{box-sizing:border-box;width:min(540px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;padding:22px 24px 20px;background:#fff;color:var(--ink);
+  border:4px solid var(--frame);border-radius:var(--wobble);box-shadow:8px 8px 0 var(--frame);font-size:18px;line-height:1.4}
+.dialog::backdrop{background:rgba(16,16,20,.62)}
+.dialog h2{margin:0 0 10px;font-family:var(--brush);font-weight:400;font-size:28px;line-height:1.05;letter-spacing:.02em;text-transform:uppercase}
+.dialog ul{margin:0 0 10px;padding-left:22px}
+.dialog li{margin-bottom:4px}
+.dialog p{margin:10px 0 0;overflow-wrap:anywhere}
+.dialog label{display:flex;align-items:center;gap:12px;min-height:44px;cursor:pointer}
+.dialog input[type=checkbox]{flex:none;width:24px;height:24px;margin:0;accent-color:var(--focus)}
+.dialog-btns{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:12px;margin-top:18px}
+
+/* ---------- the projector view on Look Closely: the chrome goes and the left gutter with it.
+   Everything else about the big screen is in that page's own style block. ---------- */
+body.bigscreen{padding-left:0;--bar-h:0px}
+html:has(> body.bigscreen){--bar-h:0px}   /* scroll-padding is worked out on html, which cannot see a property set on body */
+body.bigscreen > .side,body.bigscreen .trail,body.bigscreen .pagehead,body.bigscreen .skyframe,body.bigscreen .basefoot{display:none}
+
 /* ---------- responsive ---------- */
+/* The trail on a wide screen. The empty ::before is a full-width break: the words and the five steps go before it
+   on one line, the small steps and the note after it. Margins, not row gaps, space the lines, because the break
+   would be given a gap of its own. Kept to 110px tall at most, so the work starts high on the page. */
+@media (min-width:881px){
+  .trail::before{content:"";order:2;flex:0 0 100%;height:0}
+  .trail-now,.trail-list{order:1;flex:0 1 auto}
+  .trail-list{margin:4px 0}
+  .trail-list a,.trail-lock{width:40px;height:40px}
+  .trail-list .is-current a{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--frame)}
+  .trail-subs{order:3;flex:0 1 auto}
+  .trail-note{order:4;flex:0 1 auto}
+  .trail-note:not(.is-ahead){margin-left:auto}
+  .trail .linkbtn{min-height:22px}
+}
+/* Room for the names: each step is a pill with its number, name and tick or padlock; the current one is black,
+   a size up, and says "You're here". The words "Step 2 of 5:" move down to lead the small steps. */
+@media (min-width:1200px){
+  .trail-now{order:3;margin-top:4px}
+  .trail-now b{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+  .trail-list{flex-wrap:nowrap;gap:6px;margin:0}
+  .trail-list a,.trail-lock{width:auto;gap:7px;padding:0 13px 0 6px}
+  .trail-list a{background:#fff}
+  .trail-n,.trail-list .is-current .trail-n{flex:none;box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:27px;height:27px;background:var(--c,var(--yellow));color:var(--ink);
+    border:2px solid var(--frame);border-radius:50%;font-size:15px}
+  .trail-t{position:static;width:auto;height:auto;margin:0;overflow:visible;clip:auto;clip-path:none;font-size:16px}
+  .trail-i{position:static;flex:none;width:15px;height:15px;padding:0;background:none;border:0;border-radius:0}
+  .trail-list .is-current a{background:var(--night);box-shadow:none}
+  .trail-list .is-current .trail-i{stroke:#fff}
+  .trail-list .is-current .trail-t{font-size:17.5px}
+  .trail-list .is-current .trail-here{display:block;flex:none;padding:4px 8px 2px;background:var(--yellow);color:var(--frame);border-radius:999px;font-size:13px;line-height:1;white-space:nowrap}
+}
 @media (max-width:1100px){
   .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
   .shelves{grid-template-columns:minmax(0,1fr)}
@@ -452,18 +761,48 @@ footer{margin-top:26px;padding:18px 4px 8px;border-top:4px dotted var(--frame);f
 }
 @media (max-width:880px){
   .stepcard{min-height:430px}
-  :root{--sky-h:92px}
+  :root{--sky-h:92px;--bar-h:56px}
+  html:not(.js){--bar-h:0px}   /* without script the bar is not sticky, so nothing has to clear it */
   .skyframe .who{height:98px}
   .skyframe .ribbon{left:108px;bottom:22px;font-size:18px;padding:14px 78px 18px 92px}
   .skyframe .comet{width:84px;bottom:36px}
-  .side{position:sticky;top:0;bottom:auto;width:auto;flex-direction:row;align-items:center;overflow:visible}
+  /* The sidebar becomes a bar along the top. Without script it is an ordinary block at the top of the page and
+     every link shows, wrapping onto as many lines as it needs. Nothing scrolls sideways. */
+  .side{position:static;bottom:auto;width:auto;flex-direction:row;flex-wrap:wrap;align-items:center;overflow:visible;
+    padding:env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left)}
   .side .brand{flex:none;padding:10px 12px;font-size:17px;border-bottom:0;border-right:1px solid rgba(255,255,255,.16)}
-  .side nav{flex-direction:row;overflow-x:auto;scrollbar-width:none;padding:6px 4px}
-  .side nav::-webkit-scrollbar{display:none}
-  .side nav a{flex:none;margin:0 2px;padding:8px 10px;gap:8px;font-size:16px;border-bottom:0}
+  .side .side-name{display:block;flex:0 1 auto;min-width:0;padding:.2em 12px 0;overflow:hidden;color:#fff;text-decoration:none;
+    font-family:var(--brush);font-size:18px;line-height:44px;letter-spacing:.03em;white-space:nowrap;text-overflow:ellipsis}
+  .side .side-name:hover{color:var(--yellow)}
+  .side nav{flex:1 1 100%;flex-direction:row;flex-wrap:wrap;padding:2px 6px 8px}
+  .side nav a{flex:none;box-sizing:border-box;min-height:44px;margin:0 2px;padding:8px 10px;gap:8px;font-size:16px;border-bottom:0}
   .side nav a.on{margin:0 4px}
   .side nav a svg{width:19px;height:19px}
   .side .side-foot{display:none}
+  /* With script (class js on <html>, set by one line in the head, so the closed menu is there from the first paint):
+     one sticky row of a fixed height, and the links wait behind the Menu button. journey.js shows the button and
+     opens the panel (class is-open); closed means display:none, so the links are out of the tab order too. */
+  .js .side{position:sticky;top:0;flex-wrap:nowrap;height:var(--bar-h);height:calc(var(--bar-h) + env(safe-area-inset-top))}
+  .js .side .menu-btn{display:inline-flex;align-items:center;gap:8px;flex:none;min-width:44px;min-height:44px;margin:0 8px 0 auto;padding:.28em 14px 0}
+  .js .side nav{position:absolute;left:0;right:0;top:100%;flex-direction:column;flex-wrap:nowrap;max-height:calc(100vh - var(--bar-h));max-height:calc(100dvh - var(--bar-h));overflow-y:auto;
+    padding:4px 8px calc(10px + env(safe-area-inset-bottom));background:var(--night);border-top:1px solid rgba(255,255,255,.16);box-shadow:0 10px 0 rgba(16,16,20,.25)}
+  .js .side nav:not(.is-open){display:none}
+  .js .side nav a{min-height:50px;margin:0;padding:10px 12px;gap:14px;font-size:19px;border-bottom:1px solid rgba(255,255,255,.14)}
+  .js .side nav a.on{margin:4px 0}
+  .js .side nav a svg{width:24px;height:24px}
+  /* everything you press is at least 44px each way for a finger; .btn.small keeps its type size */
+  .btn,.pill,.copybtn,.copybtn2,.checkbtn{min-width:44px;min-height:44px}
+  .btn,.copybtn2{justify-content:center}
+  .pagehead-kicker a{min-height:44px}
+  .trail-note{line-height:1.5}
+  .need li{display:flex;flex-wrap:wrap;align-items:center;min-height:44px;padding-top:0;padding-bottom:0}
+  .need li::before{top:12px}
+  .need .linkbtn,.need a{display:inline-flex;align-items:center;min-height:44px}
+  .setup .check-row{min-height:44px;align-items:center}
+  .comic .rm,.mine-arrow{width:44px;height:44px}
+  .comic .rm{font-size:22px}
+  .basefoot .tips-again,.basefoot .linkbtn{display:inline-flex;align-items:center;min-height:44px}
+  .onboard{padding:20px 32% 20px 22px}
   .page{padding:14px 16px 0}
   .hero{grid-template-columns:minmax(0,1fr);min-height:0}
   .hero::before{background:linear-gradient(180deg,rgba(18,58,168,.9) 0%,rgba(24,80,190,.7) 55%,rgba(24,80,190,.15) 100%)}
@@ -484,8 +823,36 @@ footer{margin-top:26px;padding:18px 4px 8px;border-top:4px dotted var(--frame);f
   :root{--sky-h:64px}
   .skyframe .who{height:70px;left:6px;bottom:-6px}
   .skyframe .ribbon,.skyframe .comet{display:none}
-  .basefoot .say{display:block}
+  .basefoot{padding-left:16px;padding-right:16px}
   body{font-size:17.5px}
+  /* the first screen on a phone: no picture, a smaller title, two full-width buttons */
+  .onboard{padding:16px;background:linear-gradient(#b5dddf,#b5dddf)}
+  .onboard-art{display:none}
+  .onboard-kicker{margin-bottom:8px}
+  .onboard h1{font-size:clamp(26px,8vw,34px);-webkit-text-stroke-width:5px;text-shadow:3px 3px 0 var(--frame)}
+  .onboard-who{margin-top:10px;font-size:17.5px}
+  .onboard-line{font-size:19px}
+  .onboard-cta{flex-direction:column;gap:10px;margin-top:12px}
+  .onboard-cta .btn{width:100%;height:48px}
+  .onboard-meta{margin-top:10px;font-size:16px}
+  .skills{margin-top:10px}
+  .routes{grid-template-columns:minmax(0,1fr)}
+  /* stage cards become rows: the number on the left, the words beside it, the badge in the flow */
+  .stagecard{flex-basis:100%;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;align-items:start}
+  .stagecard > *{grid-column:2}
+  .stagecard-n{grid-column:1;grid-row:1 / span 4}
+  .stagecard-mark{position:static;justify-self:start}
+  .stagecard.is-current{transform:none}
+  .pagehead{padding:10px 14px 8px}
+  .pagehead-art{display:none}
+  .task-head{padding:12px 16px 9px}
+  .task-body{padding:16px 16px 4px}
+  .stepnav{margin:18px 16px 0}
+  .stepnav .btn{flex:1 1 auto}
+  .codebox-row{flex-direction:column}
+  .toolstep{padding:18px 16px 20px}
+  .dialog{padding:18px 16px 16px}
+  .dialog-btns .btn{flex:1 1 auto}
   .hero .copy{padding:18px 16px 14px}
   .hero .burst{width:100px;right:6px;top:6px}
   .hero .art{min-height:160px}
@@ -504,5 +871,5 @@ footer{margin-top:26px;padding:18px 4px 8px;border-top:4px dotted var(--frame);f
   .desk,.setup{padding:22px 18px 24px}
   .levels{grid-template-columns:minmax(0,1fr);gap:6px}
 }
-@media print{body{padding-left:0 !important}.side,.skyframe{display:none !important}.basefoot{padding-bottom:18px}}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none !important;animation:none !important}}
+@media print{body{padding-left:0 !important}.side,.skyframe,.trail{display:none !important}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none !important;animation:none !important}}

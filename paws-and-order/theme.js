@@ -8,7 +8,9 @@
 // empty frame. Children can also add characters in the browser (Meet the gang),
 // and those stay on their own device.
 
-const IMG = new URL('./img/', import.meta.url).href;
+// The Worker (paws-api/) imports this file too. It has no page address to build
+// from and needs no pictures, so it gets the site path instead.
+const IMG = typeof import.meta.url === 'string' ? new URL('./img/', import.meta.url).href : '/paws-and-order/img/';
 
 export default {
   id: 'pound',
@@ -18,6 +20,31 @@ export default {
   // The house style, in words. It describes the look instead of naming an artist,
   // because putting a style into words is the skill being taught.
   houseStyle: 'hand-drawn children’s comic book illustration, loose and playful, thick slightly wobbly black ink outlines, visible pencil sketch lines under the ink, flat bright colours with coarse halftone dot shading, hand-drawn paper texture, simple flat lighting, looks like it was drawn by a very talented ten-year-old',
+
+  // The five stages of making a comic, in the one order used everywhere: the home
+  // page, the progress trail on every page (journey.js), and the Teachers page.
+  // `where` says whose screen the work happens on: this site, or the image tool.
+  // `page` is the address from the Paws & Order folder. `subs` are the small steps
+  // inside a stage, as [id, label].
+  stages: [
+    { n: 1, id: 'look', name: 'Look closely', short: 'Look', colour: '#ffd23f', where: 'site', page: 'references/',
+      say: 'Study a picture and notice what is really there.',
+      subs: [['watch', 'Watch'], ['together', 'Together'], ['solo', 'Your turn'], ['send', 'Send it on']] },
+    { n: 2, id: 'choose', name: 'Choose and describe', short: 'Choose', colour: '#5ec8f2', where: 'site', page: 'picture/#choose',
+      say: 'Pick a character or a place, your colours and a level. Then put it into exact words.',
+      subs: [['who', 'Who or where'], ['colours', 'Colours'], ['level', 'Level and tool'], ['words', 'Your words'], ['brief', 'Read your brief']] },
+    { n: 3, id: 'create', name: 'Create with AI', short: 'Create', colour: '#ff9a3c', where: 'tool', page: 'picture/#create',
+      say: 'Get your prompt here. Then make the picture in your image tool.',
+      subs: [['prompt', 'Get your prompt'], ['tool', 'Use your image tool'], ['back', 'Come back']] },
+    { n: 4, id: 'check', name: 'Check and improve', short: 'Check', colour: '#b18cff', where: 'site', page: 'picture/#check',
+      say: 'Compare what you asked for with what you got. Change one thing and try again.',
+      subs: [['aim', 'Aim'], ['prompt', 'Prompt'], ['result', 'Result'], ['compare', 'Compare'], ['why', 'Why'], ['change', 'Change one thing']] },
+    { n: 5, id: 'build', name: 'Build and share', short: 'Build', colour: '#7be08f', where: 'site', page: 'builder/',
+      say: 'Put your pictures into a comic. Save it, print it or download it.',
+      subs: [['page', 'Pick a page'], ['pictures', 'Add your pictures'], ['words', 'Add the words'], ['share', 'Save and share']],
+      // How many pictures each level's page needs, said before and inside the Comic Maker.
+      needs: { basic: 'A storybook page needs 1 to 6 pictures.', medium: 'A four-panel comic needs 4 pictures.', advanced: 'A super page needs 5 or 6 pictures.' } },
+  ],
 
   // The image tools the prompts can be tuned for. Grown-ups: check the age rules
   // of any tool before children use it. Most ask for 13+ or a school account.
@@ -72,6 +99,37 @@ export default {
   ],
   castPlaceholder: IMG + 'cast/slot.svg',
   castFile: file => IMG + 'cast/' + file,
+
+  // Places in Doodleville a picture can be set in. Like a character, each has a
+  // fixed `look` that is repeated word for word, so the place stays the same from
+  // picture to picture. `id` is also its reference picture (img/ref/) and its
+  // small card picture (img/thumbs/).
+  places: [
+    { id: 'police-pound', name: 'The Police Pound',
+      look: 'the front of a blue police station with a star sign, orange steps, a police car parked outside and a doughnut in the bin' },
+    { id: 'pound-office', name: 'The Pound Office',
+      look: 'a police office with wonky desks, filing cabinets, a cork board, stacked doughnut boxes and a big window looking out at the skyline' },
+    { id: 'milkshake-bar', name: 'The Milkshake Bar',
+      look: 'a milkshake bar with red booths, tall stools, giant milkshakes and a colourful jukebox' },
+    { id: 'puddle-street', name: 'Puddle Street',
+      look: 'a drizzly evening street with puddles, a round orange car, a bent lamp post and shops with lit windows' },
+    { id: 'sunset-street', name: 'Sunset Street',
+      look: 'a street at sunset with tall wonky buildings, curly lamps and a yellow taxi' },
+    { id: 'wonky-row', name: 'Wonky Row',
+      look: 'a street of crooked coloured houses under a mustard sky, with animal-shaped mailboxes' },
+    { id: 'harbour', name: 'The Harbour',
+      look: 'a sunny harbour with a striped pink lighthouse, colourful boats and a cobbled quay with bollards' },
+    { id: 'playground', name: 'The Playground',
+      look: 'a playground with a yellow slide, climbing frames, swings, a seesaw, a sandpit and hopscotch under a big tree' },
+    { id: 'duck-pond-park', name: 'Duck Pond Park',
+      look: 'a park with a duck pond, lily pads, a wooden bridge, a bandstand, benches and a picnic blanket' },
+    { id: 'funfair', name: 'The Funfair',
+      look: 'a funfair at dusk with a big wheel, a merry-go-round, striped stalls and a candyfloss cart under strings of lights' },
+    { id: 'library', name: 'The Library',
+      look: 'a cosy library with tall bookshelves, a rolling ladder, beanbags, a round window and a desk lamp' },
+    { id: 'doughnut-factory', name: 'The Doughnut Factory',
+      look: 'a doughnut factory with winding conveyor belts covered in doughnuts, colourful pipes, mixers and steam' },
+  ],
 
   // Who is friends with whom, shown under the gang. Empty until there is a gang.
   // Each entry is [id, 'verb', id], for example ['hero', 'looks after', 'buddy'].
