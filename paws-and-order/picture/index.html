@@ -18,6 +18,8 @@
 
 /* two big answers side by side (a character or a place) */
 .pic-wide{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));max-width:660px}
+/* the three levels: wide enough that STORYTELLER stays in one piece beside its tick or padlock */
+.pic-levels{grid-template-columns:repeat(auto-fit,minmax(190px,1fr));max-width:720px}
 /* place and colour pictures fill their frame; the gang's portraits are shown whole */
 .pic-cover img{object-fit:cover}
 /* the card that opens the make-a-character form is not one of the gang, so its outline is dashed */
@@ -188,7 +190,7 @@
         <p>Choose how big your job is, and the image tool you will use.</p></div>
       <div class="task-body">
         <h3 id="q-tier">Which level? <span class="q-rule">(pick one)</span></h3>
-        <div class="choices" role="group" aria-labelledby="q-tier" id="tierChoices"></div>
+        <div class="choices pic-levels" role="group" aria-labelledby="q-tier" id="tierChoices"></div>
         <div class="callout" id="tierLower" hidden><b>Your level</b><p id="tierLowerSay"></p></div>
         <p class="level-intro" id="tierSay" hidden></p>
 
@@ -267,7 +269,7 @@
           <h3 id="lower-h" tabindex="-1">About your level</h3>
           <p id="lowerSay"></p>
           <p id="q-tier2">You can pick again here. <span class="q-rule">(pick one)</span></p>
-          <div class="choices" role="group" aria-labelledby="q-tier2" id="tierChoices2"></div>
+          <div class="choices pic-levels" role="group" aria-labelledby="q-tier2" id="tierChoices2"></div>
         </div>
 
         <!-- a second go: the prompt from last time, with the one change put in by hand. No AI. -->
