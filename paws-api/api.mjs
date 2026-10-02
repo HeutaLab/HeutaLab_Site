@@ -34,6 +34,7 @@ import {
 export const PAWS_API = "/paws-and-order/api/";
 
 const MAX_BODY = 32768;
+const MAX_DRAIN = 1048576;        // how much of an oversize body is read and thrown away before hanging up
 // All six must be bound (wrangler.jsonc), or nothing runs.
 const LIMITERS = ["PAWS_SESSION_LIMIT", "PAWS_IP_LIMIT", "PAWS_CODE_CHECKS", "PAWS_CODE_IP", "PAWS_SETUP_IP", "PAWS_MANAGE_IP"];
 // The services a workshop may run on. ai.js also knows "custom" (an address somebody types
@@ -47,7 +48,8 @@ const TIER_LEVEL = new Map([["basic", 1], ["medium", 2], ["advanced", 3]]);
 const TIMEOUTS = { gate: 20000, brief: 45000, compare: 30000, test: 20000 };
 const DEFAULT_SESSION_CAP = 40;   // AI requests per browser per six hours (var PAWS_SESSION_CAP)
 const SIX_HOURS = 21600;
-const KEY_TESTS_A_DAY = 100;      // live key tests per UTC day, per data centre
+const KEY_TESTS_A_DAY = 400;      // live key tests per UTC day, per data centre
+const KEY_TESTS_EACH = 20;        // ... and from any one address, so one address cannot use up everybody's
 const CODES_A_DAY = 200;          // new codes per UTC day, everywhere
 
 // The page shows its own words for most of these (workshop.js); they are here so a reply
@@ -149,7 +151,7 @@ export async function handlePaws(request, env, ctx) {
   }
 }
 
-// The daily tidy (the cron in wrangler.jsonc), also run after each new code is made.
+// The daily tidy (the cron in wrangler.jsonc), also run each time a new code is made.
 // It never throws: a failed sweep is logged and tried again tomorrow.
 export async function sweepPaws(env, now = Date.now()) {
   try {
@@ -201,12 +203,15 @@ async function readBody(request) {
     const { done, value } = await reader.read();
     if (done) break;
     size += value.byteLength;
-    if (size > MAX_BODY) {
+    // Too long: nothing more is kept, but the rest is read and thrown away (to a limit) before
+    // answering. Hanging up in the middle of a body can break the connection for the request after it.
+    if (size > MAX_BODY + MAX_DRAIN) {
       try { await reader.cancel(); } catch {}
       return { tooLong: true };
     }
-    chunks.push(value);
+    if (size <= MAX_BODY) chunks.push(value);
   }
+  if (size > MAX_BODY) return { tooLong: true };
   const all = new Uint8Array(size);
   let at = 0;
   for (const c of chunks) {
@@ -403,11 +408,12 @@ async function handleCreate(q) {
   const w = readWorkshop(q.body);
   if (w.error) return refuse(false, 400, "invalid", w.error);
 
-  // Old workshops are tidied whenever a new one is being made, as well as by the daily cron.
-  if (q.ctx && typeof q.ctx.waitUntil === "function") q.ctx.waitUntil(sweepPaws(q.env, q.now));
-
-  // A live test spends a little of somebody's key, so there are only so many a day.
+  // A live test spends a little of somebody's key, so there are only so many a day: from any
+  // one address first, so junk from one place cannot use up the share of every other teacher.
   const today = dayOf(q.now);
+  if (await overCount(q.url, "tests-" + today + "-" + (await sha256Hex(q.ip)), KEY_TESTS_EACH, 90000)) {
+    return refuse(false, 429, "busy", "No more codes can be made from here today. Try again tomorrow.");
+  }
   if (await overCount(q.url, "tests-" + today, KEY_TESTS_A_DAY, 90000)) return fullToday();
   if ((await madeSince(q.db, today + "T00:00:00.000Z")) >= CODES_A_DAY) return fullToday();
 
@@ -429,6 +435,8 @@ async function handleCreate(q) {
     const id = await codeId(q.keys, code);
     const sealed = await seal(q.keys, code, id, w.provider, w.key);
     if (await insertRow(q.db, { ...row, ...sealed, id })) {
+      // Old workshops are tidied whenever a new one is made, as well as by the daily cron.
+      if (q.ctx && typeof q.ctx.waitUntil === "function") q.ctx.waitUntil(sweepPaws(q.env, q.now));
       return json({ code, manage, level: w.level, platform: w.platform, until, cap: w.cap });
     }
   }

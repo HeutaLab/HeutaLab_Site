@@ -76,7 +76,7 @@ test("the deploy leaves paws-api out of the site's files, and sends its routes t
   assert.match(wrangler, /"run_worker_first": \["\/the-precinct\/api\/\*", "\/paws-and-order\/api\/\*"\]/);
   assert.match(wrangler, /"triggers": \{ "crons": \["17 3 \* \* \*"\] \}/);
   assert.match(wrangler, /"PAWS_SESSION_CAP": "40"/);
-  const want = { PAWS_SESSION_LIMIT: [4111, 8], PAWS_IP_LIMIT: [4112, 200], PAWS_CODE_CHECKS: [4113, 12], PAWS_CODE_IP: [4114, 600], PAWS_SETUP_IP: [4115, 5], PAWS_MANAGE_IP: [4116, 60] };
+  const want = { PAWS_SESSION_LIMIT: [4111, 8], PAWS_IP_LIMIT: [4112, 120], PAWS_CODE_CHECKS: [4113, 12], PAWS_CODE_IP: [4114, 600], PAWS_SETUP_IP: [4115, 5], PAWS_MANAGE_IP: [4116, 60] };
   for (const [name, [ns, limit]] of Object.entries(want)) {
     assert.ok(wrangler.includes(`{ "name": "${name}", "namespace_id": "${ns}", "simple": { "limit": ${limit}, "period": 60 } }`), name);
   }

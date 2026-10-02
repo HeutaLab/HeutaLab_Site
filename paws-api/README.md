@@ -46,7 +46,7 @@ Then, on the live site: open the Teachers page, make a code with a real key, and
 
 One row per code, in `paws_workshops`. Never the code itself (only an HMAC of it), never a learner's text, never a name, an address or a per-request record.
 
-- The teacher's AI key, encrypted with AES-256-GCM. The row's key is derived from `PAWS_VAULT_KEY` and from the code, so neither the database alone nor the secret alone opens it. Whoever holds both, and the code, can: that is the site owner. The Teachers page says so, and tells teachers to make a key just for this with a spend limit.
+- The teacher's AI key, encrypted with AES-256-GCM. The row's key is derived from `PAWS_VAULT_KEY` and from the code, so neither the database alone nor the secret alone opens it. Whoever holds both can (a code is short enough to find by trying them all): that is the site owner. The Teachers page says so, and tells teachers to make a key just for this with a spend limit.
 - The level, image tool, AI service and model; when the code was made, when it ends, whether it was ended; the daily allowance and today's count; a SHA-256 of the teacher's manage token.
 - The encrypted key is erased the moment a teacher ends the workshop, and otherwise by the first sweep after it expires (the cron runs daily; making a code also runs it). The emptied row stays 30 days so a learner can be told "that code has finished" rather than "that code did not work", then it is deleted. D1's own backups (Time Travel) can hold an earlier copy for up to 30 days more.
 - Counters, not logs: Cloudflare's rate limiters count requests per address and per browser id for a minute, and the data centre's cache holds a count per browser id (hashed) for six hours and a count of key tests per day.
@@ -59,14 +59,19 @@ One row per code, in `paws_workshops`. Never the code itself (only an HMAC of it
 | Helper requests per code per UTC day | 300, 600 or 1200, chosen by the teacher | the row's `cap`, taken in one SQL statement |
 | AI requests per browser per minute | 8 | `PAWS_SESSION_LIMIT` |
 | AI requests per browser per six hours | 40 | `PAWS_SESSION_CAP` (a var in `wrangler.jsonc`) |
-| Brief and compare requests per address per minute | 200 | `PAWS_IP_LIMIT` |
+| Brief and compare requests per address per minute | 120 | `PAWS_IP_LIMIT` |
 | Code checks per browser, per address, per minute | 12, 600 | `PAWS_CODE_CHECKS`, `PAWS_CODE_IP` |
 | New codes per address per minute | 5 | `PAWS_SETUP_IP` |
 | Status, end and level requests per address per minute | 60 | `PAWS_MANAGE_IP` |
-| Live key tests per day, per data centre | 100 | `api.mjs` |
+| Live key tests per day, from one address | 20 | `api.mjs` |
+| Live key tests per day, per data centre | 400 | `api.mjs` |
 | New codes per day, everywhere | 200 | `api.mjs`, counted in the table |
 
-A whole class shares one school address, so the per-address limits are flood guards. The bound on what anyone can make a teacher's key spend is the code's own daily allowance.
+A whole class shares one school address, so the per-address limits are flood guards. The two per-browser limits are a courtesy, not a lock: the page invents the browser id, so anyone who sends a new id each time is held only by the per-address limit. The bound on what anyone can make a teacher's key spend is the code's own daily allowance.
+
+The allowance counts requests, not money. One request is at most two calls to the AI service (the coach, then the helper; a compare is one), each capped at 1,500 or 3,000 output tokens, and a request that the service fails to answer still counts. The count starts again at midnight UTC. So a key's real ceiling is the spend limit the teacher sets at the AI service, which the Teachers page tells them to do.
+
+Someone who has a class's code (it is written on a board) can use up that class's allowance for the day. A code cannot be used to read the key, the model or anything about the teacher.
 
 ## Trying it without a real key (local only)
 
