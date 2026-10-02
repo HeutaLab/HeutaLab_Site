@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.className+=' js'</script>
+<meta name="theme-color" content="#ffd23f">
+<title>Explore Doodleville - Paws &amp; Order</title>
+<meta name="description" content="Explore Doodleville: meet the Paws &amp; Order gang, visit the places, try the colour families, read about the three levels, open a comic template and find the comics you saved.">
+<link rel="stylesheet" href="../pound.css">
+<style>
+  /* Explore Doodleville only. Everything shared is in pound.css, and the gang cards, palette cards, level rows
+     and shelves keep the classes they had on the old home page, so they look as they did there. */
+
+  /* the jump links at the top: a row of pills that wraps, each tall enough for a finger */
+  .xp-menu{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:16px 0 0}
+  .xp-menu p{margin:0;padding-top:.3em;font-family:var(--brush);font-size:15px;line-height:1;letter-spacing:.04em;text-transform:uppercase}
+  .xp-menu ul{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+  .xp-menu a{display:inline-flex;align-items:center;min-height:44px;padding:4px 16px;background:#fff;color:var(--ink);border:3px solid var(--frame);border-radius:999px;
+    font-family:var(--label);font-size:18px;line-height:1.1;text-decoration:none}
+  .xp-menu a:hover{background:var(--panel-2)}
+
+  .xp-lead{margin:0 0 14px;font-size:18px;max-width:78ch}
+  .xp-lead strong{background:var(--yellow);font-weight:400;padding:0 6px;border-radius:4px}
+
+  /* "In your brief": a tick and the words, on the card the learner has already chosen */
+  .case .xp-in{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;margin:0 0 10px;padding:3px 10px 2px 8px;background:var(--yellow);color:var(--ink);
+    border:2px solid var(--frame);border-radius:999px;font-family:var(--label);font-size:15px;line-height:1.2}
+  .case .xp-in::before{content:"";flex:none;width:13px;height:13px;background:var(--i-tick) center/contain no-repeat}
+  /* a name or a look somebody typed may be one long word */
+  .cast-grid .case h3,.cast-grid .look span{overflow-wrap:anywhere}
+
+  /* a place card is a gang card with a landscape picture, in the shape the small place pictures are drawn in */
+  .xp-place .pic{position:relative;flex:none;aspect-ratio:3/2}
+  .xp-place .pic img{position:absolute;inset:0;object-position:50% 50%}
+
+  /* the add-a-character form comes from gang.js with no heading of its own */
+  .xp-own{margin-top:26px}
+  .xp-own h3{margin:0 0 4px;font-family:var(--brush);font-weight:400;font-size:24px;line-height:1.1;text-transform:uppercase}
+  .xp-own .addchar{margin-top:10px}
+  /* the name in the "Remove this character?" box was typed by somebody, and may be one long word */
+  #rm-p{overflow-wrap:anywhere}
+
+  /* palette cards: a press anywhere on the card still picks it, as it always did; the button is the real control.
+     The cards are narrow, so the button takes the card's width and its words may wrap onto a second line. */
+  .pal-grid figure{display:flex;flex-direction:column}
+  .pal-grid .palpic,.pal-grid .bars{flex:none}
+  .pal-grid figcaption{flex:1 1 auto}
+  .pal-grid figure .btn{align-self:stretch;justify-content:center;margin:0 12px 12px;line-height:1.15;text-align:center}
+  .pal-grid figure.xp-on{background:var(--yellow)}
+  .pal-grid .btn.active{background:#fff}
+  .pal-grid .btn.active::before{content:"";flex:none;width:14px;height:14px;margin-top:-.3em;background:var(--i-tick) center/contain no-repeat}
+  .xp-now{margin-top:16px}
+  .xp-now .step-note{margin:8px 0 0}
+
+  /* each level row says its number and its name */
+  .tier b span{display:block;font-family:var(--label);font-size:15px;letter-spacing:0;text-transform:none;color:var(--ink-dim)}
+
+  @media (max-width:600px){
+    /* the picture goes on top: the narrow side strip the gang cards use would show a sliver of the place */
+    .xp-place{display:flex}
+    .xp-place .pic{aspect-ratio:16/9;height:auto;border-right:0;border-bottom:3px solid var(--frame)}
+    .tier b span{display:inline;margin-left:6px}
+  }
+  @media print{.pagehead,.xp-menu{display:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the page</a>
+<aside class="side">
+  <a class="brand" href="/" aria-label="HeutaLab home"><span>Heuta</span><span>Lab</span></a>
+  <a class="side-name" href="../">Paws &amp; Order</a>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="sideNav" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>Menu</span></button>
+  <nav id="sideNav" aria-label="Paws &amp; Order">
+    <a href="../references/?start=1" data-nav="start"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg><span>Start</span></a>
+    <a href="../references/" data-nav="look"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg><span>Look closely</span></a>
+    <a href="../builder/" data-nav="builder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg><span>Comic maker</span></a>
+    <a href="../teachers/" data-nav="teachers"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M7 8.5h7M7 12h10M12 16v2.5M8 21l4-2.5 4 2.5"/></svg><span>Teachers</span></a>
+    <a href="../explore/" data-nav="explore" class="on" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2.2 4.8-4.8 2.2 2.2-4.8z"/></svg><span>Explore</span></a>
+  </nav>
+  <div class="side-foot"><svg viewBox="0 0 120 40" aria-hidden="true"><path d="M2 39V24h8v-9h7v24h6V9h10v30h5V19h8v20h6V4h4V1h2v3h4v35h5V17h9v22h6V23h7v16h5V13h9v26h4V27h6v12"/></svg>Paws &amp; Order<small>Part of HeutaLab</small></div>
+</aside>
+<div class="page">
+
+  <header class="pagehead" style="--c:#ff8fc0">
+    <p class="pagehead-kicker"><a href="../">Paws &amp; Order</a></p>
+    <h1>Explore Doodleville</h1>
+    <img class="pagehead-art" src="../img/stickers/barnaby/telescope.webp" alt="" width="301" height="314">
+  </header>
+
+  <main id="main">
+    <noscript><p class="notice warn">This page needs JavaScript. Switch it on, then load the page again.</p></noscript>
+
+    <p class="caption">Have a look around the town. Meet the gang, visit the places and try the colours. See one you like? Press its <b>Use</b> button and it goes into your brief: your plan for a picture. Making a comic? <a href="../">The five steps start on the home page.</a></p>
+
+    <nav class="xp-menu" aria-labelledby="jump-h">
+      <p id="jump-h">Jump to</p>
+      <ul role="list">
+        <li><a href="#cast">The gang</a></li>
+        <li><a href="#places">Places</a></li>
+        <li><a href="#colours">Colours</a></li>
+        <li><a href="#levels">Levels</a></li>
+        <li><a href="#templates">Templates</a></li>
+        <li><a href="#mycomics">My comics</a></li>
+      </ul>
+    </nav>
+
+    <section id="cast" aria-labelledby="cast-h">
+      <h2 class="rule" id="cast-h">Meet the gang</h2>
+      <p class="cast-intro">Pick who you&rsquo;re drawing, then use their <strong>look</strong> word for word in every prompt: the exact words you give your image tool. It&rsquo;s what keeps them the same from picture to picture.</p>
+      <div class="cast-grid" id="castGrid"></div>
+      <div class="relations frame" id="relations" hidden></div>
+
+      <div class="xp-own">
+        <h3 id="own-h" tabindex="-1">Make a character of your own</h3>
+        <p class="step-note first">Invent someone new. Describe them the same way every time and they will stay recognisable. You do not have to: the gang is ready to use.</p>
+        <div id="addChar"></div>
+      </div>
+    </section>
+
+    <section id="places" aria-labelledby="places-h">
+      <h2 class="rule" id="places-h">Places in Doodleville</h2>
+      <p class="xp-lead">A place has a <strong>look</strong> too. Use the same words in every prompt and the place stays the same from picture to picture.</p>
+      <div class="cast-grid" id="placeGrid"></div>
+    </section>
+
+    <section id="colours" aria-labelledby="colours-h">
+      <h2 class="rule" id="colours-h">Pick your colours</h2>
+      <div class="palettes frame">
+        <p class="pal-intro">Here is the same picture in each colour family. Choose one and put it in <em>every</em> prompt. End the line with <q>no other colours</q>. When colours are not pinned down, image tools drift. Press <b>Use these colours</b> to put a family in your brief.</p>
+        <div class="pal-grid" id="palGrid" role="group" aria-labelledby="colours-h"></div>
+        <div class="xp-now" id="palNow" hidden>
+          <div class="look"><b>Your colour words, every time: <span id="palName"></span></b><span id="palWords"></span></div>
+          <p class="step-note">These exact words go in every prompt, so the colours stay the same from picture to picture.</p>
+          <div class="case-btns">
+            <button type="button" class="btn ghost small" id="palCopy">Copy colour words</button>
+            <a class="btn small" id="palGo" href="../picture/#choose">Step 2: Choose and describe <span class="arr" aria-hidden="true">&rarr;</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="levels" aria-labelledby="levels-h">
+      <h2 class="rule" id="levels-h">Three levels, two subjects</h2>
+      <p class="xp-lead">Doodler, Sketcher and Storyteller are the three levels. Each one asks a little more of you. Your picture is about a character or a place, and the levels work for both. Your teacher opens the levels for your class.</p>
+      <div class="tiers">
+        <article class="tier-panel frame">
+          <h3>Characters</h3>
+          <p class="lesson"><strong>Tip</strong>Ask for just &ldquo;a police officer for a comic&rdquo; and image tools often give you a shiny, realistic picture. Add the style in words (hand-drawn, thick wobbly outlines, flat bright colours) and it flips to a real comic look.</p>
+          <div class="tier"><b>Level 1 <span>Doodler</span></b><p>One character portrait. Plain background, one pose, one face, like a character reference sheet.</p><span aria-hidden="true" class="tpic" style="background:radial-gradient(rgba(0,0,0,.12) 1.4px,transparent 1.8px) 0 0/8px 8px,#ffd6ec"><img src="../img/stickers/vivi/standing.webp" alt=""></span></div>
+          <div class="tier"><b>Level 2 <span>Sketcher</span></b><p>The same character in a place. A shared paragraph describes them, and you copy it word for word.</p><span aria-hidden="true" class="tpic" style="background-image:url(../img/thumbs/duck-pond-park.webp)"><img src="../img/stickers/vivi/dancing.webp" alt=""></span></div>
+          <div class="tier"><b>Level 3 <span>Storyteller</span></b><p>A story of three or more pictures. Plan the shots with the prompt helper <em>before</em> you make anything.</p><span aria-hidden="true" class="tpic row"><i style="background-image:url(../img/thumbs/funfair.webp)"><img src="../img/stickers/flash/running.webp" alt=""></i><i style="background-image:url(../img/thumbs/wonky-row.webp)"><img src="../img/stickers/flash/peeking.webp" alt=""></i><i style="background-image:url(../img/thumbs/milkshake-bar.webp)"><img src="../img/stickers/flash/face-proud.webp" alt=""></i></span></div>
+        </article>
+        <article class="tier-panel frame">
+          <h3>Places</h3>
+          <p class="lesson"><strong>Tip</strong>Ask for &ldquo;a police station office&rdquo; and some tools fill it with people, speech bubbles and a whole scene. For an empty room, say so: no characters, no words, no speech bubbles, no captions.</p>
+          <div class="tier"><b>Level 1 <span>Doodler</span></b><p>One empty room, as a wide shot.</p><span aria-hidden="true" class="tpic" style="background-image:url(../img/thumbs/pound-office.webp)"></span></div>
+          <div class="tier"><b>Level 2 <span>Sketcher</span></b><p>Two rooms that must feel like one building. Copy the shared paragraph exactly, and give each room its own layout line.</p><span aria-hidden="true" class="tpic row"><i style="background-image:url(../img/thumbs/police-pound.webp)"></i><i style="background-image:url(../img/thumbs/pound-office.webp)"></i></span></div>
+          <div class="tier"><b>Level 3 <span>Storyteller</span></b><p>A place sheet: several shots of one street with the same time of day, weather and colours.</p><span aria-hidden="true" class="tpic" style="background-image:url(../img/thumbs/place-sheet.webp)"></span></div>
+        </article>
+      </div>
+    </section>
+
+    <div class="shelves">
+      <section class="shelf" id="templates" aria-labelledby="tpl-h">
+        <div class="shelf-head"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.5 1.3 6.5L12 17l-5.9 3.3 1.3-6.5L2.5 9.3l6.6-.8z"/></svg><h2 id="tpl-h">Featured templates</h2></div>
+        <p class="shelf-note">A page ready to go: the places, the gang and the first words. Open one and make it your own.</p>
+        <div class="tpls" id="tplGrid"></div>
+      </section>
+      <section class="shelf" id="mycomics" aria-labelledby="mine-h">
+        <div class="shelf-head"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.5 1.3 6.5L12 17l-5.9 3.3 1.3-6.5L2.5 9.3l6.6-.8z"/></svg><h2 id="mine-h">My comics</h2></div>
+        <p class="shelf-note">Pages you saved in the Comic Maker. They stay in this browser, on this device, and nobody else can see them.</p>
+        <div id="mineRow"></div>
+        <p class="step-note" id="mineNote" role="status"></p>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div class="skyframe" aria-hidden="true">
+  <img class="who" src="../img/stickers/nettle/face-pleased.webp" alt="" width="200" height="220">
+  <p class="ribbon">Every great story starts with a closer look&hellip;</p>
+  <svg class="comet" viewBox="0 0 150 100"><path d="M8 94C40 80 72 56 98 34" fill="none" stroke="#ffd23f" stroke-width="10" stroke-linecap="round" opacity=".35"/><path d="M26 86C52 72 76 54 98 34" fill="none" stroke="#ffd23f" stroke-width="5" stroke-linecap="round" opacity=".7"/><path d="M112 6l6 14 15 1-11 10 4 15-14-8-13 8 3-15-11-10 15-1z" fill="#ffd23f" stroke="#141414" stroke-width="3.5" stroke-linejoin="round"/></svg>
+</div>
+<footer class="basefoot">
+  <p class="say">Look closely. Choose and describe. Create with AI. Check and improve. Build your story.</p>
+  <p>Your work stays on this device. With a workshop code, the words you send to the prompt helper go through heutalab.com to the AI service your teacher chose. Pictures never leave this device. Part of <a href="/">HeutaLab</a>.</p>
+</footer>
+<script type="module">
+import J from '../journey.js';
+import { gang, places } from '../gang.js';
+import shelf from '../shelf.js';
+import THEME from '../theme.js';
+
+const $ = id => document.getElementById(id);
+const esc = J.esc;
+
+// The chrome first, so the menu and the Start link work whatever happens further down.
+J.mount({ page: 'explore' });
+
+const ARROW = ' <span class="arr" aria-hidden="true">&rarr;</span>';
+// Every card's buttons say the same words, so each also carries its card's name for a screen reader.
+const named = (words, name) => words + '<span class="vh">' + esc(name) + '</span>';
+
+// ---- the gang: the site's own characters, then the ones made on this device ----
+const castGrid = $('castGrid');
+let castIds = '';   // the cards on the page now, so a change in another tab only redraws them when the list differs
+
+function castCard(c) {
+  const cutOut = gang.stickerImg(c);
+  // The name and the look are in words beside every picture, so the picture itself says nothing more.
+  const pic = cutOut
+    ? '<div class="pic stk" style="--pc:' + esc(c.colour || '#5ec8f2') + '"><img src="' + esc(cutOut) + '" alt="" loading="lazy"></div>'
+    : '<div class="pic"><img src="' + esc(c.img || THEME.castPlaceholder) + '" alt="" loading="lazy"></div>';
+  return '<article class="case frame" data-id="' + esc(c.id) + '">' + pic
+    + '<div class="case-body"><span class="case-tag">' + esc(c.role) + ' &middot; ' + esc(String(c.tag || '').toLowerCase()) + '</span><h3>' + esc(c.name) + '</h3>'
+    + '<p class="xp-in" hidden>In your brief</p>'
+    + (c.story ? '<p>' + esc(c.story) + '</p>' : '')
+    + (c.arc ? '<p class="arc"><b>Their face changes</b>' + c.arc.map(esc).join('<span aria-hidden="true"> &rarr; </span><span class="vh">, then </span>') + '</p>' : '')
+    + '<div class="look"><b>Their look, every time</b><span>' + esc(c.look) + '</span></div>'
+    + '<div class="case-btns"><button type="button" class="btn small" data-use="' + esc(c.id) + '">' + named('Use this character', ': ' + c.name) + ARROW + '</button>'
+    + '<button type="button" class="btn ghost small" data-copy="' + esc(c.id) + '">' + named('Copy look', ' of ' + c.name) + '</button>'
+    + (c.mine ? '<button type="button" class="btn ghost small" data-remove="' + esc(c.id) + '">' + named('Remove', ' ' + c.name) + '</button>' : '')
+    + '</div></div></article>';
+}
+function renderCast() {
+  const all = gang.all(), byId = id => all.find(c => c.id === id);
+  castIds = all.map(c => c.id).join('|');
+  castGrid.innerHTML = all.map(castCard).join('');
+  const rels = (THEME.relations || []).map(([a, verb, b]) => [byId(a), verb, byId(b)]).filter(([a, , b]) => a && b);
+  const box = $('relations');
+  box.innerHTML = rels.length ? '<b>Who is who</b>' + rels.map(([a, verb, b]) =>
+    '<span class="rel"><em>' + esc(a.name) + '</em> ' + esc(verb) + ' <em>' + esc(b.name) + '</em></span>').join('') : '';
+  box.hidden = !rels.length;
+}
+// A picture somebody added may not load: show the empty frame instead. (error does not bubble, so it is caught on the way down.)
+castGrid.addEventListener('error', e => {
+  const img = e.target;
+  if (img && img.tagName === 'IMG' && img.src !== THEME.castPlaceholder) img.src = THEME.castPlaceholder;
+}, true);
+
+castGrid.addEventListener('click', e => {
+  const use = e.target.closest('[data-use]'), copy = e.target.closest('[data-copy]'), rem = e.target.closest('[data-remove]');
+  if (use) {
+    // Only the choice is saved. The next page shows it and records that the learner is now on step 2.
+    J.save({ pick: { subject: 'character', cast: [use.dataset.use] } });
+    location.href = J.hrefFor(2);
+  }
+  if (copy) { const c = gang.byId(copy.dataset.copy); if (c) J.copy(c.look, copy); }
+  if (rem) askRemove(rem.dataset.remove, rem);
+});
+
+// ---- removing a character made on this device: ask first. The dialog is made when it is needed, as the
+// Start again one is, so a browser too old for <dialog> never shows its words loose on the page. ----
+function askRemove(id, opener) {
+  const c = gang.byId(id);
+  if (!c) return;
+  const d = document.createElement('dialog');
+  if (typeof d.showModal !== 'function') {
+    if (window.confirm('Remove ' + c.name + ' from this device?')) removeCharacter(id);
+    return;
+  }
+  d.className = 'dialog';
+  d.setAttribute('aria-labelledby', 'rm-h');
+  d.setAttribute('aria-describedby', 'rm-p');
+  d.setAttribute('data-nopencil', '');
+  d.innerHTML = '<h2 id="rm-h">Remove this character?</h2>'
+    + '<p id="rm-p"><b>' + esc(c.name) + '</b> will be taken off this device. You cannot get them back.</p>'
+    + '<div class="dialog-btns"><button type="button" class="btn back" data-act="cancel" autofocus>Cancel</button>'
+    + '<button type="button" class="btn" data-act="yes">Yes, remove</button></div>';
+  let yes = false;
+  d.addEventListener('click', e => {
+    const b = e.target.closest('[data-act]');
+    if (!b) return;
+    yes = b.dataset.act === 'yes';
+    d.close();
+  });
+  // Cancel and Escape change nothing and put the focus back on the button that asked.
+  d.addEventListener('close', () => {
+    d.remove();
+    if (yes) removeCharacter(id);
+    else if (opener && opener.isConnected) opener.focus();
+  });
+  document.body.appendChild(d);
+  d.showModal();
+}
+function removeCharacter(id) {
+  const c = gang.byId(id), name = c ? c.name : 'That character';
+  gang.remove(id);
+  // gang.js leaves the journey alone: a character that has gone must not stay in the brief
+  const cast = J.get().pick.cast;
+  if (cast.includes(id)) J.save({ pick: { cast: cast.filter(x => x !== id) } });
+  renderCast();
+  showPicks();
+  // the card and its button have gone, so the focus goes to the heading just below the gang
+  J.focusHeading($('own-h'));
+  J.announce(name + ' has been removed from this device.');
+}
+
+gang.mountAddForm($('addChar'), {
+  onAdd(id) {
+    renderCast();
+    showPicks();
+    const c = gang.byId(id), card = Array.from(castGrid.children).find(el => el.dataset.id === id);
+    const name = card && card.querySelector('h3');
+    // Show the new card and put the focus on its name. Not on its Use button: an Enter key still held down
+    // from the form would press that and leave the page.
+    if (name) {
+      name.setAttribute('tabindex', '-1');
+      try { name.focus({ preventScroll: true }); } catch (e) { name.focus(); }
+      J.scrollTo(card, { block: 'center' });
+    }
+    J.announce((c ? c.name : 'Your character') + ' has joined the gang.');
+  },
+});
+
+// ---- places: each one a card like the gang's, with its picture and its fixed look ----
+const placeGrid = $('placeGrid');
+placeGrid.innerHTML = places.all().map(p => '<article class="case frame xp-place" data-id="' + esc(p.id) + '">'
+  + '<div class="pic"><img src="' + esc(p.thumb) + '" alt="" loading="lazy"></div>'
+  + '<div class="case-body"><h3>' + esc(p.name) + '</h3>'
+  + '<p class="xp-in" hidden>In your brief</p>'
+  + '<div class="look"><b>Its look, every time</b><span>' + esc(p.look) + '</span></div>'
+  + '<div class="case-btns"><button type="button" class="btn small" data-use="' + esc(p.id) + '">' + named('Use this place', ': ' + p.name) + ARROW + '</button>'
+  + '<button type="button" class="btn ghost small" data-copy="' + esc(p.id) + '">' + named('Copy look', ' of ' + p.name) + '</button>'
+  + '</div></div></article>').join('');
+placeGrid.addEventListener('click', e => {
+  const use = e.target.closest('[data-use]'), copy = e.target.closest('[data-copy]');
+  if (use) {
+    // The place only: whether the picture is about a character or a place is chosen on the next page.
+    J.save({ pick: { place: use.dataset.use } });
+    location.href = J.hrefFor(2);
+  }
+  if (copy) { const p = places.byId(copy.dataset.copy); if (p) J.copy(p.look, copy); }
+});
+
+// ---- colours: the same picture in each colour family ----
+const palGrid = $('palGrid'), palNow = $('palNow');
+palGrid.innerHTML = Object.entries(THEME.palettes).map(([key, p]) =>
+  '<figure data-pal="' + esc(key) + '"><img class="palpic" src="' + esc(gang.paletteImg(key)) + '" alt="" loading="lazy">'
+  + '<div class="bars" aria-hidden="true">' + p.colours.map(c => '<span style="background:' + esc(c) + '"></span>').join('') + '</div>'
+  + '<figcaption><b>' + esc(p.label) + '</b>' + esc(p.note) + '</figcaption>'
+  + '<button type="button" class="btn small" aria-pressed="false">' + named('Use these colours', ': ' + p.label) + '</button></figure>').join('');
+// Choosing colours does not leave this page, so the page itself has to show and say what happened.
+palGrid.addEventListener('click', e => {
+  const fig = e.target.closest('figure[data-pal]');
+  if (!fig) return;
+  const key = fig.dataset.pal;
+  if (!Object.hasOwn(THEME.palettes, key) || J.get().pick.palette === key) return;
+  J.save({ pick: { palette: key } });
+  showPicks();
+  J.announce(THEME.palettes[key].label + ' is in your brief.');
+});
+$('palCopy').addEventListener('click', e => { J.copy($('palWords').textContent, e.currentTarget); });
+$('palGo').href = J.hrefFor(2);
+
+// ---- what the learner has already chosen, marked on its card. Each mark is a tick and words, never a colour alone. ----
+function showPicks() {
+  const pick = J.get().pick;
+  const inBrief = (grid, chosen) => grid.querySelectorAll('.case').forEach(card => {
+    const chip = card.querySelector('.xp-in'), on = chosen(card.dataset.id);
+    if (chip && chip.hidden === on) chip.hidden = !on;
+  });
+  // a character only counts while the picture is about a character
+  inBrief(castGrid, id => pick.subject === 'character' && pick.cast.includes(id));
+  inBrief(placeGrid, id => pick.place === id);
+  palGrid.querySelectorAll('figure').forEach(fig => {
+    const on = fig.dataset.pal === pick.palette, btn = fig.querySelector('button');
+    // the class goes with the attribute: pencil.js only redraws an outline when a class changes
+    fig.classList.toggle('xp-on', on);
+    btn.classList.toggle('active', on);
+    if (btn.getAttribute('aria-pressed') !== String(on)) btn.setAttribute('aria-pressed', String(on));
+  });
+  const p = pick.palette && Object.hasOwn(THEME.palettes, pick.palette) ? THEME.palettes[pick.palette] : null;
+  if (p) { $('palName').textContent = p.label; $('palWords').textContent = p.phrase; }
+  if (palNow.hidden === !!p) palNow.hidden = !p;
+}
+
+// ---- the two shelves ----
+shelf.renderTemplates($('tplGrid'));
+const mineRow = $('mineRow');
+function showComics() {
+  shelf.renderComics(mineRow).then(
+    () => { $('mineNote').textContent = ''; },
+    () => { $('mineNote').textContent = 'Your saved comics could not be opened just now.'; });
+}
+
+renderCast();
+showPicks();
+showComics();
+
+// The sections are filled in after the browser may already have jumped to #places or #mycomics, so jump again now.
+// Not on a reload or the Back button: the browser then puts the page back where the reader left it.
+// It is a jump, as following a link to a section always is, not a glide down the whole page past every picture.
+const SECTIONS = ['cast', 'places', 'colours', 'levels', 'templates', 'mycomics'];
+let arrival = 'navigate';
+try { arrival = performance.getEntriesByType('navigation')[0].type; } catch (e) {}
+if (arrival === 'navigate' && SECTIONS.includes(location.hash.slice(1))) {
+  const target = $(location.hash.slice(1));
+  J.scrollTo(target, { behavior: 'instant' });
+}
+
+// Another tab, or coming back with the Back button: the gang, the choices and the saved comics may have changed.
+function refresh() {
+  if (gang.all().map(c => c.id).join('|') !== castIds) renderCast();
+  showPicks();
+}
+window.addEventListener('storage', e => {
+  if (e.key === null || e.key === 'police_pound_cast_v1' || e.key === 'paws_journey_v1') refresh();
+});
+window.addEventListener('pageshow', e => {
+  if (!e.persisted) return;
+  refresh();
+  showComics();
+});
+</script>
+<script type="module" src="../pencil.js"></script>
+</body>
+</html>
