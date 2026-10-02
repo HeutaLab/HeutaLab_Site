@@ -100,10 +100,17 @@ function build(el, cs, W, H) {
       body += line(smooth(pts, false), sd.c, sd.w * (sd.kind === 'solid' ? 0.78 : 0.85), sd.kind, 0.9);
     });
   }
-  return { svg: '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '">' + body + '</svg>', on };
+  return { svg: '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none">' + body + '</svg>', on };
 }
 
 const SIDES = ['Top', 'Right', 'Bottom', 'Left'];
+
+// A box can change size with no class changing: a text box dragged taller by its corner, a picture loading inside.
+// Every box with a drawn outline is watched, so the outline is drawn again at the new size.
+const watched = new WeakSet();
+const sizes = typeof ResizeObserver === 'function' ? new ResizeObserver(() => later()) : null;
+function watch(el) { if (sizes && !watched.has(el)) { watched.add(el); sizes.observe(el, { box: 'border-box' }); } }
+
 function sketch(el) {
   // Undo only what this script drew last time. An element's own background picture or border colour stays:
   // clearing them all used to wipe pictures set on the page (the home page cards) whenever a card was redrawn.
@@ -122,6 +129,7 @@ function sketch(el) {
   el.style.backgroundImage = 'url("data:image/svg+xml,' + encodeURIComponent(out.svg) + '")';
   el.style.backgroundSize = '100% 100%'; el.style.backgroundRepeat = 'no-repeat'; el.style.backgroundPosition = '0 0'; el.style.backgroundOrigin = 'border-box';
   el.__pp.bg = true; el.__pp.sides = [];
+  watch(el);
   out.on.forEach((v, i) => { if (v) { el.style['border' + SIDES[i] + 'Color'] = 'transparent'; el.__pp.sides.push(SIDES[i]); } });
   if (cs.boxShadow !== 'none' && !/inset/.test(cs.boxShadow)) { el.style.boxShadow = 'none'; el.__pp.shadow = true; }
 }

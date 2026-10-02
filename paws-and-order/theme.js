@@ -377,8 +377,10 @@ export default {
     'Light: where does it come from, and is it where you asked?',
   ],
 
-  // Pictures offered in the Comic Maker's library.
-  library: ['sheet-inspector-nettle', 'sheet-sergeant-rocco', 'sheet-chief-grumbleton', 'sheet-vivi-velvet', 'sheet-flash-the-crow', 'sheet-mabel-mudge', 'sheet-nana-shellby', 'sheet-captain-barnaby-bubbles', 'police-pound', 'pound-office', 'puddle-street', 'sunset-street', 'milkshake-bar', 'wonky-row', 'rooftop-balcony', 'wet-pavement', 'rain-soaked-street', 'place-sheet', 'gang', 'harbour', 'playground', 'duck-pond-park', 'funfair', 'library', 'doughnut-factory', 'penguin-postie', 'robot-chef', 'owl-inventor', 'treehouse', 'bus-stop', 'moon-base'],
+  // Pictures offered in the Comic Maker's library: empty places only, ready for stickers and words.
+  // Character sheets, the practice characters and pictures with the gang already drawn in are left out
+  // (the sticker tray has the gang). A picture not listed here still opens in templates and saved comics.
+  library: ['police-pound', 'pound-office', 'milkshake-bar', 'puddle-street', 'sunset-street', 'wonky-row', 'harbour', 'playground', 'duck-pond-park', 'funfair', 'library', 'rooftop-balcony', 'wet-pavement', 'treehouse', 'bus-stop', 'moon-base'],
 
   // Colours for captions, balloons, thoughts and sound effects in the Comic Maker.
   // fill: the box (or a sound effect's letters); text: the words; line: the outline.
