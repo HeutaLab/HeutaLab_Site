@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.className+=' js'</script>
 <meta name="theme-color" content="#ffd23f">
-<title>Comic Maker: Paws & Order</title>
+<title>Comic Maker - Paws &amp; Order</title>
 <meta name="description" content="Build your own comic page: add your pictures, then captions, speech balloons and sound effects.">
 <link rel="stylesheet" href="../pound.css">
 <style>
@@ -40,7 +41,6 @@
   .btn.ghost{background:transparent;color:var(--ink);box-shadow:none;border:1px solid var(--frame)}
   .btn.ghost:hover{border-color:var(--ink);color:var(--ink);background:transparent}
   .btn.small{font-size:16px;padding:6px 14px}
-  .btn:disabled,.pill:disabled{opacity:.35;cursor:not-allowed}
 
   .workbench{margin-top:20px;border:4px solid var(--frame);border-radius:var(--wobble);box-shadow:6px 6px 0 var(--frame);background:
     radial-gradient(rgba(0,0,0,.12) 1.4px,transparent 1.8px) 0 0/12px 12px,#5ec8f2}
@@ -55,6 +55,12 @@
   .dock::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:var(--roof);pointer-events:none;
     background:url(../img/skyline.svg) left bottom/auto 100% repeat-x}
   body.tray-open .dock::before{display:none}
+  /* ...and only when the window is tall enough to spare them the room: on a short one they would sit on the comic */
+  @media not all and (min-height:900px){.dock::before{display:none}}
+  /* Typing on a narrow screen: the keyboard takes half the window, so the dock leaves the bottom of it and waits at the
+     end of the page (the script sets body.typing). The two never stack up over the words being typed. */
+  @media (max-width:880px){body.typing .dock{position:relative}
+    body.typing .dock::before,body.typing .tray,body.typing .tip,body.typing .scard{display:none}}
   .dock .sg{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
   .dock .sg > b{font-family:var(--script);font-weight:400;font-size:17px;color:#fff6dc;margin-right:4px;position:relative}
   .dock .pill{padding:5px 12px;font-size:16px;position:relative}
@@ -65,10 +71,7 @@
   .dock label.zoom{font-size:12.5px;font-style:italic;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:6px}
   .dock input[type=range]{accent-color:var(--yellow);width:120px}
   .dock .btn.ghost,.dock .btn.ghost:hover{background:#fff;color:var(--ink);border:2px solid var(--frame)}
-  .dock .btn:disabled{opacity:.5}
-  /* no skyline hovering over this page: the rooftops stand on the dock, so the black base runs on under them */
-  .basefoot{padding-bottom:calc(var(--roof) + 14px)}
-  .basefoot .say{display:block}
+  .dock .btn:disabled,.dock .btn.ghost:disabled:hover{background:#e6dfc9;color:var(--ink-dim)}   /* greyed with real colours, as in pound.css, not faded */
   .dock .undo{margin-left:6px}
   .stylebtn{display:inline-flex;align-items:center;gap:10px;background:var(--yellow);color:#15120a;border:3px solid #111;border-radius:999px;padding:5px 12px 4px 14px;cursor:pointer;position:relative;
     font-family:var(--label);font-size:17px;box-shadow:3px 3px 0 #111}
@@ -139,7 +142,8 @@
   .sheet-title{position:relative;height:100%;display:flex;align-items:center;
     font-family:var(--brush);font-size:5.4cqw;line-height:1;color:#111;text-transform:uppercase;outline:none;
     white-space:nowrap;padding-right:.15em;user-select:text;-webkit-user-select:text}
-  .sheet-title:empty::before{content:attr(data-ph);color:#b3ab98}
+  /* the hint sits on a slip of paper with no outline of its own, so it can be read on the dark page styles too */
+  .sheet-title:empty::before{content:attr(data-ph);color:var(--ink-dim);-webkit-text-stroke:0;background:#fff6dc;border-radius:.12em;padding:.14em .2em 0}
   /* Each panel sits on its polygon's bounding box and is clipped to the polygon; frames (.edge) are SVG strokes of the same
      polygon, twice as wide as they show, so the clip leaves only the inner half (the canvas export does the same). */
   .pnl{position:absolute}
@@ -170,7 +174,7 @@
   .pnl.drop .edge .hl{stroke:var(--blue);stroke-dasharray:2 1.4}
   .pnl-inner > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
   .pnl-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1cqw;
-    color:#8a7a52;font-family:var(--label);font-size:2.4cqw;letter-spacing:.06em;text-align:center;padding:4%}
+    color:var(--ink-dim);font-family:var(--label);font-size:2.4cqw;letter-spacing:.06em;text-align:center;padding:4%}
   .pnl-empty b{font-size:6cqw;line-height:1;color:#d8c88f;font-weight:400}
 
   .it{position:absolute;touch-action:none;cursor:grab;width:max-content}
@@ -207,7 +211,7 @@
   /* prose mode */
   .prose-page{width:min(100%,720px);background:#fff6dc;color:#111;padding:5% 6% 6%;box-shadow:6px 6px 0 #111;border:4px solid #111;container-type:inline-size}
   .prose-title{font-family:var(--brush);font-size:6cqw;text-transform:uppercase;outline:none;line-height:1.05}
-  .prose-title:empty::before{content:attr(data-ph);color:#b3ab98}
+  .prose-title:empty::before{content:attr(data-ph);color:var(--ink-dim)}
   .pframe{margin-bottom:4cqw;position:relative}
   .pframe .pnl-inner{aspect-ratio:16/9;height:auto;border:.5cqw solid #111}
   .pframe.sel .pnl-inner{outline:.7cqw solid var(--blue);outline-offset:.3cqw}
@@ -216,7 +220,7 @@
   .pframe textarea:focus{outline:none;border-bottom-color:#111}
   .pframe .rm{position:absolute;top:-2.4cqw;right:-2cqw;width:26px;height:26px;border-radius:50%;border:0;background:#111;color:#f2c744;cursor:pointer;display:none}
   .pframe.sel .rm{display:block}
-  .addframe{display:block;width:100%;padding:2.4cqw;border:.3cqw dashed #b9b19c;background:none;color:#7c7462;font-family:var(--label);
+  .addframe{display:block;width:100%;padding:2.4cqw;border:.3cqw dashed #b9b19c;background:none;color:var(--ink-dim);font-family:var(--label);
     letter-spacing:.14em;text-transform:uppercase;font-size:max(12px,2cqw);cursor:pointer}
   .addframe:hover{border-color:#111;color:#111}
 
@@ -224,7 +228,7 @@
   dialog.lib{width:min(920px,calc(100vw - 32px));max-height:86vh;background:#fff;color:var(--ink);border:4px solid var(--frame);border-radius:20px;padding:0}
   dialog.lib::backdrop{background:rgba(30,20,60,.55)}
   .lib-head{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:3px solid var(--frame)}
-  .lib-head h3{margin:0;font-family:var(--brush);font-weight:400;color:var(--ink);font-size:26px}
+  .lib-head h2{margin:0;font-family:var(--brush);font-weight:400;color:var(--ink);font-size:26px}
   .lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;padding:16px 18px;overflow:auto;max-height:calc(86vh - 70px)}
   .lib-grid button{padding:0;border:3px solid var(--frame);border-radius:12px;background:#fff;cursor:pointer;aspect-ratio:1/1;overflow:hidden}
   .lib-grid button:hover{border-color:var(--ink)}
@@ -264,90 +268,162 @@
     .dock .sw{flex:none;width:24px;height:24px}
     .dock .undo{margin-left:0}
     .dock .note,.dock .more{white-space:nowrap}}
+
+  /* ---------- step 5 of the journey: the pieces round the Comic Maker ---------- */
+  /* the way back to step 4, on the page header's own line */
+  .cm-back{flex:none;display:inline-flex;align-items:center;min-height:32px;padding:4px 13px 2px;background:#fff;color:var(--frame);border:3px solid var(--frame);border-radius:999px;
+    font-family:var(--label);font-size:16.5px;line-height:1.1;text-decoration:none}
+  .cm-back:hover{background:var(--yellow)}
+  /* how many pictures the chosen page needs, and the templates: both live in the pick-a-page area */
+  .tools .cm-need{margin-top:12px}
+  .cm-tpls{margin:12px 0 0}
+  .cm-tpls summary{box-sizing:border-box;width:fit-content;min-height:44px;padding:11px 6px 0 2px;cursor:pointer;font-family:var(--brush);font-size:18px;line-height:1.2;letter-spacing:.03em;text-transform:uppercase}
+  .cm-tpls .hint2{margin:2px 0 10px}
+  @media (min-width:1101px){.cm-tpls .tpls{grid-template-columns:repeat(6,minmax(0,1fr))}}   /* all six in one row when there is room */
+  /* what the desk says while a template or a saved comic is on its way */
+  .cm-opening{margin:0;padding:16px 22px 13px;background:#fff;border:4px solid var(--frame);border-radius:var(--wobble);font-family:var(--brush);font-size:22px;line-height:1.15;text-transform:uppercase}
+  /* the finish panel under the comic */
+  .cm-finish .task-body{padding-bottom:20px}
+  .cm-ways{display:flex;flex-wrap:wrap;gap:12px}
+  .cm-said{margin:10px 0 0;font-size:17px}
+  .cm-said:empty{margin:0}
+  .cm-go{margin:18px 0 0}
+  .cm-done{background:#d8f5e0}
+  .cm-done h3{margin:0 0 6px;font-size:24px}
+  .cm-done .cm-next{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
+  /* A panel, or a Storybook picture, that the keyboard is on. The white edge keeps the ring in sight on the dark page styles. */
+  .sheet .pnl:focus-visible{outline:4px solid var(--focus);outline-offset:2px;box-shadow:0 0 0 2px #fff}
+  .prose-page .pframe .pnl-inner:focus-visible{outline:4px solid var(--focus);outline-offset:3px}
+  /* the dock holds the focus itself for a moment when the button that had it is switched off (see dockRefocus) */
+  .dock:focus-visible{outline:4px solid var(--focus-dark);outline-offset:-4px}
+  /* big enough for a finger */
+  @media (max-width:880px){.cm-back{min-height:44px}
+    .tray button,.tip button{min-width:44px;min-height:44px}
+    .scard .x{top:0;right:0;min-width:44px;min-height:44px}
+    .dock .sw{width:44px;height:44px}}
+  /* None of it prints: this adds to the Comic Maker's own list above. */
+  @media print{
+    /* p.caption is the intro the block above still calls .sub-intro: without it here the comic prints on page 2 */
+    .pagehead,.caption,.cm-need,.cm-tpls,.cm-opening,.cm-finish{display:none !important}
+    .sheet .pnl:focus-visible,.prose-page .pframe .pnl-inner:focus-visible{outline:none;box-shadow:none}
+  }
 </style>
 </head>
-<body id="top">
-<a class="skip" href="#main">Skip to the main part</a>
+<body>
+<a class="skip" href="#main">Skip to the page</a>
 <aside class="side">
   <a class="brand" href="/" aria-label="HeutaLab home"><span>Heuta</span><span>Lab</span></a>
-  <nav aria-label="Paws &amp; Order">
-    <a href="../"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
-    <a href="../#brief"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>Make a prompt</a>
-    <a href="../references/"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>Look closely</a>
-    <a href="../builder/" class="on" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg>Comic maker</a>
-    <a href="../#templates"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 10h18M10 10v10"/><path d="M15.5 13.2l.9 1.8 2 .3-1.5 1.4.4 2-1.8-1-1.8 1 .4-2-1.5-1.4 2-.3z"/></svg>Templates</a>
-    <a href="../#mycomics"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h10l4 4v12H5z"/><path d="M8 3v0M9 12h6M9 16h4"/><path d="M15 4v4h4"/></svg>My comics</a>
-    <a href="../#cast"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.3-7 8-7s7 2.5 8 7"/></svg>Meet the gang</a>
-    <a href="../#settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V9l5-3v15M8 21V4l8 3v14M16 21V11l5 2v8M2 21h20"/></svg>Places</a>
-    <a href="../#palettes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.3-1.2-1.6-1.2-2.8 0-1 .8-1.4 1.8-1.4H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg>Colours</a>
-    <a href="../#compare"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="8" height="16"/><rect x="13" y="4" width="8" height="16"/></svg>Check it</a>
-    <a href="../#grownups"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Grown-ups</a>
+  <a class="side-name" href="../">Paws &amp; Order</a>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="sideNav" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>Menu</span></button>
+  <nav id="sideNav" aria-label="Paws &amp; Order">
+    <a href="../references/?start=1" data-nav="start"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg><span>Start</span></a>
+    <a href="../references/" data-nav="look"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg><span>Look closely</span></a>
+    <a href="../builder/" data-nav="builder" class="on" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg><span>Comic maker</span></a>
+    <a href="../teachers/" data-nav="teachers"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M7 8.5h7M7 12h10M12 16v2.5M8 21l4-2.5 4 2.5"/></svg><span>Teachers</span></a>
+    <a href="../explore/" data-nav="explore"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2.2 4.8-4.8 2.2 2.2-4.8z"/></svg><span>Explore</span></a>
   </nav>
   <div class="side-foot"><svg viewBox="0 0 120 40" aria-hidden="true"><path d="M2 39V24h8v-9h7v24h6V9h10v30h5V19h8v20h6V4h4V1h2v3h4v35h5V17h9v22h6V23h7v16h5V13h9v26h4V27h6v12"/></svg>Paws &amp; Order<small>Part of HeutaLab</small></div>
 </aside>
 <div class="page">
 
-  <header class="hero mini">
-    <div class="copy">
-      <a class="kicker" href="../">Paws &amp; Order</a>
-      <h1><span class="name">Comic Maker</span></h1>
-      <div class="verbs">Plan<span>&middot;</span>Place<span>&middot;</span>Write<span>&middot;</span>Share</div>
-      <p class="tag">Your pictures, the gang and your words. <br>Build your page, panel by panel!</p>
-    </div>
-    <div class="art">
-      <img class="who" src="../img/stickers/mabel/gadget.webp" alt="" width="300" height="400">
-      <div class="burst" aria-hidden="true"><svg viewBox="0 0 200 200" aria-hidden="true"><path d="M100 4l17 40 38-24-6 44 44 2-34 28 36 26-44 6 12 42-40-20-23 38-17-40-38 24 6-44-44-2 34-28-36-26 44-6-12-42 40 20z" fill="#ffd23f" stroke="#141414" stroke-width="6" stroke-linejoin="round"/></svg><b>Your story. Your panels!</b></div>
-    </div>
+  <header class="pagehead" style="--c:var(--st5)">
+    <p class="pagehead-kicker"><a href="../">Paws &amp; Order</a></p>
+    <h1>Comic Maker</h1>
+    <a class="cm-back" href="../picture/#check">Back to step 4<span class="vh">: Check and improve</span></a>
+    <img class="pagehead-art" src="../img/stickers/mabel/gadget.webp" alt="" width="300" height="400">
   </header>
-
+  <nav id="trail" class="trail" aria-label="Your comic, step by step" data-nopencil></nav>
 
     <main id="main">
-      <p class="caption">Add the pictures you made with your AI tool (or borrow ours), put stickers of the gang on top if you like, then tell the story in words. Your pictures never leave this device, and your page saves itself in this browser as you go.</p>
+      <p class="caption">Add the pictures you made with your image tool (or borrow ours), put stickers of the gang on top if you like, then tell the story in words. Your pictures never leave this device, and your page saves itself in this browser as you go.</p>
 
-      <section class="tools" aria-label="Choose your page">
+      <section class="tools" aria-labelledby="tools-h">
+        <h2 class="vh" id="tools-h">Pick a page</h2>
         <div class="lvlcards" id="levelRow">
-          <button type="button" class="pill lvlcard" data-val="prose">
+          <button type="button" class="pill lvlcard" aria-pressed="false" data-val="prose">
             <span class="lpic book" aria-hidden="true"><i style="background-image:url(../img/thumbs/treehouse.webp)"><img src="../img/stickers/mabel/standing.webp" alt=""></i><em></em><em></em><em></em></span>
             <b>Storybook</b><span class="lt">One picture and a few sentences under it.</span></button>
-          <button type="button" class="pill lvlcard" data-val="medium">
+          <button type="button" class="pill lvlcard" aria-pressed="false" data-val="medium">
             <span class="lpic grid4" aria-hidden="true"><i style="background-image:url(../img/thumbs/police-pound.webp)"><img src="../img/stickers/nettle/standing.webp" alt=""></i><i style="background-image:url(../img/thumbs/doughnut-factory.webp)"><img src="../img/stickers/grumbleton/doughnut-theft.webp" alt=""></i><i style="background-image:url(../img/thumbs/harbour.webp)"><img src="../img/stickers/barnaby/waving.webp" alt=""></i><i style="background-image:url(../img/thumbs/milkshake-bar.webp)"><img src="../img/stickers/nana/waving.webp" alt=""></i></span>
             <b>Four panels</b><span class="lt">Four pictures, with captions and speech.</span></button>
-          <button type="button" class="pill lvlcard" data-val="advanced">
+          <button type="button" class="pill lvlcard" aria-pressed="false" data-val="advanced">
             <span class="lpic super" aria-hidden="true"><i style="background-image:url(../img/thumbs/funfair.webp)"><img src="../img/stickers/flash/running.webp" alt=""></i><i class="ink" style="background-image:url(../img/thumbs/rain-soaked-street.webp)"><img src="../img/stickers/nettle/examining.webp" alt=""></i><i style="background-image:url(../img/thumbs/moon-base.webp)"><img src="../img/stickers/mabel/gadget.webp" alt=""></i><span class="pow">Pow!</span></span>
             <b>Super maker</b><span class="lt">Page styles, stickers and sound effects.</span></button>
         </div>
         <p class="lvl-note" id="levelNote"></p>
+        <div class="callout cm-need" id="needNote" hidden>
+          <b>How many pictures you need</b>
+          <p><span id="needText"></span> You can also use the gang&rsquo;s stickers and our places if you only made one picture.</p>
+          <p id="needFit" hidden></p>
+        </div>
+        <details class="cm-tpls">
+          <summary>Start from a template</summary>
+          <p class="hint2">A template is a page with the places, the gang and a first line already in it. If you have started a page, it is kept in My comics first.</p>
+          <div id="tplRow"></div>
+        </details>
       </section>
       <p class="notice" id="notice" hidden></p>
 
-      <section class="workbench">
+      <section class="workbench" aria-labelledby="bench-h">
+        <h2 class="vh" id="bench-h">Your comic</h2>
         <div id="bench"></div>
+      </section>
+
+      <section class="task cm-finish" id="finish" style="--c:var(--st5)" aria-labelledby="finish-h">
+        <div class="task-head">
+          <h2 id="finish-h">Finished?</h2>
+          <p>There are three ways to keep your comic. It stays on this device.</p>
+        </div>
+        <div class="task-body">
+          <div class="cm-ways" role="group" aria-label="Keep your comic">
+            <button type="button" class="btn" id="finSave" data-fin="savecomic">Save to My comics</button>
+            <button type="button" class="btn" data-fin="png">Download PNG</button>
+            <button type="button" class="btn" data-fin="print">Print or save as PDF</button>
+          </div>
+          <p class="cm-said" id="finSaid"></p>
+          <div class="field2">
+            <label for="reflect">What did you change to make your picture better? <small>(you can skip this)</small></label>
+            <p class="hint2" id="reflect-h">Think back to step 4. One sentence is plenty. It is saved on this device only.</p>
+            <textarea id="reflect" maxlength="600" aria-describedby="reflect-h reflect-c"></textarea>
+            <p class="count2" id="reflect-c">0 of 600 letters</p>
+          </div>
+          <p class="cm-go" id="finGo"><button type="button" class="btn go2" id="finishBtn">My comic is finished</button></p>
+          <div class="callout cm-done" id="finDone" hidden>
+            <h3 id="finDone-h" tabindex="-1">You did it!</h3>
+            <p>You built your own comic, panel by panel. Show it to someone!</p>
+            <p class="cm-next"><a class="btn" href="../picture/#choose">Make another picture</a> <a class="btn back" href="../explore/#mycomics">See my comics</a></p>
+          </div>
+        </div>
       </section>
 
     </main>
 </div>
 
+<div class="skyframe" aria-hidden="true">
+  <img class="who" src="../img/stickers/nettle/face-pleased.webp" alt="" width="200" height="220">
+  <p class="ribbon">Every great story starts with a closer look&hellip;</p>
+  <svg class="comet" viewBox="0 0 150 100"><path d="M8 94C40 80 72 56 98 34" fill="none" stroke="#ffd23f" stroke-width="10" stroke-linecap="round" opacity=".35"/><path d="M26 86C52 72 76 54 98 34" fill="none" stroke="#ffd23f" stroke-width="5" stroke-linecap="round" opacity=".7"/><path d="M112 6l6 14 15 1-11 10 4 15-14-8-13 8 3-15-11-10 15-1z" fill="#ffd23f" stroke="#141414" stroke-width="3.5" stroke-linejoin="round"/></svg>
+</div>
 <footer class="basefoot">
-  <p class="say">The best bit is always in the last panel!</p>
-  The library pictures were drawn for this site.
-      Pictures you upload stay in this browser on this device: nothing is sent anywhere.
-      Part of <a href="/">HeutaLab</a>.
-      <button type="button" class="tips-again" id="tipsAgain">Show the tips again</button>
+  <p class="say">Look closely. Choose and describe. Create with AI. Check and improve. Build your story.</p>
+  <p>Your comics and pictures stay on this device. Part of <a href="/">HeutaLab</a>. <button type="button" class="tips-again" id="tipsAgain">Show the tips again</button></p>
 </footer>
 
-<dialog class="lib" id="libDlg">
-  <div class="lib-head"><h3>Pick a picture</h3><button class="btn ghost small" id="libClose">Close</button></div>
+<dialog class="lib" id="libDlg" aria-labelledby="libDlg-h">
+  <div class="lib-head"><h2 id="libDlg-h">Pick a picture</h2><button type="button" class="btn ghost small" id="libClose">Close</button></div>
   <div class="lib-grid" id="libGrid"></div>
 </dialog>
-<input type="file" id="fileIn" accept="image/*" hidden>
-<div class="tray" id="sfxBank" hidden aria-label="Sound effects"></div>
-<div class="tray stk" id="stkTray" hidden aria-label="Stickers"></div>
-<div class="dock" id="dock" role="toolbar" aria-label="Builder tools"></div>
+<input type="file" id="fileIn" accept="image/*" aria-label="Choose a picture from this device" hidden>
+<div class="tray" id="sfxBank" hidden role="group" aria-label="Sound effects"></div>
+<div class="tray stk" id="stkTray" hidden role="group" aria-label="Stickers"></div>
+<div class="dock" id="dock" role="toolbar" aria-label="Builder tools" tabindex="-1"></div>
 <div class="tip" id="tip" hidden role="status"></div>
-<div class="scard" id="styleCard" hidden role="dialog" aria-label="About this page style"></div>
+<div class="scard" id="styleCard" hidden role="group" aria-label="About this page style"></div>
 
 <script type="module">
 import THEME from '../theme.js';
+import J from '../journey.js';
+import shelf from '../shelf.js';
 
 (function(){
   const $ = id => document.getElementById(id);
@@ -383,6 +459,7 @@ import THEME from '../theme.js';
 
   let S = fresh();
   let sel = { p: null, it: null };   // selected panel (or prose frame) and item
+  let ready = false;   // true once start-up has put the right page on the desk; until then nothing may change the page that is there
 
   // Pages saved before tails could be dragged had tail: 'bl' | 'br' | 'none'.
   function migrate(){
@@ -437,10 +514,20 @@ import THEME from '../theme.js';
   const del = k => idb('readwrite', st => st.delete(k));
 
   let saveT = null;
+  let wiped = false;   // Start again has removed the comics from this device: nothing more is written, or the page on screen would go straight back
+  const writeState = () => { saveT = null; return put('state', JSON.parse(JSON.stringify(S))); };
   function save(){
+    if (wiped) return;
     clearTimeout(saveT);
-    saveT = setTimeout(() => put('state', JSON.parse(JSON.stringify(S))), 400);
+    saveT = setTimeout(writeState, 400);
   }
+  // A change made in the last 400ms is still waiting to be saved when the page is left, so it is written as the page goes.
+  // Not after a reset, here or in another tab (that tab's reset is why this page is being reloaded).
+  addEventListener('pagehide', () => {
+    if (saveT == null || wiped || resetSince()) return;
+    clearTimeout(saveT);
+    writeState().catch(() => {});
+  });
 
   const urls = {};  // picture id -> object URL
   async function urlFor(img){
@@ -663,7 +750,7 @@ import THEME from '../theme.js';
       + '<button type="button" data-act="del" title="Delete" aria-label="Delete">&times;</button></span>';
     return '<div class="it it-' + it.type + (on ? ' sel' : '') + '" data-j="' + j + '" style="left:' + it.x + '%;top:' + it.y + '%;' + (it.fw ? 'width:' : 'max-width:') + it.w + '%'
       + (it.rot ? ';transform:rotate(' + it.rot + 'deg)' : '') + '">'
-      + '<div class="it-text" contenteditable="true" spellcheck="false" data-ph="' + esc(PH[it.type]) + '" style="font-size:' + textSize(it) + 'cqw;' + css + '">' + esc(it.text) + '</div>' + extra + ctl + '</div>';
+      + '<div class="it-text" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="' + (it.type !== 'sfx') + '" aria-label="' + KIND[it.type] + ' words" data-ph="' + esc(PH[it.type]) + '" style="font-size:' + textSize(it) + 'cqw;' + css + '">' + esc(it.text) + '</div>' + extra + ctl + '</div>';
   }
 
   // Box geometry, shared by the page (drawBox) and the PNG export (drawItem): both draw the same SVG path strings.
@@ -784,8 +871,29 @@ import THEME from '../theme.js';
       + (!stk && sel.p === i && sel.it == null && S.panels[i].img ? protHTML(poly, b) : '') + '</div></div>';
   }
 
+  // What a panel (or a Storybook picture) tells the keyboard and a screen reader: it can be chosen, which one it is,
+  // whether it is the chosen one, and what is in it.
+  const pickAttrs = (i, n, pic) => ' tabindex="0" role="button" aria-pressed="' + (sel.p === i) + '" aria-label="' + (S.level === 'prose' ? 'Frame ' : 'Panel ')
+    + (i + 1) + ' of ' + n + (pic ? ', has a picture' : ', empty') + '"';
+  const TTL_A = ' role="textbox" aria-multiline="false" aria-label="The title of your comic"';
+  // render() rebuilds the page, which would drop the keyboard's place on it. These two remember which panel or frame
+  // the focus was in and put it back on the same one afterwards (the chosen one, if it was not in any).
+  function benchFocus(){
+    const a = document.activeElement;
+    if (!a || !bench.contains(a)) return null;
+    const at = a.id === 'titleEl' ? null : a.closest('[data-i]');
+    return { i: at ? +at.dataset.i : null };
+  }
+  function benchRefocus(f){
+    if (!f || (document.activeElement && document.activeElement !== document.body)) return;   // it was not here, or it has moved on
+    const all = bench.querySelectorAll('[role="button"][tabindex]'), i = f.i != null ? f.i : sel.p;
+    const el = i == null ? null : all[Math.min(i, all.length - 1)];
+    if (el) el.focus({ preventScroll: true });
+  }
+
   async function render(){
-    document.querySelectorAll('#levelRow .pill').forEach(b => b.classList.toggle('active', b.dataset.val === S.level));
+    const fb = benchFocus();
+    document.querySelectorAll('#levelRow .pill').forEach(b => { const on = b.dataset.val === S.level; b.classList.toggle('active', on); b.setAttribute('aria-pressed', on); });
     $('levelNote').textContent = LEVEL_NOTES[S.level];
     const list = panelList();
     if (sel.p != null && sel.p >= list.length) sel = { p: null, it: null };
@@ -797,27 +905,28 @@ import THEME from '../theme.js';
     const srcs = await Promise.all(list.map(p => urlFor(p.img)));
 
     if (S.level === 'prose') {
-      bench.innerHTML = '<div class="prose-page"><div class="ttl-prose" style="transform:rotate(' + titleTurn() + 'deg)"><div class="prose-title" contenteditable="true" spellcheck="false" data-ph="Your title" id="titleEl">' + esc(S.title) + '</div>' + TTL_H + '</div>'
+      bench.innerHTML = '<div class="prose-page"><div class="ttl-prose" style="transform:rotate(' + titleTurn() + 'deg)"><div class="prose-title" contenteditable="true" spellcheck="false"' + TTL_A + ' data-ph="Your title" id="titleEl">' + esc(S.title) + '</div>' + TTL_H + '</div>'
         + list.map((f, i) => '<div class="pframe' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '">'
-          + '<div class="pnl-inner">' + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + picStyle(i) + '">'
+          + '<div class="pnl-inner"' + pickAttrs(i, list.length, srcs[i]) + '>' + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + picStyle(i) + '">'
             + (sel.p === i ? '<span class="prot-h" title="Drag to turn the picture (hold Shift for steps of 15°)" style="left:94%;top:13%">&#8635;</span>' : '')
             : empty(sel.p === i)) + '</div>'
-          + '<textarea data-i="' + i + '" placeholder="Write this part of the story. Who is here? What just happened? What happens next?">' + esc(f.text) + '</textarea>'
+          + '<textarea data-i="' + i + '" aria-label="Words for frame ' + (i + 1) + '" placeholder="Write this part of the story. Who is here? What just happened? What happens next?">' + esc(f.text) + '</textarea>'
           + (list.length > 1 ? '<button type="button" class="rm" data-rm="' + i + '" aria-label="Remove this frame">&times;</button>' : '') + '</div>').join('')
         + (list.length < 6 ? '<button type="button" class="addframe" id="addFrame">+ Add another picture</button>' : '') + '</div>';
+      benchRefocus(fb);
       showTip();
       return;
     }
 
     const lk = look();
-    bench.innerHTML = '<div class="sheet" id="sheet" style="background:' + lk.page + '"><div class="ttl" style="transform:rotate(' + titleTurn() + 'deg)"><div class="sheet-title" contenteditable="true" spellcheck="false" data-ph="Your title" id="titleEl" style="'
+    bench.innerHTML = '<div class="sheet" id="sheet" style="background:' + lk.page + '"><div class="ttl" style="transform:rotate(' + titleTurn() + 'deg)"><div class="sheet-title" contenteditable="true" spellcheck="false"' + TTL_A + ' data-ph="Your title" id="titleEl" style="'
       + titleCss(lk.title) + '">' + esc(S.title) + '</div>' + TTL_H + '</div>'
       + lk.panels.map((poly0, i) => {
         const b = bbox(poly0), rough = q => wob(poly0, q).map(([x, y]) => [x - b.x, y - b.y]);
         const local = rough(i), local2 = rough(i + 37);
         const clip = local.map(([x, y]) => (x / b.w * 100) + '% ' + (y / b.h * 100) + '%').join(',');
         const pts = local.map(q => q.join(',')).join(' '), pts2 = local2.map(q => q.join(',')).join(' ');
-        return '<div class="pnl' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '" style="left:' + b.x + '%;top:' + (b.y / PAGE_H * 100) + '%;width:' + b.w + '%;height:' + (b.h / PAGE_H * 100) + '%">'
+        return '<div class="pnl' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '"' + pickAttrs(i, lk.panels.length, srcs[i]) + ' style="left:' + b.x + '%;top:' + (b.y / PAGE_H * 100) + '%;width:' + b.w + '%;height:' + (b.h / PAGE_H * 100) + '%">'
           + '<div class="pnl-inner" style="clip-path:polygon(' + clip + ')">'
           + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + picStyle(i) + '">' : empty(sel.p === i))
           + S.panels[i].items.map((it, j) => it.type === 'sticker' && it.clip ? itemHTML(it, j, false) : '').join('')
@@ -832,14 +941,15 @@ import THEME from '../theme.js';
     fitTitle();
     ro.disconnect();
     bench.querySelectorAll('.it:not(.it-sticker)').forEach(el => { el.classList.contains('it-sfx') ? placeRot(el) : drawBox(el); ro.observe(el.querySelector('.it-text')); });
+    benchRefocus(fb);
     showTip();
   }
 
-  function note(msg){ const n = $('notice'); n.textContent = msg; n.hidden = !msg; }
+  function note(msg){ const n = $('notice'); n.textContent = msg; n.hidden = !msg; if (msg) J.announce(msg); }
 
   // ---------- interaction ----------
   const NONE = () => ({ p: null, it: null });
-  document.querySelectorAll('#levelRow .pill').forEach(b => b.addEventListener('click', () => { if (S.level === b.dataset.val) return; checkpoint(); S.level = b.dataset.val; sel = NONE(); save(); render(); }));
+  document.querySelectorAll('#levelRow .pill').forEach(b => b.addEventListener('click', () => { if (!ready) return; goStep('pictures'); if (S.level === b.dataset.val) return; checkpoint(); S.level = b.dataset.val; sel = NONE(); save(); render(); }));
 
   // Typing: one undo step per visit to a text box (the browser's own undo works while you're in it).
   let typing = false;
@@ -898,7 +1008,7 @@ import THEME from '../theme.js';
   // Dragging: items move, their handles aim the tail or set the width, and the picture pans inside a chosen panel.
   let drag = null;
   bench.addEventListener('pointerdown', e => {
-    if (e.button > 0 || e.target.closest('[data-act],[data-pick],textarea')) return;
+    if (!ready || e.button > 0 || e.target.closest('[data-act],[data-pick],textarea')) return;
     cardOpen = false;
     const th = e.target.closest('.ttl-h');
     if (th) {
@@ -1064,13 +1174,20 @@ import THEME from '../theme.js';
 
   // Keys: undo and redo anywhere outside a text box; delete, nudge, duplicate and let go of the chosen item.
   document.addEventListener('keydown', e => {
-    if ($('libDlg').open) return;
+    if (document.querySelector('dialog[open]')) return;   // the picture library, or Start again
     const ed = e.target.closest && e.target.closest('[contenteditable=true], textarea, input');
     const mod = e.metaKey || e.ctrlKey, k = e.key.toLowerCase();
     if (mod && !ed && (k === 'z' || k === 'y')) { e.preventDefault(); (k === 'y' || e.shiftKey) ? redo() : undo(); return; }
     if (e.key === 'Escape') {
       if (ed) { ed.blur(); return; }
       if (sel.p != null) { sel = sel.it != null ? { p: sel.p, it: null } : NONE(); render(); }
+      return;
+    }
+    // A panel or a Storybook picture that has the focus: Enter or Space chooses it, as a tap does.
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('#bench [role="button"]')) {
+      e.preventDefault();
+      const i = +e.target.closest('[data-i]').dataset.i;
+      if (sel.p !== i || sel.it != null) { cardOpen = false; sel = { p: i, it: null }; render(); }
       return;
     }
     if (!ed && sel.p != null && sel.it == null && (e.key === '[' || e.key === ']') && panelList()[sel.p].img) {
@@ -1148,7 +1265,7 @@ import THEME from '../theme.js';
 
   // Paste a picture into the chosen panel (or the first empty one); paste words as plain text.
   document.addEventListener('paste', e => {
-    const cd = e.clipboardData; if (!cd) return;
+    const cd = e.clipboardData; if (!cd || !ready) return;
     const file = [...cd.items].filter(x => x.kind === 'file' && x.type.startsWith('image/')).map(x => x.getAsFile())[0];
     const ed = e.target.closest && e.target.closest('[contenteditable=true]');
     if (file) {
@@ -1176,6 +1293,7 @@ import THEME from '../theme.js';
   addEventListener('drop', e => {
     if (!hasFiles(e)) return;
     e.preventDefault(); markDrop(null);
+    if (!ready) return;
     const t = e.target.closest && e.target.closest('.pnl, .pframe');
     const f = [...e.dataTransfer.files].find(f => f.type.startsWith('image/'));
     if (!t || !f) { if (f) note('Drop the picture onto a panel.'); return; }
@@ -1183,7 +1301,10 @@ import THEME from '../theme.js';
   });
 
   // Library
-  $('libGrid').innerHTML = LIB.map(src => '<button type="button" data-src="' + src + '"><img src="' + src + '" alt="" loading="lazy"></button>').join('');
+  // The button's name is the picture's: the place's or the character's own name, or else its file name in words.
+  const libName = id => { const pl = THEME.places.find(x => x.id === id), who = THEME.cast.find(x => x.sheet === id);
+    return pl ? pl.name : who ? who.name : (id.charAt(0).toUpperCase() + id.slice(1)).replace(/-/g, ' '); };
+  $('libGrid').innerHTML = LIB.map((src, k) => '<button type="button" data-src="' + src + '" aria-label="' + esc(libName(THEME.library[k])) + '"><img src="' + src + '" alt="" loading="lazy"></button>').join('');
   function openLib(){ if (sel.p == null) return; pendingFor = sel.p; $('libDlg').showModal(); }
   $('libClose').addEventListener('click', () => $('libDlg').close());
   $('libGrid').addEventListener('click', e => {
@@ -1235,7 +1356,7 @@ import THEME from '../theme.js';
   function stickerBar(it){
     const s = STICKERS.get(it.src);
     const pill = (cmd, label, o = {}) => '<button type="button" class="pill' + (o.on ? ' active' : '') + '" data-cmd="' + cmd + '"' + (o.v != null ? ' data-v="' + o.v + '"' : '')
-      + (o.title ? ' title="' + o.title + '"' : '') + (o.exp != null ? ' aria-expanded="' + o.exp + '"' : '') + '>' + label + '</button>';
+      + (o.title ? ' title="' + o.title + '"' : '') + (o.exp != null ? ' aria-expanded="' + o.exp + '" aria-controls="stkTray"' : 'on' in o ? ' aria-pressed="' + !!o.on + '"' : '') + '>' + label + '</button>';
     const grp = (label, inner) => '<div class="sg" role="group" aria-label="' + label + '"><b>' + label + '</b>' + inner + '</div>';
     return '<span class="what">' + esc(s ? s.who : 'Sticker') + '</span>'
       + grp('Sticker', pill('sflip', 'Face the other way &#8646;', { on: it.flip }) + pill('sborder', 'White border', { on: !it.plain, title: 'A white edge round it, like a real sticker' })
@@ -1249,7 +1370,7 @@ import THEME from '../theme.js';
   function styleHTML(it){
     if (it.type === 'sticker') return stickerBar(it);
     const grp = (label, key, opts, css) => '<div class="sg" role="group" aria-label="' + label + '"><b>' + label + '</b>'
-      + opts.map(([v, l]) => '<button type="button" class="pill' + (st(it, key) === v ? ' active' : '') + '" data-style="' + key + '" data-v="' + v + '"'
+      + opts.map(([v, l]) => '<button type="button" class="pill' + (st(it, key) === v ? ' active' : '') + '" aria-pressed="' + (st(it, key) === v) + '" data-style="' + key + '" data-v="' + v + '"'
         + (css ? ' style="' + css(v) + '"' : '') + '>' + l + '</button>').join('') + '</div>';
     // A tier narrows each list; a list of one or none drops its group. Styles set in Advanced stay put in Medium.
     const tier = TIERS[S.level] || {}, pick = (all, keep) => keep ? all.filter(o => keep.includes(o[0])) : all;
@@ -1260,7 +1381,7 @@ import THEME from '../theme.js';
     let h = '<span class="what">' + KIND[it.type] + '</span>';
     if (shapes.length > 1) h += grp('Shape', 'shape', shapes);
     h += '<div class="sg" role="group" aria-label="Colour"><b>Colour</b>' + colours.map(([k, c]) =>
-      '<button type="button" class="sw' + (st(it, 'color') === k ? ' active' : '') + '" data-style="color" data-v="' + k + '" title="' + c.label
+      '<button type="button" class="sw' + (st(it, 'color') === k ? ' active' : '') + '" aria-pressed="' + (st(it, 'color') === k) + '" data-style="color" data-v="' + k + '" title="' + c.label
       + '" aria-label="' + c.label + '" style="background:' + c.fill + '"></button>').join('') + '</div>';
     if (it.type === 'sfx') h += grp('Tilt', 'tilt', TILTS).replace(/<\/div>$/, '<span class="note">' + st(it, 'tilt') + '° · or drag &#8635;</span></div>');
     if (it.type !== 'sfx' && it.rot) h += '<div class="sg"><b>Tilt</b><span class="note">' + it.rot + '°</span><button type="button" class="pill" data-style="rot" data-v="0">Straighten</button></div>';
@@ -1284,9 +1405,11 @@ import THEME from '../theme.js';
   const stkTrayOpen = () => stkOpen && S.level !== 'prose' && sel.p != null && (addReady() || !!chosenSticker());
   const openTrayH = () => { const t = [$('sfxBank'), $('stkTray')].find(x => !x.hidden); return t ? t.offsetHeight : 0; };
   function renderDock(){
+    const fd = dockFocus();
     const b = (cmd, label, o = {}) => '<button type="button" class="' + (o.cls || 'pill') + (o.on ? ' active' : '') + '" data-cmd="' + cmd + '"'
       + (o.v != null ? ' data-v="' + o.v + '"' : '') + (o.id ? ' id="' + o.id + '"' : '') + (o.off ? ' disabled' : '')
-      + (o.title ? ' title="' + o.title + '"' : '') + (o.exp != null ? ' aria-expanded="' + o.exp + '"' : '') + '>' + label + (o.isNew ? NEW : '') + '</button>';
+      + (o.title ? ' title="' + o.title + '"' : '') + (o.exp != null ? ' aria-expanded="' + o.exp + '" aria-controls="' + o.ctl + '"' : 'on' in o ? ' aria-pressed="' + !!o.on + '"' : '')
+      + (o.say ? ' aria-label="' + o.say + '"' : '') + '>' + label + (o.isNew ? NEW : '') + '</button>';
     const g = (id, inner) => '<div class="sg" data-g="' + id + '">' + inner + '</div>';
     const it = chosenItem(), list = panelList(), p = sel.p != null && list[sel.p];
     let h;
@@ -1295,22 +1418,22 @@ import THEME from '../theme.js';
     else if (p) {
       h = '<span class="what">' + (S.level === 'prose' ? 'Frame ' : 'Panel ') + (sel.p + 1) + '</span>'
         + g('picture', '<b>Picture</b>' + (p.img
-          ? b('upload', 'Replace') + b('lib', 'Library') + b('flip', 'Flip &#8646;', { v: 'flip', on: p.fit.flip, title: 'Flip the picture left to right, so a character faces the other way' })
-            + b('flip', 'Flip &#8645;', { v: 'flipY', on: p.fit.flipY, title: 'Flip the picture upside down, for a reflection in a puddle or a window' })
+          ? b('upload', 'Replace') + b('lib', 'Library') + b('flip', 'Flip &#8646;', { v: 'flip', on: p.fit.flip, say: 'Flip left to right', title: 'Flip the picture left to right, so a character faces the other way' })
+            + b('flip', 'Flip &#8645;', { v: 'flipY', on: p.fit.flipY, say: 'Flip upside down', title: 'Flip the picture upside down, for a reflection in a puddle or a window' })
             + (p.fit.r ? '<span class="note">' + p.fit.r + '°</span>' + b('straighten', 'Straighten') : '') + b('clear', 'Remove')
             + '<label class="zoom">Zoom <input type="range" id="zoom" min="1" max="3" step="0.05" value="' + p.fit.z + '"></label>'
           : b('upload', 'Upload') + b('lib', 'From our library') + '<span class="note">or paste (Ctrl/&#8984;+V) or drop a picture on the panel</span>'));
       if (addReady()) h += g('add', '<b>Add</b>' + (S.level === 'advanced' ? ['caption', 'speech', 'thought', 'sfx', 'sticker'] : ['caption', 'speech', 'sticker'])
         .map(k => { const tray = k === 'sfx' ? bankOpen() : k === 'sticker' ? stkTrayOpen() : null;
-          return b('add', ADD_NAMES[k], { v: k, isNew: !seen('n:' + k), on: !!tray, exp: tray }); }).join(''));
+          return b('add', ADD_NAMES[k], { v: k, isNew: !seen('n:' + k), on: !!tray, exp: tray, ctl: k === 'sfx' ? 'sfxBank' : 'stkTray' }); }).join(''));
       done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this panel (Esc)&#10;&#10;Keyboard, with a panel chosen:&#10;Ctrl/&#8984;+V: paste a picture you have copied&#10;Ctrl + scroll, or pinch on a trackpad: zoom the picture&#10;[ and ]: turn the picture&#10;Ctrl/&#8984;+Z: undo, Shift+Ctrl/&#8984;+Z: redo' });
     } else {
       h = '<span class="what">Page</span>'
         + (S.level === 'advanced' ? g('style', '<b>Style' + (seen('n:style') ? '' : NEW) + '</b>'
           + b('style', esc(styleInfo().name) + ' <span class="n">' + (STYLE_KEYS_ORDER.indexOf(S.style) + 1) + ' / ' + STYLE_KEYS_ORDER.length + '</span> &#9656;',
             { cls: 'stylebtn', title: 'Change the whole page layout' })
-          + b('about', 'About this style', { cls: 'btn ghost small', on: cardOpen })) : '')
-        + g('page', (db ? b('savecomic', 'Save to My comics', { cls: 'btn small', title: 'Keep this page in My comics on the home page (on this device only)' }) : '')
+          + b('about', 'About this style', { cls: 'btn ghost small', on: cardOpen, exp: cardOpen, ctl: 'styleCard' })) : '')
+        + g('page', (db ? b('savecomic', 'Save to My comics', { cls: 'btn small', title: 'Keep this page in My comics (in Explore), on this device only' }) : '')
           + b('png', 'Download PNG <span class="arr">&darr;</span>', { cls: 'btn small', id: 'pngBtn', off: exporting })
           + b('print', 'Print or save as PDF', { cls: 'btn ghost small' }) + b('reset', 'Start again', { cls: 'btn ghost small' }));
     }
@@ -1330,8 +1453,9 @@ import THEME from '../theme.js';
     stk.querySelectorAll('[data-stk]').forEach(x => x.classList.toggle('on', !!cs && x.dataset.stk === cs.src));
     const trayOpen = !tray.hidden || !stk.hidden;
     document.body.classList.toggle('tray-open', trayOpen);   // the rooftops on the dock step aside for a tray
-    document.body.style.paddingBottom = (dock.offsetHeight + (trayOpen ? openTrayH() + 24 : 0)) + 'px';
+    dockRoom();
     renderCard(dock.offsetHeight);
+    dockRefocus(fd);
   }
 
   // ---------- the style card: what the style is, and a line to ask the AI for pictures that match ----------
@@ -1405,10 +1529,10 @@ import THEME from '../theme.js';
       case 'png': sel = NONE(); render(); return exportPNG();
       case 'print': sel = NONE(); return render().then(() => print());
       case 'reset':
-        if (!isBlank() && !confirm(db ? 'Start a new page? This one will be kept in My comics on the home page.' : 'Clear this page and start again? It can’t be saved in this browser, so it will be lost.')) return;
+        if (!isBlank() && !confirm(db ? 'Start a new page? This one will be kept in My comics (in Explore).' : 'Clear this page and start again? It can’t be saved in this browser, so it will be lost.')) return;
         return saveComic(true).then(kept => {
           S = fresh(); sel = NONE(); past = []; future = [];
-          save(); tidyImages(); note(kept ? 'Your last page is safe in My comics on the home page.' : ''); render();
+          save(); tidyImages(); note(kept ? 'Your last page is safe in My comics (in Explore).' : ''); render();
         });
       case 'savecomic': sel = NONE(); render(); return saveComic(false);
     }
@@ -1476,7 +1600,7 @@ import THEME from '../theme.js';
     { id: 'advanced', at: 'dock', when: () => S.level === 'advanced' && sel.p == null,
       title: 'Super maker unlocked', text: 'Press Style down here to change the whole page layout. Choose a panel for thought bubbles and sound effects.' },
     { id: 'picture', at: 'dock', when: () => sel.p != null && !chosenItem() && !panelList()[sel.p].img,
-      title: 'Bring a picture in', text: 'Upload one, pick from our library, or copy a picture from your AI tool and paste it here with Ctrl/⌘+V.' },
+      title: 'Bring a picture in', text: 'Upload one, pick from our library, or copy a picture from your image tool and paste it here with Ctrl/⌘+V.' },
     { id: 'add', at: 'dock', when: addReady,
       title: 'Now tell the story', text: 'Add a caption box for the narrator and a speech balloon for whoever is talking. Drag the picture to frame it.' },
     { id: 'stickers', at: 'tray', when: () => stkTrayOpen() && !chosenSticker(),
@@ -1529,12 +1653,13 @@ import THEME from '../theme.js';
     markSeen(tipNow.id); tipNow = null; $('tip').hidden = true;
   });
   addEventListener('scroll', placeTip, { passive: true });
-  addEventListener('resize', () => { renderDock(); placeTip(); });
+  addEventListener('resize', () => { if (!ready) return; renderDock(); placeTip(); });
   $('tipsAgain').addEventListener('click', () => {
+    if (!ready) return;
     seenSet = new Set();
     try { localStorage.removeItem(SEEN); } catch (e) {}
     render();
-    scrollTo({ top: $('bench').getBoundingClientRect().top + scrollY - 20, behavior: 'smooth' });
+    J.scrollTo(bench.parentElement);
   });
 
   // ---------- PNG export: redraw the page on a canvas ----------
@@ -1729,7 +1854,7 @@ import THEME from '../theme.js';
     } finally { exporting = false; renderDock(); }
   }
 
-  // ---------- My comics: finished pages kept in this browser (IndexedDB 'comic:<id>'), shown on the home page ----------
+  // ---------- My comics: finished pages kept in this browser (IndexedDB 'comic:<id>'), shown in Explore ----------
   const isBlank = () => !S.title.trim() && S.panels.every(p => !p.img && !p.items.length) && S.prose.every(f => !f.img && !(f.text || '').trim());
   async function thumbOf(){
     const c = await paint(), t = document.createElement('canvas'), k = 360 / c.width;
@@ -1746,12 +1871,15 @@ import THEME from '../theme.js';
     try { thumb = await thumbOf(); } catch (e) {}
     await put('comic:' + id, { id, title: S.title.trim(), when: Date.now(), state: JSON.parse(JSON.stringify(S)), thumb });
     save();
-    if (!quiet) note('Saved in My comics. You will find it on the home page.');
+    if (!quiet) note('Saved in My comics (in Explore).');
     return true;
   }
 
   // A starter page from THEME.templates: the layout, a place in each panel, the gang as stickers sized to fit, and words.
   async function fromTemplate(t){
+    // Every sticker is loaded first, and all together: its shape sets its size. Nothing waits once the desk has changed hands.
+    const srcs = [...new Set(t.panels.flatMap(tp => (tp.stickers || []).map(([src]) => src)))].filter(src => STICKERS.has(src));
+    const shapes = new Map(await Promise.all(srcs.map(async src => { const s = STICKERS.get(src); return [src, await loadImg(THEME.stickerPath(s.dir, s.file, true))]; })));
     S = fresh();
     S.level = t.level === 'advanced' ? 'advanced' : 'medium';
     if (t.style && LOOKS[t.style]) S.style = t.style;
@@ -1765,7 +1893,7 @@ import THEME from '../theme.js';
       if (tp.place) p.img = { lib: THEME.refPath(tp.place) };
       for (const [src, o] of tp.stickers || []) {
         const s = STICKERS.get(src); if (!s) continue;
-        const im = await loadImg(THEME.stickerPath(s.dir, s.file, true));
+        const im = shapes.get(src);
         const hc = (o.h || 0.6) * b.h, w = hc * (im ? im.width / im.height : 0.6) / b.w * 100, bottom = o.bottom != null ? o.bottom : 0.97;
         const r1 = v => Math.round(v * 10) / 10;
         p.items.push(Object.assign({ type: 'sticker', src, fw: true, w: r1(w), x: r1((o.cx != null ? o.cx : 0.5) * 100 - w / 2), y: r1((bottom * b.h - hc) / b.h * 100) },
@@ -1778,30 +1906,190 @@ import THEME from '../theme.js';
     }
   }
 
-  // builder/?template=key or builder/?comic=id (from the home page). The page on the desk goes to My comics first.
+  // A link is opening: mark the page that is coming and say so on the desk, so the wait never looks like an empty builder.
+  function opening(title, level){
+    document.querySelectorAll('#levelRow .pill').forEach(b => { const on = b.dataset.val === level; b.classList.toggle('active', on); b.setAttribute('aria-pressed', on); });
+    bench.innerHTML = '<p class="cm-opening">Opening ' + esc(title) + '…</p>';
+    J.announce('Opening ' + title + '.');
+  }
+
+  // builder/?template=key or builder/?comic=id (from a template card or My comics). The page on the desk goes to My comics first.
+  // True when the link's page is the one on the desk at the end.
   async function openFromLink(){
     const q = new URLSearchParams(location.search), tkey = q.get('template'), cid = q.get('comic');
-    if (!tkey && !cid) return;
+    if (!tkey && !cid) return false;
     history.replaceState(null, '', location.pathname);   // so a reload keeps the page instead of starting it again
     const comic = cid ? await get('comic:' + cid) : null, tpl = tkey ? (THEME.templates || []).find(t => t.key === tkey) : null;
-    if (!(comic && comic.state) && !tpl) return;
-    if (comic && S.comicId === cid) return;   // already on the desk
+    if (!(comic && comic.state) && !tpl) { note('That comic is not on this device.'); return false; }
+    if (comic && S.comicId === cid) return true;   // already on the desk
+    opening(comic ? comic.title || 'your comic' : tpl.name, comic ? comic.state && comic.state.level : tpl.level === 'advanced' ? 'advanced' : 'medium');
     const kept = await saveComic(true);
     if (comic) { S = Object.assign(fresh(), comic.state); S.comicId = cid; }
     else await fromTemplate(tpl);
     migrate(); past = []; future = []; sel = NONE(); save();
-    note(kept ? 'Your last page is safe in My comics on the home page.' : '');
+    note(kept ? 'Your last page is safe in My comics (in Explore).' : '');
+    return true;
+  }
+
+  // ---------- step 5 of the journey: the trail, the note on pictures, the templates and the finish panel ----------
+  const SUBS = J.STAGES[4].subs.map(([id]) => id);   // page, pictures, words, share
+  const jn0 = J.get();
+  let sub = jn0.stage === 5 && SUBS.includes(jn0.sub) ? jn0.sub : SUBS[0];
+  let gone = false;   // Start again has run: the journey has been removed, and nothing here may write it back
+  J.mount({ page: 'builder', stage: 5, sub });
+  // Someone who has done steps 1 to 4 is on step 5 by being here, so Carry on comes back to this page. Anyone else is
+  // using the Comic Maker as a free tool: for them only what they do here moves the journey on, never the visit.
+  if (J.frontier(jn0) === 5) J.setSub(sub);
+  // The small steps only ever move forward: picking a page, then pictures, then words, then saving and sharing.
+  function goStep(to){
+    if (gone || SUBS.indexOf(to) <= SUBS.indexOf(sub)) return;
+    sub = to;
+    J.setSub(to);
+  }
+  bench.addEventListener('focusin', e => { if (e.target.closest('#titleEl, .it-text, textarea')) goStep('words'); });
+  $('finish').addEventListener('focusin', () => goStep('share'));
+  $('dock').addEventListener('click', e => {
+    const b = e.target.closest('[data-cmd]');
+    if (b && !b.disabled && ['savecomic', 'png', 'print'].includes(b.dataset.cmd)) goStep('share');
+  });
+
+  // Was this device reset after the page loaded? (Another tab's reset is why this one is being reloaded.)
+  const resetAt = () => { try { return localStorage.getItem('paws_reset_at'); } catch (e) { return null; } };
+  const resetWas = resetAt(), resetSince = () => resetAt() !== resetWas;
+  // Start again, from the trail: stop writing at once, or what is being removed would be put straight back.
+  addEventListener('paws:reset', e => {
+    gone = true; clearTimeout(reflectT); reflectT = null;
+    if (e.detail && e.detail.comics) { wiped = true; clearTimeout(saveT); saveT = null; }
+  });
+
+  // Arriving from step 4 with nothing on the desk: the page that goes with the learner's level is chosen for them
+  // (Doodler: Storybook, Sketcher: Four panels, Storyteller: Super maker). Once they have chosen here themselves it is left alone.
+  let fitted = null;   // { page, name } while the page chosen that way is still the one on the desk
+  function pageForLevel(){
+    const jn = J.get(), page = ['', 'prose', 'medium', 'advanced'][J.tierRank(jn.pick.tier)];
+    if (!page || !jn.done[4] || !isBlank() || (jn.stage === 5 && jn.sub !== SUBS[0])) return;
+    S.level = page;
+    fitted = { page, name: (THEME.game.find(g => g.tier === jn.pick.tier) || {}).name || '' };
+  }
+  // How many pictures the chosen page needs. render() rewrites the level note and the desk, so this note lives beside
+  // them and is brought up to date each time the desk has been redrawn.
+  const NEEDS = J.STAGES[4].needs || {};
+  function needNote(){
+    const words = NEEDS[S.level === 'prose' ? 'basic' : S.level];
+    if (fitted && fitted.page !== S.level) fitted = null;   // they picked another page themselves
+    $('needNote').hidden = typeof words !== 'string';
+    $('needText').textContent = typeof words === 'string' ? words : '';
+    $('needFit').hidden = !fitted;
+    $('needFit').textContent = fitted ? 'This page was picked to fit your level' + (fitted.name ? ', ' + fitted.name : '') + '. You can pick another.' : '';
+  }
+  // The desk has just been redrawn (render() swaps the whole of it).
+  new MutationObserver(() => {
+    if (!ready) return;
+    needNote();
+    if (sel.p != null) goStep('pictures');   // a panel has been chosen: the page is picked
+    if (!isField(document.activeElement)) setTyping(false);   // a text box that was swapped out while it had the focus never says it lost it
+  }).observe(bench, { childList: true });
+
+  shelf.renderTemplates($('tplRow'));
+
+  // The finish panel. Its three buttons run the dock's own commands, and say what happened down here, because the
+  // notice sits above the comic, out of sight.
+  $('finish').addEventListener('click', async e => {
+    const b = e.target.closest('[data-fin]');
+    if (!b || !ready || exporting) return;
+    const said = $('finSaid'), tell = words => { said.textContent = words; J.announce(words); };
+    goStep('share');
+    said.textContent = '';
+    sel = NONE(); note('');
+    if (b.dataset.fin === 'print') { await render(); print(); return; }
+    render();
+    if (b.dataset.fin === 'png') {
+      tell('Getting your download ready. This can take a moment.');
+      await exportPNG();
+      if ($('notice').hidden) tell('Your comic is in your downloads.'); else said.textContent = $('notice').textContent;
+    } else if (await saveComic(false)) said.textContent = $('notice').textContent;
+    else tell('There is nothing to save yet. Add a picture or a title first.');
+  });
+  // The reflection belongs to the journey, not to the comic: it is never put into S, so undo and saved comics never carry it.
+  const reflect = $('reflect');
+  let reflectT = null;
+  const countReflect = () => { $('reflect-c').textContent = reflect.value.length + ' of 600 letters'; };
+  const keepReflect = () => { clearTimeout(reflectT); reflectT = null; if (!gone) J.save({ reflect: reflect.value }); };
+  reflect.value = jn0.reflect;
+  countReflect();
+  reflect.addEventListener('input', () => { countReflect(); clearTimeout(reflectT); reflectT = setTimeout(keepReflect, 400); });
+  reflect.addEventListener('change', keepReflect);
+  addEventListener('pagehide', () => { if (reflectT != null && !resetSince()) keepReflect(); });
+  function showDone(){ $('finGo').hidden = true; $('finDone').hidden = false; }
+  if (jn0.done[5]) showDone();
+  $('finishBtn').addEventListener('click', () => {
+    if (gone) return;
+    clearTimeout(reflectT); reflectT = null;
+    J.save({ reflect: reflect.value, finished: new Date().toISOString() });
+    J.markDone(5);
+    goStep('share');
+    showDone();
+    J.focusHeading($('finDone-h'));
+  });
+
+  // ---------- room for the dock, and the keyboard's place in it ----------
+  // How much of the bottom of the window the dock takes: the dock itself, plus the tray open above it or else the rooftops
+  // when they show. The page keeps that much clear under itself, and pound.css keeps anything focused out from behind it (--dock-h).
+  const roofQ = matchMedia('(min-height:900px)'), narrowQ = matchMedia('(max-width:880px)');
+  function dockRoom(){
+    const tray = openTrayH(), roof = !tray && roofQ.matches ? parseFloat(getComputedStyle(document.body).getPropertyValue('--roof')) || 0 : 0;
+    const h = document.body.classList.contains('typing') ? 0 : $('dock').offsetHeight + tray + roof;
+    document.body.style.paddingBottom = h + 'px';
+    document.documentElement.style.setProperty('--dock-h', h + 'px');
+  }
+  new ResizeObserver(dockRoom).observe($('dock'));
+  // On a narrow screen the keyboard takes half the window. While a text box has the focus the dock is not fixed
+  // (the style block moves it to the end of the page), so the two never stack up over the words being typed.
+  const isField = el => !!(el && el.closest && el.closest('#main textarea, #main [contenteditable="true"]'));
+  function setTyping(on){
+    on = on && narrowQ.matches;
+    if (document.body.classList.contains('typing') === on) return;
+    document.body.classList.toggle('typing', on);
+    dockRoom();
+  }
+  document.addEventListener('focusin', e => setTyping(isField(e.target)));
+  document.addEventListener('focusout', e => setTyping(isField(e.relatedTarget)));
+  // The dock is rebuilt whenever anything changes, which would drop the keyboard's place in it. These two give the focus
+  // back to the same control in the new dock, or to the first one. If the same control is switched off for now
+  // (Download while it works, Undo with nothing left) the dock itself holds the focus until that control is back.
+  let dockWant = null;
+  function dockFocus(){
+    const d = $('dock'), a = document.activeElement;
+    if (!a || !d.contains(a)) return null;
+    return a === d ? dockWant : { id: a.id, cmd: a.dataset.cmd, style: a.dataset.style, v: a.dataset.v };
+  }
+  function dockRefocus(f){
+    if (!f) return;
+    const d = $('dock'), all = [...d.querySelectorAll('button, input')];
+    const same = x => f.id ? x.id === f.id : x.dataset.cmd === f.cmd && x.dataset.style === f.style;
+    const el = all.find(x => same(x) && x.dataset.v === f.v) || all.find(same);
+    dockWant = el && el.disabled ? f : null;
+    (dockWant ? d : el || all.find(x => !x.disabled) || d).focus({ preventScroll: true });
   }
 
   // ---------- start ----------
   (async () => {
     db = await openDB();
     if (!db) note('This browser won’t let the page save, so download your page before you close it.');
-    const saved = await get('state');
-    if (saved && saved.panels) S = Object.assign(fresh(), saved);
-    migrate();
-    await openFromLink();
-    render();
+    $('finSave').hidden = !db;
+    const q = new URLSearchParams(location.search), asked = !!(q.get('template') || q.get('comic'));
+    let opened = false;
+    // Whatever goes wrong while the saved page or a link is opened, the desk still ends up with a page that works.
+    try {
+      const saved = await get('state');
+      if (saved && saved.panels) S = Object.assign(fresh(), saved);
+      migrate();
+      opened = await openFromLink();
+    } catch (e) {}
+    ready = true;
+    try { if (!asked) pageForLevel(); await render(); } catch (e) { S = fresh(); sel = NONE(); await render(); }
+    if (opened) goStep('pictures');
+    if (asked) J.scrollTo($('notice').hidden ? bench.parentElement : $('notice'));   // straight to the comic, or to why there is none
     tidyImages();
     if (document.fonts) document.fonts.ready.then(fitTitle);   // measure the title again once its lettering has loaded
   })();

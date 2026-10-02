@@ -1,0 +1,1561 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.className+=' js'</script>
+<meta name="theme-color" content="#5ec8f2">
+<title>Choose and describe - Paws &amp; Order</title>
+<meta name="description" content="Make your picture with Paws &amp; Order: choose and describe, create with your AI image tool, then check and improve. Steps 2, 3 and 4 of a guided comic workshop for ages 9 to 12.">
+<link rel="stylesheet" href="../pound.css">
+<style>
+/* Make your picture only (steps 2, 3 and 4). Everything shared is in pound.css. Names made here start with pic-. */
+
+.task-body > p:not([class]){margin:0 0 12px;max-width:76ch;font-size:18px;line-height:1.4}
+.task .btn{text-align:center}
+/* words a learner typed, or an AI wrote, may be one very long word: it wraps, it never widens the page */
+.task{overflow-wrap:break-word}
+
+/* two big answers side by side (a character or a place) */
+.pic-wide{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));max-width:660px}
+/* place and colour pictures fill their frame; the gang's portraits are shown whole */
+.pic-cover img{object-fit:cover}
+/* the card that opens the make-a-character form is not one of the gang, so its outline is dashed */
+.pic-own-btn{justify-content:center;border-style:dashed}
+.pic-own-btn.is-open{background:var(--panel-2)}
+.pic-own{margin:18px 0 0}
+.pic-own h4{margin:0 0 4px;font-family:var(--brush);font-weight:400;font-size:19px;line-height:1.15;letter-spacing:.03em;text-transform:uppercase}
+.pic-own .addchar{margin-top:10px}
+
+/* words that are copied exactly into every prompt (a look, the colour words) are shown whole */
+.pic-fixed{display:block;margin:6px 0 0;padding:8px 12px;background:#fff;border-radius:8px;font-size:17px;line-height:1.4;overflow-wrap:anywhere}
+.callout .pic-fixed{margin:6px 0 0}
+.pic-name{font-family:var(--label);background:linear-gradient(transparent 62%,var(--yellow) 62%)}
+.pic-none{color:var(--ink-dim)}
+.pic-words{white-space:pre-line}
+
+/* the description box, with the picture it describes beside it when there is one */
+.pic-pair{display:grid;grid-template-columns:minmax(0,1fr);gap:0 22px;align-items:start}
+.pic-pair:has(.pic-ref){grid-template-columns:minmax(0,1fr) minmax(0,240px)}
+.pic-ref{margin:16px 0 0}
+.pic-ref img{width:100%;height:auto;border:3px solid var(--frame);border-radius:10px;background:var(--panel-2)}
+.pic-ref figcaption{margin:6px 0 0;font-size:15.5px;line-height:1.3;color:var(--ink-dim)}
+/* a line under a box: where its words came from, or what to do when it is empty. Under, not over, so the box
+   does not jump when the line goes. */
+.pic-under{margin:4px 0 0;font-size:16.5px;line-height:1.35;color:var(--ink-dim)}
+.pic-under:empty{display:none}
+
+/* the brief, and "what I asked for": rows of a label, the words and (in the brief) a way to change them */
+.pic-brief{margin:14px 0 0;padding:6px 16px 8px;background:#fffef8;border:3px solid var(--frame);border-radius:12px}
+.pic-brief h3{margin:10px 0 4px}
+.pic-brief dl{margin:0}
+.pic-row{display:grid;grid-template-columns:150px minmax(0,1fr) auto;gap:2px 16px;align-items:start;padding:10px 0;border-top:2px dashed rgba(20,20,20,.3)}
+.pic-row:first-child{border-top:0}
+.pic-row dt{padding-top:.3em;font-family:var(--brush);font-size:15px;line-height:1.15;letter-spacing:.04em;text-transform:uppercase}
+.pic-row dd{margin:0;min-width:0;font-size:17.5px;line-height:1.4;overflow-wrap:anywhere}
+.pic-row .pic-fixed{background:var(--panel-2)}
+.pic-row .pic-fixed + .pic-name{display:inline-block;margin-top:10px}
+.pic-row .linkbtn{margin-top:-8px}
+
+.pic-acts{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:16px 0 0}
+.pic-wait{display:inline-flex;align-items:center;font-size:17.5px}
+.pic-quiet{margin:10px 0 0;font-size:17px;line-height:1.35}
+
+/* the helper's questions, and its answer */
+.gate h3{margin:0 0 8px}
+.gate .hint2{margin:0 0 8px}
+.gate .count2{margin:5px 0 0}
+.pic-result{margin:22px 0 0}
+.pic-result > h3{margin-top:0}
+.pic-many{margin:0 0 4px;font-size:18px;line-height:1.4}
+.promptbox.is-used{background:#d8f5e0}
+.promptbox .pic-mark{margin:8px 0 0;padding-left:24px;background:var(--i-tick) 0 50%/16px 16px no-repeat;font-family:var(--label);font-size:16.5px;white-space:normal}
+
+/* the sentence to give the image tool: a white strip inside the black panel (so its focus ring is the purple one) */
+.pic-ask{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:8px 0 2px;padding:10px 14px;background:#fff;color:var(--ink);border-radius:10px;font-size:19px;line-height:1.3}
+.pic-ask q{flex:1 1 200px}
+.pic-ask :focus-visible{outline-color:var(--focus)}
+
+/* by eye: one thing to check at a time, each with its two answers */
+.pic-box{margin:20px 0 0}
+.pic-box > h3{margin-top:0}
+.pic-eye{margin:14px 0 0;padding:12px 0 0;border-top:2px dashed rgba(20,20,20,.3)}
+.pic-eye h4{margin:0 0 8px;font-family:var(--serif);font-weight:400;font-size:18px;line-height:1.35}
+.pic-eye .choices{grid-template-columns:repeat(2,minmax(0,180px))}
+.callout ul{margin:0;padding-left:22px}
+.pic-hints{margin:10px 0 0;padding-left:22px;font-size:17px;line-height:1.4;color:var(--ink-dim)}
+
+/* the two ways step 4 can end, side by side, and what comes after either */
+.pic-parts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+.pic-part{padding:2px 16px 16px;background:#fffef8;border:3px solid var(--frame);border-radius:12px}
+.pic-part h3{margin:14px 0 0}
+.pic-part .need{margin-top:12px}
+.pic-part .btn{margin-top:14px}
+.pic-after{margin:18px 0 0;padding:2px 16px 16px;background:#d8f5e0;border:3px solid var(--frame);border-radius:12px}
+.pic-after h3{margin:14px 0 6px}
+.pic-after p{margin:0 0 8px;max-width:76ch;font-size:18px;line-height:1.4}
+
+@media (max-width:880px){
+  .pic-pair:has(.pic-ref){grid-template-columns:minmax(0,1fr)}
+  .pic-ref{max-width:280px}
+  .pic-parts{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:600px){
+  .pic-row{grid-template-columns:minmax(0,1fr) auto}
+  .pic-row dt{grid-column:1 / -1}
+}
+@media print{.pagehead,.stepnav{display:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the page</a>
+<aside class="side">
+  <a class="brand" href="/" aria-label="HeutaLab home"><span>Heuta</span><span>Lab</span></a>
+  <a class="side-name" href="../">Paws &amp; Order</a>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="sideNav" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>Menu</span></button>
+  <nav id="sideNav" aria-label="Paws &amp; Order">
+    <a href="../references/?start=1" data-nav="start"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg><span>Start</span></a>
+    <a href="../references/" data-nav="look"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg><span>Look closely</span></a>
+    <a href="../builder/" data-nav="builder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg><span>Comic maker</span></a>
+    <a href="../teachers/" data-nav="teachers"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M7 8.5h7M7 12h10M12 16v2.5M8 21l4-2.5 4 2.5"/></svg><span>Teachers</span></a>
+    <a href="../explore/" data-nav="explore"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2.2 4.8-4.8 2.2 2.2-4.8z"/></svg><span>Explore</span></a>
+  </nav>
+  <div class="side-foot"><svg viewBox="0 0 120 40" aria-hidden="true"><path d="M2 39V24h8v-9h7v24h6V9h10v30h5V19h8v20h6V4h4V1h2v3h4v35h5V17h9v22h6V23h7v16h5V13h9v26h4V27h6v12"/></svg>Paws &amp; Order<small>Part of HeutaLab</small></div>
+</aside>
+<div class="page">
+  <!-- The words and the colour here are step 2's. The script at the end rewrites them for the step on screen. -->
+  <header class="pagehead" id="pagehead" style="--c:#5ec8f2">
+    <p class="pagehead-kicker"><a href="../">Paws &amp; Order</a></p>
+    <h1 id="pageH1">Step 2: Choose and describe</h1>
+    <img class="pagehead-art" id="pageArt" src="../img/stickers/nettle/notes.webp" alt="" width="285" height="397">
+  </header>
+  <nav id="trail" class="trail" aria-label="Your comic, step by step" data-nopencil></nav>
+  <main id="main">
+
+    <noscript><p class="notice warn">Paws &amp; Order needs JavaScript. Ask your teacher to switch it on in this browser.</p></noscript>
+
+    <!-- ================= Step 2: Choose and describe ================= -->
+
+    <section class="task" data-stage="2" data-sub="who" aria-labelledby="t-who" hidden>
+      <div class="task-head"><h2 id="t-who" tabindex="-1"><span class="where site">On Paws &amp; Order</span> Who or where?</h2>
+        <p>First choose what your picture is about.</p></div>
+      <div class="task-body">
+        <h3 id="q-subject">A character or a place? <span class="q-rule">(pick one)</span></h3>
+        <div class="choices pic-wide" role="group" aria-labelledby="q-subject" id="subjectChoices">
+          <button type="button" class="choice" aria-pressed="false" data-val="character"><span class="choice-t">A character</span><span class="choice-sub">One of the gang, or one you make up.</span><span class="choice-tick" aria-hidden="true"></span></button>
+          <button type="button" class="choice" aria-pressed="false" data-val="setting"><span class="choice-t">A place</span><span class="choice-sub">Somewhere in Doodleville, or a place of your own, with nobody in it.</span><span class="choice-tick" aria-hidden="true"></span></button>
+        </div>
+
+        <div id="whoBlock" hidden>
+          <h3 id="q-cast">Who is in your picture? <span class="q-rule" id="castRule">(pick one)</span></h3>
+          <div class="choices" role="group" aria-labelledby="q-cast" id="castChoices"></div>
+          <div class="pic-own" id="ownWrap" hidden>
+            <h4 id="own-h">Make your own character</h4>
+            <p class="hint2">You do not have to. Give them a name and say how they look. A picture is only for you: the prompt helper never sees it.</p>
+            <div id="ownForm"></div>
+          </div>
+          <div class="callout" id="castLook" hidden></div>
+        </div>
+
+        <div id="placeBlock" hidden>
+          <h3 id="q-place"><span id="placeQ">Where are they?</span> <span class="q-rule" id="placeRule">(you can skip this)</span></h3>
+          <div class="choices pic-cover" role="group" aria-labelledby="q-place" id="placeChoices"></div>
+          <div class="callout" id="placeLook" hidden></div>
+        </div>
+      </div>
+      <div class="stepnav">
+        <button type="button" class="btn go2" data-go="colours">Next</button>
+      </div>
+    </section>
+
+    <section class="task" data-stage="2" data-sub="colours" aria-labelledby="t-colours" hidden>
+      <div class="task-head"><h2 id="t-colours" tabindex="-1"><span class="where site">On Paws &amp; Order</span> Colours</h2>
+        <p>Here is the same picture in six sets of colours.</p></div>
+      <div class="task-body">
+        <h3 id="q-palette">Which colours? <span class="q-rule">(pick one)</span></h3>
+        <div class="choices pic-cover" role="group" aria-labelledby="q-palette" id="paletteChoices"></div>
+        <div class="callout" id="paletteSay" hidden></div>
+        <p class="pic-quiet">The colour words go into every prompt, word for word. Leave them out and the image tool picks its own colours. Then your pictures stop matching.</p>
+      </div>
+      <div class="stepnav">
+        <button type="button" class="btn back" data-go="who">Back</button>
+        <button type="button" class="btn go2" data-go="level">Next</button>
+      </div>
+    </section>
+
+    <section class="task" data-stage="2" data-sub="level" aria-labelledby="t-level" hidden>
+      <div class="task-head"><h2 id="t-level" tabindex="-1"><span class="where site">On Paws &amp; Order</span> Level and tool</h2>
+        <p>Choose how big your job is, and the image tool you will use.</p></div>
+      <div class="task-body">
+        <h3 id="q-tier">Which level? <span class="q-rule">(pick one)</span></h3>
+        <div class="choices" role="group" aria-labelledby="q-tier" id="tierChoices"></div>
+        <div class="callout" id="tierLower" hidden><b>Your level</b><p id="tierLowerSay"></p></div>
+        <p class="level-intro" id="tierSay" hidden></p>
+
+        <div id="toolAsk">
+          <h3 id="q-platform">Which image tool will you use? <span class="q-rule">(pick one)</span></h3>
+          <p class="hint2">The image tool is the separate AI that makes your picture. Paws &amp; Order does not make pictures. Not sure? Ask your teacher, or pick Any image maker.</p>
+          <div class="choices" role="group" aria-labelledby="q-platform" id="platformChoices"></div>
+        </div>
+        <div class="callout" id="toolFixed" hidden><b>Your image tool</b><p>Your class is using <span id="toolFixedName"></span>.</p></div>
+      </div>
+      <div class="stepnav">
+        <button type="button" class="btn back" data-go="colours">Back</button>
+        <button type="button" class="btn go2" data-go="words">Next</button>
+      </div>
+    </section>
+
+    <section class="task" data-stage="2" data-sub="words" aria-labelledby="t-words" hidden>
+      <div class="task-head"><h2 id="t-words" tabindex="-1"><span class="where site">On Paws &amp; Order</span> Your words</h2>
+        <p>Two things to write: what you noticed, and what you want to make.</p></div>
+      <div class="task-body">
+        <div class="pic-pair">
+          <div class="field2">
+            <label for="attempt">Your description: what you noticed</label>
+            <p class="hint2" id="attempt-h">Say what you saw when you looked closely: what is there, the details, and the world around it. Write at least 10 words.</p>
+            <textarea id="attempt" maxlength="1500" aria-describedby="attempt-h attempt-c attemptFrom"></textarea>
+            <p class="count2" id="attempt-c">0 words. 10 more to go.</p>
+            <p class="pic-under" id="attemptFrom"></p>
+            <p class="pic-under" id="attemptEmpty" hidden>
+              <a class="linkbtn" id="noLook" href="../references/">Do Look Closely first</a>
+              <button type="button" class="linkbtn" id="useLook" hidden>Use my words from Look Closely</button>
+            </p>
+          </div>
+          <div id="refFig"></div>
+        </div>
+        <div class="field2">
+          <label for="idea">Your idea</label>
+          <p class="hint2" id="idea-h">What should your picture show? Do not type real names, your school or where you live. Keep it friendly and silly.</p>
+          <textarea id="idea" maxlength="800" aria-describedby="idea-h idea-c"></textarea>
+          <p class="count2" id="idea-c">0 of 800 letters</p>
+        </div>
+      </div>
+      <div class="stepnav">
+        <button type="button" class="btn back" data-go="level">Back</button>
+        <button type="button" class="btn go2" data-go="brief">Next</button>
+      </div>
+    </section>
+
+    <section class="task" data-stage="2" data-sub="brief" aria-labelledby="t-brief" hidden>
+      <div class="task-head"><h2 id="t-brief" tabindex="-1"><span class="where site">On Paws &amp; Order</span> Read your brief</h2></div>
+      <div class="task-body">
+        <p>A brief is your plan in words: who or where, the colours, and your idea. Next, it gets turned into a prompt: the exact words you give your image tool.</p>
+        <div class="pic-brief">
+          <h3 id="brief-h">Your brief</h3>
+          <dl id="briefList" aria-labelledby="brief-h"></dl>
+        </div>
+        <div id="briefNeedWrap" hidden>
+          <h3 id="brief-need-h">Still to do</h3>
+          <ul class="need" role="list" id="brief-need" aria-labelledby="brief-need-h"></ul>
+        </div>
+      </div>
+      <div class="stepnav">
+        <button type="button" class="btn back" data-go="words">Back</button>
+        <button type="button" class="btn go2 is-off" id="briefReady" aria-disabled="true" aria-describedby="brief-need">My brief is ready</button>
+      </div>
+    </section>
+
+    <!-- ================= Step 3: Create with AI ================= -->
+
+    <section class="task" data-stage="3" data-sub="prompt" aria-labelledby="t-cprompt" hidden>
+      <div class="task-head"><h2 id="t-cprompt" tabindex="-1"><span class="where site">On Paws &amp; Order</span> Get your prompt</h2>
+        <p>A prompt is the exact words you give your image tool. The prompt helper turns your brief into one.</p></div>
+      <div class="task-body">
+
+        <!-- the level a class is working at: shown when the learner's level had to come down -->
+        <div class="callout" id="lowerBox" hidden>
+          <h3 id="lower-h" tabindex="-1">About your level</h3>
+          <p id="lowerSay"></p>
+          <p id="q-tier2">You can pick again here. <span class="q-rule">(pick one)</span></p>
+          <div class="choices" role="group" aria-labelledby="q-tier2" id="tierChoices2"></div>
+        </div>
+
+        <!-- a second go: the prompt from last time, with the one change put in by hand. No AI. -->
+        <div id="redoBox" hidden>
+          <div class="callout" id="redoChangeBox"><b>Your one change</b><p id="redoChange" class="pic-words"></p></div>
+          <div class="field2">
+            <label for="redoText">My prompt, with one thing changed</label>
+            <p class="hint2" id="redoText-h">This is the prompt you used last time. Put your one change into it. Then copy it.</p>
+            <textarea id="redoText" maxlength="4000" rows="8" aria-describedby="redoText-h"></textarea>
+          </div>
+          <p class="error" role="alert" id="redoErr"></p>
+          <div class="pic-acts"><button type="button" class="copybtn2" id="redoCopy">Copy<span class="vh"> my changed prompt</span></button></div>
+          <p class="pic-quiet"><button type="button" class="linkbtn" id="redoOff">Ask the helper for a whole new prompt instead</button></p>
+        </div>
+
+        <!-- the usual way: ask the helper -->
+        <div id="askBox">
+          <div id="createNeedWrap" hidden>
+            <h3 id="create-need-h">Still to do</h3>
+            <ul class="need" role="list" id="create-need" aria-labelledby="create-need-h">
+              <li><button type="button" class="linkbtn" id="toBrief" data-stage="2" data-go="brief">Finish your brief in step 2</button></li>
+            </ul>
+          </div>
+          <p id="codeCreateSay" hidden>The helper needs a workshop code. No code? You can still use a starter prompt.</p>
+          <div id="codeCreate"></div>
+
+          <div class="gate" id="gateBox" hidden>
+            <h3 id="gate-h" tabindex="-1">Before the prompt: a question or two</h3>
+            <ul id="gateQs"></ul>
+            <div class="pic-pair">
+              <div class="field2">
+                <label for="attempt2">Your description: what you noticed</label>
+                <p class="hint2" id="attempt2-h">Add to it if you like. Then press the button again. This time the helper writes your prompt either way.</p>
+                <textarea id="attempt2" maxlength="1500" aria-describedby="attempt2-h attempt2-c"></textarea>
+                <p class="count2" id="attempt2-c"></p>
+              </div>
+              <div id="refFig2"></div>
+            </div>
+          </div>
+
+          <div class="pic-acts">
+            <button type="button" class="btn go2" id="goBtn">Get my prompt</button>
+            <span class="pic-wait" id="goWait" hidden><span class="spinner" aria-hidden="true"></span>Working on it. This can take a minute.</span>
+          </div>
+          <p class="error" role="alert" id="goErr"></p>
+          <p class="pic-quiet" id="fixWords" hidden><button type="button" class="linkbtn" data-stage="2" data-go="words">Change my words in step 2</button></p>
+          <div id="starterWrap" hidden>
+            <div class="pic-acts"><button type="button" class="btn back" id="starterBtn">Use a starter prompt</button></div>
+            <p class="pic-quiet">A starter prompt is your own brief, joined up. No AI is used.</p>
+          </div>
+
+          <div class="pic-result" id="result" hidden>
+            <h3 id="result-h" tabindex="-1">Your prompt</h3>
+            <div id="resultBody"></div>
+          </div>
+        </div>
+
+        <div id="nextNeedWrap" hidden>
+          <ul class="need" role="list" id="next-need" aria-label="Before you go on">
+            <li><button type="button" class="linkbtn" id="nextNeedGo">Get your prompt first</button></li>
+          </ul>
+        </div>
+      </div>
+      <div class="stepnav">
+        <button type="button" class="btn back" data-stage="2" data-go="brief">Back to step 2</button>
+        <button type="button" class="btn go2 is-off" id="toTool" aria-disabled="true" aria-describedby="next-need">Next</button>
+      </div>
+    </section>
+
+    <section class="task" data-stage="3" data-sub="tool" aria-labelledby="t-tool" hidden>
+      <div class="task-head"><h2 id="t-tool" tabindex="-1"><span class="where tool">In your image tool</span> Use your image tool</h2>
+        <p>This part does not happen on Paws &amp; Order. Your picture is made in your image tool.</p></div>
+      <div class="task-body">
+        <div class="toolstep">
+          <h3>Now use your image tool</h3>
+          <ol role="list">
+            <li id="toolOpen">Open your image tool.</li>
+            <li>Paste your prompt.</li>
+            <li>Save the picture to this device.</li>
+          </ol>
+          <p>Not allowed to use the tool yourself? Show your prompt to your teacher.</p>
+        </div>
+        <div class="callout safe">
+          <b>Stay safe</b>
+          <p>Only use an image tool your teacher or grown-up has said yes to. Never type your name, school or address into it. Paws &amp; Order never sees or keeps your picture.</p>
+        </div>
+        <div class="promptbox" id="usedBox" hidden>
+          <h3 id="used-h">Your prompt</h3>
+          <p id="usedText"></p>
+          <button type="button" class="copybtn2" id="usedCopy" aria-describedby="used-h">Copy</button>
+        </div>
+      </div>
+      <div class="stepnav">
+        <button type="button" class="btn back" data-go="prompt">Back</button>
+        <button type="button" class="btn go2" data-go="back">Next</button>
+      </div>
+    </section>
+
+    <section class="task" data-stage="3" data-sub="back" aria-labelledby="t-back" hidden>
+      <div class="task-head"><h2 id="t-back" tabindex="-1"><span class="where site">Back on Paws &amp; Order</span> Did you make your picture?</h2></div>
+      <div class="task-body">
+        <p>Is your picture saved on this device? Then press the green button.</p>
+        <p>Paws &amp; Order cannot see your picture. In the next step you check it yourself.</p>
+        <p class="pic-quiet"><button type="button" class="linkbtn" data-go="prompt">It did not work. Try the prompt again.</button></p>
+      </div>
+      <div class="stepnav">
+        <button type="button" class="btn back" data-go="tool">Back</button>
+        <button type="button" class="btn go2" id="madeBtn">I made my picture</button>
+      </div>
+    </section>
+
+    <!-- ================= Step 4: Check and improve ================= -->
+
+    <section class="task" data-stage="4" data-sub="aim" aria-labelledby="t-aim" hidden>
+      <div class="task-head"><h2 id="t-aim" tabindex="-1"><span class="where site">On Paws &amp; Order</span> Aim: what I asked for</h2>
+        <p>Six small steps: aim, prompt, result, compare, why, change one thing.</p></div>
+      <div class="task-body">
+        <p>This is what you asked for. Keep it in your head while you look at your picture.</p>
+        <p id="aimNone" hidden>You have not made a brief yet. <button type="button" class="linkbtn" data-stage="2" data-go="who">Go to step 2</button></p>
+        <div class="pic-brief" id="aimBox">
+          <h3 id="aim-h">What I asked for</h3>
+          <dl id="aimList" aria-labelledby="aim-h"></dl>
+        </div>
+      </div>
+      <div class="stepnav">
+        <button type="button" class="btn back" data-stage="3" data-go="back">Back to step 3</button>
+        <button type="button" class="btn go2" data-go="prompt">Next</button>
+      </div>
+    </section>
+
+    <section class="task" data-stage="4" data-sub="prompt" aria-labelledby="t-kprompt" hidden>
+      <div class="task-head"><h2 id="t-kprompt" tabindex="-1"><span class="where site">On Paws &amp; Order</span> Prompt: the words I used</h2></div>
+      <div class="task-body">
+        <div class="field2">
+          <label for="cmpPrompt">The prompt I used</label>
+          <p class="hint2" id="cmpPrompt-h">These are the exact words you gave your image tool. Did you use different words? Change them here.</p>
+          <textarea id="cmpPrompt" maxlength="3000" rows="8" aria-describedby="cmpPrompt-h cmpPromptNote"></textarea>
+          <p class="pic-under" id="cmpPromptNote"></p>
+        </div>
+      </div>
+      <div class="stepnav">
+        <button type="button" class="btn back" data-go="aim">Back</button>
+        <button type="button" class="btn go2" data-go="result">Next</button>
+      </div>
+    </section>
+
+    <section class="task" data-stage="4" data-sub="result" aria-labelledby="t-result" hidden>
+      <div class="task-head"><h2 id="t-result" tabindex="-1"><span class="where tool">In your image tool</span> Result: what the tool made</h2>
+        <p>Paws &amp; Order cannot see your picture. Your image tool can, so ask it.</p></div>
+      <div class="task-body">
+        <div class="toolstep">
+          <h3>Ask your image tool what it sees</h3>
+          <ol role="list">
+            <li id="resOpen">In your image tool, start a new chat.</li>
+            <li>Add the picture you saved. Only the picture, not your prompt.</li>
+            <li>Ask it: <span class="pic-ask"><q id="askText">Describe only what you can see in this picture.</q> <button type="button" class="copybtn2" id="askCopy">Copy<span class="vh"> the question</span></button></span></li>
+            <li>Copy its answer and paste it below.</li>
+          </ol>
+        </div>
+        <h3 id="res-paste-h"><span class="where site">Back on Paws &amp; Order</span> Paste the answer</h3>
+        <div class="field2">
+          <label for="cmpDesc">What my tool says is in the picture</label>
+          <p class="hint2" id="cmpDesc-h">Paste the whole answer. It needs at least 8 words.</p>
+          <textarea id="cmpDesc" maxlength="3000" rows="6" aria-describedby="cmpDesc-h cmpDesc-c"></textarea>
+          <p class="count2" id="cmpDesc-c"></p>
+        </div>
+        <div class="field2" id="cmpRefWrap" hidden>
+          <label for="cmpRef">What my tool says is in the reference picture <small>(you can skip this)</small></label>
+          <p class="hint2" id="cmpRef-h">Storyteller: ask the same question about the picture you were aiming for. The gap between the two answers is the gap you are closing.</p>
+          <textarea id="cmpRef" maxlength="3000" rows="5" aria-describedby="cmpRef-h"></textarea>
+        </div>
+        <div class="pic-acts"><button type="button" class="btn back" id="noDescribe">My tool cannot describe pictures</button></div>
+      </div>
+      <div class="stepnav">
+        <button type="button" class="btn back" data-go="prompt">Back</button>
+        <button type="button" class="btn go2" data-go="compare">Next</button>
+      </div>
+    </section>
+
+    <section class="task" data-stage="4" data-sub="compare" aria-labelledby="t-compare" hidden>
+      <div class="task-head"><h2 id="t-compare" tabindex="-1"><span class="where site">On Paws &amp; Order</span> Compare: asked for and made</h2>
+        <p>Put what you asked for next to what the tool made. The prompt helper can compare them, or you can check by eye.</p></div>
+      <div class="task-body">
+        <div id="cmpNeedWrap" hidden>
+          <h3 id="cmp-need-h">Before the helper can compare</h3>
+          <ul class="need" role="list" id="cmp-need" aria-labelledby="cmp-need-h"></ul>
+        </div>
+        <p id="codeCheckSay" hidden>The helper needs a workshop code. No code? Check it by eye instead.</p>
+        <div id="codeCheck"></div>
+        <div class="pic-acts">
+          <button type="button" class="btn go2" id="cmpBtn">Compare them</button>
+          <button type="button" class="btn back" id="eyeBtn" aria-expanded="false" aria-controls="byEye">Check it by eye instead</button>
+          <span class="pic-wait" id="cmpWait" hidden><span class="spinner" aria-hidden="true"></span>Working on it. This can take a minute.</span>
+        </div>
+        <p class="error" role="alert" id="cmpErr"></p>
+
+        <div class="pic-box" id="cmpResult" hidden>
+          <h3 id="cmp-h" tabindex="-1">What the helper found</h3>
+          <div id="cmpBody"></div>
+        </div>
+
+        <div class="pic-box" id="byEye" hidden>
+          <h3 id="eye-h" tabindex="-1">Check it by eye</h3>
+          <p>Look at your picture. Answer one thing at a time.</p>
+          <div class="callout" id="eyeAim" hidden></div>
+          <div id="eyeList"></div>
+          <div class="field2">
+            <label for="eyeNotes">My notes <small>(you can skip this)</small></label>
+            <p class="hint2" id="eyeNotes-h">Write down anything else you spotted.</p>
+            <textarea id="eyeNotes" maxlength="300" aria-describedby="eyeNotes-h"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="stepnav">
+        <button type="button" class="btn back" data-go="result">Back</button>
+        <button type="button" class="btn go2" data-go="why">Next</button>
+      </div>
+    </section>
+
+    <section class="task" data-stage="4" data-sub="why" aria-labelledby="t-why" hidden>
+      <div class="task-head"><h2 id="t-why" tabindex="-1"><span class="where site">On Paws &amp; Order</span> Why: what happened?</h2></div>
+      <div class="task-body">
+        <div class="callout" id="whyFound" hidden></div>
+        <div class="field2">
+          <label for="whyText">Why do you think that happened? <small>(you can skip this)</small></label>
+          <p class="hint2" id="whyText-h">Have a guess. These three ideas may help.</p>
+          <textarea id="whyText" maxlength="300" aria-describedby="whyText-h whyHints"></textarea>
+        </div>
+        <ul class="pic-hints" id="whyHints">
+          <li>The tool guesses when words are missing.</li>
+          <li>Some words pull the wrong way.</li>
+          <li>Tools add extras nobody asked for.</li>
+        </ul>
+      </div>
+      <div class="stepnav">
+        <button type="button" class="btn back" data-go="compare">Back</button>
+        <button type="button" class="btn go2" data-go="change">Next</button>
+      </div>
+    </section>
+
+    <section class="task" data-stage="4" data-sub="change" aria-labelledby="t-change" hidden>
+      <div class="task-head"><h2 id="t-change" tabindex="-1"><span class="where site">On Paws &amp; Order</span> Change one thing</h2>
+        <p>Pick one of the two. Either one finishes this step.</p></div>
+      <div class="task-body">
+        <div class="pic-parts">
+          <section class="pic-part" aria-labelledby="chg-h">
+            <h3 id="chg-h">Something to fix</h3>
+            <div class="field2">
+              <label for="changeText">The one thing I will change</label>
+              <p class="hint2" id="changeText-h">Change one thing at a time, so you can see what it did.</p>
+              <textarea id="changeText" maxlength="300" aria-describedby="changeText-h"></textarea>
+            </div>
+            <ul class="need" role="list" id="chg-need" aria-label="Before you save">
+              <li><button type="button" class="linkbtn" id="chgNeedGo">Write at least 3 words in the box</button></li>
+            </ul>
+            <button type="button" class="btn is-off" id="saveChange" aria-disabled="true" aria-describedby="chg-need">Save my change</button>
+          </section>
+          <section class="pic-part" aria-labelledby="keep-h">
+            <h3 id="keep-h">It came out right</h3>
+            <div class="field2">
+              <label for="keptWhy">Say one thing that came out right <small>(you can skip this)</small></label>
+              <textarea id="keptWhy" maxlength="300"></textarea>
+            </div>
+            <ul class="need" role="list" id="keep-need" aria-label="Before you keep it">
+              <li><button type="button" class="linkbtn" id="keepNeedGo" data-go="compare">Check your picture first: compare it, or check it by eye</button></li>
+            </ul>
+            <button type="button" class="btn is-off" id="keepBtn" aria-disabled="true" aria-describedby="keep-need">It matches. I am keeping it.</button>
+          </section>
+        </div>
+
+        <div class="pic-after" id="afterBox" hidden>
+          <h3 id="after-h" tabindex="-1">Step 4 is done</h3>
+          <p id="afterSay"></p>
+          <p id="afterNeeds"></p>
+          <div class="pic-acts">
+            <button type="button" class="btn" id="againBtn">Try again with my change</button>
+            <button type="button" class="btn back" id="nextPic" hidden>Make my next picture</button>
+            <a class="btn go2" href="../builder/">Build my comic</a>
+          </div>
+        </div>
+      </div>
+      <div class="stepnav">
+        <button type="button" class="btn back" data-go="why">Back</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="skyframe" aria-hidden="true">
+  <img class="who" src="../img/stickers/nettle/face-pleased.webp" alt="" width="200" height="220">
+  <p class="ribbon">Every great story starts with a closer look&hellip;</p>
+  <svg class="comet" viewBox="0 0 150 100"><path d="M8 94C40 80 72 56 98 34" fill="none" stroke="#ffd23f" stroke-width="10" stroke-linecap="round" opacity=".35"/><path d="M26 86C52 72 76 54 98 34" fill="none" stroke="#ffd23f" stroke-width="5" stroke-linecap="round" opacity=".7"/><path d="M112 6l6 14 15 1-11 10 4 15-14-8-13 8 3-15-11-10 15-1z" fill="#ffd23f" stroke="#141414" stroke-width="3.5" stroke-linejoin="round"/></svg>
+</div>
+<footer class="basefoot">
+  <p class="say">Look closely. Choose and describe. Create with AI. Check and improve. Build your story.</p>
+  <p>Your work stays on this device. With a workshop code, the words you send to the prompt helper go through heutalab.com to the AI service your teacher chose. Pictures never leave this device. Part of <a href="/">HeutaLab</a>.</p>
+</footer>
+
+<script type="module">
+// Make your picture: steps 2, 3 and 4 of the five, on one page. The address says which step is on screen
+// (#choose, #create or #check), and inside a step one small step shows at a time. Everything chosen or typed
+// goes into the journey on this device as it changes (journey.js), so a reload, or a trip to another page,
+// loses nothing. This page never makes a picture: it gets the words ready for the image tool, and helps
+// check what came back.
+import J from '../journey.js';
+import { gang, places } from '../gang.js';
+import W from '../workshop.js';
+import * as AI from '../ai.js';
+import THEME from '../theme.js';
+
+const $ = id => document.getElementById(id);
+const esc = J.esc;
+const iso = () => new Date().toISOString();
+const stage = n => J.STAGES.find(s => s.n === n);
+const HASH = { choose: 2, create: 3, check: 4 };
+const TIERS = ['basic', 'medium', 'advanced'];
+const ATTEMPT_MIN = AI.ATTEMPT_MIN_WORDS, DESC_MIN = AI.DESCRIPTION_MIN_WORDS;
+const WAIT = 'Working on it. This can take a minute.';
+const LOCKED = 'Locked. Your teacher opens this level.';
+const OOPS = 'Something went wrong. Try again.';
+// One of the gang stands in the page head for each step (pictures the site already has).
+const ART = { 2: ['nettle', 'notes', 285, 397], 3: ['mabel', 'gadget', 232, 274], 4: ['nettle', 'face-thinking', 235, 291] };
+
+// Where to open: the step in the address; with none, the step the learner last worked in if it is one of these three.
+const opened = (() => {
+  const j = J.get();
+  let n = HASH[location.hash.slice(1)];
+  if (!n) {
+    n = J.isStarted(j) ? j.stage : J.frontier(j);
+    if (n < 2 || n > 4) n = 2;
+  }
+  return { n, sub: j.stage === n ? j.sub : stage(n).subs[0][0] };
+})();
+// The menu, Start or Carry on, the trail and every Start again button are journey.js's.
+J.mount({ page: 'picture', stage: opened.n, sub: opened.sub });
+
+const main = $('main'), tasks = Array.from(main.querySelectorAll('.task'));
+const subjectChoices = $('subjectChoices'), castChoices = $('castChoices'), placeChoices = $('placeChoices'), paletteChoices = $('paletteChoices');
+const tierChoices = $('tierChoices'), tierChoices2 = $('tierChoices2'), platformChoices = $('platformChoices');
+const attempt = $('attempt'), attempt2 = $('attempt2'), idea = $('idea'), redoText = $('redoText');
+const goBtn = $('goBtn'), goErr = $('goErr'), resultBox = $('result'), resultBody = $('resultBody');
+const cmpPrompt = $('cmpPrompt'), cmpDesc = $('cmpDesc'), cmpRef = $('cmpRef'), cmpBtn = $('cmpBtn'), cmpErr = $('cmpErr');
+const eyeList = $('eyeList'), eyeNotes = $('eyeNotes'), whyText = $('whyText'), changeText = $('changeText'), keptWhy = $('keptWhy');
+
+// ---------- what is on screen, and what is only remembered while the page is open ----------
+let cur = { n: 0, sub: '' };   // the step and the small step on screen
+let pendingSub = null;         // the small step to open when the address moves to another step
+let round = 1, gateQs = [];    // round 2: the helper has asked its questions once, so the next send gets a prompt
+let asking = false, comparing = false;
+let starterOK = false;         // the helper could not answer, and said a starter prompt is a way on
+let lowerSay = '';             // "Your class is working at ...", once the level has had to come down
+let copiedSay = '';            // the check found the prompt pasted back where the description should be
+let eyeOpen = false;           // the by-eye list is showing
+let ownMounted = false;        // the make-a-character form is built the first time it is opened
+
+// ---------- lookups ----------
+const game = tier => THEME.game.find(g => g.tier === tier) || null;
+const toolOf = id => THEME.platforms.find(t => t.id === id) || null;
+const paletteOf = key => (typeof key === 'string' && Object.hasOwn(THEME.palettes, key) ? THEME.palettes[key] : null);
+const placeOf = id => (typeof id === 'string' && id !== 'own' ? places.byId(id) : null);
+const castOf = p => p.cast.map(id => gang.byId(id)).filter(Boolean);
+const maxCast = p => (p.tier === 'advanced' ? 2 : 1);
+// A level's words: the place version when the picture is of a place.
+const taskOf = (g, p) => (p.subject === 'setting' && g.setting ? g.setting : g);
+// The tool's name for a sentence, or '' when the learner chose "Any image maker" or nothing yet.
+const toolName = p => { const t = toolOf(p.platform); return t && t.id !== 'any' ? t.label : ''; };
+// A second go is on while the journey holds `redo`: the prompt from last time, being changed by hand.
+const redoOf = j => (j.redo && typeof j.redo === 'object' && !Array.isArray(j.redo) ? j.redo : null);
+const whole = n => (Number.isInteger(n) && n >= 0 ? n : 0);
+const strs = a => (Array.isArray(a) ? a.filter(x => typeof x === 'string' && x.trim()) : []);
+// `notes` is the by-eye notes box. It rides in the check with the rest, so a reset or a new go clears it too.
+const blankCheck = () => ({ prompt: '', description: '', reference: '', result: null, byEye: [], why: '', change: '', kept: false, keptWhy: '', at: null, notes: '' });
+
+// ---------- small helpers ----------
+// Words and hidden are only written when they change: every change sends pencil.js round the page again.
+const say = (el, t) => { if (el.textContent !== t) el.textContent = t; };
+const setShown = (el, on) => { if (el.hidden === !!on) el.hidden = !on; };
+// A text box is filled from the journey, unless the learner is typing in it at this moment.
+const setField = (el, v) => { if (document.activeElement !== el && el.value !== v) el.value = v; };
+
+// One pressable card. Chosen is the class "active" and aria-pressed, set together (pencil.js redraws on the class).
+function choice(o) {
+  return '<button type="button" class="choice' + (o.on ? ' active' : '') + (o.locked ? ' is-locked' : '') + '" aria-pressed="' + (o.on ? 'true' : 'false') + '"'
+    + (o.locked ? ' aria-disabled="true"' : '') + ' data-val="' + esc(o.val) + '">'
+    + (o.img ? '<img alt="" src="' + esc(o.img) + '" loading="lazy">' : '')
+    + '<span class="choice-t">' + esc(o.t) + '</span>' + (o.sub ? '<span class="choice-sub">' + esc(o.sub) + '</span>' : '')
+    + '<span class="choice-tick" aria-hidden="true"></span></button>';
+}
+// Marks the chosen cards in a group without rebuilding it, so the card just pressed keeps the focus.
+function paint(group, isOn) {
+  group.querySelectorAll('.choice[data-val]').forEach(b => {
+    const on = !!isOn(b.dataset.val);
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+}
+// Rebuilds a group. If one of its cards had the focus, the card that stands in its place gets it back.
+function fill(el, html) {
+  const had = el.contains(document.activeElement) ? document.activeElement : null;
+  const val = had ? had.getAttribute('data-val') : null, id = had ? had.id : '';
+  el.innerHTML = html;
+  if (!had) return;
+  const next = (id && document.getElementById(id)) || Array.from(el.querySelectorAll('[data-val]')).find(b => b.getAttribute('data-val') === val);
+  if (next) next.focus({ preventScroll: true });
+}
+function onPick(group, fn) {
+  group.addEventListener('click', e => {
+    const b = e.target.closest('.choice');
+    if (b && group.contains(b)) fn(b.dataset.val, b);
+  });
+}
+// A main button that is not ready keeps its colour and still takes a press. It says so to a screen reader and
+// points at the list of what is missing.
+function setOff(btn, off, needId) {
+  btn.classList.toggle('is-off', !!off);
+  if (off) { btn.setAttribute('aria-disabled', 'true'); btn.setAttribute('aria-describedby', needId); }
+  else { btn.removeAttribute('aria-disabled'); btn.removeAttribute('aria-describedby'); }
+}
+// The two buttons that ask the AI. Not ready: tied to the list of what is missing. Busy: tied to the waiting
+// words beside the spinner. Either way the button keeps the focus, and a press starts nothing new.
+function setAsk(btn, ok, busy, needId, wait) {
+  setOff(btn, busy || !ok, ok ? wait.id : needId);
+  setShown(wait, busy);
+}
+const needHTML = list => list.map(x => (x.ok
+  ? '<li class="ok">' + esc(x.text) + '<span class="vh"> (done)</span></li>'
+  : '<li><button type="button" class="linkbtn" data-go="' + esc(x.sub) + '">' + esc(x.text) + '</button></li>')).join('');
+const firstNeed = list => { const el = list.querySelector('li:not(.ok) .linkbtn'); if (el) el.focus(); };
+
+// ---------- saving what is typed ----------
+// Words typed into a box are saved a moment after the typing stops, and at once when the box is left, a button
+// is pressed or the page is closed. Each save carries only its own field: journey.js merges it into what is stored.
+const waiting = new Map();
+let waitTimer = 0;
+let gone = false;   // Start again has removed the journey: nothing typed a moment before may be written back after it
+function saveSoon(key, save) {
+  if (gone) return;
+  waiting.set(key, save);
+  clearTimeout(waitTimer);
+  waitTimer = setTimeout(flush, 400);
+}
+function flush() {
+  clearTimeout(waitTimer);
+  const all = Array.from(waiting.values());
+  waiting.clear();
+  if (!gone) all.forEach(save => save());
+}
+function typed(el, save, then) {
+  el.addEventListener('input', () => { saveSoon(el.id, () => save(el.value)); if (then) then(); });
+  el.addEventListener('change', flush);
+}
+window.addEventListener('pagehide', flush);
+// journey.js says so just before it removes the keys (this tab), or reloads the page (a reset in another tab).
+const forget = () => { gone = true; waiting.clear(); };
+window.addEventListener('paws:reset', forget);
+window.addEventListener('storage', e => { if (e.key === 'paws_reset_at') forget(); });
+
+// A word counter is never a live region. "That is enough words." is said once, when typing first reaches the mark.
+const reached = new Set();
+function count(el, out, min, typing) {
+  const n = J.words(el.value), left = min - n;
+  say(out, n + (n === 1 ? ' word' : ' words') + (left > 0 ? '. ' + left + ' more to go.' : '. That is enough.'));
+  out.classList.toggle('ok', left <= 0);
+  if (left > 0) return;
+  if (typing && !reached.has(el.id)) J.announce('That is enough words.');
+  reached.add(el.id);
+}
+
+// ---------- moving between the steps ----------
+const headOf = () => { const t = tasks.find(x => !x.hidden); return t ? t.querySelector('h2') : null; };
+
+function showStep(n, sub, focus) {
+  const st = stage(n);
+  if (!st.subs.some(([id]) => id === sub)) sub = st.subs[0][0];
+  flush();
+  if (cur.n !== n) {
+    // One h1 for the page: it and the tab's title are rewritten for the step on screen.
+    say($('pageH1'), 'Step ' + n + ': ' + st.name);
+    document.title = st.name + ' - Paws & Order';
+    $('pagehead').style.setProperty('--c', st.colour);
+    main.style.setProperty('--c', st.colour);
+    const [dir, file, w, h] = ART[n], art = $('pageArt');
+    art.width = w; art.height = h;
+    art.src = THEME.stickerPath(dir, file, false);
+  }
+  cur = { n, sub };
+  tasks.forEach(t => setShown(t, Number(t.dataset.stage) === n && t.dataset.sub === sub));
+  // The learner is on this step now: Carry on comes back here, and the trail moves.
+  J.setStage(n, sub);
+  if (n === 4) fillUsedPrompt();
+  redraw();
+  if (focus) J.focusHeading(headOf());
+}
+const step = sub => showStep(cur.n, sub, true);
+// To another of the three steps: through the address, so the browser's Back button returns to this one.
+function goto(n, sub) {
+  const want = '#' + stage(n).id;
+  if (location.hash === want) { showStep(n, sub, true); return; }
+  pendingSub = sub;
+  location.hash = want;
+}
+// This page owns the address. Any other hash (the skip link's #main, say) changes nothing.
+window.addEventListener('hashchange', () => {
+  const n = HASH[location.hash.slice(1)];
+  if (!n) return;
+  let sub = pendingSub;
+  pendingSub = null;
+  if (!sub) { const j = J.get(); sub = j.stage === n ? j.sub : stage(n).subs[0][0]; }
+  showStep(n, sub, true);
+});
+// Back, Next, Change and every "still to do" line carry data-go (and data-stage for another step).
+main.addEventListener('click', e => {
+  const b = e.target.closest('[data-go]');
+  if (!b || !main.contains(b)) return;
+  const n = Number(b.dataset.stage) || cur.n;
+  if (n === cur.n) step(b.dataset.go); else goto(n, b.dataset.go);
+});
+// A trail link to the step already on screen changes no address, so nothing would happen: the focus goes to
+// the small step's heading, as it does after every other move.
+$('trail').addEventListener('click', e => {
+  const a = e.target.closest('a[href]');
+  if (!a || !a.hash || a.hash !== location.hash || !HASH[a.hash.slice(1)]) return;
+  if (a.pathname.replace(/index\.html$/, '') !== location.pathname.replace(/index\.html$/, '')) return;
+  e.preventDefault();
+  J.focusHeading(headOf());
+});
+
+// ---------- the brief: what it needs before it is ready ----------
+function needs(p) {
+  const out = [], add = (ok, sub, text) => out.push({ ok: !!ok, sub, text });
+  const left = ATTEMPT_MIN - J.words(p.attempt);
+  add(p.subject === 'character' || p.subject === 'setting', 'who', 'Pick a character or a place');
+  if (p.subject === 'character') add(castOf(p).length, 'who', 'Pick who is in your picture');
+  if (p.subject === 'setting') add(p.place === 'own' || placeOf(p.place), 'who', 'Pick which place');
+  add(paletteOf(p.palette), 'colours', 'Pick your colours');
+  add(TIERS.includes(p.tier) && J.tierRank(p.tier) <= W.maxLevel(), 'level', 'Pick your level');
+  add(toolOf(p.platform), 'level', 'Pick your image tool');
+  add(left <= 0, 'words', left > 0 ? 'Write ' + left + ' more ' + (left === 1 ? 'word' : 'words') + ' in your description' : 'Write your description');
+  add(p.idea.trim().length >= 3, 'words', 'Write your idea');
+  return out;
+}
+const ready = p => needs(p).every(x => x.ok);
+// A fingerprint of the brief a prompt was made from, so a prompt can say when the brief has moved on since.
+const sigOf = p => JSON.stringify([p.subject, p.subject === 'character' ? p.cast : [], p.place, p.palette, p.tier, p.platform, p.attempt.trim(), p.idea.trim()]);
+// What goes to the helper. The cast travels as gang.forPrompt makes it (never a picture); a place only when it
+// is one of Doodleville's ("My own place" is described in the idea).
+function briefInput(p, r) {
+  const input = { platform: p.platform, tier: p.tier, subject: p.subject, palette: p.palette, cast: gang.forPrompt(p.cast),
+    attempt: p.attempt.trim(), idea: p.idea.trim(), round: r, example: p.attemptIsExample };
+  if (placeOf(p.place)) input.place = p.place;
+  return input;
+}
+// What was asked for, as [label, words] rows: the anchors for the check.
+function aimRows(p, withIdea) {
+  const rows = [], pl = placeOf(p.place), pal = paletteOf(p.palette);
+  if (p.subject === 'character') castOf(p).forEach(c => rows.push(['The look of ' + c.name, c.look]));
+  if (pl) rows.push(['The place: ' + pl.name, pl.look]);
+  else if (p.subject === 'setting' && p.place === 'own') rows.push(['The place', 'My own place. It is described in my idea.']);
+  if (pal) rows.push(['The colour words', pal.phrase]);
+  if (withIdea && p.idea.trim()) rows.push(['My idea', p.idea.trim()]);
+  return rows;
+}
+// The picture the learner studied in Look Closely, beside the words it led to.
+function refFigure(j) {
+  const ref = j.look && typeof j.look.ref === 'string' && Object.hasOwn(THEME.refs, j.look.ref) ? j.look.ref : '';
+  return ref ? '<figure class="pic-ref"><img src="' + esc(THEME.refPath(ref)) + '" alt="The picture you looked at" loading="lazy">'
+    + '<figcaption>This is the picture you looked at. Your picture will be different: these words show the helper how well you look.</figcaption></figure>' : '';
+}
+
+// ---------- step 2, who or where ----------
+// The exact words of a look, shown whole and named, with the reason they never change.
+const lookHTML = (why, items) => '<b>The look</b><p>' + why + '</p>'
+  + items.map(i => '<p class="pic-fixed"><span class="pic-name">' + esc(i.name) + ':</span> ' + esc(i.look) + '</p>').join('');
+
+function drawCastLook(p) {
+  const cast = castOf(p), box = $('castLook');
+  setShown(box, cast.length > 0);
+  box.innerHTML = cast.length ? lookHTML('These exact words go in every prompt, so the character stays the same.', cast) : '';
+}
+function drawPlaceLook(p) {
+  const pl = placeOf(p.place), box = $('placeLook');
+  setShown(box, !!pl);
+  box.innerHTML = pl ? lookHTML('These exact words go in every prompt, so the place stays the same.', [pl]) : '';
+}
+function drawWho() {
+  const p = J.get().pick, isChar = p.subject === 'character';
+  paint(subjectChoices, v => v === p.subject);
+  setShown($('whoBlock'), isChar);
+  setShown($('placeBlock'), isChar || p.subject === 'setting');
+  if (isChar) {
+    say($('castRule'), maxCast(p) === 2 ? '(pick up to 2)' : '(pick one)');
+    const open = !$('ownWrap').hidden;
+    fill(castChoices, gang.all().map(c => choice({ val: c.id, t: c.name, sub: c.tag, img: c.img || THEME.castPlaceholder, on: p.cast.includes(c.id) })).join('')
+      + '<button type="button" class="choice pic-own-btn' + (open ? ' is-open' : '') + '" id="ownBtn" aria-expanded="' + (open ? 'true' : 'false') + '" aria-controls="ownWrap">'
+      + '<span class="choice-t">I’ll make my own</span><span class="choice-sub">Invent a character. You can skip this.</span></button>');
+    drawCastLook(p);
+  }
+  if (!p.subject) return;
+  // For a character the place is extra, so "No place" is a card of its own. For a place picture it is the subject.
+  say($('placeQ'), isChar ? 'Where are they?' : 'Which place?');
+  say($('placeRule'), isChar ? '(you can skip this)' : '(pick one)');
+  const cards = places.all().map(pl => choice({ val: pl.id, t: pl.name, img: pl.thumb, on: p.place === pl.id }));
+  if (isChar) cards.unshift(choice({ val: '', t: 'No place', sub: 'Just the character.', on: !placeOf(p.place) }));
+  else cards.push(choice({ val: 'own', t: 'My own place', sub: 'You will describe it in your idea.', on: p.place === 'own' }));
+  fill(placeChoices, cards.join(''));
+  drawPlaceLook(p);
+}
+onPick(subjectChoices, val => {
+  const p = J.get().pick;
+  if (p.subject === val) return;
+  const patch = { subject: val };
+  if (val === 'character' && p.place === 'own') patch.place = null;   // "My own place" is only a subject, never a backdrop
+  J.save({ pick: patch });
+  drawWho();
+});
+function setOwn(open) {
+  if (open && !ownMounted) { ownMounted = true; gang.mountAddForm($('ownForm'), { onAdd: joined }); }
+  setShown($('ownWrap'), open);
+  const btn = $('ownBtn');
+  if (!btn) return;
+  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  btn.classList.toggle('is-open', open);
+}
+// A character the learner has just made goes straight into the picture, and the focus goes to its new card.
+function joined(id) {
+  const p = J.get().pick;
+  J.save({ pick: { cast: p.cast.filter(x => x !== id && gang.byId(x)).concat(id).slice(-maxCast(p)) } });
+  setOwn(false);
+  drawWho();
+  const card = Array.from(castChoices.querySelectorAll('[data-val]')).find(b => b.dataset.val === id), c = gang.byId(id);
+  if (card) card.focus();
+  J.announce((c ? c.name : 'Your character') + ' is in the gang, and in your picture.');
+}
+onPick(castChoices, (val, b) => {
+  if (b.id === 'ownBtn') { setOwn($('ownWrap').hidden); return; }
+  const p = J.get().pick, max = maxCast(p);
+  let cast = p.cast.filter(id => gang.byId(id));
+  if (max === 1) {
+    if (cast.length === 1 && cast[0] === val) return;
+    cast = [val];
+  } else if (cast.includes(val)) cast = cast.filter(id => id !== val);
+  else cast = cast.concat(val).slice(-max);
+  J.save({ pick: { cast } });
+  paint(castChoices, v => cast.includes(v));
+  drawCastLook(J.get().pick);
+});
+onPick(placeChoices, val => {
+  const place = val || null, p = J.get().pick;
+  if ((placeOf(p.place) || p.place === 'own' ? p.place : null) === place) return;
+  J.save({ pick: { place } });
+  paint(placeChoices, v => v === (place || ''));
+  drawPlaceLook(J.get().pick);
+});
+
+// ---------- step 2, colours ----------
+function drawPaletteSay(key) {
+  const pal = paletteOf(key), box = $('paletteSay');
+  setShown(box, !!pal);
+  box.innerHTML = pal ? '<b>' + esc(pal.label) + '</b><p>' + esc(pal.note) + '</p><p class="pic-fixed"><span class="pic-name">The colour words:</span> ' + esc(pal.phrase) + '</p>' : '';
+}
+function drawColours() {
+  const p = J.get().pick;
+  fill(paletteChoices, Object.keys(THEME.palettes).map(k => choice({ val: k, t: THEME.palettes[k].label, img: gang.paletteImg(k), on: p.palette === k })).join(''));
+  drawPaletteSay(p.palette);
+}
+onPick(paletteChoices, val => {
+  if (!paletteOf(val) || J.get().pick.palette === val) return;
+  J.save({ pick: { palette: val } });
+  paint(paletteChoices, v => v === val);
+  drawPaletteSay(val);
+});
+
+// ---------- step 2, level and tool ----------
+// A level above the one that is open is a locked card: it can be focused and says why, and a press changes nothing.
+function tierCards(p) {
+  const max = W.maxLevel();
+  return THEME.game.map(g => {
+    const locked = g.level > max;
+    return choice({ val: g.tier, t: g.name, sub: 'Level ' + g.level + '. ' + taskOf(g, p).task + (locked ? ' ' + LOCKED : ''), on: !locked && p.tier === g.tier, locked });
+  }).join('');
+}
+function drawTierSay(p) {
+  const g = game(p.tier), el = $('tierSay');
+  setShown(el, !!g);
+  say(el, g ? taskOf(g, p).intro : '');
+}
+function drawLevel() {
+  const p = J.get().pick, a = W.access(), fixed = a.platform ? toolOf(a.platform) : null;
+  fill(tierChoices, tierCards(p));
+  drawTierSay(p);
+  setShown($('tierLower'), !!lowerSay);
+  say($('tierLowerSay'), lowerSay);
+  // A workshop code can name the tool the whole class uses. Then there is nothing to choose.
+  setShown($('toolFixed'), !!fixed);
+  setShown($('toolAsk'), !fixed);
+  if (fixed) {
+    say($('toolFixedName'), fixed.label);
+    if (p.platform !== fixed.id) J.save({ pick: { platform: fixed.id } });
+  } else fill(platformChoices, THEME.platforms.map(t => choice({ val: t.id, t: t.label, on: p.platform === t.id })).join(''));
+}
+function pickTier(val) {
+  if (J.tierRank(val) > W.maxLevel()) { J.announce(LOCKED); return; }
+  const p = J.get().pick;
+  if (p.tier === val) return;
+  const patch = { tier: val };
+  if (val !== 'advanced' && p.cast.length > 1) patch.cast = p.cast.slice(0, 1);   // only a Storyteller picture has two characters
+  J.save({ pick: patch });
+  if (cur.n === 3) { redraw(); return; }   // on step 3 the button and the prompt on show depend on the level too
+  paint(tierChoices, v => v === val);
+  drawTierSay(J.get().pick);
+}
+onPick(tierChoices, pickTier);
+onPick(tierChoices2, pickTier);
+onPick(platformChoices, val => {
+  if (!toolOf(val) || J.get().pick.platform === val) return;
+  J.save({ pick: { platform: val } });
+  paint(platformChoices, v => v === val);
+});
+
+// ---------- step 2, your words ----------
+// The line under the description box: where the words came from, or what to do while the box is empty.
+function drawAttemptNotes(j) {
+  const text = attempt.value.trim(), look = j.look && typeof j.look.text === 'string' ? j.look.text.trim() : '';
+  say($('attemptFrom'), text && look && text === look
+    ? 'From Look Closely. ' + (j.pick.attemptIsExample ? 'This is a worked example, not your own words. ' : '') + 'You can change it.' : '');
+  setShown($('attemptEmpty'), !text);
+  setShown($('noLook'), !look);
+  setShown($('useLook'), !!look);
+}
+function drawWords() {
+  const j = J.get();
+  setField(attempt, j.pick.attempt);
+  setField(idea, j.pick.idea);
+  $('refFig').innerHTML = refFigure(j);
+  drawAttemptNotes(j);
+  count(attempt, $('attempt-c'), ATTEMPT_MIN, false);
+  say($('idea-c'), idea.value.length + ' of 800 letters');
+}
+// Typing in the description makes it the learner's own words, whatever it started as.
+const saveAttempt = v => J.save({ pick: { attempt: v, attemptIsExample: false } });
+typed(attempt, saveAttempt, () => {
+  count(attempt, $('attempt-c'), ATTEMPT_MIN, true);
+  say($('attemptFrom'), '');
+  setShown($('attemptEmpty'), !attempt.value.trim());
+});
+typed(attempt2, saveAttempt, () => count(attempt2, $('attempt2-c'), ATTEMPT_MIN, true));
+typed(idea, v => J.save({ pick: { idea: v } }), () => say($('idea-c'), idea.value.length + ' of 800 letters'));
+$('useLook').addEventListener('click', () => {
+  const look = J.get().look;
+  if (!look || typeof look.text !== 'string') return;
+  J.save({ pick: { attempt: look.text, attemptIsExample: !!look.example } });
+  attempt.focus();
+  attempt.value = J.get().pick.attempt;
+  drawAttemptNotes(J.get());
+  count(attempt, $('attempt-c'), ATTEMPT_MIN, false);
+});
+
+// ---------- step 2, read your brief ----------
+const NONE = '<span class="pic-none">Not chosen yet</span>', UNWRITTEN = '<span class="pic-none">Not written yet</span>';
+const fixedHTML = (name, look) => '<span class="pic-name">' + esc(name) + '</span><span class="pic-fixed">' + esc(look) + '</span>';
+const row = (label, html, sub, what) => '<div class="pic-row"><dt>' + label + '</dt><dd>' + html + '</dd>'
+  + '<dd><button type="button" class="linkbtn" data-go="' + sub + '">Change<span class="vh"> ' + what + '</span></button></dd></div>';
+function briefRows(p) {
+  const cast = castOf(p), pl = placeOf(p.place), pal = paletteOf(p.palette), g = game(p.tier), tool = toolOf(p.platform);
+  let who = NONE;
+  if (p.subject === 'character') {
+    who = (cast.length ? cast.map(c => fixedHTML(c.name, c.look)).join('') : '<span class="pic-none">No character chosen yet</span>')
+      + (pl ? fixedHTML('In ' + pl.name, pl.look) : '');
+  } else if (p.subject === 'setting') {
+    who = pl ? fixedHTML(pl.name, pl.look)
+      : p.place === 'own' ? '<span class="pic-name">My own place</span> You will describe it in your idea.' : '<span class="pic-none">No place chosen yet</span>';
+  }
+  const words = t => '<span class="pic-words">' + esc(t.trim()) + '</span>';
+  return row('Who or where', who, 'who', 'who or where')
+    + row('Colours', pal ? fixedHTML(pal.label, pal.phrase) : NONE, 'colours', 'the colours')
+    + row('Level', g ? '<span class="pic-name">' + esc(g.name) + '</span> ' + esc(taskOf(g, p).task) : NONE, 'level', 'the level')
+    + row('Image tool', tool ? esc(tool.label) : NONE, 'level', 'the image tool')
+    + row('Your description', p.attempt.trim() ? words(p.attempt) + (p.attemptIsExample ? ' <span class="pic-none">(a worked example from Look Closely, not your own words)</span>' : '') : UNWRITTEN, 'words', 'your description')
+    + row('Your idea', p.idea.trim() ? words(p.idea) : UNWRITTEN, 'words', 'your idea');
+}
+function drawBrief() {
+  const p = J.get().pick, list = needs(p), ok = list.every(x => x.ok);
+  $('briefList').innerHTML = briefRows(p);
+  setShown($('briefNeedWrap'), !ok);
+  $('brief-need').innerHTML = needHTML(list);
+  setOff($('briefReady'), !ok, 'brief-need');
+}
+$('briefReady').addEventListener('click', () => {
+  flush();
+  if (!ready(J.get().pick)) { drawBrief(); firstNeed($('brief-need')); return; }
+  J.markDone(2);
+  goto(3, 'prompt');
+});
+
+// ---------- step 3, get your prompt ----------
+const onPrompt = () => cur.n === 3 && cur.sub === 'prompt';
+// The shared paragraph and the prompt are one text: this is what Copy copies, and what the check is given.
+const fullPrompt = (h, i) => { const a = String(h.anchor || '').trim(); return (a ? a + '\n\n' : '') + h.prompts[i]; };
+
+function drawGo(j) {
+  say(goBtn, round === 2 ? 'Send it back to the helper' : j.helper ? 'Get a new prompt' : 'Get my prompt');
+  setAsk(goBtn, ready(j.pick), asking, 'create-need', $('goWait'));
+}
+function drawGate(j) {
+  setShown($('gateBox'), gateQs.length > 0);
+  if (!gateQs.length) return;
+  $('gateQs').innerHTML = gateQs.map(q => '<li>' + esc(q) + '</li>').join('');
+  setField(attempt2, j.pick.attempt);
+  $('refFig2').innerHTML = refFigure(j);
+  count(attempt2, $('attempt2-c'), ATTEMPT_MIN, false);
+}
+// The helper's answer (or a starter prompt), from the journey. It is not a live region: "Your prompt is ready."
+// is said once, and the focus goes to its heading.
+function drawResult(j) {
+  const h = j.helper, has = !!(h && Array.isArray(h.prompts) && h.prompts.length && h.prompts.every(t => typeof t === 'string'));
+  setShown(resultBox, has);
+  if (!has) { resultBody.innerHTML = ''; return; }
+  const anchor = String(h.anchor || '').trim(), many = h.prompts.length > 1;
+  say($('result-h'), many ? 'Your prompts' : 'Your prompt');
+  let html = '';
+  if (typeof h.sig === 'string' && h.sig !== sigOf(j.pick)) html += '<p class="stock"><b>Your brief has changed.</b> These words were made from your brief as it was. Press Get a new prompt to match it.</p>';
+  if (h.starter) html += '<p class="stock"><b>Starter prompt.</b> It is made from your own brief. The AI helper did not write it.</p>';
+  else if (h.fallback) html += '<p class="stock"><b>A starter prompt.</b> The helper could not answer in time, so this one comes from our files. It was not written for your idea.</p>';
+  if (typeof h.friendly_note === 'string' && h.friendly_note.trim()) html += '<p class="friendly"><b>A note from the helper</b>' + esc(h.friendly_note.trim()) + '</p>';
+  if (many) html += '<p class="pic-many">You have ' + h.prompts.length + ' prompts. Make picture 1 first, check it, then come back for the next.</p>';
+  html += h.prompts.map((t, i) => {
+    const mine = !!(j.used && j.used.text === fullPrompt(h, i));
+    return '<div class="promptbox' + (mine ? ' is-used' : '') + '"><h4 id="pb-' + i + '">' + (many ? 'Prompt ' + (i + 1) : 'Prompt') + '</h4>'
+      + (anchor ? '<p class="promptbox-shared"><b>These words are the same in every picture</b>' + esc(anchor) + '</p>' : '')
+      + '<p>' + esc(t) + '</p>'
+      + '<button type="button" class="copybtn2" data-copy="' + i + '" aria-describedby="pb-' + i + '">Copy</button>'
+      + '<p class="pic-mark"' + (mine ? '' : ' hidden') + '>You copied this one.</p></div>';
+  }).join('');
+  [['Why this works', h.why_this_works], ['On another tool', h.platform_notes], ['Watch for', h.watch_for]].forEach(([label, text]) => {
+    if (typeof text === 'string' && text.trim()) html += '<p class="note"><strong>' + label + '</strong>' + esc(text.trim()) + '</p>';
+  });
+  resultBody.innerHTML = html;
+}
+// Next waits until a prompt has been copied: that is the prompt the rest of the journey is about.
+function drawNext(j) {
+  const ok = !!(j.used && j.used.text);
+  setOff($('toTool'), !ok, 'next-need');
+  setShown($('nextNeedWrap'), !ok);
+  say($('nextNeedGo'), redoOf(j) || !resultBox.hidden ? 'Press Copy on the prompt you will use' : 'Get your prompt first');
+}
+const nextTarget = () => (redoOf(J.get()) ? $('redoCopy') : resultBox.hidden ? goBtn : resultBody.querySelector('[data-copy]'));
+
+function drawPrompt() {
+  const j = J.get(), a = W.access(), redo = redoOf(j);
+  setShown($('lowerBox'), !!lowerSay);
+  say($('lowerSay'), lowerSay);
+  if (lowerSay) fill(tierChoices2, tierCards(j.pick));
+  setShown($('redoBox'), !!redo);
+  setShown($('askBox'), !redo);
+  if (redo) {
+    const change = j.checkPrev && j.checkPrev.change ? j.checkPrev.change.trim() : '';
+    setShown($('redoChangeBox'), !!change);
+    say($('redoChange'), change);
+    setField(redoText, String(redo.text || ''));
+  } else {
+    const ok = ready(j.pick);
+    setShown($('createNeedWrap'), !ok);
+    setShown($('codeCreateSay'), a.mode === 'none');
+    // A starter prompt is always a way on with no code, and after the helper has said it cannot answer.
+    setShown($('starterWrap'), ok && (a.mode === 'none' || starterOK));
+    drawGate(j);
+    drawGo(j);
+    drawResult(j);
+  }
+  drawNext(j);
+}
+
+// What went wrong, in the error line. When it is the words themselves (an unfriendly word, an idea the AI would
+// rather not take), the way back to them is offered underneath.
+function sayError(out) {
+  say(goErr, (out && out.message) || (out ? OOPS : ''));
+  setShown($('fixWords'), !!out && !out.need && !out.reason && !out.setup);
+}
+// An answer from the helper, or a starter prompt, becomes the saved `helper` (with the brief it was made from).
+// New prompts mean none is copied yet.
+function keepHelper(out, p) {
+  J.save({ helper: Object.assign({}, out.brief, { fallback: out.fallback === true, starter: out.starter === true, at: iso(), sig: sigOf(p) }), used: null });
+  round = 1; gateQs = []; starterOK = false;
+  drawPrompt();
+  if (!onPrompt()) return;
+  J.announce('Your prompt is ready.');
+  J.focusHeading($('result-h'));
+}
+goBtn.addEventListener('click', async () => {
+  if (asking) return;
+  flush();
+  const p = J.get().pick;
+  if (!ready(p)) { drawPrompt(); $('toBrief').focus(); return; }
+  asking = true;
+  sayError(null);
+  drawGo(J.get());
+  J.announce(WAIT);
+  const out = await W.makeBrief(briefInput(p, round));
+  asking = false;
+  if (gone) return;
+  if (out.type === 'brief') { keepHelper(out, p); return; }
+  if (out.type === 'gate') {
+    // The helper asks before it writes: questions only, never a verdict. The next press gets a prompt either way.
+    gateQs = strs(out.questions); round = 2;
+    drawPrompt();
+    if (onPrompt()) { J.announce('The helper has a question for you.'); J.focusHeading($('gate-h')); }
+    return;
+  }
+  starterOK = starterOK || out.canStarter === true;
+  if (out.locked) {
+    // Never a bare error: workshop.js has already moved the level down when it could. Say so, and show the levels here.
+    lowerSay = out.lowered ? W.lowerLine(out.lowered) : (out.message || LOCKED);
+    drawPrompt();
+    if (onPrompt()) { J.announce(lowerSay); J.focusHeading($('lower-h')); }
+    return;
+  }
+  drawPrompt();
+  sayError(out);
+});
+$('starterBtn').addEventListener('click', () => {
+  if (asking) return;
+  flush();
+  const p = J.get().pick;
+  if (!ready(p)) { drawPrompt(); $('toBrief').focus(); return; }
+  sayError(null);
+  const out = W.starterBrief(briefInput(p, 1));
+  if (out.type === 'brief') keepHelper(out, p);
+  else sayError(out);
+});
+// Copy saves the exact words copied as `used`, whether or not the browser let the clipboard be written
+// (the button then says "Select and copy", and the words are the same).
+resultBody.addEventListener('click', e => {
+  const b = e.target.closest('[data-copy]');
+  if (!b) return;
+  const h = J.get().helper, i = Number(b.dataset.copy);
+  if (!h || !Array.isArray(h.prompts) || typeof h.prompts[i] !== 'string') return;
+  const text = fullPrompt(h, i);
+  J.copy(text, b);
+  J.save({ used: { index: i, text, at: iso() } });
+  resultBody.querySelectorAll('.promptbox').forEach((box, k) => {
+    box.classList.toggle('is-used', k === i);
+    const mark = box.querySelector('.pic-mark');
+    if (mark) setShown(mark, k === i);
+  });
+  drawNext(J.get());
+});
+$('nextNeedGo').addEventListener('click', () => { const t = nextTarget(); if (t) t.focus(); });
+$('toTool').addEventListener('click', () => {
+  flush();
+  const j = J.get();
+  if (j.used && j.used.text) { step('tool'); return; }
+  const t = nextTarget();
+  if (t) t.focus();
+  J.announce($('nextNeedGo').textContent + '.');
+});
+
+// The second go. The words in the box are saved as they change; Copy makes them the prompt that was used.
+typed(redoText, v => {
+  const r = redoOf(J.get());
+  if (r) J.save({ redo: { text: v.slice(0, 4000), index: whole(r.index), at: r.at || iso() } });
+}, () => say($('redoErr'), ''));
+$('redoCopy').addEventListener('click', e => {
+  flush();
+  const r = redoOf(J.get()), text = redoText.value.trim().slice(0, 4000);
+  if (!r) return;
+  if (J.words(text) < 3) { say($('redoErr'), 'Write your prompt in the box first.'); redoText.focus(); return; }
+  J.copy(text, e.currentTarget);
+  J.save({ used: { index: whole(r.index), text, at: iso() } });
+  drawNext(J.get());
+});
+$('redoOff').addEventListener('click', () => {
+  flush();
+  J.save({ redo: null });
+  drawPrompt();
+  goBtn.focus();
+});
+
+// ---------- step 3, use your image tool, and come back ----------
+function drawTool() {
+  const j = J.get(), name = toolName(j.pick), text = j.used && j.used.text ? j.used.text : '';
+  say($('toolOpen'), name ? 'Open ' + name + '.' : 'Open your image tool.');
+  setShown($('usedBox'), !!text);
+  say($('usedText'), text);
+}
+$('usedCopy').addEventListener('click', e => { J.copy($('usedText').textContent, e.currentTarget); });
+function drawBack() {
+  const j = J.get();
+  say($('madeBtn'), !j.pick.tier || j.pick.tier === 'basic' ? 'I made my picture' : 'I made picture ' + (whole(j.used && j.used.index) + 1));
+}
+$('madeBtn').addEventListener('click', () => {
+  const j = J.get(), patch = { made: iso() };
+  // A prompt copied since the last picture was made means this is a new picture. Its check starts clean, and a
+  // finished check is kept as the earlier go.
+  if (j.made && j.used && j.used.at && j.used.at > j.made) {
+    if (j.check.at) patch.checkPrev = j.check;
+    patch.check = blankCheck();
+    copiedSay = ''; eyeOpen = false;
+  }
+  J.save(patch);
+  J.markDone(3);
+  goto(4, 'aim');
+});
+
+// ---------- step 4, aim and prompt ----------
+function drawAim() {
+  const rows = aimRows(J.get().pick, true);
+  setShown($('aimNone'), !rows.length);
+  setShown($('aimBox'), rows.length > 0);
+  $('aimList').innerHTML = rows.map(([k, v]) => '<div class="pic-row"><dt>' + esc(k) + '</dt><dd class="pic-words">' + esc(v) + '</dd></div>').join('');
+}
+// "The prompt I used" starts as the words copied in step 3, whenever the box is empty.
+const usedFor = j => (j.used && j.used.text ? String(j.used.text).slice(0, 3000) : '');
+function fillUsedPrompt() {
+  const j = J.get(), from = usedFor(j);
+  if (!j.check.prompt && from) J.save({ check: { prompt: from } });
+}
+function drawUsedNote(j) {
+  const from = usedFor(j), auto = !!from && cmpPrompt.value === from;
+  const many = auto && !redoOf(j) && !!j.helper && Array.isArray(j.helper.prompts) && j.helper.prompts.length > 1;
+  say($('cmpPromptNote'), auto ? 'Filled in from step 3' + (many ? ': prompt ' + (whole(j.used.index) + 1) : '') + '.' : '');
+}
+function drawUsed() {
+  const j = J.get();
+  setField(cmpPrompt, j.check.prompt);
+  drawUsedNote(j);
+}
+typed(cmpPrompt, v => J.save({ check: { prompt: v } }), () => say($('cmpPromptNote'), ''));
+
+// ---------- step 4, result ----------
+function drawResultStep() {
+  const j = J.get();
+  say($('resOpen'), 'In ' + (toolName(j.pick) || 'your image tool') + ', start a new chat.');
+  setField(cmpDesc, j.check.description);
+  setField(cmpRef, j.check.reference);
+  setShown($('cmpRefWrap'), j.pick.tier === 'advanced');   // the reference description is a Storyteller step
+  count(cmpDesc, $('cmpDesc-c'), DESC_MIN, false);
+}
+typed(cmpDesc, v => J.save({ check: { description: v } }), () => count(cmpDesc, $('cmpDesc-c'), DESC_MIN, false));
+typed(cmpRef, v => J.save({ check: { reference: v } }));
+$('askCopy').addEventListener('click', e => { J.copy($('askText').textContent, e.currentTarget); });
+$('noDescribe').addEventListener('click', () => { eyeOpen = true; step('compare'); });
+
+// ---------- step 4, compare ----------
+const cmpNeeds = c => [
+  { ok: J.words(c.prompt) >= 3, sub: 'prompt', text: 'Put in the prompt you used' },
+  { ok: J.words(c.description) >= DESC_MIN, sub: 'result', text: 'Paste what your tool says is in the picture (at least ' + DESC_MIN + ' words)' },
+];
+const eyeDone = c => THEME.compareChecklist.every((t, i) => c.byEye[i] === 'ok' || c.byEye[i] === 'wrong');
+// "It matches" needs a check first: the helper's comparison, or every line of the by-eye list answered.
+const isChecked = c => !!(c.result && c.result.type === 'compare') || eyeDone(c);
+const col = (title, items, cls) => '<div class="cmp-col ' + cls + '"><h4>' + title + '</h4>'
+  + (items.length ? '<ul>' + items.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul>' : '<p class="none">Nothing named.</p>') + '</div>';
+
+function drawCmpResult(c) {
+  const r = c.result && typeof c.result === 'object' ? c.result : null;
+  let head = '', html = '';
+  if (copiedSay) {
+    head = 'Same words back';
+    html = '<p class="copied">' + esc(copiedSay) + '</p><div class="pic-acts"><button type="button" class="btn back" data-go="result">Back to Result</button></div>';
+  } else if (r && r.type === 'fallback') {
+    head = 'Check it yourself';
+    html = '<p class="stock">The helper could not read this in time. Check your picture by eye, one thing at a time.</p>';
+  } else if (r && r.type === 'compare') {
+    const drift = strs(r.drift_words), qs = strs(r.questions);
+    head = 'What the helper found';
+    if (r.looks_copied) html += '<p class="copied"><b>Reads like a prompt</b>This sounds more like instructions than a description of a picture. Did your tool see the picture?</p>';
+    html += '<div class="cmp-cols">' + col('Asked for, not seen', strs(r.asked_and_missing), 'missing') + col('Turned up unasked', strs(r.appeared_unasked), 'extra')
+      + '<div class="cmp-col words"><h4>Drift words</h4>' + (drift.length
+        ? '<p class="chips">' + drift.map(w => '<span>' + esc(w) + '</span>').join('') + '</p><p class="step-note">Words in the description that pull away from your prompt. Which word in your prompt could pull each one back?</p>'
+        : '<p class="none">No drift words named.</p>') + '</div></div>'
+      + (qs.length ? '<div class="cmp-qs"><h4>Questions for you</h4><ul>' + qs.map(q => '<li>' + esc(q) + '</li>').join('') + '</ul></div>' : '')
+      + '<p class="closer">Change one thing and try again.</p>';
+  }
+  setShown($('cmpResult'), !!html);
+  say($('cmp-h'), head);
+  $('cmpBody').innerHTML = html;
+}
+// The by-eye list: what was asked for, then each thing to check with its two answers. It needs no code and no AI.
+function drawEye(j) {
+  const btn = $('eyeBtn');
+  setShown($('byEye'), eyeOpen);
+  btn.setAttribute('aria-expanded', eyeOpen ? 'true' : 'false');
+  btn.classList.toggle('is-open', eyeOpen);
+  if (!eyeOpen) return;
+  const rows = aimRows(j.pick, false), box = $('eyeAim');
+  setShown(box, rows.length > 0);
+  box.innerHTML = rows.length ? '<b>What I asked for</b>' + rows.map(([k, v]) => '<p class="pic-fixed"><span class="pic-name">' + esc(k) + ':</span> ' + esc(v) + '</p>').join('') : '';
+  fill(eyeList, THEME.compareChecklist.map((t, i) => '<div class="pic-eye"><h4 id="be-' + i + '">' + esc(t) + ' <span class="q-rule">(pick one)</span></h4>'
+    + '<div class="choices" role="group" aria-labelledby="be-' + i + '">'
+    + choice({ val: i + ':ok', t: 'Looks right', on: j.check.byEye[i] === 'ok' }) + choice({ val: i + ':wrong', t: 'Went wrong', on: j.check.byEye[i] === 'wrong' })
+    + '</div></div>').join(''));
+  setField(eyeNotes, typeof j.check.notes === 'string' ? j.check.notes : '');
+}
+function drawCompare() {
+  const j = J.get(), list = cmpNeeds(j.check), ok = list.every(x => x.ok);
+  setShown($('cmpNeedWrap'), !ok);
+  $('cmp-need').innerHTML = needHTML(list);
+  setShown($('codeCheckSay'), W.access().mode === 'none');
+  setAsk(cmpBtn, ok, comparing, 'cmp-need', $('cmpWait'));
+  drawCmpResult(j.check);
+  drawEye(j);
+}
+cmpBtn.addEventListener('click', async () => {
+  if (comparing) return;
+  flush();
+  const j = J.get(), c = j.check;
+  if (!cmpNeeds(c).every(x => x.ok)) { drawCompare(); firstNeed($('cmp-need')); return; }
+  comparing = true; copiedSay = '';
+  say(cmpErr, '');
+  drawCompare();
+  J.announce(WAIT);
+  const input = { prompt: c.prompt.trim(), description: c.description.trim(), reference: j.pick.tier === 'advanced' ? c.reference.trim() : '' };
+  if (j.helper) input.brief = j.helper;   // only its shared paragraph and prompts are read: they sharpen the pasted-back check
+  const out = await W.compare(input);
+  comparing = false;
+  if (gone) return;
+  const here = cur.n === 4 && cur.sub === 'compare';
+  if (out.type === 'error') {
+    if (here) drawCompare();
+    say(cmpErr, out.message || OOPS);
+    return;
+  }
+  if (out.type === 'copied') copiedSay = out.message || '';
+  else {
+    J.save({ check: { result: out } });
+    if (out.type === 'fallback') eyeOpen = true;   // the helper could not answer: the by-eye list is the check
+  }
+  if (!here) return;
+  drawCompare();
+  J.announce('Your check is ready.');
+  J.focusHeading($('cmp-h'));
+});
+$('eyeBtn').addEventListener('click', () => {
+  eyeOpen = !eyeOpen;
+  drawEye(J.get());
+  if (eyeOpen) J.focusHeading($('eye-h'));
+});
+onPick(eyeList, (val, b) => {
+  const at = val.indexOf(':'), i = Number(val.slice(0, at)), answer = val.slice(at + 1), had = J.get().check.byEye;
+  if (had[i] === answer) return;
+  // The whole list is saved each time (an array is replaced whole), one answer or none for each line.
+  const byEye = THEME.compareChecklist.map((t, k) => (k === i ? answer : had[k] === 'ok' || had[k] === 'wrong' ? had[k] : null));
+  J.save({ check: { byEye } });
+  paint(b.parentElement, v => v === val);
+});
+typed(eyeNotes, v => J.save({ check: { notes: v.slice(0, 300) } }));
+
+// ---------- step 4, why ----------
+function drawWhy() {
+  const c = J.get().check, r = c.result && c.result.type === 'compare' ? c.result : null, found = [], box = $('whyFound');
+  if (r) {
+    strs(r.asked_and_missing).forEach(t => found.push('Asked for, not seen: ' + t));
+    strs(r.appeared_unasked).forEach(t => found.push('Turned up unasked: ' + t));
+  }
+  THEME.compareChecklist.forEach((t, i) => { if (c.byEye[i] === 'wrong') found.push('Went wrong: ' + t.split(':')[0]); });
+  setShown(box, found.length > 0);
+  box.innerHTML = found.length ? '<b>What you found</b><ul>' + found.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul>' : '';
+  setField(whyText, c.why);
+}
+typed(whyText, v => J.save({ check: { why: v } }));
+
+// ---------- step 4, change one thing ----------
+// How the step ended, once it has: 'changed' (a change was saved) or 'kept'. '' until then.
+const outcome = c => (!c.at ? '' : c.kept ? 'kept' : 'changed');
+function drawChangeState(j) {
+  const c = j.check, canSave = J.words(changeText.value) >= 3, canKeep = isChecked(c), out = outcome(c), tier = j.pick.tier;
+  setOff($('saveChange'), !canSave, 'chg-need');
+  setShown($('chg-need'), !canSave);
+  setOff($('keepBtn'), !canKeep, 'keep-need');
+  setShown($('keep-need'), !canKeep);
+  setShown($('afterBox'), !!out);
+  if (!out) return;
+  // A second go keeps the number of the prompt it began from, so the next picture of a set is offered after it too
+  // (Make my next picture puts the second go away and shows the helper's prompts again).
+  const h = j.helper, more = !!h && Array.isArray(h.prompts) && !!j.used && whole(j.used.index) + 1 < h.prompts.length;
+  const need = tier && Object.hasOwn(stage(5).needs, tier) ? stage(5).needs[tier] + ' ' : '';
+  say($('afterSay'), out === 'changed' ? 'Your change is saved. Try it, or build your comic with the picture you have.' : 'You are keeping your picture. It is ready for your comic.');
+  setShown($('againBtn'), out === 'changed');
+  setShown($('nextPic'), more);
+  say($('afterNeeds'), need + 'Need more pictures? ' + (out === 'changed' ? 'Press Try again to make the next one.' : more ? 'Press Make my next picture.' : 'Go back to step 3 to make the next one.')
+    + ' You can also use the gang’s stickers.');
+}
+function drawChange() {
+  const j = J.get();
+  setField(changeText, j.check.change);
+  setField(keptWhy, j.check.keptWhy);
+  drawChangeState(j);
+}
+typed(changeText, v => J.save({ check: { change: v } }), () => drawChangeState(J.get()));
+typed(keptWhy, v => J.save({ check: { keptWhy: v } }));
+$('chgNeedGo').addEventListener('click', () => changeText.focus());
+function finished(words) {
+  J.markDone(4);
+  drawChange();
+  J.announce(words);
+  J.focusHeading($('after-h'));
+}
+$('saveChange').addEventListener('click', () => {
+  flush();
+  const text = changeText.value.trim();
+  if (J.words(text) < 3) { changeText.focus(); J.announce('Write at least 3 words in the box.'); return; }
+  J.save({ check: { change: text, kept: false, at: iso() } });
+  finished('Your change is saved. Step 4 is done.');
+});
+$('keepBtn').addEventListener('click', () => {
+  flush();
+  if (!isChecked(J.get().check)) { $('keepNeedGo').focus(); return; }
+  J.save({ check: { kept: true, keptWhy: keptWhy.value.trim(), at: iso() } });
+  finished('You are keeping your picture. Step 4 is done.');
+});
+// Try again: this check becomes the earlier go, a clean one starts, and step 3 opens on the prompt that was
+// used, ready for the one change to be put in by hand. No AI is asked.
+$('againBtn').addEventListener('click', () => {
+  flush();
+  const j = J.get();
+  if (outcome(j.check) !== 'changed') return;
+  if (J.words(j.check.change) < 3) { changeText.focus(); J.announce('Write at least 3 words in the box.'); return; }
+  J.save({ checkPrev: j.check, check: blankCheck(), made: null, used: null,
+    redo: { text: String(j.check.prompt || usedFor(j)).slice(0, 4000), index: whole(j.used && j.used.index), at: iso() } });
+  round = 1; gateQs = []; copiedSay = ''; eyeOpen = false;
+  goto(3, 'prompt');
+});
+// The next picture of a set: back to the helper's prompts, with the second go put away.
+$('nextPic').addEventListener('click', () => {
+  flush();
+  if (redoOf(J.get())) J.save({ redo: null });
+  goto(3, 'prompt');
+});
+
+// ---------- drawing the small step on screen ----------
+const DRAW = {
+  '2/who': drawWho, '2/colours': drawColours, '2/level': drawLevel, '2/words': drawWords, '2/brief': drawBrief,
+  '3/prompt': drawPrompt, '3/tool': drawTool, '3/back': drawBack,
+  '4/aim': drawAim, '4/prompt': drawUsed, '4/result': drawResultStep, '4/compare': drawCompare, '4/why': drawWhy, '4/change': drawChange,
+};
+function redraw() {
+  const draw = DRAW[cur.n + '/' + cur.sub];
+  if (draw) draw();
+}
+
+// ---------- the workshop code, and the level it opens ----------
+// One box where the helper is first needed (step 3) and one at the check (step 4). Each is mounted once and keeps
+// itself up to date.
+W.mountCodeBox($('codeCreate'), { compact: true });
+W.mountCodeBox($('codeCheck'), { compact: true });
+
+// A level above what is open cannot stay: workshop.js moves it to the highest open one, keeps everything else,
+// and tells the listener below, which shows the sentence and the level cards.
+function fitLevel() {
+  const p = J.get().pick;
+  if (p.tier && J.tierRank(p.tier) > W.maxLevel()) W.lower();
+}
+W.onChange((a, info) => {
+  if (info && info.lowered) lowerSay = info.message || W.lowerLine(info.lowered);
+  else fitLevel();
+  if (cur.n) redraw();
+});
+
+// What is saved may name things that have gone since (a character removed in Explore), and a code may name the
+// class's image tool. Put right once, before anything is drawn.
+(function tidy() {
+  const p = J.get().pick, patch = {}, a = W.access();
+  const cast = p.cast.filter(id => gang.byId(id)).slice(0, maxCast(p));
+  if (cast.length !== p.cast.length) patch.cast = cast;
+  if (p.place && p.place !== 'own' && !places.byId(p.place)) patch.place = null;
+  if (a.platform && toolOf(a.platform) && p.platform !== a.platform) patch.platform = a.platform;
+  if (Object.keys(patch).length) J.save({ pick: patch });
+})();
+fitLevel();
+
+// Another tab has changed the journey, or the browser has brought this page back from its memory.
+window.addEventListener('storage', e => { if ((e.key === 'paws_journey_v1' || e.key === null) && cur.n) redraw(); });
+window.addEventListener('pageshow', e => { if (e.persisted && cur.n) redraw(); });
+
+// ---------- start ----------
+{
+  const c = J.get().check;
+  eyeOpen = c.byEye.some(v => v === 'ok' || v === 'wrong') || !!(c.result && c.result.type === 'fallback');
+}
+// No focus is moved on a first load or a reload. With no step in the address, the one on screen is put there,
+// so the address always says what is showing.
+showStep(opened.n, opened.sub, false);
+if (!location.hash) {
+  try { history.replaceState(history.state, '', location.pathname + location.search + '#' + stage(opened.n).id); } catch (e) {}
+}
+if (lowerSay) J.announce(lowerSay);
+</script>
+<script type="module" src="../pencil.js"></script>
+</body>
+</html>

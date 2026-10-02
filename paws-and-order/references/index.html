@@ -1,191 +1,312 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.className+=' js'</script>
 <meta name="theme-color" content="#ffd23f">
-<title>Look Closely: Paws & Order</title>
-<meta name="description" content="Look before you prompt: describe a picture at basic, medium or advanced level, then send your description to the prompt helper.">
+<title>Look closely - Paws &amp; Order</title>
+<meta name="description" content="Step 1 of making a comic with Paws &amp; Order: look closely at a picture, answer the questions, and build a description in your own words.">
 <link rel="stylesheet" href="../pound.css">
 <style>
-  .how{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-  .how button{all:unset;position:relative;box-sizing:border-box;cursor:pointer;overflow:hidden;padding:0 0 16px;border:4px solid var(--frame);border-radius:var(--wobble);
-    background:radial-gradient(rgba(0,0,0,.12) 1.5px,transparent 2px) 0 0/10px 10px,var(--c);font-size:17.5px;line-height:1.35;font-family:var(--serif);
-    box-shadow:5px 5px 0 var(--frame);transition:transform .1s,box-shadow .1s}
-  .how button:nth-child(1){--c:#ffd23f}.how button:nth-child(2){--c:#5ec8f2}.how button:nth-child(3){--c:#ff9a3c}.how button:nth-child(4){--c:#b18cff}
-  .how button:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--frame)}
-  .how button.on{transform:translate(-3px,-3px);box-shadow:8px 8px 0 var(--frame)}
-  .how button.on::after{content:"You\2019re here";position:absolute;right:8px;top:8px;z-index:2;padding:.5em .7em .25em;background:#fff;border:3px solid var(--frame);border-radius:999px;
-    font-family:var(--brush);font-size:13px;line-height:1;text-transform:uppercase;box-shadow:2px 2px 0 var(--frame)}
-  .how b{display:block;font-family:var(--brush);font-weight:400;color:var(--ink);font-size:25px;line-height:1;margin-bottom:6px;padding:0 16px;text-transform:uppercase}
-  .how .mt{display:block;padding:0 16px}
-  .how .mpic{display:block;position:relative;aspect-ratio:16/9;margin-bottom:12px;border-bottom:4px solid var(--frame);background:#ddd center/cover no-repeat;overflow:hidden}
-  .how .mpic img{position:absolute;bottom:-4%;width:auto;max-width:none;transform:translateX(-50%);filter:drop-shadow(2px 3px 0 rgba(0,0,0,.35))}
-  .how button.on .mpic{border-bottom-color:var(--frame)}
-  .how button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
-  .controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px 28px;margin-top:22px;padding:16px 20px 18px;border-width:4px;box-shadow:6px 6px 0 var(--frame)}
-  .controls h4{display:flex;align-items:center;gap:8px;font-family:var(--brush);font-weight:400;font-size:22px;letter-spacing:.03em;text-transform:uppercase;margin:0 0 10px}
-  .controls h4::before{content:"";width:24px;height:24px;flex:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l2.9 6 6.6.8-4.9 4.5 1.3 6.5L12 17l-5.9 3.3 1.3-6.5L2.5 9.3l6.6-.8z' fill='%23ffd23f' stroke='%23141414' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat}
-  .stage{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);margin-top:22px;background:#fff;border-width:4px;box-shadow:6px 6px 0 var(--frame)}
-  .ref-fig{margin:0;background:radial-gradient(rgba(0,0,0,.12) 1.6px,transparent 2px) 0 0/10px 10px,#5ec8f2;border-right:4px solid var(--frame);display:flex;flex-direction:column}
-  .ref-fig .imgbox{flex:1;display:flex;align-items:center;justify-content:center;min-height:320px;padding:26px 22px}
-  .ref-fig img{max-height:540px;width:auto;max-width:100%;object-fit:contain;padding:10px;border:3px solid var(--frame);border-radius:4px;background:#fff;
+  /* Look Closely only. Everything shared is in pound.css. Every type size inside the activity is multiplied
+     by --k, so the big-screen view scales the lot from one number. */
+  .page > main{padding-top:10px}   /* the picture and the first question share the first screen: every pixel above them counts */
+
+  /* the workshop code, tucked away: looking needs no code */
+  .lk-code{font-size:16.5px;line-height:1.3}
+  .lk-code summary{width:fit-content;padding:3px 4px 3px 0;border-radius:4px;color:#5b21b6;cursor:pointer}
+  .lk-code summary b{font-weight:400;text-decoration:underline;text-underline-offset:2px}
+  .lk-code summary span{margin-left:8px;color:var(--ok)}
+  .lk-code-in{max-width:620px;margin:4px 0 12px;padding:12px 16px 14px;background:#fff;border:3px solid var(--frame);border-radius:12px}
+  .lk-code-in > p{margin:0;font-size:17px;line-height:1.35}
+  .lk-code-in .codebox{margin-top:10px}
+
+  /* how to work, which level and the big screen: one row on a wide screen, wrapping below that */
+  .lk-ctl{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 20px;margin-top:6px}
+  .lk-ctl-g{min-width:0}
+  .lk-ctl-big{margin-left:auto}
+  .lk-ctl h2{margin:0 0 2px;font-family:var(--brush);font-weight:400;font-size:14px;line-height:1.25;letter-spacing:.03em;text-transform:uppercase}
+  .lk-ctl .q-rule{font-size:14.5px}
+  /* choices as small two-line buttons in a row. The tick or padlock sits on the bottom corner, as it does on the
+     trail, so a button is the same width chosen or not and the row never shuffles along. */
+  .choices.lk-chips{display:flex;flex-wrap:wrap;gap:10px 6px}
+  .lk-chips .choice,.lk-ctl-big .choice{flex:0 1 auto;justify-content:center;gap:0;padding:3px 12px 2px}
+  .lk-chips .choice > .choice-t:first-child,.lk-ctl-big .choice > .choice-t:first-child{padding-right:0;font-size:15px}
+  .lk-chips .choice-sub,.lk-ctl-big .choice-sub{font-size:14.5px;line-height:1.2}
+  .lk-chips .choice-tick,.lk-ctl-big .choice-tick{right:-7px;top:auto;bottom:-8px;width:21px;height:21px;background-size:12px 12px}
+  .lk-chips .choice.is-locked .choice-sub{max-width:9.4em}   /* "Locked. Your teacher opens this level." takes two short lines, not one long one */
+
+  /* the activity: the level's heading, the picture, then the questions. On a wide screen the picture stands
+     on the left of the other two. */
+  .lk-act{--k:1;margin-top:12px}
+  .lk-grid{display:grid;grid-template-columns:minmax(0,1fr);border-bottom:4px solid var(--frame)}
+  .lk-act .task-head h2{font-size:calc(clamp(21px,2.1vw,27px) * var(--k))}
+  .lk-act .task-head p{font-size:calc(17px * var(--k))}
+  /* the dots are on ::before, so the box keeps a flat colour and pencil.js can draw its one outline */
+  .lk-fig{position:relative;margin:0;background:#5ec8f2;border-bottom:4px solid var(--frame)}
+  .lk-fig::before{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(rgba(0,0,0,.12) 1.6px,transparent 2px) 0 0/10px 10px}
+  .lk-fig-in{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px;padding:16px 18px 14px}
+  .lk-fig img{width:auto;max-width:100%;max-height:420px;object-fit:contain;padding:10px;background:#fff;border:3px solid var(--frame);border-radius:4px;
     box-shadow:6px 6px 0 var(--frame);transform:rotate(-1.2deg)}
-  .ref-fig figcaption{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-top:4px solid var(--frame);background:var(--yellow);
-    font-family:var(--brush);font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:var(--frame)}
-  .shuffle{font-size:15px;padding:7px 12px}
-  .ref-qs{padding:22px 24px 24px}
-  .ref-qs h2{font-family:var(--brush);font-weight:400;font-size:clamp(28px,3vw,40px);margin:0;line-height:1;transform:rotate(-2deg);transform-origin:left;
-    color:var(--yellow);-webkit-text-stroke:6px var(--frame);paint-order:stroke fill;text-shadow:4px 4px 0 var(--frame)}
-  .ref-qs .blurb{margin:12px 0 4px;font-size:19px}
-  .ref-qs .modehint{margin:0 0 14px;font-size:17px;color:var(--ink-dim)}
-  .qs{list-style:none;margin:0;padding:0;counter-reset:q}
-  .qs li{padding:11px 0;border-top:2px dashed var(--frame);counter-increment:q}
-  .qs .q{display:flex;align-items:center;gap:10px;font-family:var(--script);font-size:20px;margin-bottom:5px}
-  .qs .q::before{content:counter(q);width:30px;height:30px;box-sizing:border-box;flex:none;display:flex;align-items:center;justify-content:center;padding-top:.3em;
-    background:var(--yellow);border:2.5px solid var(--frame);border-radius:50%;font-family:var(--brush);font-size:16px;line-height:1}
-  .qs .a{margin:0;font-size:19px;line-height:1.4}
-  .qs .reveal{background:#fff;border:2px dashed var(--frame);border-radius:999px;color:var(--ink);font-family:var(--label);font-size:16px;padding:4px 14px;cursor:pointer}
-  .qs .reveal:hover{background:var(--yellow)}
-  .qs input{width:100%;background:#fff;border:3px solid var(--frame);border-radius:12px;color:var(--ink);padding:8px 12px;font-family:var(--serif);font-size:19px}
-  .qs input:focus{outline:3px solid var(--blue)}
-  .revealall{margin-top:8px}
-  .castpick{margin-top:16px;padding-top:14px;border-top:2px dashed var(--frame)}
-  .castpick .q{display:block;font-family:var(--script);font-size:20px;margin-bottom:8px}
-  .castpick .pill{padding:6px 12px;font-size:16px}
-  .castag{color:var(--ink)}
-  .box{margin-top:18px;padding-top:16px;border-top:2px dashed var(--frame)}
-  .box label{display:block;font-family:var(--script);font-size:22px;margin-bottom:8px}
-  .box .rowbtns{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
-  .box .rebuild{background:none;border:0;color:var(--ink-dim);font-family:var(--label);font-size:16px;cursor:pointer;text-decoration:underline}
-  .btn.ghost{background:#fff;color:var(--ink)}
-  @media (max-width:1100px){.how{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media (max-width:880px){.stage{grid-template-columns:minmax(0,1fr)}.ref-fig{border-right:0;border-bottom:4px solid var(--frame)}.ref-fig img{max-height:420px}
-    .controls{grid-template-columns:minmax(0,1fr)}}
-  @media (max-width:600px){.ref-qs{padding:20px 18px}.ref-fig .imgbox{min-height:220px;padding:10px}}
+  .lk-fig figcaption{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 12px}
+  .lk-fig :focus-visible{outline-color:var(--frame);outline-offset:3px}   /* purple cannot be seen on the blue */
+  .lk-cap{padding:.5em .9em .22em;background:var(--yellow);border:3px solid var(--frame);border-radius:999px;
+    font-family:var(--brush);font-size:15px;line-height:1;letter-spacing:.04em;text-transform:uppercase}
+  .lk-hint{margin:0 0 12px;font-size:calc(17px * var(--k));line-height:1.35;color:var(--ink-dim)}
+  .lk-qs{margin:0;padding:0;list-style:none}
+  .lk-qs li{padding:11px 0 12px;border-top:2px dashed var(--frame)}
+  .lk-qs .lk-q{display:flex;align-items:center;gap:10px;margin:0 0 6px;font-family:var(--script);font-weight:400;font-size:calc(20px * var(--k));line-height:1.2;
+    letter-spacing:0;text-transform:none}
+  .lk-q label{cursor:pointer}
+  .lk-qn{flex:none;box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:1.875em;height:1.875em;padding-top:.3em;
+    background:var(--yellow);border:2.5px solid var(--frame);border-radius:50%;font-family:var(--brush);font-size:.8em;line-height:1}
+  .lk-a{margin:0;font-size:calc(19px * var(--k));line-height:1.4;overflow-wrap:anywhere}
+  .lk-qs input{font-size:calc(18px * var(--k))}
+  .lk-agree{margin:0 0 8px}
+  .lk-reveal{margin:0 0 6px}
+  .lk-all{margin:4px 0 0}
+  /* one question at a time (big screen): which one, and the way to the next */
+  .lk-bq{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:0;padding:12px 0 0;border-top:2px dashed var(--frame)}
+  .lk-bq p{margin:0;font-family:var(--label);font-size:calc(17px * var(--k));color:var(--ink-dim)}
+  .lk-bq .lk-on{margin-left:auto}
+  .lk-cast,.lk-own,.lk-ex{margin-top:14px;border-top:2px dashed var(--frame)}
+  .lk-act .lk-cast h3,.lk-act .lk-ex h3{margin:14px 0 8px}
+  .lk-own .field2{margin-top:14px}
+  .lk-tools{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin:6px 0 0}
+  .lk-extext{margin:0;padding:12px 14px;background:#fffef8;border:3px solid var(--frame);border-radius:12px;font-size:calc(18px * var(--k));line-height:1.45;
+    white-space:pre-wrap;overflow-wrap:anywhere}
+  .lk-ex .callout .btn{margin-top:8px}
+  /* the panel's own line under the picture and questions stands in for the dashed one */
+  .lk-act .stepnav{margin-top:0;border-top:0}
+
+  @media (min-width:881px){
+    .lk-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);grid-template-rows:auto 1fr}
+    .lk-fig{grid-column:1;grid-row:1 / span 2;border-bottom:0;border-right:4px solid var(--frame);border-radius:10px 0 0 0 / 2px 0 0 0}
+    .lk-act .task-head{grid-column:2;grid-row:1;border-radius:0 1px 0 0 / 0 11px 0 0}
+    .lk-act .task-body{grid-column:2;grid-row:2}
+    /* The picture stays beside the questions while they scroll past, and is short enough to share the first
+       screen with question 1 (the activity starts about 330px down; a very short window still gets 240px). */
+    .lk-fig-in{position:sticky;top:12px}
+    .lk-fig img{max-height:max(240px,calc(100vh - 360px))}
+  }
+
+  /* ---------- the projector view. pound.css takes the sidebar, trail, page head, skyline and footer away;
+     the rest is here: the picture as tall as the screen allows, bigger type, one question at a time. ---------- */
+  body.bigscreen .page{max-width:none;padding-top:10px;padding-bottom:24px}
+  body.bigscreen .lk-code{display:none}
+  body.bigscreen .lk-act{--k:1.35}
+  body.bigscreen .lk-qs li{padding-top:2px;border-top:0}
+  body.bigscreen .lk-act .btn,body.bigscreen .lk-act .field2 label{font-size:calc(15px * var(--k))}
+  @media (min-width:881px){
+    body.bigscreen .lk-grid{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
+    body.bigscreen .lk-fig img{max-height:max(240px,calc(100vh - 170px))}
+  }
+  @media (min-width:1500px){body.bigscreen .lk-act{--k:1.8}}
+
+  @media (max-width:880px){
+    .lk-code summary{padding:12px 4px 12px 0}   /* 44px tall for a finger */
+    .lk-ctl-big{margin-left:0}
+  }
+  @media (max-width:600px){
+    .lk-fig-in{padding:12px}
+    .lk-fig img{max-height:340px}
+  }
+  @media print{.pagehead,.lk-code,.lk-ctl,.lk-bq,.stepnav{display:none}}
 </style>
 </head>
-<body id="top">
-<a class="skip" href="#main">Skip to the main part</a>
+<body>
+<a class="skip" href="#main">Skip to the page</a>
 <aside class="side">
   <a class="brand" href="/" aria-label="HeutaLab home"><span>Heuta</span><span>Lab</span></a>
-  <nav aria-label="Paws &amp; Order">
-    <a href="../"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
-    <a href="../#brief"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>Make a prompt</a>
-    <a href="../references/" class="on" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>Look closely</a>
-    <a href="../builder/"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg>Comic maker</a>
-    <a href="../#templates"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 10h18M10 10v10"/><path d="M15.5 13.2l.9 1.8 2 .3-1.5 1.4.4 2-1.8-1-1.8 1 .4-2-1.5-1.4 2-.3z"/></svg>Templates</a>
-    <a href="../#mycomics"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h10l4 4v12H5z"/><path d="M8 3v0M9 12h6M9 16h4"/><path d="M15 4v4h4"/></svg>My comics</a>
-    <a href="../#cast"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.3-7 8-7s7 2.5 8 7"/></svg>Meet the gang</a>
-    <a href="../#settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V9l5-3v15M8 21V4l8 3v14M16 21V11l5 2v8M2 21h20"/></svg>Places</a>
-    <a href="../#palettes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.3-1.2-1.6-1.2-2.8 0-1 .8-1.4 1.8-1.4H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg>Colours</a>
-    <a href="../#compare"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="8" height="16"/><rect x="13" y="4" width="8" height="16"/></svg>Check it</a>
-    <a href="../#grownups"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Grown-ups</a>
+  <a class="side-name" href="../">Paws &amp; Order</a>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="sideNav" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>Menu</span></button>
+  <nav id="sideNav" aria-label="Paws &amp; Order">
+    <a href="../references/?start=1" data-nav="start"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg><span>Start</span></a>
+    <a href="../references/" data-nav="look" class="on" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg><span>Look closely</span></a>
+    <a href="../builder/" data-nav="builder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="10"/><rect x="13" y="3" width="8" height="6"/><rect x="13" y="11" width="8" height="10"/><rect x="3" y="15" width="8" height="6"/></svg><span>Comic maker</span></a>
+    <a href="../teachers/" data-nav="teachers"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M7 8.5h7M7 12h10M12 16v2.5M8 21l4-2.5 4 2.5"/></svg><span>Teachers</span></a>
+    <a href="../explore/" data-nav="explore"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2.2 4.8-4.8 2.2 2.2-4.8z"/></svg><span>Explore</span></a>
   </nav>
   <div class="side-foot"><svg viewBox="0 0 120 40" aria-hidden="true"><path d="M2 39V24h8v-9h7v24h6V9h10v30h5V19h8v20h6V4h4V1h2v3h4v35h5V17h9v22h6V23h7v16h5V13h9v26h4V27h6v12"/></svg>Paws &amp; Order<small>Part of HeutaLab</small></div>
 </aside>
 <div class="page">
 
-  <header class="hero mini">
-    <div class="copy">
-      <a class="kicker" href="../">Paws &amp; Order</a>
-      <h1><span class="name">Look Closely</span></h1>
-      <div class="verbs">See<span>&middot;</span>Spot<span>&middot;</span>Describe<span>&middot;</span>Prompt</div>
-      <p class="tag">Look first, then prompt! Pick a picture and a level, <br>and the words you find here become your prompt.</p>
-    </div>
-    <div class="art">
-      <img class="who" src="../img/stickers/nettle/examining.webp" alt="" width="300" height="400">
-      <div class="burst" aria-hidden="true"><svg viewBox="0 0 200 200" aria-hidden="true"><path d="M100 4l17 40 38-24-6 44 44 2-34 28 36 26-44 6 12 42-40-20-23 38-17-40-38 24 6-44-44-2 34-28-36-26 44-6-12-42 40 20z" fill="#ffd23f" stroke="#141414" stroke-width="6" stroke-linejoin="round"/></svg><b>What do you see?</b></div>
-    </div>
+  <header class="pagehead" style="--c:#ffd23f">
+    <p class="pagehead-kicker"><a href="../">Paws &amp; Order</a></p>
+    <h1>Look closely</h1>
+    <img class="pagehead-art" src="../img/stickers/nettle/examining.webp" alt="" width="300" height="400">
   </header>
+  <nav id="trail" class="trail" aria-label="Your comic, step by step" data-nopencil></nav>
 
+  <main id="main" style="--c:var(--st1)">
+    <p class="notice" id="noSave" hidden>This browser is not saving your work. If you leave this page, your answers will be gone. Tell your teacher.</p>
 
-    <main id="main">
-      <section class="how" aria-label="How this works" id="howRow"></section>
+    <details class="lk-code">
+      <summary><b>Got a workshop code?</b><span id="codeState"></span></summary>
+      <div class="lk-code-in">
+        <p>You can put it in now, or later when you need the prompt helper. You do not need it to look.</p>
+        <div id="codeBox"></div>
+      </div>
+    </details>
 
-      <section class="controls frame panel">
-        <div><h4>Level</h4><div class="pillrow" id="levelRow"></div></div>
-        <div><h4>Mode</h4><div class="pillrow" id="modeRow"></div></div>
-      </section>
+    <section class="lk-ctl" aria-label="Choose how to look">
+      <div class="lk-ctl-g">
+        <h2 id="lk-mode-h">How will you work? <span class="q-rule">(pick one)</span></h2>
+        <div class="choices lk-chips" role="group" aria-labelledby="lk-mode-h" id="modeRow"></div>
+      </div>
+      <div class="lk-ctl-g">
+        <h2 id="lk-level-h">Which level? <span class="q-rule">(pick one)</span></h2>
+        <div class="choices lk-chips" role="group" aria-labelledby="lk-level-h" id="levelRow"></div>
+      </div>
+      <div class="lk-ctl-g lk-ctl-big">
+        <button type="button" class="choice" id="bigBtn" aria-pressed="false">
+          <span class="choice-t">Big screen</span><span class="choice-sub">for the class</span><span class="choice-tick" aria-hidden="true"></span>
+        </button>
+      </div>
+    </section>
 
-      <section class="stage frame" aria-live="polite">
-        <figure class="ref-fig">
-          <div class="imgbox"><img id="refImg" src="" alt=""></div>
-          <figcaption><span id="refCap"></span><button type="button" class="btn shuffle" id="shuffleBtn" hidden>Shuffle <span class="arr">&#x21bb;</span></button></figcaption>
-        </figure>
-        <div class="ref-qs">
-          <h2 id="lensTitle"></h2>
-          <p class="blurb" id="lensBlurb"></p>
-          <p class="modehint" id="modeHint"></p>
-          <ol class="qs" id="qs"></ol>
-          <button type="button" class="btn ghost revealall" id="revealAll" hidden>Reveal all</button>
-          <div class="castpick" id="castPick" hidden>
-            <span class="q">Could this be one of the gang?</span>
-            <div class="pillrow" id="castPickRow"></div>
+    <section class="task lk-act" id="act" aria-labelledby="lensTitle">
+      <div class="lk-grid">
+        <div class="task-head">
+          <h2 id="lensTitle" tabindex="-1"><span class="where site">On Paws &amp; Order</span> <span id="lensText">Level 1: What can you see?</span></h2>
+          <p id="lensBlurb">Name what is there. No guessing and no story yet: only what you could point at.</p>
+        </div>
+        <figure class="lk-fig">
+          <div class="lk-fig-in">
+            <img id="refImg" src="../img/ref/penguin-postie.jpg" alt="A round penguin in a blue postie cap with a red satchel, holding up a letter and smiling">
+            <figcaption>
+              <span class="lk-cap" id="refCap" role="status">Level 1 &middot; Watch</span>
+              <button type="button" class="btn small" id="shuffleBtn" hidden>Shuffle <span class="arr" aria-hidden="true">&#x21bb;</span></button>
+            </figcaption>
           </div>
-          <div class="box">
-            <label for="desc" id="descLabel">Your description</label>
-            <textarea id="desc" maxlength="800"></textarea>
-            <div class="count"><span id="descCount">0</span>/800</div>
-            <div class="rowbtns">
-              <button type="button" class="btn" id="sendBtn">Send to the prompt helper <span class="arr">&rarr;</span></button>
-              <button type="button" class="btn ghost" id="copyBtn">Copy</button>
-              <button type="button" class="rebuild" id="rebuildBtn" hidden>Rebuild from my answers</button>
+        </figure>
+        <div class="task-body">
+          <p class="lk-hint" id="modeHint">Watch: this is how a sharp-eyed detective of details looks at a picture.</p>
+          <ol class="lk-qs" id="qs" role="list"></ol>
+          <div class="lk-bq" id="bqNav" hidden>
+            <button type="button" class="btn back" id="bqBack">Back<span class="vh"> one question</span></button>
+            <p id="bqCount"></p>
+            <button type="button" class="btn lk-on" id="bqNext">Next question</button>
+          </div>
+          <p class="lk-all"><button type="button" class="btn back" id="revealAll" hidden>Reveal all</button></p>
+
+          <div class="lk-cast" id="castPick" hidden>
+            <h3 id="lk-cast-h">Could this be one of the gang? <span class="q-rule">(you can skip this)</span></h3>
+            <div class="choices lk-chips" role="group" aria-labelledby="lk-cast-h" id="castPickRow"></div>
+          </div>
+
+          <div class="lk-own" id="ownBox" hidden>
+            <div class="field2">
+              <label for="desc">Your description</label>
+              <p class="hint2" id="desc-h">Your answers build it. You can change the words yourself. It needs 10 words of your own.</p>
+              <textarea id="desc" maxlength="1500" aria-describedby="desc-h desc-c"></textarea>
+              <p class="count2" id="desc-c">0 words of your own. Write 10 more.</p>
+            </div>
+            <p class="lk-tools">
+              <button type="button" class="copybtn2" id="copyBtn">Copy</button>
+              <button type="button" class="linkbtn" id="rebuildBtn" hidden>Build it again from my answers</button>
+            </p>
+            <h3 class="vh" id="lk-need-h">Still to do</h3>
+            <ul class="need" role="list" id="lk-need" aria-labelledby="lk-need-h">
+              <li id="needWords"><button type="button" class="linkbtn" id="needBtn">Write 10 more words of your own</button><span id="needOk" hidden>Your description has 10 words of your own<span class="vh"> (done)</span></span></li>
+            </ul>
+          </div>
+
+          <div class="lk-ex" id="exBox">
+            <div id="exWrap">
+              <h3 id="lk-ex-h">Put together, the answers make a description</h3>
+              <p class="lk-extext" id="exText"></p>
+            </div>
+            <div class="callout">
+              <b>Short of time?</b>
+              <p>You can carry on with this one. This is a worked example, not your own words.</p>
+              <button type="button" class="btn back" id="useExample">Use this example and carry on</button>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+      <div class="stepnav">
+        <button type="button" class="btn back" id="backBtn" hidden>Back<span class="vh" id="backTo"></span></button>
+        <button type="button" class="linkbtn" id="skipSolo">Skip to my turn</button>
+        <button type="button" class="btn go2" id="toTogether">Next: do one together</button>
+        <button type="button" class="btn go2" id="toSolo" hidden>Next: your turn</button>
+        <button type="button" class="btn go2 is-off" id="useMine" aria-disabled="true" aria-describedby="lk-need" hidden>Use my description</button>
+      </div>
+    </section>
 
-    </main>
+  </main>
 </div>
 
 <div class="skyframe" aria-hidden="true">
-  <img class="who" src="../img/stickers/flash/face-nosy.webp" alt="" width="200" height="220">
-  <p class="ribbon">Every picture is a clue. Look again!</p>
+  <img class="who" src="../img/stickers/nettle/face-pleased.webp" alt="" width="200" height="220">
+  <p class="ribbon">Every great story starts with a closer look&hellip;</p>
   <svg class="comet" viewBox="0 0 150 100"><path d="M8 94C40 80 72 56 98 34" fill="none" stroke="#ffd23f" stroke-width="10" stroke-linecap="round" opacity=".35"/><path d="M26 86C52 72 76 54 98 34" fill="none" stroke="#ffd23f" stroke-width="5" stroke-linecap="round" opacity=".7"/><path d="M112 6l6 14 15 1-11 10 4 15-14-8-13 8 3-15-11-10 15-1z" fill="#ffd23f" stroke="#141414" stroke-width="3.5" stroke-linejoin="round"/></svg>
 </div>
 <footer class="basefoot">
-  <p class="say">Every picture is a clue. Look again!</p>
-  Every picture here was drawn for this site. Your answers stay in this browser. Sending to the prompt helper just carries them over to the next page.
-      Part of <a href="/">HeutaLab</a>.
+  <p class="say">Look closely. Choose and describe. Create with AI. Check and improve. Build your story.</p>
+  <p>Your work stays on this device. With a workshop code, the words you send to the prompt helper go through heutalab.com to the AI service your teacher chose. Pictures never leave this device. Part of <a href="/">HeutaLab</a>.</p>
 </footer>
 <script type="module">
+import J from '../journey.js';
+import W from '../workshop.js';
 import THEME from '../theme.js';
 
 (function(){
   const { levels: LEVELS, modes: MODES, refs: REFS } = THEME;
   const MODE_IDS = Object.keys(MODES);          // demo, guide, create, explore
+  const TIER_IDS = Object.keys(LEVELS);         // basic, medium, advanced
   const castById = id => THEME.cast.find(c => c.id === id);
+  const MIN_WORDS = 10;                         // step 2 asks for ten words before the helper will answer; here they must be your own
+  const MAX_DESC = 1500, MAX_ANSWER = 200;
 
-  const state = { level: 'basic', mode: 'demo', exploreRef: null, revealed: {}, cast: {} };
-  const answers = {};          // your own answers, kept per picture and level
-  let manual = false;          // stop rebuilding the box once someone edits it by hand
+  // The words an address may use: ?mode=together&level=2&big=1 (the Teachers page links here like that).
+  const URL_MODES = { watch: 'demo', together: 'guide', solo: 'create', explore: 'explore' };
+  // Each way of working is one of step 1's small steps on the trail.
+  const SUBS = { demo: 'watch', guide: 'together', create: 'solo', explore: 'solo' };
+  // What each level is about, said on its button. The lens names in theme.js head the activity itself.
+  const LEVEL_SAYS = { basic: 'what can you see?', medium: 'the details', advanced: 'the world around it' };
+  // theme.js's Explore hint still offers "add your own picture", and there is no upload here.
+  const HINTS = { explore: 'Explore: more pictures for this level. Press Shuffle for another one, then answer what you like.' };
+  const LOCKED = 'Locked. Your teacher opens this level.';
+  const PLAIN_ALT = 'Reference picture for this activity';
+
+  const state = { level: 'basic', mode: 'demo', exploreRef: null, revealed: {}, cast: {}, big: false, q: 0 };
+  let answers = {};            // your own answers, kept per picture and level
+  let agreed = {};             // Together: what the class agreed before each reveal, kept the same way
+  let edits = {};              // a description changed by hand, per picture and level: nothing rebuilds over it
+  const said = {};             // "That is enough words." is said once for each description
+  let sub = SUBS.demo;         // the small step the trail is showing
+  let loaded = false;          // the first render is not the learner doing anything: it saves and says nothing
 
   const $ = id => document.getElementById(id);
   const img = $('refImg'), cap = $('refCap'), qs = $('qs'), desc = $('desc');
-  const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+  const modeRow = $('modeRow'), levelRow = $('levelRow'), castRow = $('castPickRow'), bigBtn = $('bigBtn');
+  const esc = J.esc;
+  const has = (o, k) => Object.prototype.hasOwnProperty.call(o, k);   // Object.hasOwn came with Safari 15.4: older school iPads lack it
+  // pencil.js walks the page on every class, hidden or text change, so nothing is written unless it differs
+  const setText = (el, t) => { if (el.textContent !== t) el.textContent = t; };
+  const setHidden = (el, on) => { if (el.hidden !== on) el.hidden = on; };
+  const press = (b, on) => { b.classList.toggle('active', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); };
 
   // ---- controls built from the theme ----
-  // Each mode card has a picture: one of the gang in a place, in the spirit of the mode.
-  const MODE_PICS = {
-    demo:    { place: 'pound-office', gang: [['nettle/pointing', 50, 88]] },
-    guide:   { place: 'duck-pond-park', gang: [['nettle/standing', 30, 80], ['vivi/standing', 70, 88]] },
-    create:  { place: 'library', gang: [['nettle/examining', 50, 84]] },
-    explore: { place: 'funfair', gang: [['flash/running', 50, 84]] },
-  };
-  const modePic = m => { const p = MODE_PICS[m]; if (!p) return '';
-    return '<span class="mpic" aria-hidden="true" style="background-image:url(../img/thumbs/' + p.place + '.webp)">'
-      + p.gang.map(([s, x, h]) => '<img src="../img/stickers/' + s + '.webp" alt="" style="left:' + x + '%;height:' + h + '%">').join('') + '</span>'; };
-  $('howRow').innerHTML = MODE_IDS.map(m => '<button type="button" data-mode="' + m + '">' + modePic(m) + '<b>' + esc(MODES[m].label) + '</b><span class="mt">' + esc(MODES[m].card) + '</span></button>').join('');
-  $('modeRow').innerHTML = MODE_IDS.map(m => '<button class="pill" data-val="' + m + '">' + esc(MODES[m].label) + '<small>' + esc(MODES[m].sub.toLowerCase()) + '</small></button>').join('');
-  $('levelRow').innerHTML = Object.entries(LEVELS).map(([id, L]) => '<button class="pill" data-val="' + id + '">' + esc(L.name) + '<small>' + esc(L.short) + '</small></button>').join('');
-  $('castPickRow').innerHTML = THEME.cast.map(c => '<button class="pill" data-val="' + c.id + '">' + esc(c.short) + '<small>' + esc(c.role.replace(/^The /, '').toLowerCase()) + '</small></button>').join('');
+  const choice = (val, name, says) => '<button type="button" class="choice" aria-pressed="false" data-val="' + esc(val) + '"><span class="choice-t">' + esc(name)
+    + '</span><span class="choice-sub">' + esc(says) + '</span><span class="choice-tick" aria-hidden="true"></span></button>';
+  modeRow.innerHTML = MODE_IDS.map(m => choice(m, MODES[m].label, MODES[m].sub)).join('');
+  levelRow.innerHTML = TIER_IDS.map(id => choice(id, LEVELS[id].name, LEVEL_SAYS[id] || LEVELS[id].short)).join('');
+  castRow.innerHTML = THEME.cast.map(c => choice(c.id, c.short, c.role.replace(/^The /, '').toLowerCase())).join('');
+
+  const isOwn = () => state.mode === 'create' || state.mode === 'explore';
+  // Levels 1 and 2 ask about a character and Level 3 about a place: each level's Solo picture says which.
+  const subjectOf = tier => REFS[LEVELS[tier].create][1];
+  const isOpen = tier => J.tierRank(tier) <= W.maxLevel();
+  const topOpen = () => TIER_IDS[Math.max(1, Math.min(TIER_IDS.length, W.maxLevel())) - 1];
 
   function currentRef(){
     const L = LEVELS[state.level];
     if (state.mode === 'demo') return L.demo[0];
     if (state.mode === 'guide') return L.guide[0];
-    if (state.mode === 'create') return L.create;
+    if (state.mode === 'create' || !state.exploreRef) return L.create;
     return state.exploreRef;
   }
   function modelAnswers(){
@@ -198,139 +319,428 @@ import THEME from '../theme.js';
   function pickedCast(){
     const k = currentRef();
     if (!isCharacter()) return null;
-    return k in state.cast ? state.cast[k] : (REFS[k][2] || null);
+    const id = has(state.cast, k) ? state.cast[k] : (REFS[k][2] || null);
+    return id && castById(id) ? id : null;
   }
 
-  function assemble(){
-    const L = LEVELS[state.level], model = modelAnswers();
-    const mine = answers[key()] || {};
+  // One line for each answered question, under a line saying what the picture is of.
+  function describe(read, who){
     const lines = [];
-    L.qs.forEach(([id, , short]) => {
-      let a = '';
-      if (state.mode === 'demo') a = model[id];
-      else if (state.mode === 'guide') a = state.revealed[id] ? model[id] : '';
-      else a = (mine[id] || '').trim();
+    LEVELS[state.level].qs.forEach(([id, , short]) => {
+      const a = String(read(id) || '').trim();
       if (a) lines.push(short + ': ' + a);
     });
     if (!lines.length) return '';
-    const who = pickedCast();
     const head = who ? castById(who).name + ', based on a reference picture.'
       : (isCharacter() ? 'A character' : 'A setting') + ' based on a reference picture.';
-    return (head + '\n' + lines.join('\n')).slice(0, 800);
+    return (head + '\n' + lines.join('\n')).slice(0, MAX_DESC);
+  }
+  function assemble(){
+    const mine = answers[key()] || {};
+    return describe(id => mine[id], pickedCast());
+  }
+  // The worked example: every model answer, revealed or not.
+  function exampleText(){
+    const model = modelAnswers();
+    return model ? describe(id => model[id], null) : '';
+  }
+  const ownText = () => (has(edits, key()) ? edits[key()] : assemble());
+  // The words that count towards the ten are the learner's own: not the line that says what the picture is of,
+  // nor the label in front of each answer. Without this, one two-word answer would be "enough".
+  function ownWords(text){
+    const labels = LEVELS[state.level].qs.map(q => q[2] + ':');
+    return String(text).split('\n').reduce((n, line, i) => {
+      line = line.trim();
+      if (i === 0 && / based on a reference picture\.$/.test(line)) return n;
+      const label = labels.find(l => line.startsWith(l));
+      return n + J.words(label ? line.slice(label.length) : line);
+    }, 0);
   }
 
+  // ---- saving as you type ----
+  // The whole draft goes into the journey a moment after the last change. After Start again nothing more is
+  // written: the pending save, or the one made on leaving, would put the old answers straight back.
+  let saveTimer = 0, dirty = false, dead = false;
+  function saveDraft(){
+    clearTimeout(saveTimer);
+    if (dead || !dirty) return;
+    dirty = false;
+    J.save({ lookDraft: { tier: state.level, mode: state.mode, ref: currentRef(), answers, desc: isOwn() ? desc.value : '',
+      manual: isOwn() && has(edits, key()), cast: state.cast, agreed, edits } });
+  }
+  function touch(){
+    if (dead) return;
+    dirty = true;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveDraft, 400);
+  }
+  window.addEventListener('pagehide', saveDraft);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveDraft(); });
+  window.addEventListener('paws:reset', () => { dead = true; clearTimeout(saveTimer); });
+  window.addEventListener('storage', e => { if (e.key === 'paws_reset_at') { dead = true; clearTimeout(saveTimer); } });
+
+  // A saved draft is only trusted as far as the theme knows it: a picture, a level and that level's questions.
+  function known(src, each){
+    const out = {};
+    if (!src || typeof src !== 'object') return out;
+    Object.keys(REFS).forEach(ref => TIER_IDS.forEach(tier => {
+      const k = ref + '|' + tier;
+      if (!has(src, k)) return;
+      const v = each(src[k], tier);
+      if (v !== null) out[k] = v;
+    }));
+    return out;
+  }
+  const answerSet = (v, tier) => {
+    if (!v || typeof v !== 'object') return null;
+    const out = {};
+    LEVELS[tier].qs.forEach(([id]) => { if (typeof v[id] === 'string') out[id] = v[id].slice(0, MAX_ANSWER); });
+    return out;
+  };
+  function restore(){
+    const d = J.get().lookDraft;
+    if (!d) return;
+    answers = known(d.answers, answerSet);
+    agreed = known(d.agreed, answerSet);
+    edits = known(d.edits, v => (typeof v === 'string' && v.trim() ? v.slice(0, MAX_DESC) : null));
+    if (TIER_IDS.includes(d.tier)) state.level = d.tier;
+    if (MODE_IDS.includes(d.mode)) state.mode = d.mode;
+    const ref = typeof d.ref === 'string' && has(REFS, d.ref) ? d.ref : null;
+    if (ref && state.mode === 'explore') state.exploreRef = ref;
+    if (d.cast && typeof d.cast === 'object') Object.keys(REFS).forEach(r => {
+      const id = has(d.cast, r) ? d.cast[r] : null;
+      if (id === '' || (typeof id === 'string' && castById(id))) state.cast[r] = id;
+    });
+    // a draft that only carries the one hand-changed description it was showing
+    const k = ref + '|' + state.level;
+    if (ref && d.manual && typeof d.desc === 'string' && d.desc.trim() && !has(edits, k)) edits[k] = d.desc.slice(0, MAX_DESC);
+  }
+
+  // ---- the description, its word count and the way on ----
+  function countWords(){
+    const n = ownWords(desc.value), ok = n >= MIN_WORDS, left = MIN_WORDS - n, c = $('desc-c'), use = $('useMine');
+    setText(c, n + (n === 1 ? ' word' : ' words') + ' of your own. ' + (ok ? 'That is enough.' : 'Write ' + left + ' more.'));
+    c.classList.toggle('ok', ok);
+    $('needWords').classList.toggle('ok', ok);
+    setHidden($('needBtn'), ok);
+    setHidden($('needOk'), !ok);
+    if (!ok) setText($('needBtn'), 'Write ' + left + ' more ' + (left === 1 ? 'word' : 'words') + ' of your own');
+    // Not ready is never "disabled": the button still takes a press, which points at what is missing.
+    use.classList.toggle('is-off', !ok);
+    if (ok) { use.removeAttribute('aria-disabled'); use.removeAttribute('aria-describedby'); }
+    else { use.setAttribute('aria-disabled', 'true'); use.setAttribute('aria-describedby', 'lk-need'); }
+    if (ok && isOwn() && !said[key()]) {
+      said[key()] = true;
+      if (loaded) J.announce('That is enough words.');
+    }
+  }
   function setDesc(text){
     desc.value = text;
-    $('descCount').textContent = desc.value.length;
+    countWords();
+  }
+  // The trail moves to "Send it on" once the description is long enough to send.
+  function syncSub(){
+    const next = isOwn() && ownWords(desc.value) >= MIN_WORDS ? 'send' : SUBS[state.mode];
+    if (next === sub) return;
+    sub = next;
+    if (loaded) J.setSub(sub);
   }
 
-  function render(){
-    const L = LEVELS[state.level], ref = currentRef(), model = modelAnswers();
-    img.src = THEME.refPath(ref);
-    img.alt = REFS[ref][0];
+  // ---- what is on screen ----
+  function syncModes(){
+    modeRow.querySelectorAll('.choice').forEach(b => press(b, b.dataset.val === state.mode));
+  }
+  // A level above the one the workshop code (or the teacher's own key) opens stays on show, locked, and says why.
+  function syncLevels(){
+    levelRow.querySelectorAll('.choice').forEach(b => {
+      const id = b.dataset.val, locked = !isOpen(id);
+      press(b, id === state.level && !locked);
+      b.classList.toggle('is-locked', locked);
+      if (locked) b.setAttribute('aria-disabled', 'true'); else b.removeAttribute('aria-disabled');
+      setText(b.querySelector('.choice-sub'), locked ? LOCKED : LEVEL_SAYS[id] || LEVELS[id].short);
+    });
+  }
+  function syncCast(){
     const who = pickedCast();
-    cap.innerHTML = esc(L.name + ' · ' + MODES[state.mode].label)
-      + (REFS[ref][2] ? ' · <span class="castag">could be ' + esc(castById(REFS[ref][2]).name) + '</span>' : '');
-    $('shuffleBtn').hidden = state.mode !== 'explore';
-    $('lensTitle').textContent = L.lens;
-    $('lensBlurb').textContent = L.blurb;
-    $('modeHint').textContent = MODES[state.mode].hint;
-    $('revealAll').hidden = state.mode !== 'guide';
+    castRow.querySelectorAll('.choice').forEach(b => press(b, b.dataset.val === who));
+  }
+  function syncCode(){
+    const a = W.access();
+    setText($('codeState'), a.mode === 'code' ? 'Your code is in.' : a.mode === 'own' ? 'No code needed on this device.' : '');
+  }
+  const allRevealed = () => LEVELS[state.level].qs.every(([id]) => state.revealed[id]);
+  const syncRevealAll = () => setText($('revealAll'), allRevealed() ? 'Hide all' : 'Reveal all');
 
-    const mine = answers[key()] || (answers[key()] = {});
-    qs.innerHTML = L.qs.map(([id, q]) => {
+  // Big screen: one question on show. The others are still in the page, hidden, so nothing typed is lost.
+  function showQ(){
+    const items = Array.from(qs.children), n = items.length;
+    state.q = Math.max(0, Math.min(state.q, n - 1));
+    items.forEach((li, i) => setHidden(li, state.big && i !== state.q));
+    setHidden($('bqNav'), !state.big);
+    setHidden($('bqBack'), state.q === 0);
+    setHidden($('bqNext'), state.q >= n - 1);
+    setText($('bqCount'), 'Question ' + (state.q + 1) + ' of ' + n);
+  }
+
+  // The question list is rebuilt only when the picture, the level or the way of working changes: a press that
+  // does that is never inside the list. Reveal, typing and the cast pick change one thing in place, so the
+  // focus stays where it was.
+  function render(){
+    const L = LEVELS[state.level], ref = currentRef(), model = modelAnswers(), own = isOwn(), k = key();
+    const src = THEME.refPath(ref);
+    if (img.src !== src) img.src = src;
+    // Only the worked example may describe the picture: anywhere else the alt text would be the answers.
+    img.alt = state.mode === 'demo' ? REFS[ref][0] : PLAIN_ALT;
+    setText(cap, L.name + ' · ' + MODES[state.mode].label);
+    setHidden($('shuffleBtn'), state.mode !== 'explore');
+    setText($('lensText'), L.name + ': ' + L.lens);
+    setText($('lensBlurb'), L.blurb);
+    setText($('modeHint'), HINTS[state.mode] || MODES[state.mode].hint);
+
+    const mine = answers[k] || {}, ours = agreed[k] || {}, of = L.qs.length;
+    qs.innerHTML = L.qs.map(([id, q], i) => {
+      const n = i + 1;
+      const head = words => '<h3 class="lk-q" id="lk-q-' + i + '" tabindex="-1"><span class="lk-qn" aria-hidden="true">' + n + '</span><span class="vh">Question ' + n + ' of ' + of + ': </span>' + words + '</h3>';
       let body;
-      if (state.mode === 'demo') body = '<p class="a">' + esc(model[id]) + '</p>';
-      else if (state.mode === 'guide') body = state.revealed[id]
-        ? '<p class="a">' + esc(model[id]) + '</p>'
-        : '<button type="button" class="reveal" data-id="' + id + '">Reveal</button>';
-      else body = '<input type="text" data-id="' + id + '" value="' + esc(mine[id] || '') + '" aria-label="' + esc(q) + '">';
-      return '<li><span class="q">' + esc(q) + '</span>' + body + '</li>';
+      if (state.mode === 'demo') body = head(esc(q)) + '<p class="lk-a">' + esc(model[id]) + '</p>';
+      else if (state.mode === 'guide') {
+        const shown = !!state.revealed[id];
+        // The answer's box is in the page, empty, before Reveal fills it, so a screen reader hears it arrive.
+        body = head(esc(q))
+          + '<div class="field2 lk-agree"><label for="lk-g-' + i + '">Our answer<span class="vh"> to question ' + n + '</span> <small>(you can skip this)</small></label>'
+          + '<input type="text" id="lk-g-' + i + '" data-id="' + esc(id) + '" data-agreed maxlength="' + MAX_ANSWER + '" autocomplete="off" value="' + esc(ours[id] || '') + '"></div>'
+          + '<button type="button" class="btn back lk-reveal" data-id="' + esc(id) + '" aria-expanded="' + shown + '" aria-controls="lk-a-' + i + '"><span>' + (shown ? 'Hide' : 'Reveal') + '</span><span class="vh"> the answer to question ' + n + '</span></button>'
+          + '<p class="lk-a" id="lk-a-' + i + '" aria-live="polite">' + (shown ? esc(model[id]) : '') + '</p>';
+      } else body = head('<label for="lk-i-' + i + '">' + esc(q) + '</label>')
+          + '<input type="text" id="lk-i-' + i + '" data-id="' + esc(id) + '" maxlength="' + MAX_ANSWER + '" autocomplete="off" value="' + esc(mine[id] || '') + '">';
+      return '<li>' + body + '</li>';
     }).join('');
+    showQ();
+    setHidden($('revealAll'), state.mode !== 'guide' || state.big);
+    syncRevealAll();
 
     // Only your own readings of a character picture ask which cast member it is.
-    $('castPick').hidden = !(isCharacter() && (state.mode === 'create' || state.mode === 'explore'));
-    document.querySelectorAll('#castPickRow .pill').forEach(b => b.classList.toggle('active', b.dataset.val === who));
+    setHidden($('castPick'), !(own && isCharacter()));
+    syncCast();
 
-    $('descLabel').textContent = state.mode === 'demo' ? 'Put together, ready for the prompt helper'
-      : state.mode === 'guide' ? 'What the group has revealed so far' : 'Your description, ready for the prompt helper';
-    manual = false;
-    $('rebuildBtn').hidden = true;
-    setDesc(assemble());
+    setHidden($('ownBox'), !own);
+    setHidden($('exBox'), own);
+    setHidden($('exWrap'), state.mode !== 'demo');
+    setText($('exText'), own ? '' : exampleText());
+    setHidden($('rebuildBtn'), !(own && has(edits, k)));
+    setDesc(own ? ownText() : '');
 
-    document.querySelectorAll('#levelRow .pill').forEach(b => b.classList.toggle('active', b.dataset.val === state.level));
-    document.querySelectorAll('#modeRow .pill').forEach(b => b.classList.toggle('active', b.dataset.val === state.mode));
-    document.querySelectorAll('.how button').forEach(b => b.classList.toggle('on', b.dataset.mode === state.mode));
+    setHidden($('backBtn'), state.mode === 'demo');
+    setText($('backTo'), ' to ' + MODES[state.mode === 'guide' ? 'demo' : 'guide'].label);
+    setHidden($('skipSolo'), state.mode !== 'demo');
+    setHidden($('toTogether'), state.mode !== 'demo');
+    setHidden($('toSolo'), state.mode !== 'guide');
+    setHidden($('useMine'), !own);
+
+    syncModes();
+    syncLevels();
+    syncSub();
   }
 
+  // Explore offers only pictures of the kind this level's questions are written for: a character, or a place.
   function shuffle(){
-    const all = Object.keys(REFS).filter(k => k !== state.exploreRef);
-    state.exploreRef = all[Math.floor(Math.random() * all.length)];
+    const want = subjectOf(state.level);
+    const all = Object.keys(REFS).filter(k => REFS[k][1] === want && k !== state.exploreRef);
+    if (all.length) state.exploreRef = all[Math.floor(Math.random() * all.length)];
   }
 
-  function setMode(m){
-    state.mode = m; state.revealed = {};
-    if (m === 'explore' && !state.exploreRef) shuffle();
+  // quiet: only set it up (on the way in, before the first render)
+  function setMode(m, quiet){
+    state.mode = m; state.revealed = {}; state.q = 0;
+    if (m === 'explore' && (!state.exploreRef || REFS[state.exploreRef][1] !== subjectOf(state.level))) shuffle();
+    if (quiet) return;
     render();
+    touch();
+  }
+  function setLevel(id){
+    if (!isOpen(id)) { J.announce(LOCKED); return; }
+    if (id === state.level) return;
+    state.level = id;
+    setMode(state.mode);
   }
 
-  document.querySelectorAll('#levelRow .pill').forEach(b => b.addEventListener('click', () => { state.level = b.dataset.val; state.revealed = {}; render(); }));
-  document.querySelectorAll('#modeRow .pill').forEach(b => b.addEventListener('click', () => setMode(b.dataset.val)));
-  document.querySelectorAll('.how button').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
-  $('shuffleBtn').addEventListener('click', () => { shuffle(); render(); });
+  // Entering puts the focus on the question in view; leaving puts it back on the button that toggles the view.
+  function setBig(on, focus){
+    state.big = on;
+    document.body.classList.toggle('bigscreen', on);
+    press(bigBtn, on);
+    setHidden($('revealAll'), state.mode !== 'guide' || on);
+    showQ();
+    if (!focus) return;
+    if (on) J.focusHeading($('lk-q-' + state.q)); else bigBtn.focus();
+  }
+  function stepQ(by){
+    state.q += by;
+    showQ();
+    J.focusHeading($('lk-q-' + state.q));
+  }
 
-  $('castPickRow').addEventListener('click', e => {
-    const b = e.target.closest('.pill'); if (!b) return;
+  // After Back, Next or Skip: the focus goes to the level's heading and the activity comes to the top.
+  function go(m){
+    setMode(m);
+    const h = $('lensTitle');
+    try { h.focus({ preventScroll: true }); } catch (e) { h.focus(); }
+    J.scrollTo($('act'));
+  }
+
+  function reveal(b, on){
+    const id = b.dataset.id;
+    if (on) state.revealed[id] = true; else delete state.revealed[id];
+    b.setAttribute('aria-expanded', on ? 'true' : 'false');
+    setText(b.firstElementChild, on ? 'Hide' : 'Reveal');
+    setText($(b.getAttribute('aria-controls')), on ? modelAnswers()[id] : '');
+  }
+
+  // Stage 1 is done by this press and nothing else. The description travels in the journey; nothing is sent anywhere.
+  function carryOn(example){
+    const text = (example ? exampleText() : desc.value).trim().slice(0, MAX_DESC);
+    if (!text) return;
+    const ref = currentRef(), subject = REFS[ref][1], who = example ? null : pickedCast();
+    const had = J.get().pick, pick = { attempt: text, attemptIsExample: example };
+    // A level, a subject or a character already chosen in step 2 is the learner's own choice: looking again
+    // never undoes it. Saying here who the picture could be is a choice too, so that one does carry.
+    if (!had.tier) pick.tier = state.level;
+    if (who) { pick.subject = 'character'; pick.cast = [who]; }
+    else if (!had.subject) pick.subject = subject;
+    dirty = true;
+    saveDraft();
+    J.save({ look: { text, tier: state.level, subject, cast: who ? [who] : [], ref, mode: state.mode, example, at: new Date().toISOString() }, pick });
+    J.markDone(1);
+    location.href = J.hrefFor(2);
+  }
+
+  // ---- presses and typing ----
+  modeRow.addEventListener('click', e => {
+    const b = e.target.closest('.choice');
+    if (b && b.dataset.val !== state.mode) setMode(b.dataset.val);
+  });
+  levelRow.addEventListener('click', e => {
+    const b = e.target.closest('.choice');
+    if (b) setLevel(b.dataset.val);
+  });
+  bigBtn.addEventListener('click', () => setBig(!state.big, true));
+  // Escape leaves the big screen. An open Start again box takes Escape for itself; so does the menu (journey.js stops it there).
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape' || !state.big || e.defaultPrevented || document.querySelector('dialog[open]')) return;
+    setBig(false, true);
+  });
+  $('bqBack').addEventListener('click', () => stepQ(-1));
+  $('bqNext').addEventListener('click', () => stepQ(1));
+
+  $('shuffleBtn').addEventListener('click', () => {
+    shuffle();
+    state.q = 0;
+    render();
+    touch();
+    J.announce('Here is another picture.');
+  });
+
+  castRow.addEventListener('click', e => {
+    const b = e.target.closest('.choice'); if (!b) return;
     const k = currentRef();
-    state.cast[k] = pickedCast() === b.dataset.val ? '' : b.dataset.val;   // tap again to clear
-    render();
+    state.cast[k] = pickedCast() === b.dataset.val ? '' : b.dataset.val;   // press again to clear
+    syncCast();
+    if (!has(edits, key())) setDesc(assemble());
+    syncSub();
+    touch();
   });
 
   qs.addEventListener('click', e => {
-    const b = e.target.closest('.reveal');
+    const b = e.target.closest('.lk-reveal');
     if (!b) return;
-    state.revealed[b.dataset.id] = true;
-    render();
+    reveal(b, !state.revealed[b.dataset.id]);
+    syncRevealAll();
   });
   $('revealAll').addEventListener('click', () => {
-    LEVELS[state.level].qs.forEach(([id]) => state.revealed[id] = true);
-    render();
+    const on = !allRevealed();
+    qs.querySelectorAll('.lk-reveal').forEach(b => reveal(b, on));
+    syncRevealAll();
   });
   qs.addEventListener('input', e => {
     const i = e.target.closest('input[data-id]');
     if (!i) return;
-    answers[key()][i.dataset.id] = i.value;
-    if (!manual) setDesc(assemble());
+    const k = key(), into = i.hasAttribute('data-agreed') ? agreed : answers;
+    (into[k] || (into[k] = {}))[i.dataset.id] = i.value;
+    if (into === answers) {
+      if (!has(edits, k)) setDesc(assemble());
+      syncSub();
+    }
+    touch();
   });
 
   desc.addEventListener('input', () => {
-    $('descCount').textContent = desc.value.length;
-    manual = true;
-    $('rebuildBtn').hidden = state.mode === 'demo' || state.mode === 'guide';
+    // Emptied by hand, the box goes back to being built from the answers.
+    if (desc.value.trim()) edits[key()] = desc.value; else delete edits[key()];
+    setHidden($('rebuildBtn'), !has(edits, key()));
+    countWords();
+    syncSub();
+    touch();
   });
-  $('rebuildBtn').addEventListener('click', () => { manual = false; $('rebuildBtn').hidden = true; setDesc(assemble()); });
-
+  $('rebuildBtn').addEventListener('click', () => {
+    delete edits[key()];
+    setDesc(assemble());
+    syncSub();
+    touch();
+    desc.focus();   // the button is about to hide
+    setHidden($('rebuildBtn'), true);
+  });
   $('copyBtn').addEventListener('click', () => {
-    if (!desc.value.trim()) return;
-    navigator.clipboard.writeText(desc.value).then(() => {
-      const b = $('copyBtn'), old = b.textContent; b.textContent = 'Copied';
-      setTimeout(() => b.textContent = old, 1200);
-    }).catch(() => {});
+    if (desc.value.trim()) J.copy(desc.value, $('copyBtn'));
+    else J.announce('There is nothing to copy yet.');
   });
 
-  $('sendBtn').addEventListener('click', () => {
-    const text = desc.value.trim();
-    if (!text) { desc.focus(); desc.placeholder = 'Answer a question or two first!'; return; }
-    const who = pickedCast();
-    try {
-      localStorage.setItem('police_pound_handoff', JSON.stringify({
-        idea: text, tier: state.level, subject: REFS[currentRef()][1], cast: who ? [who] : [], mode: state.mode, ts: Date.now(),
-      }));
-    } catch (e) {}
-    location.href = '../#brief';
+  $('toTogether').addEventListener('click', () => go('guide'));
+  $('skipSolo').addEventListener('click', () => go('create'));
+  $('toSolo').addEventListener('click', () => go('create'));
+  $('backBtn').addEventListener('click', () => go(state.mode === 'guide' ? 'demo' : 'guide'));
+  $('useExample').addEventListener('click', () => carryOn(true));
+  $('useMine').addEventListener('click', () => {
+    if (ownWords(desc.value) < MIN_WORDS) { $('needBtn').focus(); return; }
+    carryOn(false);
+  });
+  // "Write 4 more words of your own" takes you to the first question still empty, or to the description if you changed it yourself.
+  $('needBtn').addEventListener('click', () => {
+    const empty = Array.from(qs.querySelectorAll('input[data-id]')).find(i => !i.value.trim());
+    if (!empty || has(edits, key())) { desc.focus(); return; }
+    const li = empty.closest('li');
+    if (li.hidden) { state.q = Array.from(qs.children).indexOf(li); showQ(); }
+    empty.focus();
   });
 
+  // A code going in, coming out or being lowered by the teacher changes which levels are open.
+  W.onChange(() => {
+    syncCode();
+    if (isOpen(state.level)) { syncLevels(); return; }
+    state.level = topOpen();
+    setMode(state.mode);
+    J.announce('That level is locked now. You are on ' + LEVELS[state.level].name + '.');
+  });
+
+  // ---- the way in ----
+  let canSave = true;
+  try { canSave = !!window.localStorage; localStorage.getItem('paws_journey_v1'); } catch (e) { canSave = false; }
+  setHidden($('noSave'), canSave);
+
+  let ask = () => '';
+  try { const p = new URLSearchParams(location.search); ask = name => (p.get(name) || '').toLowerCase(); } catch (e) {}
+  try { restore(); } catch (e) {}
+  const urlLevel = TIER_IDS[Number(ask('level')) - 1];
+  if (urlLevel) state.level = urlLevel;
+  if (!isOpen(state.level)) state.level = topOpen();
+  setMode(has(URL_MODES, ask('mode')) ? URL_MODES[ask('mode')] : state.mode, true);
+  sub = isOwn() && ownWords(ownText()) >= MIN_WORDS ? 'send' : SUBS[state.mode];
+
+  J.mount({ page: 'look', stage: 1, sub });
+  W.mountCodeBox($('codeBox'), { compact: true });
+  syncCode();
   render();
+  if (ask('big') === '1') setBig(true, false);
+  loaded = true;
 })();
 </script>
 <script type="module" src="../pencil.js"></script>
