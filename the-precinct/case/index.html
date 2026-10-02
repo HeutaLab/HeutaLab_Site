@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>document.documentElement.className+=' js'</script>
+<script>/* .js hides the links behind the Menu button; if journey.js never wires the button, they come back */
+document.documentElement.className+=' js';setTimeout(function(){var b=document.querySelector('.menu-btn'),d=document.documentElement;if(!b||b.hidden)d.className=d.className.replace(' js','')},4000)</script>
 <meta name="theme-color" content="#0a0e0f">
 <title>Your case: The Precinct</title>
 <meta name="description" content="Steps 2 to 4 of The Precinct: choose and describe, create with AI, then check and improve. One part on screen at a time.">
@@ -174,7 +175,7 @@
                 <ul id="lookFor"></ul>
               </details>
               <label for="attempt">Your own description</label>
-              <textarea id="attempt" maxlength="1500" rows="7" aria-describedby="attemptCount"></textarea>
+              <textarea id="attempt" maxlength="1500" rows="7" aria-describedby="attemptCount noticeWhy"></textarea>
               <div class="guide"><span id="attemptCount">0 words, 15 to go</span><span id="saveStatus"></span></div>
               <button type="button" class="link" id="exampleBtn" aria-expanded="false" aria-controls="exampleBox">Show an example</button>
               <p class="example" id="exampleBox" hidden><b>An example</b><span id="exampleText"></span></p>
@@ -184,7 +185,7 @@
             <h3 id="reviewTitle">Your case file so far</h3>
             <dl id="reviewList"></dl>
           </div>
-          <div class="acts"><p class="why" id="noticeWhy" aria-live="polite"></p><button type="button" class="link back" data-back>&larr; Back</button><button type="button" class="btn" data-next>Next: <span class="to"></span> <span class="arr">&rarr;</span></button></div>
+          <div class="acts"><p class="why" id="noticeWhy"></p><button type="button" class="link back" data-back>&larr; Back</button><button type="button" class="btn" data-next>Next: <span class="to"></span> <span class="arr">&rarr;</span></button></div>
         </section>
 
         <!-- ===== Step 3: Create with AI ===== -->
@@ -283,6 +284,7 @@
             <div class="field">
               <h3><label for="cmpPrompt">What you asked for</label></h3>
               <p class="step-note first" id="cmpPromptNote" hidden></p>
+              <div class="which" id="cmpWhich" role="group" aria-label="Which picture are you checking?" hidden></div>
               <textarea id="cmpPrompt" maxlength="3000" placeholder="Paste the exact brief you gave your image tool."></textarea>
             </div>
             <div class="field">
@@ -422,6 +424,7 @@ import Pics from '/the-precinct/pictures.js';
   const $ = id => document.getElementById(id);
   const wordsIn = t => words(t).length;   // the same counter the Worker uses
   const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+  const owns = (o, k) => Object.prototype.hasOwnProperty.call(o, k);   // for tables looked up with words from the address or storage
 
   // Browser storage can be missing or blocked; the page works without it.
   const store = {
@@ -580,7 +583,8 @@ import Pics from '/the-precinct/pictures.js';
   // ---- built from theme.js: the story clues, the places, the palettes ----
   if (typeof J.palette === 'string' && Object.keys(THEME.palettes).includes(J.palette)) state.palette = J.palette;
   // One sentence for a card: the first full one in the character's story.
-  const oneLine = story => { const s = story.split(/(?<=[.!?])\s+/); return s.find(x => x.length >= 30) || s[0]; };
+  // (No lookbehind in the pattern: Safari before 16.4 cannot read one, and the whole page would stop.)
+  const oneLine = story => { const s = (story.match(/[^.!?]+[.!?]+/g) || [story]).map(x => x.trim()); return s.find(x => x.length >= 30) || s[0]; };
   $('relations').innerHTML = THEME.relations.map(([a, verb, b, tail]) =>
     '<span class="rel"><em>' + esc(castName(a)) + '</em> ' + esc(verb) + ' <em>' + esc(castName(b)) + '</em>' + (tail ? ' ' + esc(tail) : '') + '</span>').join('');
   $('placeGrid').innerHTML = THEME.places.map(p =>
@@ -610,7 +614,7 @@ import Pics from '/the-precinct/pictures.js';
   const hasAI = (n = need()) => usingOwnKey ? !!ownKey : level >= n;
 
   function setStatus(text, kind){
-    codeStatus.textContent = text;
+    if (codeStatus.textContent !== text) codeStatus.textContent = text;   // it is a status: the same words again would be read out again
     codeStatus.classList.toggle('ok', kind === 'ok');
     codeStatus.classList.toggle('bad', kind === 'bad');
   }
@@ -649,9 +653,11 @@ import Pics from '/the-precinct/pictures.js';
 
   // The gate: the code box, moved to wherever the AI was asked for, with
   // what to do once the code is good.
-  let gateThen = null;
-  function openGate(slot, then){
-    gateThen = then;
+  let gateThen = null, gateNeed = null, gateOpener = null;
+  function openGate(slot, then, opener, lvl){
+    gateThen = then; gateOpener = opener || null;
+    gateNeed = lvl || need();   // the brief asks for the case's level; the compare check takes any code
+    const forBrief = !lvl;
     slot.appendChild(codeGate);
     const g = gameOf(caseOf(J.c).tier), have = THEME.game.find(x => x.level === level);
     if (usingOwnKey) {
@@ -659,17 +665,19 @@ import Pics from '/the-precinct/pictures.js';
       $('codeGateWhy').innerHTML = 'The desk now runs on your own AI key. Ask an adult to add one on the <a href="/the-precinct/key/">AI key page</a>, then come back: your work here is kept.';
       $('codeLock').hidden = true; codeStatus.hidden = true;
     } else {
-      $('codeGateTitle').textContent = level && g ? 'Enter the ' + g.name + ' code' : 'Enter your workshop code';
-      $('codeGateWhy').textContent = level && g
+      const higher = forBrief && level && g;
+      $('codeGateTitle').textContent = higher ? 'Enter the ' + g.name + ' code' : 'Enter your workshop code';
+      $('codeGateWhy').textContent = higher
         ? 'Your code opens ' + have.name + ' cases, and this is a ' + g.name + ' case. Your facilitator gives out the ' + g.name + ' code. Your work here is kept.'
-        : 'The briefing desk uses AI to write your prompt, so it needs the code your facilitator gives out.';
+        : forBrief ? 'The briefing desk uses AI to write your prompt, so it needs the code your facilitator gives out.'
+        : 'The desk’s compare check uses AI, so it needs the code your facilitator gives out.';
     }
     codeGate.hidden = false;
     const to = usingOwnKey ? $('codeGateTitle') : codeInput;
     to.focus({ preventScroll: true });
     codeGate.scrollIntoView({ block: 'nearest', behavior: 'instant' });   // it opens under the button just pressed: no slide
   }
-  function closeGate(){ codeGate.hidden = true; gateThen = null; }
+  function closeGate(){ codeGate.hidden = true; gateThen = null; gateNeed = null; gateOpener = null; }
 
   // The code is checked on Enter or the Check button, never mid-typing:
   // half-typed codes would count as wrong ones, and the checks are limited per
@@ -687,11 +695,13 @@ import Pics from '/the-precinct/pictures.js';
       if (seq !== codeSeq) return;   // the box changed while this was out
       if (res.ok) {
         applyLevel(data.level);
-        if (hasAI()) {
+        if (hasAI(gateNeed || need())) {
           setStatus(data.name + ' code accepted', 'ok');
-          const then = gateThen;
-          if (!quiet) Jn.announce('Code accepted. AI ready.');
-          if (!codeGate.hidden) { closeGate(); if (then) then(); }
+          const then = gateThen, opener = gateOpener, open = !codeGate.hidden;
+          // The box that has the focus is about to go: hand the focus back to the button that opened it.
+          if (open) { closeGate(); if (opener) opener.focus({ preventScroll: true }); }
+          if (open && then) then(true);   // what was asked for carries on, and says "Code accepted" itself
+          else if (!quiet) Jn.announce('Code accepted. AI ready.');
         } else setStatus(data.name + ' code accepted, but this case needs the ' + gameOf(caseOf(J.c).tier).name + ' code.', 'bad');
       }
       else if (res.status === 401) { setStatus('That code is not right. Check it and try again.', 'bad'); applyLevel(0); }
@@ -739,13 +749,14 @@ import Pics from '/the-precinct/pictures.js';
   document.addEventListener('visibilitychange', () => { if (document.hidden) { stash(); saveNow(); } });
   // Another page finished a step in this journey (Look closely, the comic
   // builder): take its ticks in, so the next save here does not lose them.
-  addEventListener('storage', e => {
-    if (e.key !== 'precinct_journey') return;
+  function takeIn(){
     const other = Jn.read();
     Object.keys(other.done).forEach(n => { const mine = doneList(n); (Array.isArray(other.done[n]) ? other.done[n] : []).forEach(k => { if (!mine.includes(k)) mine.push(k); }); });
     if (other.started && !J.started) J.started = other.started;
     Jn.refresh();
-  });
+  }
+  addEventListener('storage', e => { if (e.key === 'precinct_journey') takeIn(); });
+  addEventListener('pageshow', e => { if (e.persisted) takeIn(); });   // Back from the comic builder, where Finish ticked step 5
 
   // ---- part: choose a character ----
   // Rookie and Detective draw one person (radio buttons); Commissioner, a short
@@ -794,7 +805,7 @@ import Pics from '/the-precinct/pictures.js';
   }
   // A choice made with the mouse or a finger folds the grid away at once. The
   // arrow keys move through radio buttons choosing each in turn, so with the
-  // keyboard the grid stays until Enter is pressed or the focus moves on to Next.
+  // keyboard the grid stays until Enter is pressed (Next is already open by then).
   function foldWho(){
     if (!hasWho()) return;
     whoOpen = false; syncWho();
@@ -967,7 +978,9 @@ import Pics from '/the-precinct/pictures.js';
   function checkReady(){
     // Stays off while a request is out, so typing during the wait can't send a second one.
     // No code is needed to press it: the code is asked for when it is pressed.
-    goBtn.disabled = briefBusy || !briefReady();
+    // While a request is out the button is marked busy, not disabled, so the focus stays on it.
+    goBtn.disabled = !briefBusy && !briefReady();
+    goBtn.setAttribute('aria-disabled', String(briefBusy));
     renderNeeds();
   }
   // Says what is still missing, so a greyed-out button is never a dead end.
@@ -1063,19 +1076,19 @@ import Pics from '/the-precinct/pictures.js';
   // for it there and then, and sends the brief as soon as the code is good.
   goBtn.addEventListener('click', () => {
     if (briefBusy) return;
-    if (!hasAI()) { openGate($('briefGate'), sendBrief); return; }
+    if (!hasAI()) { openGate($('briefGate'), sendBrief, goBtn); return; }
     sendBrief();
   });
-  async function sendBrief(){
+  async function sendBrief(fromGate){
     if (briefBusy || !briefReady()) { checkReady(); return; }
     briefBusy = true;
     errorBox.style.display = 'none';
     result.classList.remove('show');
     $('briefNext').hidden = true;
     goBtn.classList.remove('again');
-    goBtn.disabled = true;
+    goBtn.disabled = false; goBtn.setAttribute('aria-disabled', 'true');
     goBtn.innerHTML = '<span class="spinner"></span>' + (round === 1 ? 'Reading your description…' : 'Working…');
-    Jn.announce('The desk is reading your description. This can take half a minute.');
+    Jn.announce((fromGate === true ? 'Code accepted. ' : '') + 'The desk is reading your description. This can take half a minute.');
     renderNeeds();
     const sentFrom = J.c;
     let again = false;
@@ -1119,7 +1132,7 @@ import Pics from '/the-precinct/pictures.js';
       }
       goBtn.textContent = goLabel();
       checkReady();
-      if (again && !usingOwnKey && sentFrom === J.c) openGate($('briefGate'), sendBrief);
+      if (again && !usingOwnKey && sentFrom === J.c) openGate($('briefGate'), sendBrief, goBtn);
     }
   }
 
@@ -1184,9 +1197,22 @@ import Pics from '/the-precinct/pictures.js';
     autoFilled = true;
     cmpPromptNote.hidden = false;
     cmpPromptNote.textContent = 'This is your brief' + (lastBrief.prompts.length > 1 ? ' for picture ' + (i + 1) : '') + '. Change it here if you ran something else.';
+    renderWhich();
     checkCompareReady();
     stash();
   }
+  // A brief for several pictures: a button for each, so any of them can be the one being checked.
+  function renderWhich(){
+    const many = !!(lastBrief && Array.isArray(lastBrief.prompts) && lastBrief.prompts.length > 1);
+    $('cmpWhich').hidden = !many;
+    if (many) $('cmpWhich').innerHTML = '<span>I am checking:</span>' + lastBrief.prompts.map((p, i) =>
+      '<button type="button" class="btn ghost small" data-fill="' + i + '" aria-pressed="' + (cmpPrompt.value === briefFill(i)) + '">Picture ' + (i + 1) + '</button>').join('');
+  }
+  $('cmpWhich').addEventListener('click', e => {
+    const b = e.target.closest('[data-fill]'); if (!b) return;
+    fillComparePrompt(Number(b.dataset.fill));
+    $('cmpWhich').querySelector('[data-fill="' + b.dataset.fill + '"]').focus();
+  });
   // When a case opens: fill the brief in, or recognise one already there.
   function syncCompareFill(){
     autoFilled = false;
@@ -1202,14 +1228,16 @@ import Pics from '/the-precinct/pictures.js';
     cmpResult.innerHTML = '';
     cmpError.style.display = 'none';
     $('deskCheck').open = !!cmpDesc.value.trim();
+    renderWhich();
     checkCompareReady();
   }
-  cmpPrompt.addEventListener('input', () => { autoFilled = false; cmpPromptNote.hidden = true; checkCompareReady(); stash(); });
+  cmpPrompt.addEventListener('input', () => { autoFilled = false; cmpPromptNote.hidden = true; renderWhich(); checkCompareReady(); stash(); });
   cmpDesc.addEventListener('input', () => { checkCompareReady(); stash(); });
   cmpRef.addEventListener('input', stash);
   const compareReady = () => wordsIn(cmpPrompt.value) >= 3 && wordsIn(cmpDesc.value) >= 8;
   function checkCompareReady(){
-    cmpBtn.disabled = cmpBusy || !compareReady();
+    cmpBtn.disabled = !cmpBusy && !compareReady();
+    cmpBtn.setAttribute('aria-disabled', String(cmpBusy));
     $('cmpNeeds').textContent = compareReady() ? '' : 'The desk needs the brief you used, above, and at least 8 words of your tool’s description.';
   }
 
@@ -1247,7 +1275,13 @@ import Pics from '/the-precinct/pictures.js';
     await renderSlots();
     Jn.announce(Pics.SLOT_NAMES[slot] + ' added. It stays in this browser.');
   }
-  const emptySlot = () => Pics.SLOTS.find(s => !slotEl(s).classList.contains('has')) || 'improved';
+  // A pasted or dropped picture goes in the first empty box. With both full it is not swapped in silently.
+  function addToEmpty(file){
+    const free = Pics.SLOTS.find(s => !slotEl(s).classList.contains('has'));
+    if (free) return addPicture(free, file);
+    $('picError').textContent = 'Both boxes have a picture. Press Replace on the one you want to change.';
+    $('picError').style.display = 'block';
+  }
   $('slots').addEventListener('click', async e => {
     const add = e.target.closest('[data-add]'), rm = e.target.closest('[data-rm]'), zoom = e.target.closest('[data-zoompic]');
     if (add) { pendingSlot = add.dataset.add; $('picIn').click(); }
@@ -1269,8 +1303,11 @@ import Pics from '/the-precinct/pictures.js';
     if (cur !== 'compare' || !e.clipboardData) return;
     const file = [...e.clipboardData.items].filter(x => x.kind === 'file' && x.type.startsWith('image/')).map(x => x.getAsFile())[0];
     if (!file) return;
+    // Words copied from some apps carry a picture of themselves too: in a text box, the words are what was meant.
+    const box = e.target.closest && e.target.closest('textarea, input');
+    if (box && e.clipboardData.getData('text/plain')) return;
     e.preventDefault();
-    addPicture(emptySlot(), file);
+    addToEmpty(file);
   });
   const hasFiles = e => e.dataTransfer && [...e.dataTransfer.types].includes('Files');
   $('slots').addEventListener('dragover', e => {
@@ -1284,7 +1321,7 @@ import Pics from '/the-precinct/pictures.js';
     e.preventDefault();
     document.querySelectorAll('.slot.drop').forEach(s => s.classList.remove('drop'));
     const s = e.target.closest('.slot'), f = [...e.dataTransfer.files].find(f => f.type.startsWith('image/'));
-    if (f) addPicture(s ? s.dataset.slot : emptySlot(), f);
+    if (f) { if (s) addPicture(s.dataset.slot, f); else addToEmpty(f); }
   });
 
   // The differences, one at a time. They stay in this browser.
@@ -1342,16 +1379,17 @@ import Pics from '/the-precinct/pictures.js';
 
   cmpBtn.addEventListener('click', () => {
     if (cmpBusy) return;
-    if (!hasAI(1)) { openGate($('cmpGate'), runCompare); return; }
+    if (!hasAI(1)) { openGate($('cmpGate'), runCompare, cmpBtn, 1); return; }
     runCompare();
   });
-  async function runCompare(){
+  async function runCompare(fromGate){
     if (cmpBusy || !compareReady()) { checkCompareReady(); return; }
     cmpBusy = true;
     cmpError.style.display = 'none';
     cmpResult.classList.remove('show');
-    cmpBtn.disabled = true;
+    cmpBtn.disabled = false; cmpBtn.setAttribute('aria-disabled', 'true');
     cmpBtn.innerHTML = '<span class="spinner"></span>Comparing…';
+    Jn.announce((fromGate === true ? 'Code accepted. ' : '') + 'The desk is comparing.');
     const sentFrom = J.c;
     let again = false;
     try {
@@ -1371,7 +1409,7 @@ import Pics from '/the-precinct/pictures.js';
       cmpBusy = false;
       cmpBtn.textContent = 'Compare';
       checkCompareReady();
-      if (again && !usingOwnKey && sentFrom === J.c) openGate($('cmpGate'), runCompare);
+      if (again && !usingOwnKey && sentFrom === J.c) openGate($('cmpGate'), runCompare, cmpBtn, 1);
     }
   }
 
@@ -1456,6 +1494,8 @@ import Pics from '/the-precinct/pictures.js';
         // Notes from the old "Study the reference" step become the start of the description.
         attempt.value = notes.slice(0, 1500);
         handoffNote.textContent = NOTES_NOTE; handoffNote.hidden = false;
+        delete W().notes;   // moved across once: clearing the box does not bring them back
+        if (!doneList().includes('look')) doneList().push('look');
         countAttempt(); checkReady(); stash();
       }
       renderReview();
@@ -1518,7 +1558,7 @@ import Pics from '/the-precinct/pictures.js';
   function renderCasePick(){
     $('caseList').innerHTML = CASES.map(c => {
       const g = c.tier && gameOf(c.tier), st = Jn.status(J, c.n);
-      const far = st.all ? 'Finished' : (doneList(c.n).length || (J.work[c.n] && (J.work[c.n].attempt || J.work[c.n].idea))) ? 'In progress' : 'Not started';
+      const far = st.all ? 'Finished' : st.done[4] ? 'Picture checked' : (doneList(c.n).length || (J.work[c.n] && (J.work[c.n].attempt || J.work[c.n].idea))) ? 'In progress' : 'Not started';
       const needs = g && g.level > Math.max(level, 1) && !usingOwnKey ? ' · needs the ' + g.name + ' code at Step 3' : '';
       return '<li><button type="button" data-case="' + c.n + '"' + (c.n === J.c ? ' aria-current="true"' : '') + '>'
         + '<b>Case 0' + c.n + ': ' + esc(c.tab) + '</b>' + esc(c.about)
@@ -1580,6 +1620,8 @@ import Pics from '/the-precinct/pictures.js';
     const c = caseOf(J.c);
     delete J.work[c.n]; delete J.done[c.n]; delete J.at[c.n];
     Object.keys(J.ref).forEach(k => { if (k.startsWith(c.n + ':')) delete J.ref[k]; });
+    live = false;   // until the case opens again, nothing typed a moment ago is put back
+    saveNow();
     await Pics.clearCase(c.n);
     openCase(c.n, { fresh: true, focus: true, step: stepsOf(c)[0] });
     Jn.announce('This case has been cleared.');
@@ -1587,7 +1629,7 @@ import Pics from '/the-precinct/pictures.js';
 
   // ---- start up ----
   const incoming = location.hash;   // goStep() rewrites the address, so keep what the page was opened with
-  if (J.platform && TOOLS[J.platform]) state.platform = J.platform;
+  if (typeof J.platform === 'string' && owns(TOOLS, J.platform)) state.platform = J.platform;
   // Show the last known level straight away, then ask the Worker what the saved code really opens.
   applyLevel(level);
   Jn.mount({ page: 'case', step: 2, journey: () => J });
@@ -1609,16 +1651,38 @@ import Pics from '/the-precinct/pictures.js';
     const mine = caseOf(Number(handoff.kase));
     const fits = mine && mine.tier === handoff.tier && (mine.swap || mine.subject === subject);
     const n = fits ? mine.n : handoff.tier === 'advanced' ? 4 : handoff.tier === 'medium' ? 3 : subject === 'setting' ? 2 : 1;
-    openCase(n, { subject, step: stepsOf(caseOf(n))[0] });   // Step 2 from its first part: the description is waiting further on
-    attempt.value = String(handoff.idea).slice(0, 1500);
-    setExample(handoff.mode === 'demo' || handoff.mode === 'guide');
-    if (!attemptIsExample) { handoffNote.textContent = HANDOFF_NOTE; handoffNote.hidden = false; }
-    if (Array.isArray(handoff.cast) && subject === 'character' && handoff.cast.some(validCast)) {
+    openCase(n, { subject });
+    const text = String(handoff.idea).slice(0, 1500), example = handoff.mode === 'demo' || handoff.mode === 'guide';
+    const had = attempt.value.trim();
+    // Never over the learner's own words: a description already written for this case stays, and the
+    // new one is offered beside it. A worked example is not offered at all.
+    const keep = !!had && !attemptIsExample && had !== text.trim();
+    if (!keep) {
+      attempt.value = text;
+      setExample(example);
+      if (!example) { handoffNote.textContent = HANDOFF_NOTE; handoffNote.hidden = false; }
+    } else if (example) {
+      handoffNote.textContent = 'You already have your own description for this case, so the worked example from Look closely was not brought in.';
+      handoffNote.hidden = false;
+    } else {
+      handoffNote.innerHTML = 'You already have a description for this case, so it has been kept. <button type="button" class="link" id="useHandoff">Use the new one from Look closely instead</button>';
+      handoffNote.hidden = false;
+      $('useHandoff').addEventListener('click', () => {
+        attempt.value = text; setExample(false);
+        handoffNote.textContent = HANDOFF_NOTE;
+        countAttempt(); checkReady(); stash(); syncNext(); renderReview(); Jn.refresh();
+        attempt.focus();
+      });
+    }
+    if (Array.isArray(handoff.cast) && subjectOf(caseOf(n)) === 'character' && handoff.cast.some(validCast) && !hasWho()) {
       state.cast = handoff.cast.filter(validCast); own = false;
       setDone('who');
     }
     setDone('look');
-    countAttempt(); checkReady(); stash(); syncWho(); renderReview(); syncParts();
+    countAttempt(); checkReady(); stash(); syncWho(); renderReview();
+    // Step 2 from its first part, with the description waiting further on; straight to the description
+    // when there are two to choose between. (Worked out now: the subject may have just changed.)
+    goStep(keep ? 'notice' : stepsOf(caseOf(n))[0], {});
   }
 
   // The address says which step: #choose, #create, #check. Links made before
@@ -1627,7 +1691,8 @@ import Pics from '/the-precinct/pictures.js';
   function route(first){
     const h = (first ? incoming : location.hash).replace('#', ''), steps = () => stepsOf(caseOf(J.c)), has = k => steps().includes(k);
     if (first && arrived) return;   // the handoff has already opened the right part
-    const old = { brief: 'brief', palettes: 'palette', compare: 'compare', cast: 'who', characters: 'who' }[h];
+    const OLD = { brief: 'brief', palettes: 'palette', compare: 'compare', cast: 'who', characters: 'who' };
+    const old = owns(OLD, h) ? OLD[h] : null;
     if (old) { if (!has(old)) openCase(1, {}); goStep(old, { focus: true, jump: first }); return; }
     if (h === 'settings') { openCase(2, {}); return; }
     const step = Jn.STEPS.find(s => s.id === h && s.n >= 2 && s.n <= 4);

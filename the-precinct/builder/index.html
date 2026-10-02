@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>document.documentElement.className+=' js'</script>
+<script>/* .js hides the links behind the Menu button; if journey.js never wires the button, they come back */
+document.documentElement.className+=' js';setTimeout(function(){var b=document.querySelector('.menu-btn'),d=document.documentElement;if(!b||b.hidden)d.className=d.className.replace(' js','')},4000)</script>
 <meta name="theme-color" content="#0a0e0f">
 <title>Comic Builder: The Precinct</title>
 <meta name="description" content="Build your own noir comic page: add your pictures, then captions, speech balloons and sound effects, at prose, medium or advanced level.">
@@ -499,13 +500,16 @@ import Pics from '/the-precinct/pictures.js';
   const get = k => idb('readonly', st => st.get(k));
   const del = k => idb('readwrite', st => st.delete(k));
 
-  let saveT = null, savedAt = 0;
+  let saveT = null, savedAt = 0, saveFailed = false;
   function save(){
     clearTimeout(saveT);
-    saveT = setTimeout(async () => { await put('state', JSON.parse(JSON.stringify(S))); savedAt = Date.now(); showSaved(); }, 400);
+    saveT = setTimeout(async () => {
+      saveFailed = (await put('state', JSON.parse(JSON.stringify(S)))) == null;   // null: the browser refused the write
+      savedAt = Date.now(); showSaved();
+    }, 400);
   }
   // The dock says, in words, that the page is kept: "Saved just now", then the time of the last save.
-  const savedWords = () => !db ? 'Not saved in this browser: download your page'
+  const savedWords = () => !db || saveFailed ? 'Not saved in this browser: download your page'
     : !savedAt ? 'Saves itself in this browser'
     : Date.now() - savedAt < 60000 ? 'Saved just now'
     : 'Saved at ' + new Date(savedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -1482,12 +1486,12 @@ import Pics from '/the-precinct/pictures.js';
         if (b.dataset.cmd === 'sfront') { const items = S.panels[sel.p].items; items.push(items.splice(sel.it, 1)[0]); sel.it = items.length - 1; }
         save(); return render();
       }
-      case 'more': moreOpen = !moreOpen; return renderDock();
+      case 'more': { moreOpen = !moreOpen; renderDock(); const m = $('dock').querySelector('[data-cmd="more"]'); if (m) m.focus(); return; }   // the dock is redrawn: keep the focus on the button
       case 'finish': return finish();
       case 'png': sel = NONE(); render(); return exportPNG();
       case 'print': sel = NONE(); return render().then(() => print());
       case 'reset':
-        if (!confirm('Clear this page and start again? Your pictures will be removed from this browser.')) return;
+        if (!confirm('Clear this page and start again? The pictures on this page will be removed from this browser. Pictures you added in a case stay with that case.')) return;
         S = fresh(); sel = NONE(); past = []; future = [];
         save(); tidyImages(); return render();
     }
@@ -1515,6 +1519,10 @@ import Pics from '/the-precinct/pictures.js';
     if (b.dataset.finish === 'png') exportPNG();
     if (b.dataset.finish === 'print') print();
   });
+  // The dock was redrawn while the card was open: put the focus back on Finish, not at the top of the page.
+  $('finishDlg').addEventListener('close', () => { const f = $('dock').querySelector('[data-cmd="finish"]'); if (f) f.focus({ preventScroll: true }); });
+  // Back from the case file: a picture added there since this page was first shown is waiting too.
+  addEventListener('pageshow', e => { if (e.persisted) loadMine(); });
 
   // Sound effects: a tray of words above the dock. A word goes into the chosen panel, or replaces the chosen sound effect.
   let sfxOpen = false;

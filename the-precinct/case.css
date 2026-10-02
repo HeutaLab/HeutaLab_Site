@@ -44,8 +44,6 @@
   .stepp .lead{margin:0 0 14px;font-size:15px;line-height:1.5;max-width:74ch}
   .stepp .lead strong{font-weight:700}
   .hint{margin:6px 0 0;font-size:12.5px;line-height:1.45;color:var(--ink-p2)}
-  .ready{margin:12px 0 0;font-size:14px;font-weight:700}
-  .ready:empty{display:none}
 
   /* The Next bar: always the last thing in a part, and it stays at the bottom
      of the window while the part is on screen, so the next action is never
@@ -163,7 +161,6 @@
   .review dt:first-of-type,.review dt:first-of-type + dd,.review dt:first-of-type + dd + dd{border-top:0}
   .review .link{min-height:32px}
   .review .miss{color:var(--red-deep);font-weight:700}
-  .handoff{margin:0 0 12px;padding:10px 14px;background:var(--paper-hi);border-left:3px solid var(--red);font-size:13.5px}
 
   /* part: get my brief */
   .tools-row{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;border:0}
@@ -257,6 +254,8 @@
   .slot.drop .slot-pic{border-color:var(--red);border-style:solid;box-shadow:0 0 0 3px var(--red)}
   .slot-btns{display:flex;flex-wrap:wrap;gap:8px}
   .slot-btns .btn{flex:1 1 auto;min-height:40px}
+  .which{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px;font-size:13.5px}
+  .which .btn[aria-pressed="true"]{background:var(--ink-p);color:var(--paper-hi);box-shadow:none}
   .diffs{margin:0 0 20px;padding:14px 16px;background:rgba(255,255,255,.3);border-left:3px solid var(--red)}
   .diffs ol{margin:0 0 10px;padding-left:22px;font-size:14.5px;line-height:1.5}
   .diffs ol:empty{display:none}

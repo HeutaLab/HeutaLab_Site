@@ -100,6 +100,24 @@ test('every state on the bar has words, so nothing is told by colour alone', () 
   assert.equal(v.now.noir, 'Send the brief');
 });
 
+test('the start action names the case on the desk', () => {
+  const j = fresh({ c: 3 });
+  assert.equal(J.resume(j).label, 'Start Case 03');
+});
+
+test('a part is named only when it is where the case file will open', () => {
+  // saved at the check, but the description is not written: the case file opens step 2 at its first unfinished part
+  const j = fresh({ at: { 1: 'compare' }, done: { 1: ['look'] } });
+  assert.equal(J.resume(j).label, 'Continue Step 2: Choose and describe');
+  assert.deepEqual(J.position(j), { step: 2, part: null });
+});
+
+test('a case number saved as text is still a case', () => {
+  const j = J.tidy({ c: '3' });
+  assert.equal(j.c, 3);
+  assert.equal(J.status(j).c, 3);
+});
+
 test('a damaged saved journey is put right, not thrown away', () => {
   const j = J.tidy({ c: 99, done: [], work: 'x' });
   assert.equal(j.c, 1);
