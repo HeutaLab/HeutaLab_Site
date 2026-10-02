@@ -393,7 +393,9 @@ function readWorkshop(body) {
   const { provider, model, key, level, days, cap } = body;
   const platform = body.platform == null || body.platform === "" ? null : body.platform;
   if (!SERVICES.includes(provider) || !Object.hasOwn(PROVIDERS, provider)) return { error: "Choose Claude, ChatGPT or Gemini." };
-  if (typeof model !== "string" || !PROVIDERS[provider].models.includes(model)) return { error: "Choose a model from the list." };
+  // Any model name of the right shape: the lists in ai.js go out of date as services retire
+  // models, and the live test below is what really decides whether the name is good.
+  if (typeof model !== "string" || !/^[A-Za-z0-9._:-]{1,80}$/.test(model)) return { error: "Choose a model from the list, or type its name: letters, numbers, dots and dashes only." };
   if (typeof key !== "string" || !/^[\x21-\x7e]{20,300}$/.test(key)) return { error: "That does not look like an API key. Paste the whole key, with no spaces." };
   if (!Number.isInteger(level) || level < 1 || level > 3) return { error: "Choose the highest level." };
   if (platform !== null && !THEME.platforms.some((p) => p.id === platform)) return { error: "Choose the image tool from the list." };

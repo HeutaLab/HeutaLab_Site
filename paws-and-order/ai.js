@@ -27,11 +27,12 @@ export const PROVIDERS = {
   },
   openai: {
     label: 'ChatGPT (OpenAI)', keyLabel: 'OpenAI API key', keyHelp: 'platform.openai.com',
-    defaultModel: 'gpt-5-mini', models: ['gpt-5-mini', 'gpt-5.4-mini', 'gpt-5'],
+    defaultModel: 'gpt-6-luna', models: ['gpt-6-luna', 'gpt-6.1-sol', 'gpt-6-astra'],
   },
   google: {
     label: 'Gemini (Google AI Studio)', keyLabel: 'Google AI Studio API key', keyHelp: 'aistudio.google.com',
-    defaultModel: 'gemini-2.5-flash', models: ['gemini-2.5-flash', 'gemini-2.5-pro'],
+    // Google serves the 2.5 models only to accounts that already used them: a new key gets 404.
+    defaultModel: 'gemini-3.5-flash-lite', models: ['gemini-3.5-flash-lite', 'gemini-3.8-flash'],
   },
   custom: {
     label: 'Other (OpenAI-compatible address)', keyLabel: 'API key (leave empty if none)', keyHelp: '',

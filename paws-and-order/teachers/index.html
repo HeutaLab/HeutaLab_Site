@@ -374,6 +374,11 @@
               <label for="wModel">Model</label>
               <select id="wModel"></select>
             </div>
+            <div class="field2 wide" id="wOtherBox" hidden>
+              <label for="wOther">The model&rsquo;s name</label>
+              <p class="hint2" id="wOtherHint">Type it exactly as the AI service writes it, for example in its list of models. Use this if the models in the list have been retired.</p>
+              <input type="text" id="wOther" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="80" aria-describedby="wOtherHint">
+            </div>
             <div class="field2 wide">
               <label for="wKey" id="wKeyLabel">API key</label>
               <p class="hint2" id="wKeyHint"><span id="wKeyWhere"></span> It goes to heutalab.com once, is tested with one short message to the AI service, and is stored there encrypted. This page never keeps it: the box is emptied as soon as the server answers.</p>
@@ -869,9 +874,14 @@ function syncService() {
   $('wKeyLabel').textContent = p.keyLabel;
   $('wKeyWhere').textContent = 'Make one at ' + p.keyHelp + '.';
   wModel.innerHTML = p.models.map(m => '<option value="' + esc(m) + '"' + (m === p.defaultModel ? ' selected' : '') + '>'
-    + esc(m) + (m === p.defaultModel ? ' (recommended)' : '') + '</option>').join('');
+    + esc(m) + (m === p.defaultModel ? ' (recommended)' : '') + '</option>').join('')
+    // Services retire models faster than this list is edited, so a teacher can always type a name.
+    + '<option value="">Another model (type its name)</option>';
+  syncOther();
 }
+function syncOther() { $('wOtherBox').hidden = wModel.value !== ''; }
 wProvider.addEventListener('change', syncService);
+wModel.addEventListener('change', () => { syncOther(); if (wModel.value === '') $('wOther').focus(); });
 syncService();
 function showKey(on) {
   wShow.checked = on;
@@ -888,7 +898,12 @@ $('wMake').addEventListener('click', async () => {
     wKey.focus();
     return;
   }
-  const provider = wProvider.value, model = wModel.value;
+  const provider = wProvider.value, model = wModel.value || $('wOther').value.trim();
+  if (!model) {
+    err.textContent = 'Type the model’s name first, or choose one from the list.';
+    $('wOther').focus();
+    return;
+  }
   busy(btn, 'Testing the key…');
   wait.textContent = 'Testing your key with the AI service, then making the code. This can take up to a minute.';
   const out = await W.teacher.create({ provider, model, key: wKey.value, level: $('wLevel').value, platform: $('wPlatform').value,

@@ -499,7 +499,7 @@ test("the teacher's calls: what is sent, what comes back, and nothing is kept", 
 
   const fails = [
     [[400, { reason: "key_test", message: "The AI service refused that key." }], "key_test", "The AI service refused that key."],
-    [[400, { reason: "invalid", message: "Choose a model from the list." }], "invalid", "Choose a model from the list."],
+    [[400, { reason: "invalid", message: "Choose a model from the list, or type its name: letters, numbers, dots and dashes only." }], "invalid", "Choose a model from the list, or type its name: letters, numbers, dots and dashes only."],
     [[401, { reason: "wrong", message: "That code and manage key do not match a workshop." }], "wrong"],
     [[410, { reason: "ended", message: "That workshop has been ended." }], "ended"],
     [[429, { reason: "busy", message: "Too many codes are being made right now. Try again in a few minutes." }], "busy"],

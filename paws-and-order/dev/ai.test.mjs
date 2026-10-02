@@ -60,10 +60,10 @@ test("own-key mode calls each service as before, with the browser header for Ant
 
   await AI.makeBrief(own({ provider: "openai" }), input());
   assert.equal(sent[1].url, "https://api.openai.com/v1/chat/completions");
-  assert.deepEqual([sent[1].headers.authorization, sent[1].body.model, sent[1].body.max_completion_tokens], ["Bearer " + KEY, "gpt-5-mini", 6000]);
+  assert.deepEqual([sent[1].headers.authorization, sent[1].body.model, sent[1].body.max_completion_tokens], ["Bearer " + KEY, "gpt-6-luna", 6000]);
 
-  await AI.makeBrief(own({ provider: "google", model: "gemini-2.5-pro" }), input());
-  assert.equal(sent[2].url, "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent");
+  await AI.makeBrief(own({ provider: "google", model: "gemini-3.8-flash" }), input());
+  assert.equal(sent[2].url, "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent");
   assert.equal(sent[2].headers["x-goog-api-key"], KEY);
 
   // "Other": the address the teacher typed, in the browser only.

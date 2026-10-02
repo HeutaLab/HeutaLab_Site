@@ -216,7 +216,7 @@ test("what a teacher sends is checked before their key is tried", async () => {
   const bad = [
     { provider: "custom" }, { provider: "custom", model: "", base: "https://attacker.example/v1" },
     ...HOSTILE.map((provider) => ({ provider })), { provider: ["anthropic"] }, { provider: undefined },
-    { model: "gpt-5-mini" }, { model: "claude-made-up" }, { model: "constructor" }, { model: 7 },
+    { model: "" }, { model: "has a space" }, { model: "models/../secret" }, { model: "x".repeat(81) }, { model: "naïve-model" }, { model: 7 }, { model: null },
     { key: "short" }, { key: "has a space in the middle of it 12345" }, { key: "x".repeat(301) }, { key: "café-key-0123456789-0123456789" }, { key: 12345678901234567890 }, { key: null },
     { level: 0 }, { level: 4 }, { level: "2" }, { level: 1.5 }, { level: null },
     { platform: "midjourney" }, { platform: "constructor" }, { platform: 3 },
@@ -231,9 +231,9 @@ test("what a teacher sends is checked before their key is tried", async () => {
   assert.equal(ai.sent.length, 0, "no key was sent anywhere");
   assert.equal(env.USAGE.sqlite.prepare("SELECT COUNT(*) AS n FROM paws_workshops").get().n, 0);
   // A base address in the request is not a thing: the three services' own addresses are used.
-  await makeWorkshop(env, { base: "https://attacker.example/v1", provider: "openai", model: "gpt-5-mini" });
+  await makeWorkshop(env, { base: "https://attacker.example/v1", provider: "openai", model: "gpt-6-luna" });
   assert.equal(ai.sent[0].url, "https://api.openai.com/v1/chat/completions");
-  await makeWorkshop(env, { provider: "google", model: "gemini-2.5-flash" });
+  await makeWorkshop(env, { provider: "google", model: "gemini-3.8-flash" });
   assert.ok(ai.sent[1].url.startsWith("https://generativelanguage.googleapis.com/"));
 });
 
@@ -518,13 +518,13 @@ test("the six-hour count per browser: a courtesy cap, kept under the Paws prefix
 
 test("the service, model and key come from the code's row, never from the request", async () => {
   const env = makeEnv();
-  const w = await makeWorkshop(env, { provider: "openai", model: "gpt-5-mini" });
+  const w = await makeWorkshop(env, { provider: "openai", model: "gpt-6-luna" });
   resetAI();
   const r = await call(env, "brief", briefBody(w.code, { provider: "custom", base: "https://attacker.example/v1", model: "attacker-model", key: "attacker-key-0123456789-0123456789", settings: { provider: "google" } }));
   assert.equal(r.status, 200);
   assert.equal(ai.sent.length, 1);
   assert.equal(ai.sent[0].url, "https://api.openai.com/v1/chat/completions");
-  assert.equal(ai.sent[0].body.model, "gpt-5-mini");
+  assert.equal(ai.sent[0].body.model, "gpt-6-luna");
   assert.equal(ai.sent[0].headers.authorization, "Bearer " + TEACHER_KEY);
   assert.ok(!JSON.stringify(ai.sent[0]).includes("attacker"));
   await call(env, "compare", compareBody(w.code, { provider: "custom", base: "https://attacker.example/v1", key: "attacker-key-0123456789-0123456789" }));
@@ -850,7 +850,7 @@ test("a pasted-back prompt is caught with no AI call and no charge, but only for
 
 test("the teacher's key is in no reply and no log line, whatever goes wrong", async () => {
   const env = makeEnv();
-  const good = { provider: "openai", key: TEACHER_KEY, model: "gpt-5-mini", level: 3, platform: null, days: 7, cap: 300 };
+  const good = { provider: "openai", key: TEACHER_KEY, model: "gpt-6-luna", level: 3, platform: null, days: 7, cap: 300 };
 
   // The service echoes the key in its error, as OpenAI does.
   ai.status = 401;
@@ -909,10 +909,26 @@ test("an error thrown anywhere answers 500 busy and logs only the route and the 
   assert.ok(!gave(TEACHER_KEY) && !gave("exploded"));
 });
 
+test("a model that is not in the page's list can be used: the live test decides, not the list", async () => {
+  // Services retire models faster than the lists in ai.js are edited (Google's 2.5 models, October 2026).
+  const env = makeEnv();
+  const w = await makeWorkshop(env, { provider: "google", model: "gemini-9.9-not-listed" });
+  assert.match(w.code, /^[a-z]+-[a-z]+-[a-z]+-\d{2}$/);
+  assert.equal(ai.sent[0].url, "https://generativelanguage.googleapis.com/v1beta/models/gemini-9.9-not-listed:generateContent");
+  resetAI();
+  // The service saying "no such model" is passed on in plain words, and nothing is stored.
+  ai.status = 404;
+  const before = env.USAGE.sqlite.prepare("SELECT COUNT(*) AS n FROM paws_workshops").get().n;
+  const no = await call(env, "workshop/create", { provider: "google", key: TEACHER_KEY, model: "gemini-2.5-flash", level: 1, platform: null, days: 1, cap: 300 });
+  assert.equal(no.status, 400);
+  assert.match(no.data.message, /does not know that model/);
+  assert.equal(env.USAGE.sqlite.prepare("SELECT COUNT(*) AS n FROM paws_workshops").get().n, before);
+});
+
 test("PAWS_TEST_AI_BASE is honoured for this machine only", async () => {
   for (const base of ["http://localhost:1234/v1", "http://127.0.0.1:1234/v1/", "https://localhost/v1"]) {
     const env = makeEnv({ PAWS_TEST_AI_BASE: base });
-    const w = await makeWorkshop(env, { provider: "google", model: "gemini-2.5-flash" });
+    const w = await makeWorkshop(env, { provider: "google", model: "gemini-3.8-flash" });
     await call(env, "brief", briefBody(w.code));
     await call(env, "compare", compareBody(w.code));
     assert.equal(ai.sent.length, 3);

@@ -54,7 +54,7 @@ test("the charge statement in real SQLite: up to the cap, then nothing, then a n
 
 test("insert, read, end, level and count in real SQLite", { skip }, () => {
   const lines = run([
-    ...bind("w1", 3, "gemini", "google", "gemini-2.5-flash", "c2FsdA==", "aXY=", "Y3Q=", "hash", "2026-10-05T10:00:00.000Z", "2026-10-12T10:00:00.000Z", 600),
+    ...bind("w1", 3, "gemini", "google", "gemini-3.8-flash", "c2FsdA==", "aXY=", "Y3Q=", "hash", "2026-10-05T10:00:00.000Z", "2026-10-12T10:00:00.000Z", 600),
     SQL.insert + ";", CHANGES,
     SQL.insert + ";", CHANGES,                                // the same id again: ignored, not an error
     ...bind("w1"), SQL.read + ";",
@@ -68,7 +68,7 @@ test("insert, read, end, level and count in real SQLite", { skip }, () => {
   ]);
   assert.deepEqual(lines, [
     "changes=1", "changes=0",
-    "w1|3|gemini|google|gemini-2.5-flash|c2FsdA==|aXY=|Y3Q=|hash|2026-10-05T10:00:00.000Z|2026-10-12T10:00:00.000Z||0|600|",
+    "w1|3|gemini|google|gemini-3.8-flash|c2FsdA==|aXY=|Y3Q=|hash|2026-10-05T10:00:00.000Z|2026-10-12T10:00:00.000Z||0|600|",
     "1", "changes=1", "changes=1", "changes=0", "changes=0", "changes=0",
     "1|1|1|1|2026-10-06T09:00:00.000Z|0",
   ]);
