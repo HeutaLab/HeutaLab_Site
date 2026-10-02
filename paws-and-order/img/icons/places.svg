@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-labelledby="title">
+  <title id="title">Places</title>
+  <g fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 28h24M6.2 28V13.8h5V9.2h9.6v4.6h5V28M11.2 15.8H6.5M25.5 15.8h-4.7M13 28v-7.6h6V28"/>
+    <path d="m16 11.5 1.1 2.1 2.3.3-1.7 1.6.4 2.3-2.1-1.1-2.1 1.1.4-2.3-1.7-1.6 2.3-.3z"/>
+    <path d="M3.5 30c7.8-.5 16.1-.5 25 0" stroke-width=".9" opacity=".45"/>
+  </g>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-labelledby="title">
+  <title id="title">My comics</title>
+  <g fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 6.5h18.5v21H5zM8.5 3.5H27v21h-3.5M8.3 10.1h11.9v6.3H8.3zM8.3 19.3h5.1v4.2H8.3zM16 19.3h4.2v4.2H16z"/>
+    <path d="m9.6 14 2.2-1.9 2 1.5 2.7-2.3 2.3 2.7" stroke-width="1.35"/>
+    <path d="M4 29c5.8.5 12 .5 18.4 0" stroke-width=".9" opacity=".45"/>
+  </g>
+</svg>

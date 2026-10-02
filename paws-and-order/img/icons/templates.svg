@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-labelledby="title">
+  <title id="title">Templates</title>
+  <g fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 3.8h16l4 4v20.4H6zM22 3.8v4h4M9.3 11.2h13.4v6.2H9.3zM9.3 20.4h5.4v4.5H9.3zM17.4 20.4h5.3v4.5h-5.3z"/>
+    <path d="M8.5 9c4.8-.5 9.4-.5 13.9 0" stroke-width=".9" opacity=".45"/>
+  </g>
+</svg>

@@ -14,7 +14,7 @@ No build step and no framework: plain pages and ES modules. The pages work from 
 | 4 Check and improve | `picture/#check` |
 | 5 Build and share | `builder/` |
 
-`index.html` is the home page (Start my comic, I'm teaching this). `teachers/` has the lesson plan, setup, privacy and how to reset shared devices. `explore/` holds the gang, the places, colours, levels, templates and My comics. The order and names of the steps live in `stages` in `theme.js` and are the same everywhere.
+`index.html` is the home page (Start my comic, I'm teaching this). `teachers/` has the lesson plan, setup, privacy and how to reset shared devices. `explore/` holds the gang, the places, colours, levels, templates and My comics. `slips/` is an extra activity, Spot the AI slips: two pictures with AI mistakes left in (the robot chef and the doughnut factory) for learners to find, explain and fix one thing in. Its notes for teachers are on the Teachers page. The order and names of the steps live in `stages` in `theme.js` and are the same everywhere.
 
 Progress is kept in the browser (`localStorage`, key `paws_journey_v1`) and does not follow a learner to another device. Start again clears it.
 
@@ -35,7 +35,8 @@ The helper only writes text prompts. Pictures are made in a separate image tool 
 - `gang.js`: the cast, learner-made characters and places. `shelf.js`: templates and My comics.
 - `pound.css`, `pencil.js` (draws the wobbly outlines), `fonts/` (self-hosted open-licence fonts), `img/`.
 - `builder/?template=<key>` opens a starter page from `templates` in `theme.js`; `builder/?comic=<id>` opens a page saved in My comics. Comics are kept in this browser's IndexedDB (`police-pound-builder`, keys `comic:<id>`).
-- `img/stickers/<character>/`: the gang cut out of their character sheets, `<name>.webp` with a see-through background and `<name>-b.webp` with a white border, listed in `stickers` in `theme.js`.
+- `img/stickers/<character>/`: the gang as cut-outs, `<name>.webp` with a see-through background and `<name>-b.webp` with a white border, listed in `stickers` in `theme.js`. The border is grown from the cut-out's own outline, never drawn a second time, so the two always match.
+- `img/icons/`: the comic-stroke icon set (32 by 32, `currentColor`). The menu uses five of them, written into each page.
 - `gemini-prompts/`: an art prompt pack. Not linked from the site.
 
 Old home-page links (`#brief`, `#cast`, `#palettes`, `#compare`, `#templates`, `#mycomics`, `#grownups`) are sent on to the page that now holds them.

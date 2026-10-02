@@ -79,7 +79,8 @@ h1[tabindex="-1"]:focus,h2[tabindex="-1"]:focus,h3[tabindex="-1"]:focus,h4[tabin
 .side nav{display:flex;flex-direction:column;padding:8px 0}
 .side nav a{display:flex;align-items:center;gap:14px;margin:0 8px;padding:11px 10px;color:#fff;text-decoration:none;font-family:var(--label);font-size:18px;line-height:1.1;
   border-bottom:1px solid rgba(255,255,255,.14)}
-.side nav a svg{width:24px;height:24px;flex:none;stroke:currentColor;fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+/* the comic-stroke icons (img/icons/) are drawn on a 32 grid and carry their own line weight */
+.side nav a svg{width:28px;height:28px;flex:none;stroke:currentColor;fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
 .side nav a:hover{background:rgba(255,255,255,.08)}
 .side nav a.on{background:var(--yellow);color:var(--frame);border:3px solid var(--frame);border-radius:12px 5px 13px 6px / 6px 13px 5px 12px;margin:3px 6px;box-shadow:3px 3px 0 #000}
 .side nav a.on:hover{background:#ffe27a}
@@ -777,7 +778,7 @@ body.bigscreen > .side,body.bigscreen .trail,body.bigscreen .pagehead,body.bigsc
   .side nav{flex:1 1 100%;flex-direction:row;flex-wrap:wrap;padding:2px 6px 8px}
   .side nav a{flex:none;box-sizing:border-box;min-height:44px;margin:0 2px;padding:8px 10px;gap:8px;font-size:16px;border-bottom:0}
   .side nav a.on{margin:0 4px}
-  .side nav a svg{width:19px;height:19px}
+  .side nav a svg{width:22px;height:22px}
   .side .side-foot{display:none}
   /* With script (class js on <html>, set by one line in the head, so the closed menu is there from the first paint):
      one sticky row of a fixed height, and the links wait behind the Menu button. journey.js shows the button and
@@ -789,7 +790,7 @@ body.bigscreen > .side,body.bigscreen .trail,body.bigscreen .pagehead,body.bigsc
   .js .side nav:not(.is-open){display:none}
   .js .side nav a{min-height:50px;margin:0;padding:10px 12px;gap:14px;font-size:19px;border-bottom:1px solid rgba(255,255,255,.14)}
   .js .side nav a.on{margin:4px 0}
-  .js .side nav a svg{width:24px;height:24px}
+  .js .side nav a svg{width:28px;height:28px}
   /* everything you press is at least 44px each way for a finger; .btn.small keeps its type size */
   .btn,.pill,.copybtn,.copybtn2,.checkbtn{min-width:44px;min-height:44px}
   .btn,.copybtn2{justify-content:center}

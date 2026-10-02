@@ -103,7 +103,8 @@ export default {
   // Places in Doodleville a picture can be set in. Like a character, each has a
   // fixed `look` that is repeated word for word, so the place stays the same from
   // picture to picture. `id` is also its reference picture (img/ref/) and its
-  // small card picture (img/thumbs/).
+  // small card picture (img/thumbs/). The doughnut factory is not one of them: its picture has AI
+  // mistakes left in, and is used for Spot the AI slips (slips/), not as a model to repeat.
   places: [
     { id: 'police-pound', name: 'The Police Pound',
       look: 'the front of a blue police station with a star sign, orange steps, a police car parked outside and a doughnut in the bin' },
@@ -127,8 +128,6 @@ export default {
       look: 'a funfair at dusk with a big wheel, a merry-go-round, striped stalls and a candyfloss cart under strings of lights' },
     { id: 'library', name: 'The Library',
       look: 'a cosy library with tall bookshelves, a rolling ladder, beanbags, a round window and a desk lamp' },
-    { id: 'doughnut-factory', name: 'The Doughnut Factory',
-      look: 'a doughnut factory with winding conveyor belts covered in doughnuts, colourful pipes, mixers and steam' },
   ],
 
   // Who is friends with whom, shown under the gang. Empty until there is a gang.
@@ -433,9 +432,9 @@ export default {
   // in % of the panel]. To add a character, cut their sheet the same way and add an entry here.
   stickers: [
     { who: 'Inspector Nettle', dir: 'nettle', items: [
-      ['standing', 'Standing', 30], ['side', 'Side on', 30], ['walking-away', 'Walking away', 30],
-      ['examining', 'Examining clues', 38], ['notes', 'Taking notes', 30], ['pointing', 'Pointing', 40],
-      ['face-pleased', 'Pleased', 24], ['face-thinking', 'Thinking', 24], ['face-confused', 'Confused', 24],
+      ['standing', 'Standing', 37], ['side', 'Side on', 30], ['walking-away', 'Walking away', 30],
+      ['examining', 'Examining clues', 41], ['notes', 'Taking notes', 30], ['pointing', 'Pointing', 49],
+      ['face-pleased', 'Pleased', 27], ['face-thinking', 'Thinking', 28], ['face-confused', 'Confused', 24],
       ['face-suspicious', 'Suspicious', 24], ['face-determined', 'Determined', 24], ['face-cross', 'Cross', 24],
       ['magnifying-glass', 'Magnifying glass', 12], ['notepad', 'Notepad', 12], ['pencil', 'Pencil', 8],
     ] },
@@ -448,7 +447,7 @@ export default {
     ] },
     { who: 'Chief Grumbleton', dir: 'grumbleton', items: [
       ['standing', 'Standing', 40], ['side', 'Side on', 30], ['walking-away', 'Walking away', 39],
-      ['glaring', 'Glaring', 40], ['doughnut-theft', 'Doughnut theft', 46], ['bossing', 'Bossing', 46],
+      ['glaring', 'Glaring', 40], ['doughnut-theft', 'Doughnut theft', 48], ['bossing', 'Bossing', 46],
       ['face-scowl', 'Grumpy scowl', 30], ['face-smirk', 'Sneaky smirk', 30], ['face-shocked', 'Shocked', 30],
       ['face-tantrum', 'Tantrum', 30], ['face-guilty', 'Guilty', 30], ['face-pleased', 'Secretly pleased', 30],
       ['cap', 'Peaked cap', 14], ['tusk', 'Walrus tusk', 9], ['trophy', 'Doughnut trophy', 9],
@@ -475,8 +474,8 @@ export default {
       ['spectacles', 'Spectacles', 14], ['tray', 'Tray', 14], ['milkshake', 'Milkshake', 8],
     ] },
     { who: 'Vivi Velvet', dir: 'vivi', items: [
-      ['standing', 'Standing', 20], ['side', 'Side on', 19], ['walking-away', 'Walking away', 20],
-      ['singing', 'Singing', 34], ['bashful', 'Bashful', 21], ['dancing', 'Dancing', 37],
+      ['standing', 'Standing', 18], ['side', 'Side on', 19], ['walking-away', 'Walking away', 20],
+      ['singing', 'Singing', 34], ['bashful', 'Bashful', 21], ['dancing', 'Dancing', 40],
       ['face-cool', 'Cool glance', 21], ['face-sly', 'Sly smile', 26], ['face-surprised', 'Surprised', 25],
       ['face-giggling', 'Giggling', 27], ['face-sad', 'Sad', 30], ['face-wink', 'Cheeky wink', 27],
       ['earrings', 'Star earrings', 14], ['boa', 'Feather boa', 14], ['microphone', 'Microphone', 14],

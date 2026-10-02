@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.className+=' js'</script>
+<meta name="theme-color" content="#ffd23f">
+<title>Spot the AI slips - Paws &amp; Order</title>
+<meta name="description" content="Spot the AI slips: two pictures an AI image tool made, with mistakes left in. Find one, say why it is a problem, and choose one thing to change.">
+<link rel="stylesheet" href="../pound.css">
+<style>
+  /* Spot the AI slips only. Everything shared is in pound.css. Names made here start with sl-. */
+  .sl-how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0 0;padding:0;list-style:none;counter-reset:sl}
+  .sl-how li{counter-increment:sl;padding:12px 14px 12px 52px;position:relative;background:#fff;border:3px solid var(--frame);border-radius:12px 5px 13px 6px / 6px 13px 5px 12px;font-size:18px;line-height:1.3}
+  .sl-how li::before{content:counter(sl);position:absolute;left:12px;top:11px;width:28px;height:28px;display:grid;place-items:center;padding-top:.28em;box-sizing:border-box;
+    background:var(--yellow);border:2px solid var(--frame);border-radius:50%;font-family:var(--brush);font-size:16px;line-height:1}
+  .sl-how b{display:block;font-family:var(--brush);font-weight:400;font-size:17px;letter-spacing:.03em;text-transform:uppercase}
+  .sl-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin:22px 0 0;align-items:start}
+  .sl-card{padding:16px 18px 18px;background:var(--panel)}
+  .sl-card h2{margin:6px 0 10px;font-family:var(--brush);font-weight:400;font-size:26px;line-height:1.05;letter-spacing:.02em;text-transform:uppercase}
+  /* the label comes before the picture, so nobody takes it for a perfect model */
+  .sl-tag{display:inline-block;margin:0;padding:.42em 12px .14em;background:var(--night);color:#fff;border-radius:999px;font-family:var(--brush);font-size:14px;line-height:1.2;letter-spacing:.06em;text-transform:uppercase}
+  .sl-card img{width:100%;height:auto;border:3px solid var(--frame);border-radius:10px;background:var(--panel-2)}
+  .sl-hint{margin:12px 0 4px;font-size:18px;line-height:1.4}
+  .sl-card .field2{margin-top:12px}
+  .sl-card textarea{min-height:64px}
+  .sl-saved{margin:14px 0 0;font-size:16.5px;color:var(--ink-dim)}
+  .sl-next{margin:22px 0 0}
+  .sl-acts{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0 0}
+  @media (max-width:880px){.sl-how,.sl-cards{grid-template-columns:minmax(0,1fr)}}
+  @media print{.pagehead,.sl-acts,.side,.skyframe,.basefoot{display:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the page</a>
+<aside class="side">
+  <a class="brand" href="/" aria-label="HeutaLab home"><span>Heuta</span><span>Lab</span></a>
+  <a class="side-name" href="../">Paws &amp; Order</a>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="sideNav" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>Menu</span></button>
+  <nav id="sideNav" aria-label="Paws &amp; Order">
+    <a href="../references/?start=1" data-nav="start"><svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 17.2 3 14.3l4-.7-.6-4 3.7 1.7 1.7-3.7 2.3 3.2 3-2.6 1 3.8 3.9-1 .2 4 4 .2-1.6 3.6 3.4 2.1-3 2.7 2.3 3.2-4 .8.1 2.1H8.4l.3-2.5-4-.4 2-3.5-3.2-2.4z"/><path d="m13.2 12.8 7.2 4.3-7.2 4.3z"/><path d="M9.4 27.7c3.9.6 8.1.6 12.2 0" stroke-width=".9" opacity=".45"/></g></svg><span>Start</span></a>
+    <a href="../references/" data-nav="look"><svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M3.2 13.8s4.4-6 10.3-6 10.4 6 10.4 6-4.5 6-10.4 6-10.3-6-10.3-6z"/><circle cx="13.5" cy="13.8" r="3.5"/><circle cx="21.7" cy="21" r="5.1"/><path d="m25.4 24.6 3.7 3.7M7 23.8l-2.2 2.1M9.8 25.5l-.9 3"/><path d="M10.8 12.7c1.2-1.4 3.2-1.8 4.7-.8" stroke-width=".9" opacity=".45"/></g></svg><span>Look closely</span></a>
+    <a href="../builder/" data-nav="builder"><svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 4.5h23v23h-23zM4.5 15.5h23M16 4.5v23"/><path d="M7.3 7.7h5.6v4.4H7.3zM19.2 18.8h5.2v5.4h-5.2z"/><path d="m9 23.9 11.8-12.1 2.1 2L11 26l-3.5.9z"/><path d="M6.8 14c2.2-.5 4.4-.5 6.5 0" stroke-width=".9" opacity=".45"/></g></svg><span>Comic maker</span></a>
+    <a href="../teachers/" data-nav="teachers"><svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M4.2 8.2c4.3-1 8.3-.1 11.8 2.4v16c-3.5-2.5-7.5-3.3-11.8-2.3zM27.8 8.2c-4.3-1-8.3-.1-11.8 2.4v16c3.5-2.5 7.5-3.3 11.8-2.3z"/><path d="m22.9 3.4 1.2 2.3 2.6.4-1.9 1.8.5 2.6-2.4-1.2-2.3 1.2.4-2.6-1.9-1.8 2.7-.4z"/><path d="M7.2 12c2.1-.2 4 .3 5.7 1.4M19.3 13.4c1.8-1.1 3.6-1.6 5.6-1.4" stroke-width=".9" opacity=".45"/></g></svg><span>Teachers</span></a>
+    <a href="../explore/" data-nav="explore"><svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M15.8 29V4.2M15.8 7.2H5.2l-2.3 4.1 2.3 4.1h10.6M16 17.1h10.7l2.3 4.1-2.3 4.1H16"/><path d="m8.2 9.5 3.2 1.9-3.2 1.8M23.8 19.3l-3.2 1.9 3.2 1.8"/><path d="M12.5 29h6.7"/><path d="M4.9 16.8c2.9.4 6.1.4 9.4 0" stroke-width=".9" opacity=".45"/></g></svg><span>Explore</span></a>
+  </nav>
+  <div class="side-foot"><svg viewBox="0 0 120 40" aria-hidden="true"><path d="M2 39V24h8v-9h7v24h6V9h10v30h5V19h8v20h6V4h4V1h2v3h4v35h5V17h9v22h6V23h7v16h5V13h9v26h4V27h6v12"/></svg>Paws &amp; Order<small>Part of HeutaLab</small></div>
+</aside>
+<div class="page">
+
+  <header class="pagehead" style="--c:#b18cff">
+    <p class="pagehead-kicker"><a href="../">Paws &amp; Order</a></p>
+    <h1>Spot the AI slips</h1>
+    <img class="pagehead-art" src="../img/stickers/nettle/examining.webp" alt="" width="760" height="755">
+  </header>
+
+  <main id="main">
+    <p class="caption">An AI image tool made these two pictures. They look good at first. Look again: the tool slipped up. Find one thing that would be hard to build, hard to move, or hard to draw again from another side.</p>
+
+    <ol class="sl-how">
+      <li><b>I notice&hellip;</b> Name one thing you can point to.</li>
+      <li><b>It may be a problem because&hellip;</b> Say why it would not work.</li>
+      <li><b>I would change&hellip;</b> Choose one exact fix.</li>
+    </ol>
+
+    <div class="sl-cards">
+      <article class="sl-card frame" aria-labelledby="sl-chef-h">
+        <p class="sl-tag">Spot the AI slips</p>
+        <h2 id="sl-chef-h">Robot Chef</h2>
+        <img src="../img/ref/robot-chef.jpg" alt="A cartoon robot chef in an apron and a tall hat, holding a spatula." loading="lazy">
+        <p class="sl-hint">Look at the claws, the tools, the arm joints, the apron ties and the body panels. Which one would be hardest to make work, or to draw the same way twice?</p>
+        <div class="field2">
+          <label for="sl-chef-notice">I notice&hellip;</label>
+          <p class="hint2" id="sl-chef-notice-h">One thing you can point to in the picture.</p>
+          <textarea id="sl-chef-notice" data-pic="chef" data-part="notice" maxlength="300" rows="2" aria-describedby="sl-chef-notice-h"></textarea>
+        </div>
+        <div class="field2">
+          <label for="sl-chef-why">It may be a problem because&hellip;</label>
+          <p class="hint2" id="sl-chef-why-h">Why would it not work, or be hard to draw again?</p>
+          <textarea id="sl-chef-why" data-pic="chef" data-part="why" maxlength="300" rows="2" aria-describedby="sl-chef-why-h"></textarea>
+        </div>
+        <div class="field2">
+          <label for="sl-chef-change">I would change&hellip;</label>
+          <p class="hint2" id="sl-chef-change-h">One exact fix. Only one.</p>
+          <textarea id="sl-chef-change" data-pic="chef" data-part="change" maxlength="300" rows="2" aria-describedby="sl-chef-change-h"></textarea>
+        </div>
+      </article>
+      <article class="sl-card frame" aria-labelledby="sl-factory-h">
+        <p class="sl-tag">Spot the AI slips</p>
+        <h2 id="sl-factory-h">Doughnut Factory</h2>
+        <img src="../img/ref/doughnut-factory.jpg" alt="A cartoon doughnut factory with pipes, machines, racks and a winding conveyor belt." loading="lazy">
+        <p class="sl-hint">Trace the conveyor belt and the pipes with your finger. What does each machine do? Where do the doughnuts start, and where do they end up?</p>
+        <div class="field2">
+          <label for="sl-factory-notice">I notice&hellip;</label>
+          <p class="hint2" id="sl-factory-notice-h">One thing you can point to in the picture.</p>
+          <textarea id="sl-factory-notice" data-pic="factory" data-part="notice" maxlength="300" rows="2" aria-describedby="sl-factory-notice-h"></textarea>
+        </div>
+        <div class="field2">
+          <label for="sl-factory-why">It may be a problem because&hellip;</label>
+          <p class="hint2" id="sl-factory-why-h">Why would it not work, or be hard to draw again?</p>
+          <textarea id="sl-factory-why" data-pic="factory" data-part="why" maxlength="300" rows="2" aria-describedby="sl-factory-why-h"></textarea>
+        </div>
+        <div class="field2">
+          <label for="sl-factory-change">I would change&hellip;</label>
+          <p class="hint2" id="sl-factory-change-h">One exact fix. Only one.</p>
+          <textarea id="sl-factory-change" data-pic="factory" data-part="change" maxlength="300" rows="2" aria-describedby="sl-factory-change-h"></textarea>
+        </div>
+      </article>
+    </div>
+    <p class="sl-saved" id="slSaved" role="status"></p>
+
+    <div class="callout sl-next">
+      <b>Change one thing</b>
+      <p>A slip is not a disaster. You fix one thing, then look again. In step 4 you do the same with your own picture: find one thing that went wrong, and change the words that caused it.</p>
+      <div class="sl-acts">
+        <a class="btn" href="../picture/#check">Go to step 4: Check and improve</a>
+        <a class="btn ghost" href="../references/">Look closely at more pictures</a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="skyframe" aria-hidden="true">
+  <img class="who" src="../img/stickers/nettle/face-pleased.webp" alt="" width="452" height="480">
+  <p class="ribbon">Every great story starts with a closer look&hellip;</p>
+  <svg class="comet" viewBox="0 0 150 100"><path d="M8 94C40 80 72 56 98 34" fill="none" stroke="#ffd23f" stroke-width="10" stroke-linecap="round" opacity=".35"/><path d="M26 86C52 72 76 54 98 34" fill="none" stroke="#ffd23f" stroke-width="5" stroke-linecap="round" opacity=".7"/><path d="M112 6l6 14 15 1-11 10 4 15-14-8-13 8 3-15-11-10 15-1z" fill="#ffd23f" stroke="#141414" stroke-width="3.5" stroke-linejoin="round"/></svg>
+</div>
+<footer class="basefoot">
+  <p class="say">Look closely. Choose and describe. Create with AI. Check and improve. Build your story.</p>
+  <p>Your work stays on this device. With a workshop code, the words you send to the prompt helper go through heutalab.com to the AI service your teacher chose. Pictures never leave this device. Part of <a href="/">HeutaLab</a>.</p>
+</footer>
+<script type="module">
+import J from '../journey.js';
+
+// The chrome first, so the menu and the Start link work whatever happens further down.
+J.mount({ page: 'slips' });
+
+// What a learner writes here is kept with the rest of their work (so Start again clears it) and
+// goes nowhere else. Nothing on this page is sent to the prompt helper.
+const boxes = [...document.querySelectorAll('textarea[data-pic]')];
+const saved = (J.get().slips && typeof J.get().slips === 'object') ? J.get().slips : {};
+for (const b of boxes) {
+  const v = saved[b.dataset.pic] && saved[b.dataset.pic][b.dataset.part];
+  if (typeof v === 'string') b.value = v.slice(0, 300);
+}
+let timer = 0;
+function keep() {
+  const slips = {};
+  for (const b of boxes) (slips[b.dataset.pic] = slips[b.dataset.pic] || {})[b.dataset.part] = b.value.slice(0, 300);
+  J.save({ slips });
+  document.getElementById('slSaved').textContent = 'Saved on this device only.';
+}
+for (const b of boxes) b.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(keep, 400); });
+addEventListener('pagehide', () => { if (timer) { clearTimeout(timer); keep(); } });
+</script>
+<script type="module" src="../pencil.js"></script>
+</body>
+</html>
