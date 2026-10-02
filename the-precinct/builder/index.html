@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.className+=' js'</script>
 <meta name="theme-color" content="#0a0e0f">
 <title>Comic Builder: The Precinct</title>
 <meta name="description" content="Build your own noir comic page: add your pictures, then captions, speech balloons and sound effects, at prose, medium or advanced level.">
@@ -13,7 +14,7 @@
 <link rel="stylesheet" href="/the-precinct/precinct.css">
 <style>
   /* how it works: three steps on a note */
-  .howto{margin-top:6px;padding:20px 26px 16px}
+  .howto{margin-top:22px;padding:20px 26px 16px}
   .howto ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 30px;counter-reset:h}
   .howto li{counter-increment:h;position:relative;padding-left:44px;font-size:13.5px;line-height:1.45}
   .howto li::before{content:counter(h);position:absolute;left:0;top:1px;width:30px;height:34px;background:var(--red);color:#fff;font-family:var(--label);
@@ -48,6 +49,8 @@
   .dock label.zoom{font-size:12.5px;color:var(--ink-dim);display:flex;align-items:center;gap:6px}
   .dock input[type=range]{accent-color:var(--red-hi);width:120px}
   .dock .undo{margin-left:6px}
+  .dock .saved{font-size:12px;color:var(--ink-dim);white-space:nowrap}
+  .dock .morebtn{display:none}   /* a narrow screen folds the less-used picture tools behind it */
   .dock :focus-visible,.tray :focus-visible,dialog.lib :focus-visible{outline-color:var(--yellow)}
   .stylebtn{display:inline-flex;align-items:center;gap:10px;background:var(--paper-hi);color:var(--ink-p);border:0;padding:7px 12px 7px 14px;cursor:pointer;position:relative;
     font-family:var(--label);font-weight:600;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;box-shadow:3px 3px 0 #000;white-space:nowrap;flex:none}
@@ -90,7 +93,7 @@
   .tray.stk .w button{width:78px;height:104px;padding:4px;background:#1b2526;display:flex;align-items:center;justify-content:center}
   .tray.stk .w button.on{border-color:var(--yellow);outline:2px solid var(--yellow)}
   .tray.stk .w img{max-width:100%;max-height:100%;pointer-events:none}
-  .tray.stk .who{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .tray.stk .who{display:flex;flex-wrap:wrap;gap:6px;padding-bottom:2px}
   .tray.stk .who button{flex:none;display:flex;align-items:center;gap:8px;font-family:var(--label);font-size:12px;letter-spacing:.12em;text-transform:uppercase;line-height:1;padding:3px 12px 3px 3px}
   .tray.stk .who button[aria-selected=true]{background:var(--yellow);border-color:var(--yellow);color:#14110c}
   .tray.stk .who img{width:34px;height:34px;object-fit:cover;object-position:50% 0;background:#1b2526;pointer-events:none}   /* the top of the standing figure: head and shoulders */
@@ -202,6 +205,32 @@
     letter-spacing:.14em;text-transform:uppercase;font-size:max(12px,2cqw);cursor:pointer}
   .addframe:hover{border-color:#111;color:#111}
 
+  /* from your case: the pictures added at Step 4, waiting to go on the page */
+  .mine{margin-top:22px;padding:16px 20px 16px}
+  .mine h2{font-family:var(--label);font-weight:700;font-size:17px;letter-spacing:.05em;text-transform:uppercase;line-height:1.15;margin:0 0 4px}
+  .mine p{margin:0 0 10px;font-size:13.5px}
+  .mine-pics{display:flex;flex-wrap:wrap;gap:10px}
+  .mine-pics button{display:flex;flex-direction:column;gap:5px;width:132px;padding:6px;cursor:pointer;background:var(--paper-hi);border:1.5px solid var(--ink-p2);color:var(--ink-p);
+    font-family:var(--label);font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-align:left;line-height:1.25}
+  .mine-pics button:hover{border-color:var(--red);box-shadow:0 0 0 2px var(--red)}
+  .mine-pics img{width:100%;aspect-ratio:1/1;object-fit:cover;background:#070a0a}
+  .lib-mine{padding:14px 18px 0}
+  .lib-mine h4,.lib-ours{margin:0 0 8px;font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim)}
+  .lib-ours{padding:14px 18px 0;margin:0}
+  .lib-mine .lib-grid{padding:0;max-height:none}
+  .lib-scroll{overflow:auto;max-height:calc(86vh - 70px)}
+  .lib-scroll .lib-grid{max-height:none;overflow:visible}
+
+  /* finish: the case is closed, and here is how to keep the page */
+  dialog.finish{width:min(480px,calc(100vw - 28px));padding:22px 24px 20px;background:var(--paper-hi);color:var(--ink-p);border:2px solid var(--ink-p);box-shadow:8px 8px 0 #000}
+  dialog.finish::backdrop{background:rgba(0,0,0,.75)}
+  dialog.finish h2{font-family:var(--slab);font-weight:400;font-size:28px;line-height:1.1;margin:0 0 8px;text-shadow:.5px 0 0 currentColor}
+  dialog.finish p{margin:0 0 14px;font-size:14.5px;line-height:1.5}
+  dialog.finish .btns{display:flex;flex-direction:column;gap:10px}
+  dialog.finish .btn{min-height:44px}
+  dialog.finish a.btn.ghost{color:var(--ink-p)}
+  dialog.finish :focus-visible{outline-color:var(--ink-p)}
+
   /* library picker */
   dialog.lib{width:min(920px,calc(100vw - 32px));max-height:86vh;background:var(--panel);color:var(--ink);border:2px solid var(--paper);padding:0}
   dialog.lib::backdrop{background:rgba(0,0,0,.75)}
@@ -220,7 +249,7 @@
   @media print{
     html,body{background:#fff !important}
     body{padding:0 !important}
-    .masthead,.skip,.howto,.tools,.notice,footer,.it-ctl,.tip-h,.rs-h,.rot-h,.prot-h,.ttl-h,.rm,.addframe,.dock,.tray,.tip,.scard{display:none !important}
+    .masthead,.skip,.trail,.mine,.howto,.tools,.notice,footer,.it-ctl,.tip-h,.rs-h,.rot-h,.prot-h,.ttl-h,.rm,.addframe,.dock,.tray,.tip,.scard{display:none !important}
     .page{padding:0;margin:0;max-width:none}
     .workbench,#bench{padding:0;background:none;margin:0;border:0}
     .sheet{box-shadow:none;width:auto;height:calc(100vh - 1mm);max-width:100%;margin:0 auto;break-inside:avoid;
@@ -236,16 +265,28 @@
   }
 
   @media (max-width:880px){.howto ol{grid-template-columns:minmax(0,1fr)}}
+  /* A narrow screen: the tools stack in rows that wrap, never a row that scrolls sideways. The page's two main
+     actions (Download PNG, Finish) share the first row; print, start again, undo and redo take the second. The
+     less-used picture tools fold behind More. The dock may grow tall, so it scrolls up and down inside itself,
+     and the page keeps enough room underneath for it (set in renderDock). */
   @media (max-width:600px){.workbench{margin-left:-16px;margin-right:-16px;border-left:0;border-right:0}#bench{padding:12px 8px}
     .howto{padding:18px 18px 14px}
-    .dock{flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:6px;padding:8px 10px calc(8px + env(safe-area-inset-bottom))}
+    .mine{padding:14px 16px}
+    .mine-pics button{width:calc(50% - 5px)}
+    .dock{flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:7px;padding:9px 10px calc(9px + env(safe-area-inset-bottom));max-height:48vh;overflow-y:auto}
     .dock .what{display:none}
-    .dock .sg{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:9px 9px 2px 0;margin-top:-7px}
-    .dock .sg > b{min-width:62px;flex:none}
-    .dock .pill,.dock .btn{padding:5px 8px;font-size:11px;white-space:nowrap;flex:none}
-    .dock .sw{flex:none;width:24px;height:24px}
+    .dock .sg{flex-wrap:wrap;gap:6px}
+    .dock .sg > b{margin-right:2px}
+    .dock .pill,.dock .btn{padding:8px 10px;font-size:11.5px;min-height:38px}
+    .dock .sg[data-g="page"] .btn{flex:1 1 40%;min-height:44px;font-size:13px}
+    .dock .sw{flex:none;width:30px;height:30px}
     .dock .undo{margin-left:0}
-    .dock .note,.dock .more{white-space:nowrap}}
+    .dock .long{display:none}   /* "Print" is enough on a phone */
+    .dock label.zoom{flex-basis:100%}
+    .dock label.zoom input{flex:1;width:auto}
+    .dock .morebtn{display:inline-block}
+    .dock:not(.more-open) .xtra{display:none}
+    .dock .note{flex-basis:100%}}
 </style>
 </head>
 <body id="top">
@@ -274,15 +315,19 @@
     <img class="art noir" src="/the-precinct/img/card-story.jpg" alt="" width="640" height="465">
     <header class="top">
       <p class="brand"><a class="logo" href="/the-precinct/"><span class="the">The</span><span class="name">Precinct</span><span class="strap">AI comics. Real ideas.</span></a></p>
-      <nav aria-label="The Precinct">
-        <a href="/the-precinct/#cases">The cases</a>
-        <a href="/the-precinct/references/">References</a>
+      <nav id="siteNav" aria-label="The Precinct">
+        <a href="/the-precinct/references/">Look closely</a>
         <a href="/the-precinct/builder/" aria-current="page">Comic builder</a>
-        <a href="/the-precinct/#teachers">Teachers</a>
-        <a href="/the-precinct/#about">About</a>
-        <a class="out" href="/">HeutaLab</a>
+        <a href="/the-precinct/teachers/">Teachers</a>
+        <a href="/the-precinct/resources/">Resources</a>
+        <span class="more">
+          <a href="/the-precinct/about/">About</a>
+          <a href="/the-precinct/key/">AI key page (adults)</a>
+          <a class="out" href="/">HeutaLab</a>
+        </span>
       </nav>
-      <a class="cta-line" href="/the-precinct/#cases" id="topStart"><span class="lab">Start a case</span> <span class="arr">&rarr;</span></a>
+      <button type="button" class="menu-btn" aria-expanded="false" aria-controls="siteNav" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span class="m">Menu</span><span class="d">More</span></button>
+      <a class="cta-line" href="/the-precinct/references/?start=1" data-resume><span class="lab">Start</span> <span class="arr">&rarr;</span></a>
     </header>
     <div class="pagehead paper tape">
       <p class="where">Back at The Precinct</p>
@@ -293,13 +338,20 @@
   </div>
 
   <main id="main">
+    <nav id="trail" class="trail" aria-label="Your case, step by step"></nav>
     <section class="howto paper b" aria-label="How the builder works">
       <ol>
         <li><b>Bring your pictures in</b>Tap a panel, then upload a picture you made in your AI image tool, paste one you have copied, drop one on the panel, or borrow one of ours.</li>
         <li><b>Tell the story</b>A paragraph under each picture at Prose. Captions and speech balloons at Medium. Thoughts and sound effects too at Advanced.</li>
         <li><b>Keep it</b>Download the page as a picture, or print it. It also saves itself in this browser as you go.</li>
       </ol>
-      <p>Your pictures never leave this device. A picture isn&rsquo;t right yet? <a href="/the-precinct/#compare">Go back and compare it</a>. No pictures yet? <a href="/the-precinct/#cases">Start a case</a>.</p>
+      <p>Your pictures never leave this device. A picture isn&rsquo;t right yet? <a href="/the-precinct/case/#check">Go back to Check and improve</a>.</p>
+    </section>
+
+    <section class="mine paper" id="mine" aria-labelledby="mineTitle" hidden>
+      <h2 id="mineTitle">From your case</h2>
+      <p id="mineWho"></p>
+      <div class="mine-pics" id="minePics"></div>
     </section>
 
     <section class="tools paper" aria-label="Level">
@@ -330,7 +382,21 @@
 
 <dialog class="lib" id="libDlg">
   <div class="lib-head"><h3>Pick a picture</h3><button class="btn ghost small" id="libClose">Close</button></div>
-  <div class="lib-grid" id="libGrid"></div>
+  <div class="lib-scroll">
+    <div class="lib-mine" id="libMine" hidden><h4>From your case</h4><div class="lib-grid" id="libMineGrid"></div></div>
+    <h4 class="lib-ours" id="libOurs" hidden>From our library</h4>
+    <div class="lib-grid" id="libGrid"></div>
+  </div>
+</dialog>
+<dialog class="finish" id="finishDlg" aria-labelledby="finishTitle">
+  <h2 id="finishTitle">Case closed.</h2>
+  <p>Your page is saved in this browser, on this device. To keep it or share it, download it or print it.</p>
+  <div class="btns">
+    <button type="button" class="btn" data-finish="png">Download PNG <span class="arr">&darr;</span></button>
+    <button type="button" class="btn ghost" data-finish="print">Print or save as PDF</button>
+    <a class="btn ghost" id="finishNext" href="/the-precinct/"></a>
+    <button type="button" class="btn ghost" data-finish="close">Keep working on this page</button>
+  </div>
 </dialog>
 <input type="file" id="fileIn" accept="image/*" hidden>
 <div class="tray" id="sfxBank" hidden aria-label="Sound effects"></div>
@@ -339,12 +405,14 @@
 <div class="tip" id="tip" hidden role="status"></div>
 <div class="scard" id="styleCard" hidden role="dialog" aria-label="About this page style"></div>
 
-<script src="/the-precinct/top.js" defer></script>
 <script type="module">
 import THEME from '/the-precinct/theme.js';
+import Jn from '/the-precinct/journey.js';
+import Pics from '/the-precinct/pictures.js';
 
 (function(){
   const $ = id => document.getElementById(id);
+  Jn.mount({ page: 'builder', step: 5 });
 
   // ---------- data ----------
   const LEVEL_NOTES = {
@@ -431,11 +499,18 @@ import THEME from '/the-precinct/theme.js';
   const get = k => idb('readonly', st => st.get(k));
   const del = k => idb('readwrite', st => st.delete(k));
 
-  let saveT = null;
+  let saveT = null, savedAt = 0;
   function save(){
     clearTimeout(saveT);
-    saveT = setTimeout(() => put('state', JSON.parse(JSON.stringify(S))), 400);
+    saveT = setTimeout(async () => { await put('state', JSON.parse(JSON.stringify(S))); savedAt = Date.now(); showSaved(); }, 400);
   }
+  // The dock says, in words, that the page is kept: "Saved just now", then the time of the last save.
+  const savedWords = () => !db ? 'Not saved in this browser: download your page'
+    : !savedAt ? 'Saves itself in this browser'
+    : Date.now() - savedAt < 60000 ? 'Saved just now'
+    : 'Saved at ' + new Date(savedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  function showSaved(){ const el = $('savedLine'); if (el && el.textContent !== savedWords()) el.textContent = savedWords(); }
+  setInterval(showSaved, 20000);
 
   const urls = {};  // picture id -> object URL
   async function urlFor(img){
@@ -1069,8 +1144,8 @@ import THEME from '/the-precinct/theme.js';
   });
 
   // ---------- pictures ----------
-  async function setPicture(i, file){
-    const blob = await shrink(file);
+  async function setPicture(i, file, asIs){
+    const blob = asIs ? file : await shrink(file);   // a case picture was shrunk when it was added
     const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
     if (db) await put('img:' + id, blob);
     urls[id] = URL.createObjectURL(blob);
@@ -1146,6 +1221,43 @@ import THEME from '/the-precinct/theme.js';
     const f = [...e.dataTransfer.files].find(f => f.type.startsWith('image/'));
     if (!t || !f) { if (f) note('Drop the picture onto a panel.'); return; }
     note(''); sel = { p: +t.dataset.i, it: null }; setPicture(+t.dataset.i, f);
+  });
+
+  // From your case: the pictures added at Step 4 (Check and improve), kept in this browser by pictures.js.
+  // They show above the page and at the top of the library; tapping one puts it in the chosen panel,
+  // or in the first empty one.
+  let mine = [];
+  async function loadMine(){
+    mine = await Pics.all();
+    const j = Jn.read(), c = Jn.caseOf(j.c), w = (j.work && j.work[j.c]) || {};
+    const who = (Array.isArray(w.cast) ? w.cast : []).map(id => THEME.cast.find(x => x.id === id)).filter(Boolean);
+    const place = THEME.places.find(x => x.id === w.place), pal = c.tier && THEME.palettes[j.palette || THEME.defaultPalette];
+    const begun = who.length || w.own || w.attempt || w.brief;   // nothing to say about a case nobody has started
+    const facts = begun ? [who.map(x => x.name).join(' and '), place && place.name, pal && pal.label + ' palette'].filter(Boolean) : [];
+    // The sticker tray opens on the case's character.
+    const g = who.length && THEME.stickers.find(x => x.who === who[0].short);
+    if (g) stkWho = g.dir;
+    $('mine').hidden = !mine.length && !facts.length;
+    $('mineWho').textContent = 'Case 0' + c.n + (facts.length ? ': ' + facts.join(' · ') + '. ' : '. ')
+      + (mine.length ? 'Tap a picture to put it in the chosen panel, or in the first empty one.' : 'No pictures added at Step 4 yet: upload, paste or drop one on a panel.')
+      + (who.length && S.level !== 'prose' ? ' Stickers of ' + who.map(x => x.short).join(' and ') + ' are under Add, once a panel has a picture.' : '');
+    const btn = (m, i) => '<button type="button" data-mine="' + i + '"><img src="' + (m.url = m.url || URL.createObjectURL(m.blob)) + '" alt="">Case 0' + m.n + ': ' + Pics.SLOT_NAMES[m.slot].toLowerCase() + '</button>';
+    $('minePics').innerHTML = mine.map(btn).join('');
+    $('libMineGrid').innerHTML = mine.map((m, i) => '<button type="button" data-mine="' + i + '" aria-label="Case 0' + m.n + ': ' + Pics.SLOT_NAMES[m.slot].toLowerCase() + '"><img src="' + m.url + '" alt=""></button>').join('');
+    $('libMine').hidden = $('libOurs').hidden = !mine.length;
+  }
+  function useMine(i, into){
+    const m = mine[i]; if (!m) return;
+    const at = into != null ? into : sel.p != null ? sel.p : panelList().findIndex(p => !p.img);
+    if (at < 0) { note('Every panel has a picture. Tap the one to replace, then tap your picture again.'); return; }
+    note(''); sel = { p: at, it: null };
+    setPicture(at, m.blob, true);
+    Jn.announce('Picture added to ' + (S.level === 'prose' ? 'frame ' : 'panel ') + (at + 1) + '.');
+  }
+  $('minePics').addEventListener('click', e => { const b = e.target.closest('[data-mine]'); if (b) useMine(+b.dataset.mine); });
+  $('libMineGrid').addEventListener('click', e => {
+    const b = e.target.closest('[data-mine]'); if (!b) return;
+    $('libDlg').close(); useMine(+b.dataset.mine, pendingFor);
   });
 
   // Library
@@ -1240,7 +1352,7 @@ import THEME from '/the-precinct/theme.js';
   // ---------- the dock: page tools, then panel tools, then box styles, as each is chosen ----------
   const ADD_NAMES = { caption: 'Caption box', speech: 'Speech balloon', thought: 'Thought bubble', sfx: 'Sound effect', sticker: 'Sticker' };
   const NEW = '<i class="new">NEW</i>';
-  let exporting = false, shownGroups = [];
+  let exporting = false, shownGroups = [], moreOpen = false;
   const chosenItem = () => sel.it != null && S.level !== 'prose' && S.panels[sel.p] && S.panels[sel.p].items[sel.it];
   // Add waits until the panel has a picture (or already has words): picture first, then the story.
   const addReady = () => sel.p != null && S.level !== 'prose' && !chosenItem() && (S.panels[sel.p].img || S.panels[sel.p].items.length > 0);
@@ -1261,9 +1373,10 @@ import THEME from '/the-precinct/theme.js';
     else if (p) {
       h = '<span class="what">' + (S.level === 'prose' ? 'Frame ' : 'Panel ') + (sel.p + 1) + '</span>'
         + g('picture', '<b>Picture</b>' + (p.img
-          ? b('upload', 'Replace') + b('lib', 'Library') + b('flip', 'Flip &#8646;', { v: 'flip', on: p.fit.flip, title: 'Flip the picture left to right, so a character faces the other way' })
-            + b('flip', 'Flip &#8645;', { v: 'flipY', on: p.fit.flipY, title: 'Flip the picture upside down, for a reflection in a puddle or a window' })
-            + (p.fit.r ? '<span class="note">' + p.fit.r + '°</span>' + b('straighten', 'Straighten') : '') + b('clear', 'Remove')
+          ? b('upload', 'Replace') + b('lib', 'Library') + b('more', moreOpen ? 'Fewer tools' : 'More tools', { cls: 'pill morebtn', exp: moreOpen })
+            + b('flip', 'Flip &#8646;', { cls: 'pill xtra', v: 'flip', on: p.fit.flip, title: 'Flip the picture left to right, so a character faces the other way' })
+            + b('flip', 'Flip &#8645;', { cls: 'pill xtra', v: 'flipY', on: p.fit.flipY, title: 'Flip the picture upside down, for a reflection in a puddle or a window' })
+            + (p.fit.r ? '<span class="note xtra">' + p.fit.r + '°</span>' + b('straighten', 'Straighten', { cls: 'pill xtra' }) : '') + b('clear', 'Remove', { cls: 'pill xtra' })
             + '<label class="zoom">Zoom <input type="range" id="zoom" min="1" max="3" step="0.05" value="' + p.fit.z + '"></label>'
           : b('upload', 'Upload') + b('lib', 'From our library') + '<span class="note">or paste (Ctrl/&#8984;+V) or drop a picture on the panel</span>'));
       if (addReady()) h += g('add', '<b>Add</b>' + (S.level === 'advanced' ? ['caption', 'speech', 'thought', 'sfx', 'sticker'] : ['caption', 'speech', 'sticker'])
@@ -1276,12 +1389,16 @@ import THEME from '/the-precinct/theme.js';
           + b('style', esc(styleInfo().name) + ' <span class="n">' + (STYLE_KEYS_ORDER.indexOf(S.style) + 1) + ' / ' + STYLE_KEYS_ORDER.length + '</span> &#9656;',
             { cls: 'stylebtn', title: 'Give the whole page the look of the next comics era' })
           + b('about', 'About this style', { cls: 'btn ghost small', on: cardOpen })) : '')
+        // The page's two main actions. Print and Start again sit with Undo and Redo: the second row on a narrow screen.
         + g('page', b('png', 'Download PNG <span class="arr">&darr;</span>', { cls: 'btn small', id: 'pngBtn', off: exporting })
-          + b('print', 'Print or save as PDF', { cls: 'btn ghost small' }) + b('reset', 'Start again', { cls: 'btn ghost small' }));
+          + b('finish', 'Finish', { cls: 'btn small', title: 'Close the case: keep your page, then start the next one' }));
+      done = b('print', 'Print<span class="long"> or save as PDF</span>', { cls: 'btn ghost small', title: 'Print the page, or save it as a PDF' }) + b('reset', 'Start again', { cls: 'btn ghost small' });
     }
     h += '<div class="sg undo">' + done + b('undo', 'Undo', { cls: 'btn ghost small', id: 'undoBtn', off: !past.length, title: 'Undo (Ctrl/&#8984;+Z)' })
-      + b('redo', 'Redo', { cls: 'btn ghost small', id: 'redoBtn', off: !future.length, title: 'Redo (Shift+Ctrl/&#8984;+Z)' }) + '</div>';
+      + b('redo', 'Redo', { cls: 'btn ghost small', id: 'redoBtn', off: !future.length, title: 'Redo (Shift+Ctrl/&#8984;+Z)' })
+      + '<span class="saved" id="savedLine">' + savedWords() + '</span></div>';
     const dock = $('dock');
+    dock.classList.toggle('more-open', moreOpen);
     dock.innerHTML = h;
     // Groups that weren't in the dock a moment ago slide in, so new tools are seen arriving.
     const ids = [...dock.querySelectorAll('[data-g]')].map(x => x.dataset.g);
@@ -1365,6 +1482,8 @@ import THEME from '/the-precinct/theme.js';
         if (b.dataset.cmd === 'sfront') { const items = S.panels[sel.p].items; items.push(items.splice(sel.it, 1)[0]); sel.it = items.length - 1; }
         save(); return render();
       }
+      case 'more': moreOpen = !moreOpen; return renderDock();
+      case 'finish': return finish();
       case 'png': sel = NONE(); render(); return exportPNG();
       case 'print': sel = NONE(); return render().then(() => print());
       case 'reset':
@@ -1379,6 +1498,23 @@ import THEME from '/the-precinct/theme.js';
     zoomTo(sel.p, +e.target.value);
   });
   $('dock').addEventListener('change', e => { if (e.target.id === 'zoom') zooming = false; });
+
+  // Finish: step 5 is done for the case on the desk. The page stays where it is; the card says how to keep it
+  // and offers the next case.
+  function finish(){
+    sel = NONE(); render();
+    const j = Jn.markBuilt(), r = Jn.resume(j), a = $('finishNext');
+    a.textContent = r.kind === 'next' ? r.label : 'Back to the start';
+    a.href = r.kind === 'next' ? r.href : Jn.BASE;
+    const d = $('finishDlg');
+    if (d.showModal) d.showModal(); else note('Case closed. Download or print your page to keep it.');
+  }
+  $('finishDlg').addEventListener('click', e => {
+    const b = e.target.closest('[data-finish]'); if (!b) return;
+    $('finishDlg').close();
+    if (b.dataset.finish === 'png') exportPNG();
+    if (b.dataset.finish === 'print') print();
+  });
 
   // Sound effects: a tray of words above the dock. A word goes into the chosen panel, or replaces the chosen sound effect.
   let sfxOpen = false;
@@ -1686,6 +1822,7 @@ import THEME from '/the-precinct/theme.js';
     const saved = await get('state');
     if (saved && saved.panels) S = Object.assign(fresh(), saved);
     migrate();
+    await loadMine();
     render();
     tidyImages();
     if (document.fonts) document.fonts.ready.then(fitTitle);   // measure the title again once its lettering has loaded

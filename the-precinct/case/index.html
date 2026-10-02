@@ -1,0 +1,1645 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.className+=' js'</script>
+<meta name="theme-color" content="#0a0e0f">
+<title>Your case: The Precinct</title>
+<meta name="description" content="Steps 2 to 4 of The Precinct: choose and describe, create with AI, then check and improve. One part on screen at a time.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Special+Elite&family=Courier+Prime:wght@400;700&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Caveat:wght@600&display=swap">
+<link rel="stylesheet" href="/the-precinct/precinct.css">
+<link rel="stylesheet" href="/the-precinct/case.css">
+</head>
+<body id="top">
+
+<!-- noir: pulls the mixed green, blue and yellow source panels into one palette,
+     teal shadows to yellow highlights. worn: wears holes in a stamp or the logo. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="noir" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values=".33 .5 .17 0 0  .33 .5 .17 0 0  .33 .5 .17 0 0  0 0 0 1 0"/>
+    <feComponentTransfer>
+      <feFuncR type="table" tableValues="0.03 0.09 0.30 0.95 0.98"/>
+      <feFuncG type="table" tableValues="0.05 0.21 0.45 0.78 0.92"/>
+      <feFuncB type="table" tableValues="0.055 0.22 0.42 0.27 0.70"/>
+    </feComponentTransfer>
+  </filter>
+  <filter id="worn" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" seed="7" result="n"/>
+    <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -5 3.7" result="m"/>
+    <feComposite in="SourceGraphic" in2="m" operator="in"/>
+  </filter>
+</svg>
+
+<a class="skip" href="#case">Skip to your case</a>
+
+<div class="keybanner" id="keyBanner" role="region" aria-label="API key needed" hidden>
+  <p><b>Bring your own AI key</b>You will need to create a personal API key to use the HeutaLab Comic Book Creator with AI-assisted character and setting creation. Please go to the API key page to paste in your API key.</p>
+  <div class="keybanner-btns">
+    <a class="btn red" href="/the-precinct/key/">Go to the API key page <span class="arr">&rarr;</span></a>
+    <button type="button" class="btn ghost" id="keyBannerClose">Carry on without it</button>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="masthead mini">
+    <img class="art noir" src="/the-precinct/img/hero.jpg" alt="" width="950" height="364">
+    <header class="top">
+      <p class="brand"><a class="logo" href="/the-precinct/"><span class="the">The</span><span class="name">Precinct</span><span class="strap">AI comics. Real ideas.</span></a></p>
+      <nav id="siteNav" aria-label="The Precinct">
+        <a href="/the-precinct/references/">Look closely</a>
+        <a href="/the-precinct/builder/">Comic builder</a>
+        <a href="/the-precinct/teachers/">Teachers</a>
+        <a href="/the-precinct/resources/">Resources</a>
+        <span class="more">
+          <a href="/the-precinct/about/">About</a>
+          <a href="/the-precinct/key/">AI key page (adults)</a>
+          <a class="out" href="/">HeutaLab</a>
+        </span>
+      </nav>
+      <button type="button" class="menu-btn" aria-expanded="false" aria-controls="siteNav" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span class="m">Menu</span><span class="d">More</span></button>
+    </header>
+  </div>
+
+  <main id="main">
+  <nav id="trail" class="trail" aria-label="Your case, step by step"></nav>
+
+  <!-- ================= the case file: steps 2 to 4, one part at a time ================= -->
+  <section class="casefile folder" id="case" aria-labelledby="caseTitle">
+
+    <header class="case-head">
+      <p class="stamp" id="caseStamp">Case 01</p>
+      <h1 id="caseTitle" tabindex="-1">Build your character</h1>
+      <div class="case-meta">
+        <span class="level-tag" id="levelTag">Rookie level</span>
+        <span class="ai-ready" id="aiReady" hidden></span>
+        <button type="button" class="btn ghost small" id="caseChange" aria-expanded="false" aria-controls="casePick">Change case</button>
+      </div>
+    </header>
+
+    <div class="case-pick" id="casePick" hidden>
+      <h2 id="casePickTitle">Choose a case</h2>
+      <ul class="case-list" id="caseList" aria-labelledby="casePickTitle"></ul>
+      <p class="hint">Each case keeps its own work. Changing case clears nothing.</p>
+    </div>
+
+    <div class="case-bar" id="caseBar">
+      <p class="level-intro" id="levelIntro"></p>
+      <fieldset class="swap" id="swapRow" hidden>
+        <legend>This case draws</legend>
+        <label class="tool"><input type="radio" name="swap" value="character"> A character</label>
+        <label class="tool"><input type="radio" name="swap" value="setting"> A setting</label>
+      </fieldset>
+      <p class="level-need" id="levelNeed" hidden></p>
+      <p class="keyline" id="keyLine" hidden></p>
+    </div>
+
+    <div class="case-body" id="caseBody">
+
+        <!-- ===== Step 2: Choose and describe ===== -->
+
+        <!-- who -->
+        <section class="stepp" data-step="who" hidden>
+          <p class="where">On The Precinct</p>
+          <h2 tabindex="-1">Choose a character</h2>
+          <p class="lead">Pick who you&rsquo;re drawing. <span id="whoNote"></span></p>
+          <div id="whoPicked" tabindex="-1"></div>
+          <fieldset class="choose" id="whoChoose">
+            <legend class="sr" id="whoLegend">Characters</legend>
+            <div class="cast-grid" id="castGrid"></div>
+            <button type="button" class="btn ghost small morebtn" id="castMore" aria-expanded="false" aria-controls="castExtra">See three more characters</button>
+            <div class="cast-grid" id="castExtra" hidden></div>
+            <label class="opt" id="cast-own"><input type="radio" name="cast" value="own"><span><b>A character of my own</b>Leave the cast out and draw someone new. Your own description carries their look.</span></label>
+          </fieldset>
+          <details class="clues">
+            <summary>Story clues: who wants what</summary>
+            <div class="relations" id="relations"></div>
+          </details>
+          <div class="acts"><p class="why" id="whoWhy" aria-live="polite"></p><button type="button" class="link back" data-back>&larr; Back</button><button type="button" class="btn" data-next>Next: <span class="to"></span> <span class="arr">&rarr;</span></button></div>
+        </section>
+
+        <!-- place -->
+        <section class="stepp" data-step="place" hidden>
+          <p class="where">On The Precinct</p>
+          <h2 tabindex="-1">Does this picture need a place?</h2>
+          <p class="lead" id="placeLead">A place is optional. Choose one and your picture happens there: its look goes into your brief for you.</p>
+          <fieldset class="yn" id="placeYN">
+            <legend class="sr">A place for this picture</legend>
+            <label class="opt"><input type="radio" name="needplace" value="no"><span><b>Not yet</b>Just the character.</span></label>
+            <label class="opt"><input type="radio" name="needplace" value="yes"><span><b>Choose a place</b>Ten places from the story.</span></label>
+          </fieldset>
+          <div id="placePicked" tabindex="-1"></div>
+          <fieldset class="choose" id="placeChoose" hidden>
+            <legend class="sr">Places</legend>
+            <div class="place-grid" id="placeGrid"></div>
+          </fieldset>
+          <div class="acts"><button type="button" class="link back" data-back>&larr; Back</button><button type="button" class="btn" data-next>Next: <span class="to"></span> <span class="arr">&rarr;</span></button></div>
+        </section>
+
+        <!-- palette -->
+        <section class="stepp" data-step="palette" hidden>
+          <p class="where">On The Precinct</p>
+          <h2 tabindex="-1">Choose a palette</h2>
+          <p class="lead">Noir here is always monochrome, in one of five palettes. Choose one, and it goes into your brief for you.</p>
+          <fieldset class="choose">
+            <legend class="sr">Palettes</legend>
+            <div class="pal-grid" id="palGrid"></div>
+          </fieldset>
+          <div class="acts"><button type="button" class="link back" data-back>&larr; Back</button><button type="button" class="btn" data-next>Next: <span class="to"></span> <span class="arr">&rarr;</span></button></div>
+        </section>
+
+        <!-- notice -->
+        <section class="stepp" data-step="notice" hidden>
+          <p class="where">On The Precinct</p>
+          <h2 tabindex="-1">Write what you notice</h2>
+          <p class="lead">Look before you ask for anything. The desk reads this before it writes your brief.</p>
+          <div class="notice-grid">
+            <figure class="ref">
+              <img id="caseRef2" src="" alt="">
+              <button type="button" class="zoom" data-zoom aria-label="Look closer: open the picture at full size"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.500" cy="10.500" r="6.500"/><path d="M15.500 15.500L21 21M10.500 8v5M8 10.500h5"/></svg></button>
+              <figcaption><span id="caseRefCap">Reference</span><button type="button" class="btn ghost small" id="refNext">Another picture <span class="arr">&#x21bb;</span></button></figcaption>
+            </figure>
+            <div class="field">
+              <p class="handoff" id="handoffNote" hidden></p>
+              <ol class="prompts" aria-label="Write these three things">
+                <li><b>What you see.</b> Who or what, and what they are doing.</li>
+                <li><b>The details.</b> Clothes, objects, faces, materials.</li>
+                <li><b>The world around it.</b> Place, light, time, weather.</li>
+              </ol>
+              <details class="fold">
+                <summary>Stuck? Things to look for</summary>
+                <ul id="lookFor"></ul>
+              </details>
+              <label for="attempt">Your own description</label>
+              <textarea id="attempt" maxlength="1500" rows="7" aria-describedby="attemptCount"></textarea>
+              <div class="guide"><span id="attemptCount">0 words, 15 to go</span><span id="saveStatus"></span></div>
+              <button type="button" class="link" id="exampleBtn" aria-expanded="false" aria-controls="exampleBox">Show an example</button>
+              <p class="example" id="exampleBox" hidden><b>An example</b><span id="exampleText"></span></p>
+            </div>
+          </div>
+          <div class="review" id="review" aria-labelledby="reviewTitle">
+            <h3 id="reviewTitle">Your case file so far</h3>
+            <dl id="reviewList"></dl>
+          </div>
+          <div class="acts"><p class="why" id="noticeWhy" aria-live="polite"></p><button type="button" class="link back" data-back>&larr; Back</button><button type="button" class="btn" data-next>Next: <span class="to"></span> <span class="arr">&rarr;</span></button></div>
+        </section>
+
+        <!-- ===== Step 3: Create with AI ===== -->
+
+        <!-- brief -->
+        <section class="stepp" data-step="brief" hidden>
+          <p class="where">On The Precinct</p>
+          <h2 tabindex="-1">Get my brief</h2>
+          <p class="lead">The brief is your <strong>AI image prompt</strong>: the words you paste into your image tool. You describe it. The briefing desk sharpens it.</p>
+          <div class="field">
+            <fieldset class="tools-row" id="platformRow">
+              <legend><h3 id="platformLabel">Which image tool will you use?</h3></legend>
+              <label class="tool"><input type="radio" name="platform" value="gemini"> Gemini</label>
+              <label class="tool"><input type="radio" name="platform" value="chatgpt"> ChatGPT</label>
+              <label class="tool"><input type="radio" name="platform" value="copilot"> Copilot</label>
+              <label class="tool"><input type="radio" name="platform" value="nanobanana"> Nano Banana</label>
+              <label class="tool"><input type="radio" name="platform" value="midjourney"> Midjourney</label>
+            </fieldset>
+            <p class="step-note">The brief is tuned for the tool you pick. Use the one your teacher or facilitator has approved.</p>
+          </div>
+          <div class="field">
+            <label for="idea">Your idea</label>
+            <textarea id="idea" maxlength="800"></textarea>
+            <div class="count"><span id="ideaCount">0</span>/800</div>
+          </div>
+          <p class="tip" id="briefTip"></p>
+          <button type="button" class="go" id="goBtn" disabled>Get my brief</button>
+          <div class="needs" id="briefNeeds" hidden></div>
+          <div id="briefGate"></div>
+          <div class="error" id="errorBox" role="alert" style="display:none"></div>
+          <div class="deskq" id="gateBox" hidden aria-live="polite">
+            <b>Before the brief: a question or two</b>
+            <ul id="gateQs"></ul>
+            <p>Add to your description if you like (<button type="button" class="link" data-step="notice">go back to it</button>), then send it again. Or send it as it is: this time the desk writes your brief either way.</p>
+          </div>
+
+          <div class="result" id="result">
+            <h3 class="h">Your brief</h3>
+            <p class="sub">Read it through. On the next screen you copy it into your image tool.</p>
+            <p class="stock" id="stockNote" hidden><b>From the files</b><span id="stockWhy">The desk is swamped</span>, so this is a stock brief, not one written for your idea. Make it yours: swap in your own words before you paste it.<span class="setup-note" id="setupNote" hidden> Tell your facilitator: the desk&rsquo;s AI account needs attention.</span></p>
+            <div class="pair">
+              <div class="yours"><div class="label" id="attemptLabel">Your description</div><p id="attemptEcho"></p></div>
+              <div class="theirs">
+                <div id="anchorBlock" style="display:none"></div>
+                <div id="promptBlocks"></div>
+              </div>
+            </div>
+            <p class="note"><strong>Why this works</strong><span id="whyText"></span></p>
+            <p class="note"><strong>On another platform</strong><span id="platformText"></span></p>
+            <p class="note"><strong>Watch for</strong><span id="watchText"></span></p>
+          </div>
+          <div class="acts"><button type="button" class="link back" data-back>&larr; Back</button><button type="button" class="btn" id="briefNext" data-next hidden>Next: <span class="to"></span> <span class="arr">&rarr;</span></button></div>
+        </section>
+
+        <!-- make -->
+        <section class="stepp" data-step="make" hidden>
+          <p class="where away"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9 2h5v5M14 2L7 9M12 9.500V14H2V4h4.500"/></svg>In your AI image tool</p>
+          <h2 tabindex="-1">Make the picture</h2>
+          <p class="lead">This part happens somewhere else. Copy your brief, make the picture in your image tool, then come back to this tab.</p>
+          <div class="empty" id="makeEmpty">
+            <strong>No brief for this case yet.</strong> The words you paste come from the part before this one.
+            <br><button type="button" class="btn small" data-step="brief">Get my brief <span class="arr">&rarr;</span></button>
+          </div>
+          <div class="away-grid" id="makeHas" hidden>
+            <div>
+              <div id="makePrompts"></div>
+              <p class="said" id="makeSaid" role="status" hidden><b>Brief copied</b>Now paste it into your image tool. This tab will wait for you.</p>
+            </div>
+            <div>
+              <div class="toolbox">
+                <h3 id="toolName"></h3>
+                <p id="toolHow"></p>
+                <a class="btn ghost" id="toolOpen" href="#" rel="noopener" target="_blank"><span id="toolOpenLab"></span> <span class="arr" aria-hidden="true">&#8599;</span><span class="sr"> (opens in a new tab)</span></a>
+                <p class="hint">The Precinct cannot see what you make there. <button type="button" class="link" data-step="brief">Use a different tool</button></p>
+              </div>
+              <fieldset class="todo" id="todo">
+                <legend>In your image tool</legend>
+                <label><input type="checkbox" data-tick="paste"> Paste the brief</label>
+                <label><input type="checkbox" data-tick="made"> Make the picture</label>
+                <label><input type="checkbox" data-tick="kept"> Save or copy it</label>
+              </fieldset>
+            </div>
+          </div>
+          <div class="acts"><button type="button" class="link back" data-back>&larr; Back</button><button type="button" class="btn" id="gotImage">I&rsquo;ve made my picture <span class="arr">&rarr;</span></button></div>
+        </section>
+
+        <!-- ===== Step 4: Check and improve ===== -->
+
+        <!-- compare -->
+        <section class="stepp" data-step="compare" hidden>
+          <p class="where">Back at The Precinct</p>
+          <h2 tabindex="-1">Check and improve</h2>
+          <p class="lead">Put what came back next to what you asked for. Find one difference, change one thing, and make it again.</p>
+
+          <div class="sidebyside">
+            <div class="field">
+              <h3><label for="cmpPrompt">What you asked for</label></h3>
+              <p class="step-note first" id="cmpPromptNote" hidden></p>
+              <textarea id="cmpPrompt" maxlength="3000" placeholder="Paste the exact brief you gave your image tool."></textarea>
+            </div>
+            <div class="field">
+              <h3 id="slotsTitle">What came back</h3>
+              <div class="slots" id="slots" role="group" aria-labelledby="slotsTitle">
+                <div class="slot" data-slot="first">
+                  <b>First result</b>
+                  <div class="slot-pic"><span>No picture yet</span></div>
+                  <div class="slot-btns"><button type="button" class="btn small" data-add="first">Add your picture</button><button type="button" class="btn ghost small" data-rm="first" hidden>Remove</button></div>
+                </div>
+                <div class="slot" data-slot="improved">
+                  <b>Improved result</b>
+                  <div class="slot-pic"><span>After your change</span></div>
+                  <div class="slot-btns"><button type="button" class="btn ghost small" data-add="improved">Add the new picture</button><button type="button" class="btn ghost small" data-rm="improved" hidden>Remove</button></div>
+                </div>
+              </div>
+              <p class="hint">Choose the picture you saved, paste one you copied (Ctrl or &#8984; + V), or drop it on a box. It stays in this browser: it is not sent anywhere, and it will be waiting in the comic builder.</p>
+              <p class="error" id="picError" role="alert" style="display:none"></p>
+            </div>
+          </div>
+
+          <div class="diffs">
+            <h3 id="diffTitle">One difference at a time</h3>
+            <ol id="diffList" aria-labelledby="diffTitle"></ol>
+            <div class="inrow">
+              <label for="diffIn">A difference I can see</label>
+              <input type="text" id="diffIn" maxlength="200" autocomplete="off" enterkeyhint="done">
+              <button type="button" class="btn ghost small" id="diffAdd">Add it</button>
+            </div>
+            <p class="hint">Look at one thing at a time: style, era, people, text, light, colour. What stayed the same? What changed or went missing?</p>
+          </div>
+
+          <div class="field">
+            <label for="changeIn">The one thing I will change in my brief</label>
+            <input type="text" id="changeIn" maxlength="300" autocomplete="off">
+            <p class="step-note">Change one thing only, so you can see what it did. Then make the picture again and add it as your improved result.</p>
+            <p style="margin:10px 0 0"><button type="button" class="btn ghost" id="reviseBtn">Change my brief and try again</button></p>
+          </div>
+
+          <details class="deskcheck" id="deskCheck">
+            <summary>Ask the desk to compare <small>optional</small></summary>
+            <div class="deskcheck-in">
+              <div class="ask">
+                <b>Ask your tool first</b>
+                <p>The desk can&rsquo;t see your picture, but your image tool can. Give it the picture it made, and only the picture, and ask:</p>
+                <p class="ask-line"><q id="askText">Describe only what you see in this image, as a prompt that would recreate it.</q>
+                  <button type="button" class="btn ghost small" id="askCopy">Copy</button></p>
+                <p class="step-note">Don&rsquo;t paste your brief into that request, or it will just hand your own words back. Then paste what it says below, and the desk puts it next to what you asked for.</p>
+              </div>
+              <div class="field">
+                <label for="cmpDesc">What your tool saw</label>
+                <textarea id="cmpDesc" maxlength="3000" placeholder="Paste your tool&rsquo;s description of the picture it made."></textarea>
+              </div>
+              <div class="field" id="cmpRefStep" hidden>
+                <label for="cmpRef">What it saw in your reference <small>optional</small></label>
+                <p class="step-note first">Commissioner level: ask the same question about the reference picture you were aiming for. The gap between the two descriptions is the gap you are closing.</p>
+                <textarea id="cmpRef" maxlength="3000" placeholder="Paste your tool&rsquo;s description of the reference picture."></textarea>
+              </div>
+              <button type="button" class="go" id="cmpBtn" disabled>Compare</button>
+              <p class="step-note" id="cmpNeeds"></p>
+              <div id="cmpGate"></div>
+              <div class="error" id="cmpError" role="alert" style="display:none"></div>
+              <div class="result" id="cmpResult" aria-live="polite"></div>
+            </div>
+          </details>
+
+          <div class="field">
+            <label for="reflectIn">What did your change do? <small>optional: you can skip it</small></label>
+            <textarea id="reflectIn" maxlength="600" rows="3"></textarea>
+          </div>
+
+          <p class="another" id="nextCaseRow">A comic page needs more than one picture. <button type="button" class="link" id="nextCase">Start the next case: <span id="nextCaseName"></span></button></p>
+
+          <div class="acts">
+            <button type="button" class="link back" data-back>&larr; Back</button>
+            <a class="btn" id="builderLink" href="/the-precinct/builder/">Next: Build my comic <span class="arr">&rarr;</span></a>
+          </div>
+        </section>
+
+    </div>
+
+    <!-- The workshop code. It waits here, out of sight, until the desk's AI is first asked for. -->
+    <div class="codegate" id="codeGate" hidden>
+      <h3 id="codeGateTitle" tabindex="-1">Enter your workshop code</h3>
+      <p id="codeGateWhy">The briefing desk uses AI to write your prompt, so it needs the code your facilitator gives out.</p>
+      <div class="lock" id="codeLock">
+        <label for="code">Workshop code</label>
+        <input id="code" type="password" autocomplete="off" enterkeyhint="go" aria-describedby="codeStatus">
+        <button type="button" class="btn small" id="codeCheck">Check code</button>
+      </div>
+      <p class="status" id="codeStatus" role="status">not checked yet</p>
+    </div>
+
+    <p class="saved">This browser remembers where you got to and what you typed. It does not follow you to another device.
+      <button type="button" class="link" id="startAgain">Start this case again</button>
+      <span class="confirm" id="againConfirm" hidden>Clear your choices, description, brief and pictures for this case?<br>
+        <button type="button" class="btn small" id="againYes">Clear it</button><button type="button" class="btn small ghost" id="againNo">Keep it</button></span>
+    </p>
+  </section>
+
+  </main>
+
+  <footer id="privacy">
+    The artwork here comes from Glenn Malcolm&rsquo;s own 2023 Midjourney noir comic.
+    Your description, your idea, and the brief and descriptions you paste into the desk&rsquo;s compare check go to a Cloudflare Worker for this site and then to Anthropic&rsquo;s API. Your workshop code is checked by the Worker only. Nothing you type is kept on the server or shown to anyone else.
+    Kept in this browser only, and sent nowhere: your code, your level, where you got to in each case, your choices, descriptions, ideas and briefs, the pictures you add to the check, and the differences and changes you write there. On a shared computer, use &ldquo;Start this case again&rdquo; when you finish.
+    If you add your own AI key, the key and what you type go straight from this browser to that service (Google, OpenAI or Anthropic) and never to this site. Either way, the site counts each request to the desk: the step, your level, the image tool, palette and characters you picked, whether it worked, how long it took, and a random number for this browser. Never what you type, your pictures, your code or your key.
+    Part of the <a href="/">HeutaLab</a> AIFE workshop materials: &ldquo;Human Creativity, AI Precision&rdquo;.
+  </footer>
+
+</div>
+
+<input type="file" id="picIn" accept="image/*" hidden>
+<dialog class="zoomdlg" id="zoomDlg" aria-label="The picture, full size">
+  <img id="zoomImg" src="" alt="">
+  <form method="dialog"><span>Look closer</span><button class="btn ghost small">Close</button></form>
+</dialog>
+
+<script type="module">
+import THEME from '/the-precinct/theme.js';
+import { words } from '/the-precinct/copycheck.js';
+import {
+  readBrief, gateRequest, gateOutcome, briefRequest,
+  readCompare, compareStepA, compareRequest, cleanCompare, stockBrief, cleanBrief,
+} from '/the-precinct/desk.js';
+import { PROVIDERS, loadKey, maskKey, askAI, isTransient, failureMessage, personalKeysNeeded } from '/the-precinct/providers.js';
+import Jn from '/the-precinct/journey.js';
+import Pics from '/the-precinct/pictures.js';
+
+(function(){
+  const API = "/the-precinct/api/";
+  const state = { platform:null, subject:null, palette:THEME.defaultPalette, tier:null, cast:[], place:null };
+  const TIER_LEVEL = { basic:1, medium:2, advanced:3 };
+  const ATTEMPT_MIN = 15;
+  const CORE = 4;   // the cast shown first: the four inside the precinct
+  const PARTS = Jn.PARTS;
+  const $ = id => document.getElementById(id);
+  const wordsIn = t => words(t).length;   // the same counter the Worker uses
+  const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+
+  // Browser storage can be missing or blocked; the page works without it.
+  const store = {
+    get(k){ try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v){ try { localStorage.setItem(k, v); return true; } catch (e) { return false; } },
+  };
+
+  // ---- the journey: which case, which part, and the work in each ----
+  // Kept in this browser only, so a reload, or a trip to the image tool and
+  // back, lands where the learner left off. None of it is sent anywhere.
+  Jn.arrive();   // ?case=N puts that case on the desk before the journey is read
+  const CASES = THEME.cases, REFS = THEME.refs;
+  const caseOf = n => CASES.find(c => c.n === n);
+  const J = Jn.read();
+  let live = false;        // true once the first case is on screen
+  let cur = null;          // the part on show
+  let saveTimer = 0, savedAt = 0, savedOK = true;
+  const saveNow = () => {
+    clearTimeout(saveTimer); saveTimer = 0;
+    savedOK = store.set('precinct_journey', JSON.stringify(J));
+    savedAt = Date.now(); showSaved();
+  };
+  const saveJ = () => { if (!saveTimer) saveTimer = setTimeout(saveNow, 300); };
+  // Says, in words, that the work is kept: "just now", then the time it was last saved.
+  function showSaved(){
+    if (!savedAt) return;
+    const t = !savedOK ? 'This browser is not saving your work: keep this tab open'
+      : Date.now() - savedAt < 60000 ? 'Saved in this browser just now'
+      : 'Saved in this browser at ' + new Date(savedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if ($('saveStatus').textContent !== t) $('saveStatus').textContent = t;
+  }
+  setInterval(showSaved, 20000);
+  const W = (n = J.c) => (J.work[n] && typeof J.work[n] === 'object') ? J.work[n] : (J.work[n] = {});
+  const doneList = (n = J.c) => Array.isArray(J.done[n]) ? J.done[n] : (J.done[n] = []);
+  const subjectOf = c => Jn.subjectOf(J, c);
+  const stepsOf = c => Jn.partsOf(J, c);
+
+  // A random id per browser, so the desk can share itself fairly. Not a login.
+  let session = store.get('precinct_session');
+  if (!session || !/^[A-Za-z0-9-]{8,64}$/.test(session)) {
+    session = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + '-' + Date.now().toString(36));
+    store.set('precinct_session', session);
+  }
+  async function post(route, payload){
+    const res = await fetch(API + route, {
+      method:'POST', headers:{'content-type':'application/json'},
+      body: JSON.stringify(Object.assign({ code: codeInput.value.trim(), session }, payload)),
+    });
+    return { res, data: await res.json().catch(() => ({})) };
+  }
+
+  // ---- the attendee's own AI key ----
+  // With a key saved (any time) or once personal keys are needed (from
+  // 9 November 2026), the desk calls the AI straight from this browser and
+  // the workshop code and levels step aside: every level is open.
+  const personalOnly = personalKeysNeeded();
+  const ownKey = loadKey();
+  const usingOwnKey = !!ownKey || personalOnly;
+
+  // Runs a brief or compare request on the attendee's own key and answers in
+  // the same shape as the Worker, so the rest of the page treats both alike.
+  async function ownRequest(route, payload){
+    const answer = (status, data) => ({ res: { ok: status === 200, status }, data });
+    if (!ownKey) return answer(428, { error: 'Add your own AI key on the API key page first.' });
+    const failed = fail => answer(fail === 'refusal' ? 422 : 502, { error: failureMessage(fail, ownKey.provider), fail });
+    if (route === 'brief') {
+      const b = readBrief(payload);
+      if (b.error) return answer(400, b);
+      const started = Date.now();
+      if (b.round === 1 && !b.example) {
+        const gate = await askAI(ownKey, { ...gateRequest(b), timeoutMs: 20000 });
+        if (gate.data) {
+          const asks = gateOutcome(gate.data);
+          if (asks) return answer(200, { gate: true, questions: asks.questions, attempt: b.attempt });
+        } else if (gate.fail === 'bad_key' || gate.fail === 'no_credit') return failed(gate.fail);
+        // Otherwise the gate is a nudge: if it can't answer, the brief goes through.
+      }
+      // Your own key isn't queuing behind a room, so it gets a longer budget.
+      const brief = await askAI(ownKey, briefRequest(b, Math.max(8000, 45000 - (Date.now() - started))));
+      const tidy = brief.data && cleanBrief(brief.data, b.tier);
+      if (tidy && tidy.prompts.length) return answer(200, { ...tidy, attempt: b.attempt });
+      if (tidy || isTransient(brief.fail)) return answer(200, { ...stockBrief(b.subject, b.tier, b.palette, b.castUsed, b.placeUsed), fallback: true, own: true, attempt: b.attempt });
+      return failed(brief.fail);
+    }
+    const c = readCompare(payload, 3);
+    if (c.error) return answer(400, c);
+    const a = compareStepA(c);
+    if (a.copied) return answer(200, a);
+    const out = await askAI(ownKey, { ...compareRequest(c, a), timeoutMs: 25000 });
+    if (out.data) return answer(200, cleanCompare(out.data));
+    if (isTransient(out.fail)) return answer(200, { fallback: true, own: true, checklist: THEME.compareChecklist });
+    return failed(out.fail);
+  }
+
+  // An own-key request never passes through heutalab.com, so the page tells
+  // the site's usage log that one happened: the step, the AI service, the
+  // fixed choices (image tool, level, palette, characters), the outcome and
+  // how long it took. None of the attendee's words, and never the key.
+  async function ownRequestLogged(route, payload){
+    const started = Date.now();
+    const out = await ownRequest(route, payload);
+    const { res, data } = out;
+    if (res.status !== 428) {
+      const outcome = data.gate ? 'questions' : data.copied ? 'copied' : data.fallback ? 'fallback' : res.ok ? 'ok'
+        : data.fail === 'refusal' ? 'refused' : data.fail || (res.status === 400 ? 'bad_request' : 'error');
+      const choices = route === 'brief'
+        ? { platform: payload.platform, tier: payload.tier, subject: payload.subject, palette: payload.palette, cast: payload.cast, round: payload.round, example: payload.example }
+        : { reference: !!payload.reference };
+      try {
+        navigator.sendBeacon(API + 'ping', JSON.stringify({ route, outcome, ms: Date.now() - started, provider: ownKey.provider, session, ...choices }));
+      } catch (e) {}
+    }
+    return out;
+  }
+  const send = (route, payload) => usingOwnKey ? ownRequestLogged(route, payload) : post(route, payload);
+
+  // The banner and the key line.
+  const banner = $('keyBanner');
+  let bannerClosed = false;
+  try { bannerClosed = sessionStorage.getItem('precinct_banner_closed') === '1'; } catch (e) {}
+  banner.hidden = !(personalOnly && !ownKey) || bannerClosed;
+  $('keyBannerClose').addEventListener('click', () => {
+    banner.hidden = true;
+    try { sessionStorage.setItem('precinct_banner_closed', '1'); } catch (e) {}
+  });
+  const keyLine = $('keyLine');
+  if (usingOwnKey) {
+    keyLine.hidden = false;
+    keyLine.innerHTML = ownKey
+      ? 'Using your own <b>' + esc(PROVIDERS[ownKey.provider].short) + '</b> key ' + esc(maskKey(ownKey.key)) + '. Every level is open. <a href="/the-precinct/key/">Change or forget it</a>'
+      : 'The desk now runs on your own AI key. You can look, choose and write without one; an adult adds it on the <a href="/the-precinct/key/">AI key page</a> before Step 3.';
+  }
+  const validCast = id => THEME.cast.some(c => c.id === id);
+  const castOf = id => THEME.cast.find(c => c.id === id);
+  const castName = id => castOf(id).name;
+  const validPlace = id => THEME.places.some(p => p.id === id);
+  const placeOf = id => THEME.places.find(p => p.id === id);
+
+  // Copies words, says so on the button and aloud, and resolves true if it
+  // worked. With no clipboard access it selects the words instead, ready for Ctrl+C.
+  function copyText(text, btn, source){
+    const label = btn.dataset.label || (btn.dataset.label = btn.textContent);
+    const show = (t, ms) => { btn.textContent = t; clearTimeout(btn._t); btn._t = setTimeout(() => { btn.textContent = label; }, ms); };
+    const tried = navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(text) : Promise.reject();
+    return tried.then(() => { show('Copied', 1400); Jn.announce('Copied.'); return true; }).catch(() => {
+      if (source) {
+        const r = document.createRange(); r.selectNodeContents(source);
+        const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+      }
+      show(source ? 'Selected: press Ctrl+C or ⌘C' : 'Could not copy', 3600);
+      Jn.announce(source ? 'Could not copy. The words are selected: press Control C or Command C.' : 'Could not copy.');
+      return false;
+    });
+  }
+
+  // ---- built from theme.js: the story clues, the places, the palettes ----
+  if (typeof J.palette === 'string' && Object.keys(THEME.palettes).includes(J.palette)) state.palette = J.palette;
+  // One sentence for a card: the first full one in the character's story.
+  const oneLine = story => { const s = story.split(/(?<=[.!?])\s+/); return s.find(x => x.length >= 30) || s[0]; };
+  $('relations').innerHTML = THEME.relations.map(([a, verb, b, tail]) =>
+    '<span class="rel"><em>' + esc(castName(a)) + '</em> ' + esc(verb) + ' <em>' + esc(castName(b)) + '</em>' + (tail ? ' ' + esc(tail) : '') + '</span>').join('');
+  $('placeGrid').innerHTML = THEME.places.map(p =>
+    '<label class="spot" id="place-' + p.id + '"><input class="pickbox" type="radio" name="place" value="' + p.id + '">'
+    + '<span class="chosen" aria-hidden="true">✓ Chosen</span><img class="noir" src="' + p.thumb + '" alt="" loading="lazy" width="600" height="400">'
+    + '<b>' + esc(p.name) + '</b><small>' + esc(p.tag) + '</small></label>').join('');
+  $('palGrid').innerHTML = Object.entries(THEME.palettes).map(([id, p]) =>
+    '<label class="pal"><input class="pickbox" type="radio" name="palette" value="' + id + '"><span class="chosen" aria-hidden="true">✓ Chosen</span>'
+    + '<img src="' + p.sample + '" alt="" loading="lazy"><span class="txt"><b><i class="dot-c" style="background:' + p.dot + '"></i>' + esc(p.label) + '</b>' + esc(p.note) + '</span></label>').join('');
+
+  // Marks the chosen card in a group of real radio buttons or tick boxes.
+  const markPicked = (root, name) => root.querySelectorAll('input[name="' + name + '"]').forEach(i => i.closest('label').classList.toggle('picked', i.checked));
+
+  // ---- the code and the level it opens ----
+  // The level here only decides what the page shows. The Worker checks the
+  // code again on every request, so nothing is unlocked by editing this.
+  // The code is asked for only when the desk's AI is first needed (the brief,
+  // or the desk's compare check): looking, choosing and writing need none.
+  const codeInput = $('code');
+  const codeStatus = $('codeStatus');
+  const codeGate = $('codeGate');
+  const levelIntro = $('levelIntro');
+  let level = Number(store.get('precinct_level')) || 0;
+  const gameOf = tier => THEME.game.find(x => x.tier === tier);
+  const forSubject = g => (state.subject === 'setting' && g.setting) ? g.setting : g;
+  const need = () => TIER_LEVEL[caseOf(J.c).tier] || 1;           // the level this case's brief asks for
+  const hasAI = (n = need()) => usingOwnKey ? !!ownKey : level >= n;
+
+  function setStatus(text, kind){
+    codeStatus.textContent = text;
+    codeStatus.classList.toggle('ok', kind === 'ok');
+    codeStatus.classList.toggle('bad', kind === 'bad');
+  }
+  function applyLevel(n){
+    if (usingOwnKey) n = ownKey ? 3 : 0;   // your own key opens every level; the workshop level stays as it was
+    else store.set('precinct_level', String(n));
+    level = n;
+    $('cmpRefStep').hidden = level < 3;
+    syncAccess(); checkReady(); checkCompareReady();
+    if (live) renderCasePick();
+  }
+  // "AI ready", small and always there once it is true, and one plain line
+  // when this case will ask for a code the browser does not have yet.
+  function syncAccess(){
+    const c = caseOf(J.c), g = c.tier && gameOf(c.tier), have = THEME.game.find(x => x.level === level);
+    const chip = $('aiReady'), ready = usingOwnKey ? !!ownKey : level >= 1;
+    chip.hidden = !ready;
+    if (ready) chip.textContent = '✓ AI ready' + (usingOwnKey || !have ? '' : ': ' + have.name + ' code');
+    const line = $('levelNeed');
+    // Said on the way into Step 2 and again on the way out of it, with no box to fill in. From Step 3 on, the
+    // code is asked for where it is needed. The parts in between keep the top of the page short: the level's
+    // line and this one step aside, so the heading and the choice come first on a small screen.
+    const parts = cur ? stepsOf(c) : [], edge = !!cur && (cur === parts[0] || cur === 'notice');
+    line.hidden = usingOwnKey || !g || hasAI() || !edge;
+    levelIntro.hidden = !!cur && cur !== parts[0];
+    $('caseBar').hidden = levelIntro.hidden && line.hidden && $('swapRow').hidden && keyLine.hidden;
+    if (!line.hidden) line.textContent = level
+      ? 'Your code opens ' + have.name + ' cases. This is a ' + g.name + ' case: at Step 3 it needs the ' + g.name + ' code, which your facilitator gives out. You can choose and describe before then.'
+      : g.level > 1 ? 'You can complete Look closely and Choose and describe without a workshop code. At Step 3 this ' + g.name + ' case needs the ' + g.name + ' code, which your facilitator gives out.'
+      : 'You can complete Look closely and Choose and describe without a workshop code. You’ll need one when the briefing desk writes your prompt.';
+  }
+  function syncTier(){
+    const c = caseOf(J.c), g = c.tier && gameOf(c.tier);
+    levelIntro.textContent = g ? forSubject(g).intro : c.about;
+  }
+
+  // The gate: the code box, moved to wherever the AI was asked for, with
+  // what to do once the code is good.
+  let gateThen = null;
+  function openGate(slot, then){
+    gateThen = then;
+    slot.appendChild(codeGate);
+    const g = gameOf(caseOf(J.c).tier), have = THEME.game.find(x => x.level === level);
+    if (usingOwnKey) {
+      $('codeGateTitle').textContent = 'This needs an AI key';
+      $('codeGateWhy').innerHTML = 'The desk now runs on your own AI key. Ask an adult to add one on the <a href="/the-precinct/key/">AI key page</a>, then come back: your work here is kept.';
+      $('codeLock').hidden = true; codeStatus.hidden = true;
+    } else {
+      $('codeGateTitle').textContent = level && g ? 'Enter the ' + g.name + ' code' : 'Enter your workshop code';
+      $('codeGateWhy').textContent = level && g
+        ? 'Your code opens ' + have.name + ' cases, and this is a ' + g.name + ' case. Your facilitator gives out the ' + g.name + ' code. Your work here is kept.'
+        : 'The briefing desk uses AI to write your prompt, so it needs the code your facilitator gives out.';
+    }
+    codeGate.hidden = false;
+    const to = usingOwnKey ? $('codeGateTitle') : codeInput;
+    to.focus({ preventScroll: true });
+    codeGate.scrollIntoView({ block: 'nearest', behavior: 'instant' });   // it opens under the button just pressed: no slide
+  }
+  function closeGate(){ codeGate.hidden = true; gateThen = null; }
+
+  // The code is checked on Enter or the Check button, never mid-typing:
+  // half-typed codes would count as wrong ones, and the checks are limited per
+  // venue IP, which the whole room may share.
+  let codeSeq = 0, checking = null;
+  async function verifyCode(quiet){
+    const code = codeInput.value.trim();
+    if (!code) { ++codeSeq; checking = null; setStatus('Type the code, then press Check code.'); applyLevel(0); return; }
+    if (code === checking) return;   // Enter and the button can both fire; one check at a time
+    checking = code;
+    const seq = ++codeSeq;
+    setStatus('checking…');
+    try {
+      const { res, data } = await post('code', {});
+      if (seq !== codeSeq) return;   // the box changed while this was out
+      if (res.ok) {
+        applyLevel(data.level);
+        if (hasAI()) {
+          setStatus(data.name + ' code accepted', 'ok');
+          const then = gateThen;
+          if (!quiet) Jn.announce('Code accepted. AI ready.');
+          if (!codeGate.hidden) { closeGate(); if (then) then(); }
+        } else setStatus(data.name + ' code accepted, but this case needs the ' + gameOf(caseOf(J.c).tier).name + ' code.', 'bad');
+      }
+      else if (res.status === 401) { setStatus('That code is not right. Check it and try again.', 'bad'); applyLevel(0); }
+      else setStatus(res.status === 429 ? 'Too many tries. Wait a minute, then try again.' : res.status === 500 ? 'The desk is not set up yet. Tell your facilitator.' : 'Could not check the code. Try again.', 'bad');
+    } catch (e) { if (seq === codeSeq) setStatus('Could not reach the desk. Check your connection.', 'bad'); }
+    finally { if (seq === codeSeq) checking = null; }
+  }
+  const savedCode = store.get('precinct_code');
+  if (savedCode) codeInput.value = savedCode;
+  codeInput.addEventListener('input', () => {
+    store.set('precinct_code', codeInput.value);
+    ++codeSeq; checking = null;
+    setStatus(codeInput.value.trim() ? 'Press Check code (or Enter).' : 'not checked yet');
+  });
+  codeInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); verifyCode(); } });
+  $('codeCheck').addEventListener('click', () => verifyCode());
+
+  // ---- the boxes people type in ----
+  const attempt = $('attempt'), idea = $('idea');
+  const attemptCount = $('attemptCount'), ideaCount = $('ideaCount');
+  const cmpPrompt = $('cmpPrompt'), cmpDesc = $('cmpDesc'), cmpRef = $('cmpRef');
+  const BOXES = { attempt, idea, cmpPrompt, cmpDesc, cmpRef, change: $('changeIn'), reflect: $('reflectIn') };
+  let own = false;                 // "a character of my own", chosen on purpose
+  let attemptIsExample = false;    // a worked example from Look closely, not the attendee's own looking
+  let needPlace = null;            // "does this picture need a place?": 'yes', 'no', or not answered
+  // The work in the boxes belongs to the case on show: put away when another
+  // case opens, and laid out again when this one comes back.
+  function stash(){
+    if (!live) return;
+    const w = W();
+    for (const k in BOXES) w[k] = BOXES[k].value;
+    w.cast = state.cast.slice(); w.own = own; w.place = state.place; w.needPlace = needPlace; w.example = attemptIsExample;
+    saveJ();
+  }
+  function unstash(){
+    const w = W();
+    for (const k in BOXES) BOXES[k].value = typeof w[k] === 'string' ? w[k] : '';
+    state.cast = (Array.isArray(w.cast) ? w.cast : []).filter(validCast);
+    own = !!w.own;
+    state.place = validPlace(w.place) ? w.place : null;
+    needPlace = w.needPlace === 'yes' || w.needPlace === 'no' ? w.needPlace : null;
+    attemptIsExample = !!w.example;
+  }
+  addEventListener('pagehide', () => { stash(); saveNow(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { stash(); saveNow(); } });
+  // Another page finished a step in this journey (Look closely, the comic
+  // builder): take its ticks in, so the next save here does not lose them.
+  addEventListener('storage', e => {
+    if (e.key !== 'precinct_journey') return;
+    const other = Jn.read();
+    Object.keys(other.done).forEach(n => { const mine = doneList(n); (Array.isArray(other.done[n]) ? other.done[n] : []).forEach(k => { if (!mine.includes(k)) mine.push(k); }); });
+    if (other.started && !J.started) J.started = other.started;
+    Jn.refresh();
+  });
+
+  // ---- part: choose a character ----
+  // Rookie and Detective draw one person (radio buttons); Commissioner, a short
+  // sequence, can bring two together (tick boxes). Four of the cast show first.
+  // Once someone is chosen the grid folds into one card with their look, and Change.
+  const whoNote = $('whoNote');
+  const maxCast = () => state.tier === 'advanced' ? 2 : 1;
+  let whoOpen = false, extraOpen = false, byPointer = false;
+  const hasWho = () => state.cast.length > 0 || own;
+  function renderWho(){
+    const type = maxCast() === 2 ? 'checkbox' : 'radio';
+    const card = c => '<label class="case" id="cast-' + c.id + '"><input class="pickbox" type="' + type + '" name="cast" value="' + c.id + '">'
+      + '<span class="chosen" aria-hidden="true">✓ Chosen</span><img class="noir" src="' + c.img + '" alt="" loading="lazy" width="900" height="900">'
+      + '<span class="case-text"><span class="case-tag">' + esc(c.role) + ' · ' + esc(c.tag.toLowerCase()) + '</span><b class="nm">' + esc(c.name) + '</b>'
+      + '<span class="one">' + esc(oneLine(c.story)) + '</span></span></label>';
+    $('castGrid').innerHTML = THEME.cast.slice(0, CORE).map(card).join('');
+    $('castExtra').innerHTML = THEME.cast.slice(CORE).map(card).join('');
+    $('cast-own').querySelector('input').type = type;
+    $('whoLegend').textContent = type === 'radio' ? 'Characters: choose one' : 'Characters: choose one or two';
+  }
+  const lookHTML = (title, text, attr) => '<div class="look"><b>' + title + '</b><span>' + esc(text) + '</span>'
+    + '<button type="button" class="btn ghost small" ' + attr + '>Copy look</button></div>';
+  function syncWho(){
+    state.cast = state.cast.slice(-maxCast());
+    const root = $('whoChoose'), many = maxCast() === 2;
+    root.querySelectorAll('input[name="cast"]').forEach(i => { i.checked = i.value === 'own' ? (own && !state.cast.length) : state.cast.includes(i.value); });
+    markPicked(root, 'cast');
+    const showExtra = extraOpen || state.cast.some(id => THEME.cast.findIndex(c => c.id === id) >= CORE);
+    $('castExtra').hidden = !showExtra;
+    $('castMore').hidden = showExtra;
+    $('castMore').setAttribute('aria-expanded', String(showExtra));
+    const folded = hasWho() && !whoOpen;
+    root.hidden = folded;
+    const box = $('whoPicked');
+    box.innerHTML = !folded ? '' : (own && !state.cast.length
+        ? '<div class="picked-card plain"><div><span class="case-tag">Your choice</span><h3>A character of my own</h3><p>You are leaving the cast out. Your own description carries their look.</p></div></div>'
+        : state.cast.map(id => { const c = castOf(id);
+            return '<div class="picked-card"><img class="noir" id="picked-' + c.id + '" src="' + c.img + '" alt="" width="900" height="900"><div><span class="case-tag">' + esc(c.role) + ' · ' + esc(c.tag.toLowerCase()) + '</span>'
+              + '<h3>' + esc(c.name) + '</h3><p>' + esc(c.story) + '</p>' + (c.arc ? '<p class="arc"><b>His arc</b>' + c.arc.map(esc).join(' &rarr; ') + '</p>' : '')
+              + lookHTML('Their look, in every brief', c.look, 'data-copylook="' + c.id + '"') + '</div></div>'; }).join(''))
+      + '<div class="picked-btns"><button type="button" class="btn ghost small" data-change="who">Change</button>'
+      + (many && state.cast.length === 1 ? '<button type="button" class="btn ghost small" data-change="who">Add a second character</button>' : '') + '</div>';
+    whoNote.textContent = folded ? 'Their look goes into your brief word for word: it keeps them recognisable from picture to picture.'
+      : many ? 'Pick one or two for a Commissioner sequence.' : 'Pick one.';
+    syncNext();
+  }
+  // A choice made with the mouse or a finger folds the grid away at once. The
+  // arrow keys move through radio buttons choosing each in turn, so with the
+  // keyboard the grid stays until Enter is pressed or the focus moves on to Next.
+  function foldWho(){
+    if (!hasWho()) return;
+    whoOpen = false; syncWho();
+    $('whoPicked').focus({ preventScroll: true });
+  }
+  $('whoChoose').addEventListener('pointerdown', () => { byPointer = true; });
+  $('whoChoose').addEventListener('keydown', e => {
+    byPointer = false;
+    if (e.key === 'Enter' && e.target.name === 'cast') { e.preventDefault(); if (!e.target.checked) e.target.click(); foldWho(); }
+  });
+  $('whoChoose').addEventListener('change', e => {
+    const i = e.target; if (i.name !== 'cast') return;
+    if (i.value === 'own') { own = i.checked; state.cast = []; }
+    else if (maxCast() === 2) { own = false; state.cast = i.checked ? state.cast.concat(i.value) : state.cast.filter(x => x !== i.value); }
+    else { own = false; state.cast = [i.value]; }
+    whoOpen = true;
+    stash(); syncWho(); setDone('who', hasWho()); renderReview();
+    Jn.announce(hasWho() ? 'Chosen: ' + (state.cast.length ? state.cast.map(castName).join(' and ') : 'a character of my own') + '.' : 'Nobody chosen.');
+    if (byPointer && (maxCast() === 1 || state.cast.length === 2 || own)) foldWho();
+    byPointer = false;
+  });
+  $('castMore').addEventListener('click', () => { extraOpen = true; syncWho(); const f = $('castExtra').querySelector('input'); if (f) f.focus(); });
+  $('whoPicked').addEventListener('click', e => {
+    const copy = e.target.closest('[data-copylook]');
+    if (copy) copyText(castOf(copy.dataset.copylook).look, copy, copy.closest('.look').querySelector('span'));
+    if (e.target.closest('[data-change]')) {
+      whoOpen = true; syncWho();
+      const f = $('whoChoose').querySelector('input:checked') || $('whoChoose').querySelector('input');
+      f.focus();
+    }
+  });
+
+  // ---- part: add a place ----
+  // Asked as a question. The ten places only appear if the answer is yes, and
+  // the chosen one folds into a card. Detective and Commissioner cases put a
+  // character in a room, so there the places are open from the start.
+  let placeOpen = false, placeByPointer = false;
+  function syncPlace(){
+    const c = caseOf(J.c);
+    if (needPlace === null) needPlace = state.place || (c.tier && c.tier !== 'basic') ? 'yes' : 'no';
+    if (state.place) needPlace = 'yes';
+    $('placeLead').textContent = c.tier && c.tier !== 'basic'
+      ? 'This case puts the same face in a room. Choose the room, and its look goes into your brief for you. Or leave it out and describe a place of your own.'
+      : 'A place is optional. Choose one and your picture happens there: its look goes into your brief for you.';
+    $('placeYN').querySelectorAll('input').forEach(i => { i.checked = i.value === needPlace; });
+    markPicked($('placeYN'), 'needplace');
+    const grid = $('placeChoose');
+    grid.querySelectorAll('input').forEach(i => { i.checked = i.value === state.place; });
+    markPicked(grid, 'place');
+    const folded = !!state.place && !placeOpen;
+    grid.hidden = needPlace !== 'yes' || folded;
+    const pl = state.place && placeOf(state.place);
+    $('placePicked').innerHTML = !folded ? '' : '<div class="picked-card wide"><img class="noir" src="' + pl.thumb + '" alt="" width="600" height="400"><div>'
+      + '<span class="case-tag">' + esc(pl.role) + ' · ' + esc(pl.tag.toLowerCase()) + '</span><h3>' + esc(pl.name) + '</h3><p>' + esc(pl.story) + '</p>'
+      + lookHTML('Its look, in every brief', pl.look, 'data-copyplace="' + pl.id + '"') + '</div></div>'
+      + '<div class="picked-btns"><button type="button" class="btn ghost small" data-change="place">Change</button></div>';
+  }
+  function foldPlace(){
+    if (!state.place) return;
+    placeOpen = false; syncPlace();
+    $('placePicked').focus({ preventScroll: true });
+  }
+  $('placeYN').addEventListener('change', e => {
+    needPlace = e.target.value;
+    if (needPlace === 'no') { state.place = null; placeOpen = false; }
+    else placeOpen = true;
+    stash(); syncPlace(); renderReview();
+    Jn.announce(needPlace === 'yes' ? 'Ten places to choose from are shown below.' : 'No place for now.');
+  });
+  $('placeChoose').addEventListener('pointerdown', () => { placeByPointer = true; });
+  $('placeChoose').addEventListener('keydown', e => {
+    placeByPointer = false;
+    if (e.key === 'Enter' && e.target.name === 'place') { e.preventDefault(); if (!e.target.checked) e.target.click(); foldPlace(); }
+  });
+  $('placeChoose').addEventListener('change', e => {
+    if (e.target.name !== 'place') return;
+    state.place = e.target.value; placeOpen = true;
+    stash(); syncPlace(); renderReview();
+    Jn.announce('Place chosen: ' + placeOf(state.place).name + '.');
+    if (placeByPointer) foldPlace();
+    placeByPointer = false;
+  });
+  $('placePicked').addEventListener('click', e => {
+    const copy = e.target.closest('[data-copyplace]');
+    if (copy) copyText(placeOf(copy.dataset.copyplace).look, copy, copy.closest('.look').querySelector('span'));
+    if (e.target.closest('[data-change]')) {
+      placeOpen = true; syncPlace();
+      ($('placeChoose').querySelector('input:checked') || $('placeChoose').querySelector('input')).focus();
+    }
+  });
+
+  // ---- part: choose a palette ----
+  function syncPalette(){
+    $('palGrid').querySelectorAll('input').forEach(i => { i.checked = i.value === state.palette; });
+    markPicked($('palGrid'), 'palette');
+  }
+  $('palGrid').addEventListener('change', e => {
+    state.palette = e.target.value; J.palette = state.palette;
+    syncPalette(); setDone('palette'); renderReview(); saveJ();
+    Jn.announce('Palette chosen: ' + THEME.palettes[state.palette].label + '.');
+  });
+
+  // ---- part: get my brief (the image tool) ----
+  function syncPlatform(){
+    $('platformRow').querySelectorAll('input').forEach(i => { i.checked = i.value === state.platform; });
+    markPicked($('platformRow'), 'platform');
+  }
+  $('platformRow').addEventListener('change', e => {
+    state.platform = e.target.value; J.platform = state.platform;
+    syncPlatform(); checkReady(); saveJ();
+  });
+  $('swapRow').addEventListener('change', e => { J.subj[J.c] = e.target.value; openCase(J.c, { step: cur }); });
+
+  idea.addEventListener('input', () => { ideaCount.textContent = idea.value.length; checkReady(); stash(); });
+  ['change', 'reflect'].forEach(k => BOXES[k].addEventListener('input', stash));
+
+  // ---- part: write what you notice ----
+  function countAttempt(){
+    const n = wordsIn(attempt.value);
+    attemptCount.textContent = n + (n === 1 ? ' word' : ' words') + (n < ATTEMPT_MIN ? ', ' + (ATTEMPT_MIN - n) + ' to go' : ': enough for the desk') + ' · ' + attempt.value.length + ' of 1,500 characters';
+    attemptCount.classList.toggle('ok', n >= ATTEMPT_MIN);
+  }
+  // A worked example brought over from Look closely (Demo or Guide) is sent
+  // labelled as one, so the desk doesn't treat it as the attendee's own looking.
+  const handoffNote = $('handoffNote');
+  const HANDOFF_NOTE = 'Your description from Look closely is in the box. Read it through and add to it if you like.';
+  const EXAMPLE_NOTE = 'This is the worked example from Look closely, not your own looking. Swap in what you see in your own picture, or send it as a demo.';
+  const NOTES_NOTE = 'Your notes are in the box. Turn them into a description: what you see, the details, then the world around it.';
+  function setExample(on){
+    attemptIsExample = on;
+    if (on) { handoffNote.textContent = EXAMPLE_NOTE; handoffNote.hidden = false; }
+    else if (handoffNote.textContent === EXAMPLE_NOTE) handoffNote.hidden = true;
+  }
+  let noticeWas = false;
+  attempt.addEventListener('input', () => {
+    if (attemptIsExample) setExample(false);
+    countAttempt(); checkReady(); stash(); syncNext(); renderReview();
+    if (isDone('notice') !== noticeWas) {
+      noticeWas = isDone('notice'); Jn.refresh();
+      if (noticeWas) Jn.announce('Fifteen words: enough for the desk.');
+    }
+  });
+  $('exampleBtn').addEventListener('click', () => {
+    const on = $('exampleBox').hidden;
+    $('exampleBox').hidden = !on;
+    $('exampleBtn').textContent = on ? 'Hide the example' : 'Show an example';
+    $('exampleBtn').setAttribute('aria-expanded', String(on));
+  });
+  // The case file so far: what has been chosen, with a way back to each part.
+  function renderReview(){
+    const c = caseOf(J.c);
+    if (!c.tier) return;
+    const subj = subjectOf(c), n = wordsIn(attempt.value), rows = [];
+    const row = (name, html, step) => rows.push('<dt>' + name + '</dt><dd>' + html + '</dd><dd><button type="button" class="link" data-step="' + step + '">Change<span class="sr"> ' + name.toLowerCase() + '</span></button></dd>');
+    if (subj === 'character') {
+      row('Character', state.cast.length ? esc(state.cast.map(castName).join(' and ')) : own ? 'One of my own' : '<span class="miss">Not chosen yet</span>', 'who');
+      row('Place', state.place ? esc(placeOf(state.place).name) : 'No place for now', 'place');
+    } else rows.push('<dt>Drawing</dt><dd>A setting</dd><dd></dd>');
+    row('Palette', esc(THEME.palettes[state.palette].label), 'palette');
+    rows.push('<dt>Description</dt><dd>' + (n >= ATTEMPT_MIN ? n + ' words' : '<span class="miss">' + n + (n === 1 ? ' word' : ' words') + ': ' + (ATTEMPT_MIN - n) + ' more to go</span>') + '</dd><dd></dd>');
+    $('reviewList').innerHTML = rows.join('');
+  }
+
+  // ---- the brief ----
+  // Round 2 means the desk has asked its questions once; the next send gets a brief regardless.
+  let round = 1, briefBusy = false;
+  const goBtn = $('goBtn');
+  const goLabel = () => round === 2 ? 'Send it back to the desk' : W().brief ? 'Ask the desk again' : 'Get my brief';
+  const briefReady = () => !!(state.platform && state.subject && state.tier && idea.value.trim().length >= 3 && wordsIn(attempt.value) >= ATTEMPT_MIN);
+  function checkReady(){
+    // Stays off while a request is out, so typing during the wait can't send a second one.
+    // No code is needed to press it: the code is asked for when it is pressed.
+    goBtn.disabled = briefBusy || !briefReady();
+    renderNeeds();
+  }
+  // Says what is still missing, so a greyed-out button is never a dead end.
+  function renderNeeds(){
+    const box = $('briefNeeds'), c = caseOf(J.c), items = [];
+    if (!c.tier || briefBusy) { box.hidden = true; return; }
+    if (!state.platform) items.push('Choose your image tool, above.');
+    if (wordsIn(attempt.value) < ATTEMPT_MIN) items.push('Write your own description, at least ' + ATTEMPT_MIN + ' words. <button type="button" class="link" data-step="notice">Go to that part</button>');
+    if (idea.value.trim().length < 3) items.push('Say what you want to make, in the &ldquo;Your idea&rdquo; box.');
+    box.hidden = !items.length;
+    if (items.length) box.innerHTML = '<b>Before the desk can write your brief</b><ul>' + items.map(t => '<li>' + t + '</li>').join('') + '</ul>';
+  }
+
+  const errorBox = $('errorBox');
+  const result = $('result');
+  const anchorBlock = $('anchorBlock');
+  const promptBlocks = $('promptBlocks');
+  const whyText = $('whyText');
+  const platformText = $('platformText');
+  const watchText = $('watchText');
+
+  function showError(msg){
+    errorBox.textContent = msg;
+    errorBox.style.display = 'block';
+  }
+
+  function blockHTML(label, text, main){
+    const safe = text.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+    return '<div class="block' + (main ? ' main' : '') + '"><div class="label">'+label+'</div><pre>'+safe+'</pre>'
+      + '<button type="button" class="copybtn" data-copy="'+encodeURIComponent(text)+'">' + (main || 'Copy') + '</button></div>';
+  }
+
+  const gateBox = $('gateBox');
+  const stockNote = $('stockNote');
+  const attemptEcho = $('attemptEcho');
+
+  // Shows a brief: a new one from the desk, or (restored) the one this case already has.
+  function render(data, restored){
+    anchorBlock.style.display = 'none';
+    anchorBlock.innerHTML = '';
+    promptBlocks.innerHTML = '';
+    stockNote.hidden = !data.fallback;
+    $('stockWhy').textContent = data.own ? 'Your AI didn’t answer in time' : 'The desk is swamped';
+    $('setupNote').hidden = !data.setup;
+    attemptEcho.textContent = data.attempt || attempt.value.trim();
+    $('attemptLabel').textContent = (restored ? data.example : attemptIsExample) ? 'Worked example (from Look closely)' : 'Your description';
+
+    if (data.anchor && data.anchor.trim()) {
+      anchorBlock.style.display = 'block';
+      anchorBlock.innerHTML = blockHTML('Shared anchor (it goes in front of every prompt below)', data.anchor.trim());
+    }
+    (data.prompts || []).forEach((p, i) => {
+      const label = (data.prompts.length > 1) ? ('AI image prompt ' + (i+1)) : 'AI image prompt';
+      promptBlocks.innerHTML += blockHTML(label, p);
+    });
+    setLastBrief({ anchor: (data.anchor || '').trim(), prompts: data.prompts || [] }, restored);
+
+    // A note that comes back empty is hidden, not shown as a bare heading.
+    [[whyText, data.why_this_works], [platformText, data.platform_notes], [watchText, data.watch_for]].forEach(([el, text]) => {
+      el.textContent = (text || '').trim();
+      el.parentElement.hidden = !el.textContent;
+    });
+
+    result.classList.add('show');
+    // With a brief on show, Next is the main action and asking again the quiet one.
+    goBtn.classList.add('again');
+    $('briefNext').hidden = false;
+    if (!restored) {
+      W().brief = Object.assign({}, data, { example: attemptIsExample });
+      saveJ();
+      setDone('brief');
+      Jn.announce('Your brief is ready, below.');
+      result.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  }
+  // Puts back the brief this case already has, or clears the desk if it has none.
+  function restoreBrief(){
+    const b = W().brief;
+    errorBox.style.display = 'none';
+    gateBox.hidden = true; round = 1;
+    if (b && Array.isArray(b.prompts) && b.prompts.length) render(b, true);
+    else {
+      result.classList.remove('show');
+      goBtn.classList.remove('again');
+      $('briefNext').hidden = true;
+      lastBrief = null;
+      if (!caseOf(J.c).tier) { try { lastBrief = JSON.parse(store.get('precinct_lastbrief') || 'null'); } catch (e) {} }   // Review checks the latest brief
+    }
+    goBtn.textContent = goLabel();
+  }
+
+  // The first press with no code (or one that does not open this case) asks
+  // for it there and then, and sends the brief as soon as the code is good.
+  goBtn.addEventListener('click', () => {
+    if (briefBusy) return;
+    if (!hasAI()) { openGate($('briefGate'), sendBrief); return; }
+    sendBrief();
+  });
+  async function sendBrief(){
+    if (briefBusy || !briefReady()) { checkReady(); return; }
+    briefBusy = true;
+    errorBox.style.display = 'none';
+    result.classList.remove('show');
+    $('briefNext').hidden = true;
+    goBtn.classList.remove('again');
+    goBtn.disabled = true;
+    goBtn.innerHTML = '<span class="spinner"></span>' + (round === 1 ? 'Reading your description…' : 'Working…');
+    Jn.announce('The desk is reading your description. This can take half a minute.');
+    renderNeeds();
+    const sentFrom = J.c;
+    let again = false;
+
+    try {
+      const { res, data } = await send('brief', {
+        platform: state.platform,
+        subject: state.subject,
+        palette: state.palette,
+        cast: state.subject === 'character' ? state.cast : [],
+        place: state.subject === 'character' ? state.place : null,
+        tier: state.tier,
+        attempt: attempt.value.trim(),
+        example: attemptIsExample,
+        idea: idea.value.trim(),
+        round,
+      });
+      if (res.status === 401) { setStatus('That code is not right. Check it and try again.', 'bad'); applyLevel(0); again = true; }
+      if (res.status === 403 && typeof data.level === 'number') { applyLevel(data.level); again = true; }
+      if (sentFrom !== J.c) return;   // another case was opened while this was out: its desk is not this one
+      if (again && !usingOwnKey) { /* the code box opens below, once the button is itself again */ }
+      else if (!res.ok) { showError(data.error || ('Something went wrong (' + res.status + ').')); }
+      else if (data.gate) {
+        // The desk asks before it briefs: questions only, never a verdict.
+        $('gateQs').innerHTML = (data.questions || []).map(q => '<li>' + esc(q) + '</li>').join('');
+        gateBox.hidden = false;
+        round = 2;
+        gateBox.scrollIntoView({behavior:'smooth', block:'center'});
+      }
+      else { gateBox.hidden = true; round = 1; render(data); }
+    } catch (e) {
+      if (sentFrom === J.c) showError('Could not reach the briefing desk. Check your connection and try again.');
+    } finally {
+      briefBusy = false;
+      if (sentFrom === J.c) {
+        // A retry that failed, or that came back with questions, keeps the brief already made.
+        const has = !!W().brief;
+        result.classList.toggle('show', has);
+        $('briefNext').hidden = !has;
+        goBtn.classList.toggle('again', has && round === 1);
+      }
+      goBtn.textContent = goLabel();
+      checkReady();
+      if (again && !usingOwnKey && sentFrom === J.c) openGate($('briefGate'), sendBrief);
+    }
+  }
+
+  // Copy buttons on any prompt block, in the brief or in "Make the picture".
+  document.addEventListener('click', e => {
+    const copy = e.target.closest('.copybtn');
+    if (!copy) return;
+    copyText(decodeURIComponent(copy.dataset.copy), copy, copy.parentElement.querySelector('pre')).then(ok => {
+      const said = copy.closest('.stepp').querySelector('.said');
+      if (said && ok) said.hidden = false;
+    });
+  });
+
+  // ---- part: make the picture ----
+  // Leaving for the image tool and coming back is one task: the brief with one
+  // main action (copy it), how the chosen tool works, a link to open it, three
+  // things to tick off there, and the way back.
+  const TOOLS = {
+    gemini:     { name: 'Gemini',      url: 'https://gemini.google.com/',     how: 'Start a new chat in Gemini. Paste your brief and send it. If it answers in words only, ask it to make the image.' },
+    chatgpt:    { name: 'ChatGPT',     url: 'https://chatgpt.com/',           how: 'Start a new chat in ChatGPT. Paste your brief and send it.' },
+    copilot:    { name: 'Copilot',     url: 'https://copilot.microsoft.com/', how: 'Start a new chat in Copilot. Paste your brief and send it.' },
+    nanobanana: { name: 'Nano Banana', url: 'https://aistudio.google.com/',   how: 'Nano Banana is in Google AI Studio. Open it, choose the Nano Banana image model, paste your brief and run it.' },
+    midjourney: { name: 'Midjourney',  url: 'https://www.midjourney.com/',    how: 'Midjourney is a paid tool, used here for demonstrations. Paste your brief into its Create box.' },
+  };
+  const ticks = () => { const w = W(); return (w.ticks && typeof w.ticks === 'object') ? w.ticks : (w.ticks = {}); };
+  function renderMake(){
+    const b = W().brief, has = !!(b && Array.isArray(b.prompts) && b.prompts.length);
+    $('makeEmpty').hidden = has;
+    $('makeHas').hidden = !has;
+    $('gotImage').hidden = !has;
+    $('makeSaid').hidden = true;
+    if (!has) return;
+    const many = b.prompts.length > 1, anchor = (b.anchor || '').trim();
+    $('makePrompts').innerHTML = b.prompts.map((p, i) =>
+      blockHTML(many ? 'Your brief for picture ' + (i + 1) + ' of ' + b.prompts.length : 'Your brief', (anchor ? anchor + '\n\n' : '') + p,
+        many ? 'Copy brief ' + (i + 1) : 'Copy brief')).join('');
+    const t = TOOLS[state.platform] || TOOLS.gemini;
+    $('toolName').textContent = 'In ' + t.name;
+    $('toolHow').textContent = t.how + ' Then save the picture, or copy it. Keep it, even if it missed.';
+    $('toolOpen').href = t.url;
+    $('toolOpenLab').textContent = 'Open ' + t.name;
+    $('todo').querySelectorAll('[data-tick]').forEach(i => { i.checked = !!ticks()[i.dataset.tick]; });
+  }
+  $('todo').addEventListener('change', e => { const i = e.target.closest('[data-tick]'); if (i) { ticks()[i.dataset.tick] = i.checked; saveJ(); } });
+  $('gotImage').addEventListener('click', () => { setDone('make'); goStep('compare', { focus: true }); });
+
+  // ---- part: check and improve ----
+  const cmpBtn = $('cmpBtn'), cmpError = $('cmpError'), cmpResult = $('cmpResult');
+  const cmpPromptNote = $('cmpPromptNote');
+  let lastBrief = null, autoFilled = false, cmpBusy = false;
+
+  function setLastBrief(b, restored){
+    lastBrief = b;
+    if (restored) return;
+    store.set('precinct_lastbrief', JSON.stringify(b));
+    if (!cmpPrompt.value.trim() || autoFilled) fillComparePrompt(0);
+  }
+  const briefFill = i => (lastBrief.anchor ? lastBrief.anchor + '\n\n' : '') + lastBrief.prompts[i];
+  function fillComparePrompt(i){
+    if (!lastBrief || !lastBrief.prompts || !lastBrief.prompts[i]) return;
+    cmpPrompt.value = briefFill(i);
+    autoFilled = true;
+    cmpPromptNote.hidden = false;
+    cmpPromptNote.textContent = 'This is your brief' + (lastBrief.prompts.length > 1 ? ' for picture ' + (i + 1) : '') + '. Change it here if you ran something else.';
+    checkCompareReady();
+    stash();
+  }
+  // When a case opens: fill the brief in, or recognise one already there.
+  function syncCompareFill(){
+    autoFilled = false;
+    cmpPromptNote.hidden = true;
+    if (lastBrief && Array.isArray(lastBrief.prompts)) {
+      if (!cmpPrompt.value.trim()) fillComparePrompt(0);
+      else {
+        const i = lastBrief.prompts.findIndex((p, k) => briefFill(k) === cmpPrompt.value);
+        if (i >= 0) fillComparePrompt(i);
+      }
+    }
+    cmpResult.classList.remove('show');
+    cmpResult.innerHTML = '';
+    cmpError.style.display = 'none';
+    $('deskCheck').open = !!cmpDesc.value.trim();
+    checkCompareReady();
+  }
+  cmpPrompt.addEventListener('input', () => { autoFilled = false; cmpPromptNote.hidden = true; checkCompareReady(); stash(); });
+  cmpDesc.addEventListener('input', () => { checkCompareReady(); stash(); });
+  cmpRef.addEventListener('input', stash);
+  const compareReady = () => wordsIn(cmpPrompt.value) >= 3 && wordsIn(cmpDesc.value) >= 8;
+  function checkCompareReady(){
+    cmpBtn.disabled = cmpBusy || !compareReady();
+    $('cmpNeeds').textContent = compareReady() ? '' : 'The desk needs the brief you used, above, and at least 8 words of your tool’s description.';
+  }
+
+  // The pictures: what came back, and the improved one. This browser only.
+  const picUrls = {};
+  let pendingSlot = null;
+  const slotEl = s => document.querySelector('.slot[data-slot="' + s + '"]');
+  async function renderSlots(){
+    const n = J.c;
+    for (const s of Pics.SLOTS) {
+      const blob = await Pics.get(n, s);
+      if (n !== J.c) return;   // another case opened meanwhile
+      const el = slotEl(s), pic = el.querySelector('.slot-pic'), add = el.querySelector('[data-add]'), rm = el.querySelector('[data-rm]');
+      if (picUrls[s]) { URL.revokeObjectURL(picUrls[s]); picUrls[s] = null; }
+      const name = Pics.SLOT_NAMES[s];
+      if (blob) {
+        picUrls[s] = URL.createObjectURL(blob);
+        pic.innerHTML = '<img src="' + picUrls[s] + '" alt="' + name + ': the picture you added">'
+          + '<button type="button" class="zoom" data-zoompic aria-label="Look closer at your ' + name.toLowerCase() + '"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.500" cy="10.500" r="6.500"/><path d="M15.500 15.500L21 21M10.500 8v5M8 10.500h5"/></svg></button>';
+      } else pic.innerHTML = '<span>' + (s === 'first' ? 'No picture yet' : 'After your change') + '</span>';
+      add.textContent = blob ? 'Replace' : s === 'first' ? 'Add your picture' : 'Add the new picture';
+      add.classList.toggle('ghost', !!blob || s !== 'first');   // the one main action here is adding the first picture
+      add.setAttribute('aria-label', (blob ? 'Replace the ' : 'Add the ') + name.toLowerCase());
+      rm.hidden = !blob;
+      rm.setAttribute('aria-label', 'Remove the ' + name.toLowerCase());
+      el.classList.toggle('has', !!blob);
+    }
+  }
+  async function addPicture(slot, file){
+    const err = $('picError');
+    err.style.display = 'none';
+    if (!file || !/^image\//.test(file.type)) { err.textContent = 'That is not a picture file. Choose a PNG or JPEG.'; err.style.display = 'block'; return; }
+    const ok = await Pics.put(J.c, slot, file);
+    if (!ok) { err.textContent = 'This browser would not keep the picture (private browsing can stop it). You can still check it by eye, and add it in the comic builder.'; err.style.display = 'block'; return; }
+    await renderSlots();
+    Jn.announce(Pics.SLOT_NAMES[slot] + ' added. It stays in this browser.');
+  }
+  const emptySlot = () => Pics.SLOTS.find(s => !slotEl(s).classList.contains('has')) || 'improved';
+  $('slots').addEventListener('click', async e => {
+    const add = e.target.closest('[data-add]'), rm = e.target.closest('[data-rm]'), zoom = e.target.closest('[data-zoompic]');
+    if (add) { pendingSlot = add.dataset.add; $('picIn').click(); }
+    if (rm) {
+      const s = rm.dataset.rm;
+      await Pics.remove(J.c, s); await renderSlots();
+      Jn.announce(Pics.SLOT_NAMES[s] + ' removed.');
+      slotEl(s).querySelector('[data-add]').focus();
+    }
+    if (zoom) openZoom(zoom.parentElement.querySelector('img'));
+  });
+  $('picIn').addEventListener('change', () => {
+    const f = $('picIn').files[0]; $('picIn').value = '';
+    if (f && pendingSlot) addPicture(pendingSlot, f);
+    pendingSlot = null;
+  });
+  // Paste a picture while the check is on screen; drop one on a box.
+  document.addEventListener('paste', e => {
+    if (cur !== 'compare' || !e.clipboardData) return;
+    const file = [...e.clipboardData.items].filter(x => x.kind === 'file' && x.type.startsWith('image/')).map(x => x.getAsFile())[0];
+    if (!file) return;
+    e.preventDefault();
+    addPicture(emptySlot(), file);
+  });
+  const hasFiles = e => e.dataTransfer && [...e.dataTransfer.types].includes('Files');
+  $('slots').addEventListener('dragover', e => {
+    if (!hasFiles(e)) return;
+    e.preventDefault();
+    document.querySelectorAll('.slot').forEach(s => s.classList.toggle('drop', s === e.target.closest('.slot')));
+  });
+  $('slots').addEventListener('dragleave', e => { if (!e.relatedTarget || !$('slots').contains(e.relatedTarget)) document.querySelectorAll('.slot.drop').forEach(s => s.classList.remove('drop')); });
+  $('slots').addEventListener('drop', e => {
+    if (!hasFiles(e)) return;
+    e.preventDefault();
+    document.querySelectorAll('.slot.drop').forEach(s => s.classList.remove('drop'));
+    const s = e.target.closest('.slot'), f = [...e.dataTransfer.files].find(f => f.type.startsWith('image/'));
+    if (f) addPicture(s ? s.dataset.slot : emptySlot(), f);
+  });
+
+  // The differences, one at a time. They stay in this browser.
+  const diffs = () => { const w = W(); return Array.isArray(w.diffs) ? w.diffs : (w.diffs = []); };
+  function renderDiffs(){
+    $('diffList').innerHTML = diffs().map((d, i) => '<li>' + esc(d) + '<button type="button" class="link" data-rmdiff="' + i + '">Remove<span class="sr"> this difference</span></button></li>').join('');
+    $('diffAdd').disabled = diffs().length >= 8;
+  }
+  function addDiff(){
+    const t = $('diffIn').value.trim();
+    if (!t || diffs().length >= 8) return;
+    diffs().push(t.slice(0, 200)); $('diffIn').value = '';
+    renderDiffs(); saveJ();
+    Jn.announce('Difference ' + diffs().length + ' added.');
+    $('diffIn').focus();
+  }
+  $('diffAdd').addEventListener('click', addDiff);
+  $('diffIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addDiff(); } });
+  $('diffList').addEventListener('click', e => {
+    const b = e.target.closest('[data-rmdiff]'); if (!b) return;
+    diffs().splice(Number(b.dataset.rmdiff), 1); renderDiffs(); saveJ();
+    $('diffIn').focus();
+  });
+
+  $('askCopy').addEventListener('click', e => copyText($('askText').textContent, e.currentTarget, $('askText')));
+
+  const listHTML = (title, items, cls) => '<div class="cmp-col ' + cls + '"><h4>' + title + '</h4>'
+    + (items.length ? '<ul>' + items.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul>' : '<p class="none">Nothing named.</p>') + '</div>';
+
+  function renderCompare(d){
+    let html = '';
+    if (d.copied) {
+      html = '<p class="copied"><b>Same words back</b>' + esc(d.message) + '</p>';
+    } else if (d.fallback) {
+      html = '<p class="stock"><b>' + (d.own ? 'No answer in time' : 'The desk is swamped') + '</b>' + (d.own ? 'Your AI' : 'It') + ' could not read this in time. Check these yourself, one at a time:'
+        + (d.setup ? ' <span class="setup-note">Tell your facilitator: the desk&rsquo;s AI account needs attention.</span>' : '') + '</p>'
+        + '<ul class="checklist">' + d.checklist.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul>'
+        + '<p class="closer">Change one thing and run it again.</p>';
+    } else {
+      if (d.looks_copied) html += '<p class="copied"><b>Reads like a prompt</b>This sounds more like instructions than a description of a picture. Did your tool see the image?</p>';
+      html += '<div class="cmp-cols">'
+        + listHTML('Asked for, not seen', d.asked_and_missing, 'missing')
+        + listHTML('Turned up unasked', d.appeared_unasked, 'extra')
+        + '<div class="cmp-col words"><h4>Drift words</h4>' + (d.drift_words.length
+          ? '<p class="chips">' + d.drift_words.map(w => '<span>' + esc(w) + '</span>').join('') + '</p><p class="step-note">Words in the description that pull away from your prompt. Which word in your prompt could pull each one back?</p>'
+          : '<p class="none">No drift words named.</p>') + '</div>'
+        + '</div>'
+        + (d.questions.length ? '<div class="cmp-qs"><h4>Questions for you</h4><ul>' + d.questions.map(q => '<li>' + esc(q) + '</li>').join('') + '</ul></div>' : '')
+        + '<p class="closer">Change one thing and run it again.</p>';
+    }
+    cmpResult.innerHTML = html;
+    cmpResult.classList.add('show');
+    if (!d.copied) setDone('compare');   // a pasted-back prompt is not a comparison yet
+  }
+
+  cmpBtn.addEventListener('click', () => {
+    if (cmpBusy) return;
+    if (!hasAI(1)) { openGate($('cmpGate'), runCompare); return; }
+    runCompare();
+  });
+  async function runCompare(){
+    if (cmpBusy || !compareReady()) { checkCompareReady(); return; }
+    cmpBusy = true;
+    cmpError.style.display = 'none';
+    cmpResult.classList.remove('show');
+    cmpBtn.disabled = true;
+    cmpBtn.innerHTML = '<span class="spinner"></span>Comparing…';
+    const sentFrom = J.c;
+    let again = false;
+    try {
+      const { res, data } = await send('compare', {
+        prompt: cmpPrompt.value.trim(), description: cmpDesc.value.trim(),
+        reference: level >= 3 ? cmpRef.value.trim() : '',
+        brief: lastBrief,
+      });
+      if (res.status === 401) { setStatus('That code is not right. Check it and try again.', 'bad'); applyLevel(0); again = true; }
+      if (sentFrom !== J.c) return;
+      if (again && !usingOwnKey) { /* the code box opens below */ }
+      else if (!res.ok) { cmpError.textContent = data.error || ('Something went wrong (' + res.status + ').'); cmpError.style.display = 'block'; }
+      else renderCompare(data);
+    } catch (e) {
+      if (sentFrom === J.c) { cmpError.textContent = 'Could not reach the desk. Check your connection and try again.'; cmpError.style.display = 'block'; }
+    } finally {
+      cmpBusy = false;
+      cmpBtn.textContent = 'Compare';
+      checkCompareReady();
+      if (again && !usingOwnKey && sentFrom === J.c) openGate($('cmpGate'), runCompare);
+    }
+  }
+
+  // What comes after the check: fix the brief, build the comic, or the next case.
+  function renderAfter(){
+    const c = caseOf(J.c), next = c.tier && c.n < 4 ? caseOf(c.n + 1) : null;   // after Page comes the builder, not Review
+    $('reviseBtn').hidden = !c.tier;
+    $('nextCaseRow').hidden = !next;
+    if (next) $('nextCaseName').textContent = next.title;
+  }
+  $('reviseBtn').addEventListener('click', () => goStep('brief', { focus: true }));
+  // The next case begins where every case does: with looking.
+  $('nextCase').addEventListener('click', () => { setDone('check'); stash(); saveNow(); location.href = Jn.BASE + 'references/?case=' + (J.c + 1); });
+  $('builderLink').addEventListener('click', () => { setDone('check'); stash(); saveNow(); });
+
+  // ---- the case file: its parts, and moving between them ----
+  const panels = [...document.querySelectorAll('.stepp')];
+
+  function isDone(k, n = J.c){
+    if (k === 'notice') return wordsIn(n === J.c && live ? attempt.value : (W(n).attempt || '')) >= ATTEMPT_MIN;
+    if (k === 'who') return n === J.c && live ? hasWho() : !!((W(n).cast || []).length || W(n).own);
+    if (k === 'brief') return !!(W(n).brief && Array.isArray(W(n).brief.prompts) && W(n).brief.prompts.length);
+    return doneList(n).includes(k);
+  }
+  // A part is ticked by something that happened: a choice made, a brief on
+  // show, or the learner saying so. Never by a copy or a click away.
+  function setDone(k, on = true){
+    const d = doneList(), i = d.indexOf(k);
+    if (on && i < 0) d.push(k); else if (!on && i >= 0) d.splice(i, 1); else return;
+    saveJ(); syncParts();
+  }
+
+  // Next says where it goes; it waits, and says why, when the part asks for a choice first.
+  function syncNext(){
+    const c = caseOf(J.c);
+    if (!c.tier) return;
+    const who = panels.find(p => p.dataset.step === 'who').querySelector('[data-next]');
+    who.disabled = !hasWho();
+    $('whoWhy').textContent = hasWho() ? '' : 'Choose a character to go on.';
+    const n = wordsIn(attempt.value), noWho = subjectOf(c) === 'character' && !hasWho();
+    const notice = panels.find(p => p.dataset.step === 'notice').querySelector('[data-next]');
+    notice.disabled = n < ATTEMPT_MIN || noWho;
+    $('noticeWhy').textContent = noWho ? 'Choose a character first: use Change, above.' : n < ATTEMPT_MIN ? 'Write ' + (ATTEMPT_MIN - n) + ' more ' + (ATTEMPT_MIN - n === 1 ? 'word' : 'words') + ' to go on.' : '';
+  }
+  // The plain line under the five-step bar ("Part 2 of 4: Choose a palette"),
+  // and where each Next goes: the next part, or the next step by its name.
+  function syncParts(){
+    if (!cur) return;
+    const steps = stepsOf(caseOf(J.c));
+    panels.forEach(p => {
+      const at = steps.indexOf(p.dataset.step);
+      if (at < 0) return;
+      const to = p.querySelector('[data-next] .to'), bk = p.querySelector('[data-back]'), next = steps[at + 1];
+      if (to && next) to.textContent = PARTS[next].step !== PARTS[p.dataset.step].step ? Jn.STEPS[PARTS[next].step - 1].name : PARTS[next].label;
+      if (bk) bk.hidden = at === 0;
+    });
+    const step = PARTS[cur].step, mine = steps.filter(k => PARTS[k].step === step);
+    Jn.update({ step, part: { i: mine.indexOf(cur) + 1, of: mine.length, label: PARTS[cur].label } });
+    noticeWas = isDone('notice');
+    syncNext(); syncAccess();
+  }
+
+  // Brings the part into view and moves focus to its heading, so a keyboard or
+  // screen reader user lands on the new instructions, not on a button that has gone.
+  function reveal(jump){
+    const h = panels.find(p => p.dataset.step === cur).querySelector('h2'), top = h.getBoundingClientRect().top;
+    if (jump || top < 8 || top > innerHeight * .5) h.scrollIntoView({ block: 'start', behavior: jump ? 'instant' : 'auto' });
+    h.focus({ preventScroll: true });
+  }
+
+  function goStep(key, opt = {}){
+    const c = caseOf(J.c), steps = stepsOf(c);
+    if (!steps.includes(key)) key = steps[0];
+    cur = key; J.at[J.c] = key;
+    panels.forEach(p => { p.hidden = p.dataset.step !== key; });
+    if (!codeGate.hidden && !codeGate.closest('.stepp:not([hidden])')) closeGate();
+    if (key === 'who') { whoOpen = false; syncWho(); }
+    if (key === 'place') { placeOpen = false; syncPlace(); }
+    if (key === 'notice') {
+      const notes = typeof W().notes === 'string' ? W().notes.trim() : '';
+      if (!attempt.value.trim() && notes) {
+        // Notes from the old "Study the reference" step become the start of the description.
+        attempt.value = notes.slice(0, 1500);
+        handoffNote.textContent = NOTES_NOTE; handoffNote.hidden = false;
+        countAttempt(); checkReady(); stash();
+      }
+      renderReview();
+    }
+    if (key === 'brief') checkReady();
+    if (key === 'make') renderMake();
+    if (key === 'compare') { checkCompareReady(); renderAfter(); renderSlots(); renderDiffs(); }
+    syncParts();
+    const id = '#' + Jn.STEPS[PARTS[key].step - 1].id;
+    if (location.hash !== id) { try { history.replaceState(history.state, '', id); } catch (e) {} }
+    if (opt.focus) reveal(opt.jump);
+    saveJ();
+  }
+  function nextStep(){
+    const steps = stepsOf(caseOf(J.c)), i = steps.indexOf(cur);
+    if (cur === 'place' || cur === 'palette') setDone(cur);   // answered the question, or kept the palette on show
+    if (steps[i + 1]) goStep(steps[i + 1], { focus: true });
+  }
+  // The first part of a step still to do, or its last part when all are done.
+  const firstOpen = mine => mine.find(k => !isDone(k)) || mine[mine.length - 1];
+
+  // The picture to study while writing: the case's own, or the next of its kind.
+  const refKey = c => c.n + ':' + subjectOf(c);
+  function refOf(c){
+    const subj = subjectOf(c), k = J.ref[refKey(c)];
+    if (k && REFS[k] && REFS[k][1] === subj) return k;
+    return subj === 'setting' && c.refSetting ? c.refSetting : c.ref;
+  }
+  function renderRef(){
+    const c = caseOf(J.c);
+    if (!c.tier) return;
+    const k = refOf(c), subj = subjectOf(c);
+    $('caseRef2').src = THEME.refPath(k); $('caseRef2').alt = REFS[k][0];
+    $('caseRefCap').textContent = 'Reference' + (REFS[k][2] ? ' · could be ' + castName(REFS[k][2]) : '');
+    $('lookFor').innerHTML = THEME.lookFor[subj].map(t => '<li>' + esc(t) + '</li>').join('');
+    $('exampleText').textContent = subj === 'setting'
+      ? '“An empty office: rows of desks, filing cabinets, a coat stand. Blinds half shut, hard light across the floor. Daytime, a city skyline through the windows, black and white ink.”'
+      : '“A big man in a long belted coat and a fedora, hands in his pockets, scowling. A dark band on the hat, a tie, a waistcoat. Night, a wet street, one streetlamp, black and white ink.”';
+    idea.placeholder = subj === 'setting'
+      ? 'Describe the place you’re picturing, in your own words. e.g. “The detectives’ office after everyone has gone home, one desk lamp still on”'
+      : 'Describe what you’re picturing, in your own words. e.g. “Edward Novak waiting in a doorway across the street from the precinct, watching”';
+    $('briefTip').innerHTML = subj === 'setting'
+      ? '<strong>Tested on Gemini</strong>Ask for &ldquo;an old police station office&rdquo; and Gemini fills it with named cops, speech balloons and an arrest in progress. For an empty room, say so: no characters, no text, no dialogue, no captions.'
+      : '<strong>Tested on Gemini</strong>&ldquo;A police chief character for a comic book&rdquo; came back as a modern colour superhero. Adding era, medium and a named artist (1940s film noir, black and white ink, Al Williamson) flipped the whole style in one step.';
+  }
+  $('refNext').addEventListener('click', () => {
+    const c = caseOf(J.c), subj = subjectOf(c), all = Object.keys(REFS).filter(k => REFS[k][1] === subj);
+    J.ref[refKey(c)] = all[(all.indexOf(refOf(c)) + 1) % all.length];
+    renderRef(); saveJ();
+  });
+  function openZoom(img){
+    if (!$('zoomDlg').showModal) { open(img.src, '_blank', 'noopener'); return; }   // an older browser: the picture in its own tab
+    $('zoomImg').src = img.src; $('zoomImg').alt = img.alt;
+    $('zoomDlg').showModal();
+  }
+  document.querySelectorAll('[data-zoom]').forEach(b => b.addEventListener('click', () => openZoom(b.parentElement.querySelector('img'))));
+  $('zoomDlg').addEventListener('click', e => { if (e.target === $('zoomDlg')) $('zoomDlg').close(); });   // a click on the dark around it closes it
+
+  // The kinds of case. Each says its level and how far it has got, in words.
+  function renderCasePick(){
+    $('caseList').innerHTML = CASES.map(c => {
+      const g = c.tier && gameOf(c.tier), st = Jn.status(J, c.n);
+      const far = st.all ? 'Finished' : (doneList(c.n).length || (J.work[c.n] && (J.work[c.n].attempt || J.work[c.n].idea))) ? 'In progress' : 'Not started';
+      const needs = g && g.level > Math.max(level, 1) && !usingOwnKey ? ' · needs the ' + g.name + ' code at Step 3' : '';
+      return '<li><button type="button" data-case="' + c.n + '"' + (c.n === J.c ? ' aria-current="true"' : '') + '>'
+        + '<b>Case 0' + c.n + ': ' + esc(c.tab) + '</b>' + esc(c.about)
+        + '<small>' + (g ? esc(g.name) + ' level' : 'Any level') + needs + ' · ' + far + (c.n === J.c ? ' · On your desk' : '') + '</small></button></li>';
+    }).join('');
+  }
+  function setPick(open){
+    $('casePick').hidden = !open;
+    $('caseChange').setAttribute('aria-expanded', String(open));
+    if (open) { renderCasePick(); ($('caseList').querySelector('[aria-current]') || $('caseList').querySelector('button')).focus(); }
+  }
+  $('caseChange').addEventListener('click', () => setPick($('casePick').hidden));
+
+  function openCase(n, opt = {}){
+    const c = caseOf(n);
+    if (!c) return;
+    if (!opt.fresh) stash();
+    J.c = n;
+    if (opt.subject && c.swap) J.subj[n] = opt.subject;
+    unstash();
+    const g = c.tier && gameOf(c.tier), subj = subjectOf(c);
+    // The desk's subject and level follow the case.
+    state.subject = subj || 'character';
+    state.tier = c.tier || null;
+    whoOpen = placeOpen = extraOpen = false;
+    $('caseStamp').textContent = 'Case 0' + n;
+    $('caseTitle').textContent = c.title;
+    $('levelTag').textContent = g ? g.name + ' level' : 'Any level';
+    $('swapRow').hidden = !c.swap;
+    $('swapRow').querySelectorAll('input').forEach(i => { i.checked = i.value === subj; });
+    markPicked($('swapRow'), 'swap');
+    closeGate();
+    syncTier(); renderWho(); syncWho(); syncPlace(); syncPalette(); syncPlatform(); renderRef(); countAttempt();
+    ideaCount.textContent = idea.value.length;
+    handoffNote.hidden = true;
+    setExample(attemptIsExample);
+    restoreBrief(); syncCompareFill(); renderDiffs();
+    live = true;
+    renderCasePick();
+    goStep(opt.step || J.at[n], opt);
+    saveJ();
+  }
+
+  document.addEventListener('click', e => {
+    const t = e.target;
+    const step = t.closest('button[data-step]'), tab = t.closest('[data-case]');
+    if (step) goStep(step.dataset.step, { focus: true });
+    else if (tab) { setPick(false); openCase(Number(tab.dataset.case), {}); $('caseTitle').focus({ preventScroll: true }); $('case').scrollIntoView({ block: 'start' }); }
+    else if (t.closest('[data-next]')) nextStep();
+    else if (t.closest('[data-back]')) { const s = stepsOf(caseOf(J.c)); goStep(s[Math.max(0, s.indexOf(cur) - 1)], { focus: true }); }
+  });
+
+  // Start again: only this case's choices, words, brief and pictures. The code and the key stay.
+  const againConfirm = $('againConfirm');
+  $('startAgain').addEventListener('click', () => { againConfirm.hidden = false; $('againNo').focus(); });
+  $('againNo').addEventListener('click', () => { againConfirm.hidden = true; $('startAgain').focus(); });
+  $('againYes').addEventListener('click', async () => {
+    againConfirm.hidden = true;
+    const c = caseOf(J.c);
+    delete J.work[c.n]; delete J.done[c.n]; delete J.at[c.n];
+    Object.keys(J.ref).forEach(k => { if (k.startsWith(c.n + ':')) delete J.ref[k]; });
+    await Pics.clearCase(c.n);
+    openCase(c.n, { fresh: true, focus: true, step: stepsOf(c)[0] });
+    Jn.announce('This case has been cleared.');
+  });
+
+  // ---- start up ----
+  const incoming = location.hash;   // goStep() rewrites the address, so keep what the page was opened with
+  if (J.platform && TOOLS[J.platform]) state.platform = J.platform;
+  // Show the last known level straight away, then ask the Worker what the saved code really opens.
+  applyLevel(level);
+  Jn.mount({ page: 'case', step: 2, journey: () => J });
+  openCase(J.c, { fresh: true });
+  if (!usingOwnKey && codeInput.value.trim()) verifyCode(true);
+
+  // A description sent over from Look closely, so nobody types it twice. It is
+  // the attendee's own looking, so it goes in the description box of the case
+  // on the desk if it was written at that case's level, or else of the case
+  // that matches the level and subject it was written at.
+  let handoff = null;
+  try {
+    handoff = JSON.parse(localStorage.getItem('precinct_handoff') || 'null');
+    localStorage.removeItem('precinct_handoff');
+  } catch (e) {}
+  const arrived = !!(handoff && handoff.idea && Date.now() - (handoff.ts || 0) < 6 * 3600e3);
+  if (arrived) {
+    const subject = handoff.subject === 'setting' ? 'setting' : 'character';
+    const mine = caseOf(Number(handoff.kase));
+    const fits = mine && mine.tier === handoff.tier && (mine.swap || mine.subject === subject);
+    const n = fits ? mine.n : handoff.tier === 'advanced' ? 4 : handoff.tier === 'medium' ? 3 : subject === 'setting' ? 2 : 1;
+    openCase(n, { subject, step: stepsOf(caseOf(n))[0] });   // Step 2 from its first part: the description is waiting further on
+    attempt.value = String(handoff.idea).slice(0, 1500);
+    setExample(handoff.mode === 'demo' || handoff.mode === 'guide');
+    if (!attemptIsExample) { handoffNote.textContent = HANDOFF_NOTE; handoffNote.hidden = false; }
+    if (Array.isArray(handoff.cast) && subject === 'character' && handoff.cast.some(validCast)) {
+      state.cast = handoff.cast.filter(validCast); own = false;
+      setDone('who');
+    }
+    setDone('look');
+    countAttempt(); checkReady(); stash(); syncWho(); renderReview(); syncParts();
+  }
+
+  // The address says which step: #choose, #create, #check. Links made before
+  // the case file had a page of its own (#brief, #cast and so on) still open
+  // the part they meant.
+  function route(first){
+    const h = (first ? incoming : location.hash).replace('#', ''), steps = () => stepsOf(caseOf(J.c)), has = k => steps().includes(k);
+    if (first && arrived) return;   // the handoff has already opened the right part
+    const old = { brief: 'brief', palettes: 'palette', compare: 'compare', cast: 'who', characters: 'who' }[h];
+    if (old) { if (!has(old)) openCase(1, {}); goStep(old, { focus: true, jump: first }); return; }
+    if (h === 'settings') { openCase(2, {}); return; }
+    const step = Jn.STEPS.find(s => s.id === h && s.n >= 2 && s.n <= 4);
+    if (!step || (cur && PARTS[cur].step === step.n)) return;
+    const mine = steps().filter(k => PARTS[k].step === step.n);
+    if (!mine.length) return;   // Review has no such step
+    goStep(mine.includes(J.at[J.c]) ? J.at[J.c] : firstOpen(mine), { focus: !first });
+  }
+  addEventListener('hashchange', () => route(false));
+  route(true);
+})();
+</script>
+<noscript><p style="padding:20px;color:#ece6d6">The Precinct needs JavaScript to run the case file.</p></noscript>
+</body>
+</html>

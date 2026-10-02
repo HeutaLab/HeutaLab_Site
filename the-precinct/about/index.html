@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.className+=' js'</script>
+<meta name="theme-color" content="#0a0e0f">
+<title>About: The Precinct</title>
+<meta name="description" content="Where The Precinct came from, who made it, and what you practise by using it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Special+Elite&family=Courier+Prime:wght@400;700&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Caveat:wght@600&display=swap">
+<link rel="stylesheet" href="/the-precinct/precinct.css">
+<style>
+  .res{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:6px}
+  .res > *{border:1px solid var(--frame);background:var(--panel);padding:16px 16px 18px;color:var(--ink);text-decoration:none;font-size:13.5px;line-height:1.5}
+  .res b{display:block;font-family:var(--label);font-weight:500;letter-spacing:.12em;text-transform:uppercase;font-size:14px;color:var(--yellow);margin-bottom:6px}
+  .res span{display:block;margin-top:10px;font-family:var(--label);letter-spacing:.14em;text-transform:uppercase;font-size:11.5px;color:var(--yellow)}
+  .res a:hover{border-color:var(--yellow)}
+  .res ul{margin:0;padding-left:18px}
+  .res li{margin-bottom:5px}
+  .strip{display:grid;grid-template-columns:1fr 160px;gap:14px;margin-top:22px}
+  .strip .pic{position:relative;overflow:hidden;min-height:150px;border:1px solid var(--frame)}
+  .strip img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 60%}
+  .strip .pic::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(11,15,15,.92) 0%,rgba(11,15,15,.5) 38%,transparent 62%)}
+  .strip blockquote{position:relative;z-index:2;margin:0;padding:34px 30px;font-family:var(--serif);font-style:italic;font-size:19px;line-height:1.4;max-width:380px}
+  .strip cite{display:block;margin-top:8px;font-style:normal;font-family:var(--label);font-size:11px;letter-spacing:.2em;color:var(--ink-dim)}
+  .strip .stampbox{display:flex;align-items:center;justify-content:center;padding:14px;font-family:var(--label);font-size:19px;letter-spacing:.14em;line-height:1.25;text-transform:uppercase;border:1px solid var(--frame);text-align:center}
+  @media (max-width:880px){.res{grid-template-columns:repeat(2,minmax(0,1fr))}.strip{grid-template-columns:minmax(0,1fr)}}
+  @media (max-width:600px){.res{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body id="top">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="noir" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values=".33 .5 .17 0 0  .33 .5 .17 0 0  .33 .5 .17 0 0  0 0 0 1 0"/>
+    <feComponentTransfer>
+      <feFuncR type="table" tableValues="0.03 0.09 0.30 0.95 0.98"/>
+      <feFuncG type="table" tableValues="0.05 0.21 0.45 0.78 0.92"/>
+      <feFuncB type="table" tableValues="0.055 0.22 0.42 0.27 0.70"/>
+    </feComponentTransfer>
+  </filter>
+  <filter id="worn" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" seed="7" result="n"/>
+    <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -5 3.7" result="m"/>
+    <feComposite in="SourceGraphic" in2="m" operator="in"/>
+  </filter>
+</svg>
+
+<a class="skip" href="#main">Skip to the page</a>
+
+<div class="page">
+
+  <div class="masthead mini">
+    <img class="art noir" src="/the-precinct/img/street.jpg" alt="" width="922" height="266">
+    <header class="top">
+      <p class="brand"><a class="logo" href="/the-precinct/"><span class="the">The</span><span class="name">Precinct</span><span class="strap">AI comics. Real ideas.</span></a></p>
+      <nav id="siteNav" aria-label="The Precinct">
+        <a href="/the-precinct/references/">Look closely</a>
+        <a href="/the-precinct/builder/">Comic builder</a>
+        <a href="/the-precinct/teachers/">Teachers</a>
+        <a href="/the-precinct/resources/">Resources</a>
+        <span class="more">
+          <a href="/the-precinct/about/" aria-current="page">About</a>
+          <a href="/the-precinct/key/">AI key page (adults)</a>
+          <a class="out" href="/">HeutaLab</a>
+        </span>
+      </nav>
+      <button type="button" class="menu-btn" aria-expanded="false" aria-controls="siteNav" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span class="m">Menu</span><span class="d">More</span></button>
+      <a class="cta-line" href="/the-precinct/references/?start=1" data-resume><span class="lab">Start</span> <span class="arr">&rarr;</span></a>
+    </header>
+    <div class="pagehead paper tape">
+      <p class="where">The project</p>
+      <h1>About The Precinct</h1>
+      <p>A film noir comic, made with AI and with close looking. Part of the AIFE workshop &ldquo;Human Creativity, AI Precision&rdquo;.</p>
+    </div>
+    <p class="tagline" aria-hidden="true">Real stories. Your panels.</p>
+  </div>
+
+  <main id="main">
+  <section class="res" aria-label="About The Precinct">
+    <div><b>What you practise</b>
+      <ul>
+        <li>to analyse visual language</li>
+        <li>to describe precisely</li>
+        <li>to improve an idea by changing one thing</li>
+      </ul>
+    </div>
+    <a href="/blog/21cl-bkk-ai-is-not-taking-our-jobs-quite-the-opposite-midjourney-generative-art/"><b>The original comic</b>How the 2023 Midjourney noir strip behind these images was made.<span>Read the post &rarr;</span></a>
+    <a href="/about/cv/"><b>Who&rsquo;s behind this?</b>Glenn Malcolm: technology &amp; learning curriculum designer, subject leader and international schools consultant. HeutaLab is his home for practical EdTech tools, ideas and training.<span>Glenn&rsquo;s CV &rarr;</span></a>
+    <a href="/the-precinct/teachers/#privacy"><b>What this site sends and stores</b>Your work stays in your browser. Only what you send to the briefing desk goes to an AI service.<span>Read it in full &rarr;</span></a>
+    <a href="/the-precinct/resources/"><b>Resources</b>The cast and the places as downloads, ready for slides, storyboards or reference sheets.<span>Open Resources &rarr;</span></a>
+    <a href="/apps/"><b>More from HeutaLab</b>Classroom apps: LoopLab, PlanBench, Sage Stage and more, for teachers and learners of 5&ndash;13.<span>See the apps &rarr;</span></a>
+  </section>
+
+  <section class="strip">
+    <div class="pic">
+      <img class="noir" src="/the-precinct/img/street.jpg" alt="A sedan&rsquo;s headlights on a rain-soaked street at night" width="922" height="266" loading="lazy">
+      <blockquote>&ldquo;It&rsquo;s not just a comic.<br>It&rsquo;s a case.&rdquo;<cite>THE PRECINCT</cite></blockquote>
+    </div>
+    <div class="stampbox">Real stories.<br>Your panels.</div>
+  </section>
+  </main>
+
+  <footer>
+    The artwork here comes from Glenn Malcolm&rsquo;s own 2023 Midjourney noir comic.
+    <a href="/the-precinct/teachers/#privacy">What this site sends and stores</a>.
+    Part of the <a href="/">HeutaLab</a> AIFE workshop materials: &ldquo;Human Creativity, AI Precision&rdquo;.
+  </footer>
+
+</div>
+
+<script type="module">
+import Jn from '/the-precinct/journey.js';
+Jn.mount({ page: 'about' });
+</script>
+</body>
+</html>

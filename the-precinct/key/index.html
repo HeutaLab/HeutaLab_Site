@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.className+=' js'</script>
 <meta name="theme-color" content="#0a0e0f">
 <title>Your API key: The Precinct</title>
 <meta name="description" content="Add your own AI key (Google Gemini, OpenAI or Anthropic Claude) so The Precinct's briefing desk can write your character and setting prompts. The key stays in your browser.">
@@ -66,15 +67,19 @@
     <img class="art noir" src="/the-precinct/img/hat.jpg" alt="" width="489" height="335">
     <header class="top">
       <p class="brand"><a class="logo" href="/the-precinct/"><span class="the">The</span><span class="name">Precinct</span><span class="strap">AI comics. Real ideas.</span></a></p>
-      <nav aria-label="The Precinct">
-        <a href="/the-precinct/#cases">The cases</a>
-        <a href="/the-precinct/references/">References</a>
+      <nav id="siteNav" aria-label="The Precinct">
+        <a href="/the-precinct/references/">Look closely</a>
         <a href="/the-precinct/builder/">Comic builder</a>
-        <a href="/the-precinct/#teachers">Teachers</a>
-        <a href="/the-precinct/#about">About</a>
-        <a class="out" href="/">HeutaLab</a>
+        <a href="/the-precinct/teachers/">Teachers</a>
+        <a href="/the-precinct/resources/">Resources</a>
+        <span class="more">
+          <a href="/the-precinct/about/">About</a>
+          <a href="/the-precinct/key/" aria-current="page">AI key page (adults)</a>
+          <a class="out" href="/">HeutaLab</a>
+        </span>
       </nav>
-      <a class="cta-line" href="/the-precinct/#cases" id="topStart"><span class="lab">Start a case</span> <span class="arr">&rarr;</span></a>
+      <button type="button" class="menu-btn" aria-expanded="false" aria-controls="siteNav" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span class="m">Menu</span><span class="d">More</span></button>
+      <a class="cta-line" href="/the-precinct/references/?start=1" data-resume><span class="lab">Start</span> <span class="arr">&rarr;</span></a>
     </header>
     <div class="pagehead paper tape">
       <p class="where">Setting up</p>
@@ -105,7 +110,7 @@
         <button type="button" class="go" id="saveKey" disabled>Save and test</button>
         <div class="keystatus" id="keyStatus" aria-live="polite" hidden></div>
         <div class="keybtns">
-          <a class="btn ghost" href="/the-precinct/#brief">Get your brief <span class="arr">&rarr;</span></a>
+          <a class="btn ghost" href="/the-precinct/case/#create">Back to your case <span class="arr">&rarr;</span></a>
           <button type="button" class="btn ghost" id="forgetKey" hidden>Forget this key</button>
         </div>
       </div>
@@ -129,8 +134,9 @@
 
 </div>
 
-<script src="/the-precinct/top.js" defer></script>
 <script type="module">
+import Jn from '/the-precinct/journey.js';
+Jn.mount({ page: 'key' });
 import { PROVIDERS, loadKey, saveKey, forgetKey, maskKey, testKey, failureMessage, isTransient, personalKeysNeeded } from '/the-precinct/providers.js';
 
 (function(){

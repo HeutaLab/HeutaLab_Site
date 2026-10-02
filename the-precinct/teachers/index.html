@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.className+=' js'</script>
+<meta name="theme-color" content="#0a0e0f">
+<title>Teachers: The Precinct</title>
+<meta name="description" content="A lesson outline for The Precinct, what students learn, what to have ready, the three levels, and what the site sends and stores.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Special+Elite&family=Courier+Prime:wght@400;700&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Caveat:wght@600&display=swap">
+<link rel="stylesheet" href="/the-precinct/precinct.css">
+<style>
+  /* the lesson, what students learn, and what to have ready: one sheet */
+  .teach{margin:6px 0 0;padding:26px 28px 28px}
+  .teach h2{font-family:var(--slab);font-weight:400;font-size:clamp(24px,2.6vw,31px);line-height:1.15;margin:0 0 6px;text-shadow:.5px 0 0 currentColor}
+  .teach > p{margin:0 0 18px;max-width:76ch}
+  .teach-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:30px}
+  .teach h3{font-family:var(--label);font-weight:600;font-size:14px;letter-spacing:.16em;text-transform:uppercase;margin:0 0 8px}
+  .teach h3:not(:first-child){margin-top:20px}
+  .teach ul{margin:0;padding-left:20px;font-size:14px;line-height:1.5}
+  .teach li{margin-bottom:6px}
+  .teach p.small{margin:0;font-size:14px;line-height:1.5}
+  .lesson{list-style:none;margin:0;padding:0}
+  .lesson li{display:grid;grid-template-columns:70px minmax(0,1fr);gap:12px;align-items:baseline;margin:0;padding:10px 0;border-top:1.5px dashed var(--rule-p);font-size:14px;line-height:1.45}
+  .lesson li:last-child{border-bottom:1.5px dashed var(--rule-p)}
+  .lesson .min{font-family:var(--label);font-weight:700;font-size:21px;line-height:1;color:var(--red)}
+  .lesson .min small{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin-left:3px}
+  .lesson b{display:block;font-size:14.5px}
+  .lesson .wh{font-family:var(--label);font-weight:600;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-p2)}
+  .lesson .wh.away{color:var(--red-deep)}
+  .teach .after{margin:10px 0 0;font-size:13px;color:var(--ink-p2)}
+  .linkrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:6px}
+  .linkrow code{font:14px var(--type);background:var(--paper-hi);border:1.5px solid var(--ink-p2);padding:6px 10px}
+  .linkrow .btn{color:var(--ink-p)}
+  /* the three levels: how hard a case is, not a step */
+  .levels{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .levels li{--lv:#2f7a3d;border:1.5px solid var(--lv);margin:0;padding:0 10px 10px 0;font-size:12.5px;line-height:1.4;display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:10px;align-content:start;background:var(--paper-hi)}
+  .levels li.lv2{--lv:#2f66a8}
+  .levels li.lv3{--lv:#b3261e}
+  .levels li b{grid-row:1;background:var(--lv);color:#fff;font-family:var(--label);font-weight:700;font-size:18px;width:28px;height:30px;display:grid;place-items:center}
+  .levels li strong{grid-row:1;align-self:center;font-family:var(--label);font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:13.5px}
+  .levels li span{grid-column:2;margin-top:4px}
+  .privacy{margin:28px 0 0;padding:24px 28px 26px;scroll-margin-top:10px}
+  .privacy h2{font-family:var(--slab);font-weight:400;font-size:clamp(22px,2.4vw,28px);line-height:1.15;margin:0 0 10px;text-shadow:.5px 0 0 currentColor}
+  .privacy h3{font-family:var(--label);font-weight:600;font-size:14px;letter-spacing:.16em;text-transform:uppercase;margin:16px 0 6px}
+  .privacy p,.privacy li{font-size:14px;line-height:1.55;max-width:80ch}
+  .privacy p{margin:0 0 8px}
+  .privacy ul{margin:0;padding-left:20px}
+  @media (max-width:880px){.teach-grid{grid-template-columns:minmax(0,1fr)}}
+  @media (max-width:600px){.teach,.privacy{padding:22px 16px 24px}.levels{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body id="top">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="noir" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values=".33 .5 .17 0 0  .33 .5 .17 0 0  .33 .5 .17 0 0  0 0 0 1 0"/>
+    <feComponentTransfer>
+      <feFuncR type="table" tableValues="0.03 0.09 0.30 0.95 0.98"/>
+      <feFuncG type="table" tableValues="0.05 0.21 0.45 0.78 0.92"/>
+      <feFuncB type="table" tableValues="0.055 0.22 0.42 0.27 0.70"/>
+    </feComponentTransfer>
+  </filter>
+  <filter id="worn" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" seed="7" result="n"/>
+    <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -5 3.7" result="m"/>
+    <feComposite in="SourceGraphic" in2="m" operator="in"/>
+  </filter>
+</svg>
+
+<a class="skip" href="#main">Skip to the lesson</a>
+
+<div class="page">
+
+  <div class="masthead mini">
+    <img class="art noir" src="/the-precinct/img/ref/novak-card.jpg" alt="" width="900" height="900">
+    <header class="top">
+      <p class="brand"><a class="logo" href="/the-precinct/"><span class="the">The</span><span class="name">Precinct</span><span class="strap">AI comics. Real ideas.</span></a></p>
+      <nav id="siteNav" aria-label="The Precinct">
+        <a href="/the-precinct/references/">Look closely</a>
+        <a href="/the-precinct/builder/">Comic builder</a>
+        <a href="/the-precinct/teachers/" aria-current="page">Teachers</a>
+        <a href="/the-precinct/resources/">Resources</a>
+        <span class="more">
+          <a href="/the-precinct/about/">About</a>
+          <a href="/the-precinct/key/">AI key page (adults)</a>
+          <a class="out" href="/">HeutaLab</a>
+        </span>
+      </nav>
+      <button type="button" class="menu-btn" aria-expanded="false" aria-controls="siteNav" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span class="m">Menu</span><span class="d">More</span></button>
+      <a class="cta-line" href="/the-precinct/references/?start=1" data-resume><span class="lab">Start</span> <span class="arr">&rarr;</span></a>
+    </header>
+    <div class="pagehead paper tape">
+      <p class="where">For teachers and facilitators</p>
+      <h1>Teachers</h1>
+      <p>A lesson outline, setup, differentiation and privacy.</p>
+    </div>
+    <p class="tagline" aria-hidden="true">Teaching this?</p>
+  </div>
+
+  <main id="main">
+  <section class="teach folder" aria-labelledby="teachTitle">
+    <h2 id="teachTitle">One lesson, five steps, and what to have ready.</h2>
+    <p>Run the first step from the front, then let the room work. Students look and describe on The Precinct, make the picture in the AI image tool your school has approved, and come back here to check it.</p>
+    <div class="teach-grid">
+      <div>
+        <h3>A suggested lesson: about 55 minutes</h3>
+        <ol class="lesson">
+          <li><span class="min">10<small>min</small></span><div><b>Step 1: Look closely</b><span class="wh">On The Precinct</span><br>Read one picture together on the <a href="/the-precinct/references/">Look closely page</a>. Demo shows worked answers; Guide lets the room agree an answer before you reveal it.</div></li>
+          <li><span class="min">10<small>min</small></span><div><b>Step 2: Choose and describe</b><span class="wh">On The Precinct</span><br>Students open Case 01: choose a character and a palette, and write what they notice.</div></li>
+          <li><span class="min">10<small>min</small></span><div><b>Step 3: Create with AI</b><span class="wh away">On The Precinct, then in the AI image tool</span><br>Get the brief (this is where the workshop code is asked for), paste it into the image tool, make the picture and save it.</div></li>
+          <li><span class="min">10<small>min</small></span><div><b>Step 4: Check and improve</b><span class="wh">Back at The Precinct</span><br>The picture goes next to the brief. What stayed the same, what changed, and which one thing to change.</div></li>
+          <li><span class="min">15<small>min</small></span><div><b>Step 5: Build and share</b><span class="wh">Back at The Precinct</span><br>The <a href="/the-precinct/builder/">comic builder</a> turns pictures into a page with captions and speech balloons.</div></li>
+        </ol>
+        <p class="after">Making pictures takes time, and a comic page needs several of them. Plan a second session for the page.</p>
+        <h3>The link for students</h3>
+        <div class="linkrow"><code id="linkText">heutalab.com/the-precinct/</code><button type="button" class="btn small ghost" id="copyLink">Copy link</button></div>
+      </div>
+      <div>
+        <h3>Students are learning to</h3>
+        <ul>
+          <li>analyse visual language</li>
+          <li>keep characters and scenes consistent</li>
+          <li>evaluate the difference between what they asked for and what came back</li>
+        </ul>
+        <h3>You will see it when they</h3>
+        <ul>
+          <li>describe a picture before they prompt: what they see, the details, the world around it</li>
+          <li>can say which steps happen here and which happen in the image tool</li>
+          <li>change one thing at a time, and can say why</li>
+        </ul>
+        <h3>Before the lesson</h3>
+        <ul>
+          <li>Choose the AI image tool your school has approved, and check its age and data rules. Students pick it at Step 3 and see only that tool&rsquo;s instructions.</li>
+          <li>Have a way in ready for the brief and the desk&rsquo;s compare check: a workshop code from your facilitator, or an AI key saved on each device (see the <a href="/the-precinct/key/">AI key page</a>). Students are asked for the code at Step 3, not before. Steps 1 and 2 need neither.</li>
+          <li>Work through Case 01 yourself first.</li>
+          <li>Read <a href="#privacy">what this site sends and stores</a>.</li>
+        </ul>
+      </div>
+    </div>
+    <h3 id="levels">Differentiation: three levels, four kinds of case</h3>
+    <p class="small" style="margin-bottom:10px">The level is how hard a case is. Every case has the same five steps. Case 01 Character and Case 02 Location are Rookie, Case 03 Scene is Detective and Case 04 Page is Commissioner; Case 05 is the check on its own, for any picture. Students change case from the case file, and each case keeps its own work.</p>
+    <ol class="levels" id="levelStrip" aria-label="Levels"></ol>
+  </section>
+
+  <section class="privacy folder" id="privacy" aria-labelledby="privacyTitle">
+    <h2 id="privacyTitle">What this site sends and stores</h2>
+    <h3>Kept in the browser, and sent nowhere</h3>
+    <ul>
+      <li>Where a student got to in each case, and their choices, descriptions, ideas and briefs.</li>
+      <li>The pictures they add at Step 4 and in the comic builder, and the differences and changes they write at Step 4.</li>
+      <li>The workshop code and the level it opens.</li>
+    </ul>
+    <p style="margin-top:8px">It does not follow a student to another device. On a shared computer, use &ldquo;Start this case again&rdquo; in the case file, and &ldquo;Start again&rdquo; in the comic builder, when a student finishes.</p>
+    <h3>Sent to the AI service</h3>
+    <p>When a student presses &ldquo;Get my brief&rdquo;, their description and their idea go to a Cloudflare Worker for this site and then to Anthropic&rsquo;s API. The desk&rsquo;s optional compare check sends the brief and the descriptions pasted into it the same way. The workshop code is checked by the Worker only. Nothing a student types is kept on the server or shown to anyone else. Pictures are never sent: the site cannot see them.</p>
+    <p>With your own AI key, the key and what is typed go straight from the browser to that service (Google, OpenAI or Anthropic) and never to this site.</p>
+    <h3>Counted</h3>
+    <p>Either way, the site counts each request to the desk: the step, the level, the image tool, palette and characters picked, whether it worked, how long it took, and a random number for the browser. Never what anyone types, their pictures, their code or their key.</p>
+    <h3>The image tool</h3>
+    <p>The picture is made in an AI image tool outside this site, under that tool&rsquo;s own terms. The Precinct cannot see what is made there.</p>
+  </section>
+  </main>
+
+  <footer>
+    The artwork here comes from Glenn Malcolm&rsquo;s own 2023 Midjourney noir comic.
+    Part of the <a href="/">HeutaLab</a> AIFE workshop materials: &ldquo;Human Creativity, AI Precision&rdquo;.
+  </footer>
+
+</div>
+
+<script type="module">
+import Jn from '/the-precinct/journey.js';
+Jn.mount({ page: 'teachers' });
+import THEME from '/the-precinct/theme.js';
+const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+document.getElementById('levelStrip').innerHTML = THEME.game.map(g =>
+  '<li class="lv' + g.level + '"><b aria-hidden="true">' + g.level + '</b><strong>' + esc(g.name) + '</strong><span>' + esc(g.sum) + ' ' + esc(g.learn) + '</span></li>').join('');
+const btn = document.getElementById('copyLink');
+btn.addEventListener('click', () => {
+  const done = t => { btn.textContent = t; Jn.announce(t + '.'); setTimeout(() => { btn.textContent = 'Copy link'; }, 1600); };
+  try { navigator.clipboard.writeText('https://heutalab.com/the-precinct/').then(() => done('Copied'), () => done('Select the link to copy it')); }
+  catch (e) { done('Select the link to copy it'); }
+});
+</script>
+</body>
+</html>

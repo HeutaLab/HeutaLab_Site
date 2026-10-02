@@ -1,7 +1,9 @@
 /* The Precinct: what every page shares. A case file on a night street:
-   dark ground, old paper, one red stamp. The top bar, paper cards, buttons
-   and form parts live here; home.css holds the home page's own pieces, and
-   References, the comic builder and the key page keep theirs in the page. */
+   dark ground, old paper, one red stamp. The top bar and its menu, the
+   five-step bar (drawn by journey.js), paper cards, buttons and form parts
+   live here. home.css holds the landing page's own pieces and case.css the
+   case file's; Look closely, the comic builder, Teachers, Resources, About
+   and the key page keep theirs in the page. */
   :root{
     --bg:#0a0e0f;
     --panel:#101516;
@@ -96,29 +98,78 @@
   .link{background:none;border:0;padding:0;cursor:pointer;color:var(--red-deep);text-decoration:underline;font:inherit}
 
   /* ---------- masthead: the top bar and the start card over the street ---------- */
-  .masthead{position:relative;isolation:isolate;margin:0 -16px;padding:0 16px 30px;overflow:hidden}
+  .masthead{position:relative;z-index:5;isolation:isolate;margin:0 -16px;padding:0 16px 30px;overflow:hidden}
+  /* The menu drops below the bar, so the masthead only clips sideways where a browser can do that. */
+  @supports (overflow:clip){.masthead{overflow-x:clip;overflow-y:visible}}
   .masthead .art{position:absolute;z-index:-2;top:0;right:0;width:76%;height:100%;object-fit:cover;object-position:60% 30%}
   .masthead::before{content:"";position:absolute;inset:0;z-index:-1;background:
     linear-gradient(90deg,var(--bg) 24%,rgba(10,14,15,.7) 38%,rgba(10,14,15,.08) 60%,rgba(10,14,15,.12) 86%,var(--bg) 100%),
     linear-gradient(180deg,rgba(10,14,15,.86) 0,rgba(10,14,15,.25) 24%,rgba(10,14,15,0) 40%,rgba(10,14,15,.1) 76%,var(--bg) 100%)}
-  .top{display:flex;align-items:center;gap:22px;padding:16px 0 6px}
+  .top{position:relative;display:flex;align-items:center;gap:22px;padding:16px 0 6px}
   .top h1{margin:0}
   .logo{display:block;color:#f6f1e4;text-decoration:none;font-family:var(--label);font-weight:700;text-transform:uppercase;line-height:.82;
     transform:rotate(-3deg);transform-origin:left center;filter:url(#worn)}
   .logo .the{display:block;font-size:21px;margin-left:24px;letter-spacing:.03em}
   .logo .name{display:block;font-size:56px;letter-spacing:-.005em}
   .logo .strap{display:block;margin:7px 0 0 58px;padding-top:5px;border-top:3px solid var(--red-hi);font-weight:500;font-size:11.5px;letter-spacing:.2em;line-height:1;white-space:nowrap}
-  .top nav{display:flex;gap:2px;flex:1;margin-left:26px}
+  /* The bar, in order: the name, the four pages a learner uses, the menu
+     button (About, the AI key page and HeutaLab sit behind it), then the one
+     start-or-continue action. On a narrow screen every link is behind the
+     button, so nothing scrolls sideways. journey.js wires the button; with no
+     script every link simply shows. */
+  .top nav{order:2;display:flex;align-items:center;gap:2px;flex:1;margin-left:26px}
   .top nav a{color:var(--ink);text-decoration:none;font-family:var(--label);font-weight:500;font-size:14px;letter-spacing:.14em;
     text-transform:uppercase;padding:10px 13px;white-space:nowrap;text-shadow:0 1px 3px #000}
   .top nav a:hover{color:#fff;box-shadow:inset 0 -3px 0 var(--red-hi)}
   .top nav a.out{color:var(--ink-dim)}
-  .cta-line{display:inline-flex;align-items:center;gap:10px;font-family:var(--label);font-weight:600;font-size:17px;letter-spacing:.12em;
+  .top nav .more{display:flex;gap:2px}
+  .js .top nav .more{display:none;position:absolute;right:0;top:100%;z-index:30;flex-direction:column;gap:0;min-width:220px;padding:6px;
+    background:var(--panel);border:1.5px solid var(--frame);box-shadow:0 12px 26px rgba(0,0,0,.65)}
+  .js .top nav.is-open .more{display:flex}
+  .js .top nav .more a{padding:12px 13px}
+  .menu-btn{order:3;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 13px;cursor:pointer;white-space:nowrap;
+    font-family:var(--label);font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;line-height:1;
+    color:var(--ink);background:rgba(10,14,15,.55);border:1.5px solid var(--ink-dim)}
+  .menu-btn:hover,.menu-btn[aria-expanded="true"]{color:#fff;border-color:#fff}
+  .menu-btn svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+  .menu-btn .m{display:none}
+  .cta-line{order:4;display:inline-flex;align-items:center;gap:10px;font-family:var(--label);font-weight:600;font-size:17px;letter-spacing:.12em;
     text-transform:uppercase;text-decoration:none;color:var(--red-hi);border:2px solid var(--red-hi);padding:8px 16px;white-space:nowrap;
     background:rgba(10,14,15,.55);transform:rotate(-1deg)}
   .cta-line:hover{background:var(--red);border-color:var(--red);color:#fff}
   .top .brand{margin:0}
   .top nav a[aria-current="page"]{color:#fff;box-shadow:inset 0 -3px 0 var(--red-hi)}
+
+  /* ---------- the journey: five steps, the same on every page ---------- */
+  /* One numbered bar. Each step says its state in words (done, you are here,
+     next, locked); a locked step is a button that says why when pressed. The
+     parts inside a step are one plain line, never a second set of numbers. */
+  .trail{margin:16px 0 0;font-family:var(--label);color:var(--ink)}
+  .trail-now{margin:0 0 9px;font-size:14px;letter-spacing:.12em;text-transform:uppercase;line-height:1.3}
+  .trail-now b{font-weight:700;color:#fff}
+  .trail-case{display:inline-block;margin-right:8px;padding:2px 8px 3px;border:1.5px solid var(--red-hi);color:var(--red-hi);font-weight:600;letter-spacing:.14em}
+  .trail-noir{margin-left:8px;font-family:var(--script);font-weight:600;font-size:21px;letter-spacing:0;text-transform:none;color:var(--yellow);white-space:nowrap}
+  .trail-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+  .trail-list li{display:flex;min-width:0}
+  .trail-list a,.trail-lock{display:flex;align-items:center;gap:10px;width:100%;min-width:0;min-height:52px;padding:7px 10px;text-align:left;text-decoration:none;
+    font:inherit;color:var(--ink);background:var(--panel);border:1.5px solid var(--frame);cursor:pointer}
+  .trail-list a:hover{border-color:var(--paper)}
+  .trail-n{flex:none;width:30px;height:34px;display:grid;place-items:center;font-weight:700;font-size:19px;line-height:1;border-radius:4px;background:var(--panel-2);color:var(--ink)}
+  .trail-w{display:block;min-width:0}
+  .trail-t{display:block;font-weight:500;font-size:13px;letter-spacing:.1em;text-transform:uppercase;line-height:1.15}
+  .trail-s{display:block;margin-top:2px;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim);line-height:1.1}
+  .trail-list .is-done .trail-n{background:var(--paper);color:var(--ink-p)}
+  .trail-list .is-current a{background:var(--paper-hi);border-color:var(--paper-hi);color:var(--ink-p);box-shadow:3px 3px 0 var(--red)}
+  .trail-list .is-current .trail-n{background:var(--red);color:#fff;transform:rotate(-4deg)}
+  .trail-list .is-current .trail-s{color:var(--red-deep);font-weight:600}
+  .trail-list .is-current a:focus-visible{outline-color:var(--yellow)}
+  .trail-lock{border-style:dashed;background:transparent;color:var(--ink-dim)}
+  .trail-lock .trail-n{background:transparent;box-shadow:inset 0 0 0 1.5px var(--frame);color:var(--ink-dim)}
+  .trail-lock:hover{color:var(--ink);border-color:var(--ink-dim)}
+  .trail-part{margin:10px 0 0;font-family:var(--type);font-size:14.5px;font-weight:700;color:var(--ink)}
+  .trail-note{margin:6px 0 0;font-family:var(--type);font-size:13.5px;line-height:1.45;color:var(--ink-dim)}
+  .trail-note:empty{display:none}
+  .trail-note.is-ahead{color:var(--ink)}
 
   /* The other pages: the same top bar, and the page's name on a card over a strip of the street. */
   .masthead.mini{padding-bottom:26px}
@@ -176,6 +227,7 @@
     .top nav a{padding:10px 9px;font-size:13px;letter-spacing:.1em}
     .cta-line{font-size:14.5px;padding:7px 12px;gap:8px}
     .logo .name{font-size:50px}
+    .trail-t{font-size:12px;letter-spacing:.07em}
   }
   @media (max-width:1040px){
     .top nav{margin-left:8px}
@@ -183,18 +235,42 @@
     .masthead.mini .tagline{font-size:24px}
   }
   @media (max-width:880px){
-    .top{flex-wrap:wrap;gap:8px 14px;padding-top:12px}
-    .top nav{order:3;flex-basis:calc(100% + 32px);margin:0 -16px;padding:0 8px;overflow-x:auto;scrollbar-width:none}
-    .top nav::-webkit-scrollbar{display:none}
-    .cta-line{margin-left:auto;font-size:14px;padding:7px 12px}
+    /* the name, the one action and the Menu button on a row; the links open underneath */
+    .top{flex-wrap:wrap;gap:8px 10px;padding-top:12px}
+    .top h1,.top .brand{margin-right:auto}
+    .cta-line{order:2;font-size:14px;padding:9px 12px;transform:none}
+    .menu-btn .m{display:inline}
+    .menu-btn .d{display:none}
+    .top nav{order:5;flex:1 1 100%;flex-direction:column;align-items:stretch;gap:0;margin:2px 0 0;padding:6px;background:var(--panel);border:1.5px solid var(--frame)}
+    .js .top nav{display:none}
+    .js .top nav.is-open{display:flex}
+    .top nav a{padding:13px 12px;font-size:15px;letter-spacing:.12em;text-shadow:none}
+    .top nav .more,.js .top nav .more{display:flex;position:static;flex-direction:column;gap:0;min-width:0;margin-top:6px;padding:6px 0 0;
+      background:none;border:0;border-top:1px dashed var(--frame);box-shadow:none}
     .logo .name{font-size:44px}
     .logo .the{font-size:17px;margin-left:18px}
     .logo .strap{margin-left:44px;font-size:10px}
     .masthead.mini .art{width:100%;object-position:50% 25%}
     .masthead.mini::before{background:linear-gradient(180deg,rgba(10,14,15,.9) 0,rgba(10,14,15,.6) 120px,rgba(10,14,15,.45) 60%,var(--bg) 100%)}
     .masthead.mini .tagline{display:none}
+    /* the bar: five numbers in a row, with only the current step's name in the line above them */
+    .trail-list{gap:6px}
+    .trail-list a,.trail-lock{justify-content:center;gap:0;padding:6px 4px;min-height:48px}
+    .trail-w{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    .trail-list .is-done a::after{content:"\2713";margin-left:5px;font-size:14px;font-weight:700;color:var(--ink)}
+    .trail-lock::after{content:"";width:11px;height:13px;margin-left:5px;background:currentColor;
+      clip-path:polygon(18% 46%,18% 30%,30% 8%,50% 0,70% 8%,82% 30%,82% 46%,100% 46%,100% 100%,0 100%,0 46%,36% 46%,36% 30%,42% 20%,50% 17%,58% 20%,64% 30%,64% 46%)}
+    .trail-noir{display:none}   /* a phone keeps the step's own name and gives the room to the work */
   }
   @media (max-width:600px){
     .pagehead{padding:18px 20px 18px}
+    /* the name, the one action and Menu share a row on a phone */
+    .top{gap:8px}
+    .logo .name{font-size:34px}
+    .logo .the{font-size:14px;margin-left:13px}
+    .logo .strap{margin-left:30px;font-size:7.5px;letter-spacing:.14em;border-top-width:2px}
+    .cta-line{font-size:12.5px;padding:10px 9px;gap:5px;letter-spacing:.08em;border-width:1.5px}
+    .menu-btn{padding:8px 9px;gap:6px;font-size:12px;letter-spacing:.08em}
+    .trail-now{font-size:13px}
   }
   @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.spinner{animation-duration:2s}}

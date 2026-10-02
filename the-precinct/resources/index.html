@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.className+=' js'</script>
+<meta name="theme-color" content="#0a0e0f">
+<title>Resources: The Precinct</title>
+<meta name="description" content="The Precinct cast and places as downloads, the original 2023 comic, and related links.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Special+Elite&family=Courier+Prime:wght@400;700&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Caveat:wght@600&display=swap">
+<link rel="stylesheet" href="/the-precinct/precinct.css">
+<style>
+  .res{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:6px}
+  .res > *{border:1px solid var(--frame);background:var(--panel);padding:16px 16px 18px;color:var(--ink);text-decoration:none;font-size:13.5px;line-height:1.5}
+  .res b{display:block;font-family:var(--label);font-weight:500;letter-spacing:.12em;text-transform:uppercase;font-size:14px;color:var(--yellow);margin-bottom:6px}
+  .res span{display:block;margin-top:10px;font-family:var(--label);letter-spacing:.14em;text-transform:uppercase;font-size:11.5px;color:var(--yellow)}
+  .res a:hover{border-color:var(--yellow)}
+  .res .castdl{grid-column:1 / -1}
+  .castdl p{margin:0 0 12px;max-width:76ch}
+  .castdl-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+  .castdl-grid a{display:block;border:1px solid var(--frame);background:var(--bg);color:var(--ink);text-decoration:none}
+  .castdl-grid a:hover{border-color:var(--yellow)}
+  .castdl-grid img{width:100%;height:auto;aspect-ratio:1/1;object-fit:cover}
+  .castdl .more{margin-top:22px}
+  .castdl-grid.wide{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .castdl-grid.wide img{aspect-ratio:3/2}
+  .castdl-grid span{display:block;margin:0;padding:8px 10px;font-family:var(--label);letter-spacing:.12em;text-transform:uppercase;font-size:11.5px;color:var(--yellow)}
+  @media (max-width:880px){.res{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:600px){.res{grid-template-columns:minmax(0,1fr)}.castdl-grid,.castdl-grid.wide{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head>
+<body id="top">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="noir" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values=".33 .5 .17 0 0  .33 .5 .17 0 0  .33 .5 .17 0 0  0 0 0 1 0"/>
+    <feComponentTransfer>
+      <feFuncR type="table" tableValues="0.03 0.09 0.30 0.95 0.98"/>
+      <feFuncG type="table" tableValues="0.05 0.21 0.45 0.78 0.92"/>
+      <feFuncB type="table" tableValues="0.055 0.22 0.42 0.27 0.70"/>
+    </feComponentTransfer>
+  </filter>
+  <filter id="worn" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" seed="7" result="n"/>
+    <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -5 3.7" result="m"/>
+    <feComposite in="SourceGraphic" in2="m" operator="in"/>
+  </filter>
+</svg>
+
+<a class="skip" href="#main">Skip to the downloads</a>
+
+<div class="page">
+
+  <div class="masthead mini">
+    <img class="art noir" src="/the-precinct/img/hat.jpg" alt="" width="489" height="335">
+    <header class="top">
+      <p class="brand"><a class="logo" href="/the-precinct/"><span class="the">The</span><span class="name">Precinct</span><span class="strap">AI comics. Real ideas.</span></a></p>
+      <nav id="siteNav" aria-label="The Precinct">
+        <a href="/the-precinct/references/">Look closely</a>
+        <a href="/the-precinct/builder/">Comic builder</a>
+        <a href="/the-precinct/teachers/">Teachers</a>
+        <a href="/the-precinct/resources/" aria-current="page">Resources</a>
+        <span class="more">
+          <a href="/the-precinct/about/">About</a>
+          <a href="/the-precinct/key/">AI key page (adults)</a>
+          <a class="out" href="/">HeutaLab</a>
+        </span>
+      </nav>
+      <button type="button" class="menu-btn" aria-expanded="false" aria-controls="siteNav" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span class="m">Menu</span><span class="d">More</span></button>
+      <a class="cta-line" href="/the-precinct/references/?start=1" data-resume><span class="lab">Start</span> <span class="arr">&rarr;</span></a>
+    </header>
+    <div class="pagehead paper tape">
+      <p class="where">Downloads and links</p>
+      <h1>Resources</h1>
+      <p>The cast and the places, ready to use, and where the comic came from.</p>
+    </div>
+    <p class="tagline" aria-hidden="true">Take them with you.</p>
+  </div>
+
+  <main id="main">
+  <section class="res" aria-label="Downloads and links">
+    <div class="castdl">
+      <b>The cast, ready to use</b>
+      <p>All seven characters in the site&rsquo;s yellow palette, as square PNGs for your slides, storyboards or reference sheets. Match them with each character&rsquo;s look: it shows once you choose them at Step 2 of a case.</p>
+      <div class="castdl-grid">
+        <a href="/the-precinct/img/cast/harlan-vance-yellow.png" download><img class="noir" src="/the-precinct/img/ref/vance-card.jpg" alt="Commissioner Harlan Vance" loading="lazy" width="900" height="900"><span>Harlan Vance &darr;</span></a>
+        <a href="/the-precinct/img/cast/edward-novak-yellow.png" download><img class="noir" src="/the-precinct/img/ref/novak-card.jpg" alt="Edward Novak" loading="lazy" width="900" height="900"><span>Edward Novak &darr;</span></a>
+        <a href="/the-precinct/img/cast/frank-rourke-yellow.png" download><img class="noir" src="/the-precinct/img/ref/rourke-card.jpg" alt="Sergeant Frank Rourke" loading="lazy" width="900" height="900"><span>Frank Rourke &darr;</span></a>
+        <a href="/the-precinct/img/cast/vera-sinclair-yellow.png" download><img class="noir" src="/the-precinct/img/ref/vera-card.jpg" alt="Vera Sinclair" loading="lazy" width="800" height="800"><span>Vera Sinclair &darr;</span></a>
+        <a href="/the-precinct/img/cast/hattie-cole-yellow.png" download><img class="noir" src="/the-precinct/img/ref/hattie-card.jpg" alt="Hattie Cole" loading="lazy" width="900" height="900"><span>Hattie Cole &darr;</span></a>
+        <a href="/the-precinct/img/cast/tommy-doyle-yellow.png" download><img class="noir" src="/the-precinct/img/ref/tommy-card.jpg" alt="Patrolman Tommy Doyle" loading="lazy" width="900" height="900"><span>Tommy Doyle &darr;</span></a>
+        <a href="/the-precinct/img/cast/lottie-woning-yellow.png" download><img class="noir" src="/the-precinct/img/ref/charlotte-card.jpg" alt="Lottie Woning" loading="lazy" width="900" height="900"><span>Lottie Woning &darr;</span></a>
+      </div>
+      <b class="more">The places, ready to use</b>
+      <p>All ten places in the same palette. Each one&rsquo;s look shows once you choose it at Step 2.</p>
+      <div class="castdl-grid wide">
+        <a href="/the-precinct/img/cast/the-ziggurat-yellow.png" download><img class="noir" src="/the-precinct/img/places/ziggurat.jpg" alt="" loading="lazy" width="600" height="400"><span>The Ziggurat &darr;</span></a>
+        <a href="/the-precinct/img/cast/outside-the-ziggurat-yellow.png" download><img class="noir" src="/the-precinct/img/places/ziggurat-outside.jpg" alt="" loading="lazy" width="600" height="400"><span>Outside The Ziggurat &darr;</span></a>
+        <a href="/the-precinct/img/cast/the-precinct-steps-yellow.png" download><img class="noir" src="/the-precinct/img/places/precinct-steps.jpg" alt="" loading="lazy" width="600" height="400"><span>The precinct steps &darr;</span></a>
+        <a href="/the-precinct/img/cast/the-squad-room-yellow.png" download><img class="noir" src="/the-precinct/img/places/squad-room.jpg" alt="" loading="lazy" width="600" height="400"><span>The squad room &darr;</span></a>
+        <a href="/the-precinct/img/cast/the-commissioners-office-yellow.png" download><img class="noir" src="/the-precinct/img/places/commissioners-office.jpg" alt="" loading="lazy" width="600" height="400"><span>The Commissioner&rsquo;s office &darr;</span></a>
+        <a href="/the-precinct/img/cast/the-interview-room-yellow.png" download><img class="noir" src="/the-precinct/img/places/interview-room.jpg" alt="" loading="lazy" width="600" height="400"><span>The interview room &darr;</span></a>
+        <a href="/the-precinct/img/cast/the-newsroom-yellow.png" download><img class="noir" src="/the-precinct/img/places/newsroom.jpg" alt="" loading="lazy" width="600" height="400"><span>The newsroom &darr;</span></a>
+        <a href="/the-precinct/img/cast/the-alley-yellow.png" download><img class="noir" src="/the-precinct/img/places/alley.jpg" alt="" loading="lazy" width="600" height="400"><span>The alley &darr;</span></a>
+        <a href="/the-precinct/img/cast/the-street-corner-yellow.png" download><img class="noir" src="/the-precinct/img/places/street-corner.jpg" alt="" loading="lazy" width="600" height="400"><span>The street corner &darr;</span></a>
+        <a href="/the-precinct/img/cast/the-docks-yellow.png" download><img class="noir" src="/the-precinct/img/places/docks.jpg" alt="" loading="lazy" width="600" height="400"><span>The docks &darr;</span></a>
+      </div>
+    </div>
+    <a href="/blog/21cl-bkk-ai-is-not-taking-our-jobs-quite-the-opposite-midjourney-generative-art/"><b>The original comic</b>How the 2023 Midjourney noir strip behind these images was made.<span>Read the post &rarr;</span></a>
+    <a href="/the-precinct/teachers/"><b>For teachers</b>A lesson outline, what to have ready, the three levels, and what the site sends and stores.<span>Teachers &rarr;</span></a>
+    <a href="/apps/"><b>More from HeutaLab</b>Classroom apps: LoopLab, PlanBench, Sage Stage and more, for teachers and learners of 5&ndash;13.<span>See the apps &rarr;</span></a>
+  </section>
+  </main>
+
+  <footer>
+    The artwork here comes from Glenn Malcolm&rsquo;s own 2023 Midjourney noir comic.
+    <a href="/the-precinct/teachers/#privacy">What this site sends and stores</a>.
+    Part of the <a href="/">HeutaLab</a> AIFE workshop materials: &ldquo;Human Creativity, AI Precision&rdquo;.
+  </footer>
+
+</div>
+
+<script type="module">
+import Jn from '/the-precinct/journey.js';
+Jn.mount({ page: 'resources' });
+</script>
+</body>
+</html>
