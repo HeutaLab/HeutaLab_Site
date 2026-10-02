@@ -3,16 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.className+=' js'</script>
 <meta name="theme-color" content="#0a0e0f">
-<title>References: The Precinct</title>
-<meta name="description" content="Look before you prompt: describe a noir reference picture at basic, medium or advanced level, then send your description to the briefing desk.">
+<title>Look closely: The Precinct</title>
+<meta name="description" content="Step 1 of The Precinct: look closely. Describe a noir reference picture at basic, medium or advanced level, then take your description on to your case.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Special+Elite&family=Courier+Prime:wght@400;700&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Caveat:wght@600&display=swap">
 <link rel="stylesheet" href="/the-precinct/precinct.css">
 <style>
   /* the four ways in: see it done, work it together, your turn, any picture */
-  .how{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin-top:6px}
+  .how{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin-top:26px}
   .how button{all:unset;box-sizing:border-box;position:relative;isolation:isolate;cursor:pointer;padding:16px 16px 18px;color:var(--ink-p);
     font-size:13px;line-height:1.45;filter:drop-shadow(0 5px 7px rgba(0,0,0,.5))}
   .how button::before{content:"";position:absolute;inset:0;z-index:-1;clip-path:var(--torn-a);
@@ -104,25 +105,30 @@
     <img class="art noir" src="/the-precinct/img/femme.jpg" alt="" width="575" height="355">
     <header class="top">
       <p class="brand"><a class="logo" href="/the-precinct/"><span class="the">The</span><span class="name">Precinct</span><span class="strap">AI comics. Real ideas.</span></a></p>
-      <nav aria-label="The Precinct">
-        <a href="/the-precinct/#cases">The cases</a>
-        <a href="/the-precinct/references/" aria-current="page">References</a>
+      <nav id="siteNav" aria-label="The Precinct">
+        <a href="/the-precinct/references/" aria-current="page">Look closely</a>
         <a href="/the-precinct/builder/">Comic builder</a>
-        <a href="/the-precinct/#teachers">Teachers</a>
-        <a href="/the-precinct/#about">About</a>
-        <a class="out" href="/">HeutaLab</a>
+        <a href="/the-precinct/teachers/">Teachers</a>
+        <a href="/the-precinct/resources/">Resources</a>
+        <span class="more">
+          <a href="/the-precinct/about/">About</a>
+          <a href="/the-precinct/key/">AI key page (adults)</a>
+          <a class="out" href="/">HeutaLab</a>
+        </span>
       </nav>
-      <a class="cta-line" href="/the-precinct/#cases" id="topStart"><span class="lab">Start a case</span> <span class="arr">&rarr;</span></a>
+      <button type="button" class="menu-btn" aria-expanded="false" aria-controls="siteNav" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span class="m">Menu</span><span class="d">More</span></button>
+      <a class="cta-line" href="/the-precinct/references/?start=1" data-resume><span class="lab">Start</span> <span class="arr">&rarr;</span></a>
     </header>
     <div class="pagehead paper tape">
       <p class="where">On The Precinct</p>
-      <h1>References</h1>
+      <h1>Look closely</h1>
       <p>Look first. Then prompt. The words you find here become your brief.</p>
     </div>
     <p class="tagline" aria-hidden="true">What do you see?</p>
   </div>
 
   <main id="main">
+    <nav id="trail" class="trail" aria-label="Your case, step by step"></nav>
 
     <section class="how" aria-label="How this works" id="howRow"></section>
 
@@ -160,10 +166,11 @@
             <textarea id="desc" maxlength="800"></textarea>
             <div class="count"><span id="descCount">0</span>/800</div>
             <div class="rowbtns">
-              <button type="button" class="btn" id="sendBtn">Send to the briefing desk <span class="arr">&rarr;</span></button>
+              <button type="button" class="btn" id="sendBtn">Next: Choose and describe <span class="arr">&rarr;</span></button>
               <button type="button" class="btn ghost" id="copyBtn">Copy</button>
               <button type="button" class="rebuild" id="rebuildBtn" hidden>Rebuild from my answers</button>
             </div>
+            <p class="step-note" id="sendWhy" role="status"></p>
           </div>
         </div>
       </div>
@@ -173,15 +180,15 @@
 
   <footer>
     Every reference here is a panel from Glenn Malcolm&rsquo;s own 2023 Midjourney noir comic, shown in its original colours.
-    Your answers stay in this browser. Sending to the briefing desk just carries them over to your case on the home page.
+    Your answers stay in this browser. Pressing Next just carries your description over to your case.
     Part of the <a href="/">HeutaLab</a> AIFE workshop materials: &ldquo;Human Creativity, AI Precision&rdquo;.
   </footer>
 
 </div>
 
-<script src="/the-precinct/top.js" defer></script>
 <script type="module">
 import THEME from '/the-precinct/theme.js';
+import Jn from '/the-precinct/journey.js';
 
 (function(){
   const { levels: LEVELS, modes: MODES, refs: REFS } = THEME;
@@ -189,6 +196,10 @@ import THEME from '/the-precinct/theme.js';
   const castById = id => THEME.cast.find(c => c.id === id);
 
   const state = { level: 'basic', mode: 'demo', exploreRef: null, revealed: {}, cast: {} };
+  // This is step 1 of the case on the desk, so it opens at that case's level.
+  Jn.mount({ page: 'look', step: 1 });
+  const onDesk = Jn.caseOf(Jn.read().c);
+  if (onDesk && onDesk.tier && LEVELS[onDesk.tier]) state.level = onDesk.tier;
   const answers = {};          // your own answers, kept per picture and level
   let manual = false;          // stop rebuilding the box once someone edits it by hand
 
@@ -280,8 +291,8 @@ import THEME from '/the-precinct/theme.js';
     $('castPick').hidden = !(isCharacter() && (state.mode === 'create' || state.mode === 'explore'));
     mark('#castPickRow .pill', 'active', b => b.dataset.val === who);
 
-    $('descLabel').textContent = state.mode === 'demo' ? 'Put together, ready for the briefing desk'
-      : state.mode === 'guide' ? 'What the group has revealed so far' : 'Your description, ready for the briefing desk';
+    $('descLabel').textContent = state.mode === 'demo' ? 'Put together, ready for your case'
+      : state.mode === 'guide' ? 'What the group has revealed so far' : 'Your description, ready for your case';
     manual = false;
     $('rebuildBtn').hidden = true;
     setDesc(assemble());
@@ -342,20 +353,22 @@ import THEME from '/the-precinct/theme.js';
     if (!desc.value.trim()) return;
     navigator.clipboard.writeText(desc.value).then(() => {
       const b = $('copyBtn'), old = b.textContent; b.textContent = 'Copied';
+      Jn.announce('Copied.');
       setTimeout(() => b.textContent = old, 1200);
-    }).catch(() => {});
+    }).catch(() => { Jn.announce('Could not copy. Select the words and copy them.'); });
   });
 
   $('sendBtn').addEventListener('click', () => {
     const text = desc.value.trim();
-    if (!text) { desc.focus(); desc.placeholder = 'Answer a question or two first.'; return; }
+    if (!text) { $('sendWhy').textContent = state.mode === 'guide' ? 'Reveal an answer or two first: they make the description you take on.' : 'Answer a question or two first: your answers make the description you take on.'; desc.focus(); return; }
     const who = pickedCast();
     try {
       localStorage.setItem('precinct_handoff', JSON.stringify({
         idea: text, tier: state.level, subject: REFS[currentRef()][1], cast: who ? [who] : [], mode: state.mode, ts: Date.now(),
+        kase: Jn.read().c,   // the case on the desk: it takes the description if it is at this level
       }));
     } catch (e) {}
-    location.href = '/the-precinct/#brief';
+    location.href = '/the-precinct/case/#choose';
   });
 
   render();

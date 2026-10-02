@@ -29,3 +29,6 @@ blog/21cl-midjourney-images.zip
 paws-and-order/dev
 # Paws & Order: Worker-only modules (workshop codes, the word list) and their tests
 paws-api
+
+# The Precinct: tests for the journey rules are not site files
+the-precinct/dev
