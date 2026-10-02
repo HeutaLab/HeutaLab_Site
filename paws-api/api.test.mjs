@@ -761,7 +761,19 @@ test("the Worker's calls are shorter than a browser's: 1500 tokens for the coach
   await call(env, "brief", briefBody(w.code, { round: 1 }));
   assert.deepEqual(ai.sent.map((s) => s.body.max_tokens), [1500, 3000]);
   assert.ok(ai.sent.every((s) => !("anthropic-dangerous-direct-browser-access" in s.headers)));
-  assert.ok(ai.sent.every((s) => s.redirect === "error"), "a redirect would carry the key somewhere else");
+  // "manual", not "error": a Worker's fetch throws on "error", which once stopped every AI call on the live site.
+  assert.ok(ai.sent.every((s) => s.redirect === "manual"), "a redirect would carry the key somewhere else");
+});
+
+test("a redirect from the AI service is a failure, not somewhere to follow with the key", async () => {
+  const env = makeEnv();
+  const w = await makeWorkshop(env);
+  resetAI();
+  ai.status = 307;
+  const r = await call(env, "brief", briefBody(w.code, { round: 1 }));
+  assert.deepEqual([r.status, r.data.type, r.data.fallback], [200, "brief", true]);
+  assert.ok(ai.sent.every((s) => s.url === "https://api.anthropic.com/v1/messages"));
+  assert.ok(logged.some((l) => l.includes("http_307")));
 });
 
 test("one request is at most two AI calls: a reply that is not JSON is not asked for again", async () => {

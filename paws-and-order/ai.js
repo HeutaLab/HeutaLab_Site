@@ -115,11 +115,13 @@ function timeoutsOf(opts) {
 
 // `raw` (the service's own error text) is read here to choose a retry and goes no further:
 // some services echo part of the key in it.
-// `strict` (the Worker): a redirect is an error, because the key in the headers would follow it.
+// `strict` (the Worker): a redirect is never followed, because the key in the headers would go with
+// it. 'manual' hands the 3xx back, which is then a failure like any other bad status. (Not 'error':
+// a Cloudflare Worker does not have that setting, and throws on every call if it is asked for.)
 async function fetchJSON(url, init, timeoutMs, strict) {
   let res;
   try {
-    res = await fetch(url, Object.assign({}, init, { signal: AbortSignal.timeout(timeoutMs) }, strict ? { redirect: 'error' } : null));
+    res = await fetch(url, Object.assign({}, init, { signal: AbortSignal.timeout(timeoutMs) }, strict ? { redirect: 'manual' } : null));
   } catch (e) {
     return { fail: e && (e.name === 'TimeoutError' || e.name === 'AbortError') ? 'timeout' : 'network' };
   }
