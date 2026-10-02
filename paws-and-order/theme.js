@@ -1,6 +1,6 @@
 // Paws & Order theme: everything specific to this comic-making site lives here.
-// The home page, Look Closely, the Comic Maker and ai.js all import it, so changing
-// the cast, the palettes or the wording means editing this one file.
+// Every page imports it, and so do ai.js and the Worker (paws-api/), so changing
+// the cast, the places, the palettes or the wording means editing this one file.
 //
 // TO ADD YOUR OWN CHARACTER: drop a square picture into img/cast/ (for example
 // hero.png), then fill in the matching entry in `cast` below (name, role, story,
@@ -46,7 +46,7 @@ export default {
       needs: { basic: 'A storybook page needs 1 to 6 pictures.', medium: 'A four-panel comic needs 4 pictures.', advanced: 'A super page needs 5 or 6 pictures.' } },
   ],
 
-  // The image tools the prompts can be tuned for. Grown-ups: check the age rules
+  // The image tools the prompts can be tuned for. Teachers: check the age rules
   // of any tool before children use it. Most ask for 13+ or a school account.
   platforms: [
     { id: 'gemini', label: 'Gemini' },
@@ -61,7 +61,7 @@ export default {
   // description children repeat in every prompt: it keeps a character
   // recognisable from picture to picture. `arc` is optional: how their face
   // changes across a story. `file` is the picture in img/cast/.
-  // sticker: their folder in img/stickers/ (the home page shows them standing, cut out, on their colour).
+  // sticker: their folder in img/stickers/ (Explore shows them standing, cut out, on their colour).
   cast: [
     { id: 'hero', file: 'hero.png', sticker: 'nettle', colour: '#5ec8f2', sheet: 'sheet-inspector-nettle',
       name: 'Inspector Nettle', short: 'Nettle', role: 'The Inspector', tag: 'The hero',
@@ -170,8 +170,8 @@ export default {
                card: 'Answer in your own words, then send it to the prompt helper.',
                hint: 'Solo: answer in your own words. Short phrases are fine. Your answers build the description below.' },
     explore: { label: 'Explore', sub: 'Any picture',
-               card: 'Any picture, any level. Shuffle, or add a picture of your own.',
-               hint: 'Explore: any picture, any level. Shuffle, or add your own picture, then answer what you like.' },
+               card: 'Any picture, any level. Shuffle to see another.',
+               hint: 'Explore: any picture, any level. Shuffle to see another, then answer what you like.' },
   },
 
   // Starter reference pictures: alt text, then character or setting, then (for a
@@ -284,8 +284,8 @@ export default {
     },
   },
 
-  // The three levels as a ladder. Each tier is a level; a grown-up can choose the
-  // highest level children can use (in Grown-ups, at the bottom of the home page).
+  // The three levels as a ladder. Each tier is a level; the teacher's workshop code
+  // (or their own-key setup on the Teachers page) sets the highest one children can use.
   // `setting` holds the task and intro shown when Place is picked instead of Character.
   game: [
     { level: 1, tier: 'basic', name: 'Doodler', task: 'One character portrait.',
@@ -492,7 +492,7 @@ export default {
   stickerPath: (dir, file, border) => IMG + 'stickers/' + dir + '/' + file + (border ? '-b' : '') + '.webp',
   thumbPath: name => IMG + 'thumbs/' + name + '.webp',
 
-  // Starter pages for the Comic Maker (Featured templates on the home page). Each opens ready to go: a page layout,
+  // Starter pages for the Comic Maker (Featured templates, in Explore and in the Comic Maker). Each opens ready to go: a page layout,
   // a place picture from the library in every panel, the gang as stickers, and a first caption to get started.
   // level: 'medium' is the four-panel page; 'advanced' uses a page style. Panels are filled in order.
   // A sticker is [src, { cx, h, bottom, clip, flip }]: cx is the middle across the panel (0 to 1), h its height as a share of
