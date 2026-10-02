@@ -55,7 +55,7 @@ export function tidy(raw) {
   const j = Object.assign({ c: 1, at: {}, subj: {}, ref: {}, done: {}, work: {}, platform: null, palette: null },
     raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {});
   ['at', 'subj', 'ref', 'done', 'work'].forEach(k => { if (!j[k] || typeof j[k] !== 'object' || Array.isArray(j[k])) j[k] = {}; });
-  if (!caseOf(j.c)) j.c = 1;
+  j.c = caseOf(j.c) ? Number(j.c) : 1;   // a number, whatever was saved
   return j;
 }
 export function read() {
@@ -124,14 +124,14 @@ export function position(j) {
   const st = status(j), at = j.at[st.c], p = st.parts.includes(at) ? PARTS[at] : null;
   const last = p && st.parts.filter(k => PARTS[k].step === p.step).pop() === at;
   const step = p && p.step <= st.frontier && !(st.done[p.step] && last) ? p.step : st.frontier;
-  const part = p && p.step === step ? at : st.parts.find(k => PARTS[k].step === step) || null;
-  return { step, part };
+  // The part is named only when it is the one the case file will open at: the saved one.
+  return { step, part: p && p.step === step ? at : null };
 }
 
 // The one start or continue action: what it says and where it goes.
 export function resume(j) {
   const st = status(j);
-  if (!begun(j)) return { kind: 'start', label: 'Start Case 01', short: 'Start', href: BASE + 'references/?start=1' };
+  if (!begun(j)) return { kind: 'start', label: 'Start Case 0' + st.c, short: 'Start', href: BASE + 'references/?start=1' };
   if (st.all) {
     const next = st.kase.tier ? caseOf(st.c + 1) : null;
     if (next && next.tier) return { kind: 'next', label: 'Start the next case', short: 'Next case', href: BASE + 'references/?case=' + next.n };
@@ -219,13 +219,13 @@ function buildTrail(el) {
     const face = '<span class="trail-n" aria-hidden="true">' + s.n + '</span><span class="trail-w"><span class="sr">Step ' + s.n + ': </span>'
       + '<span class="trail-t">' + esc(s.name) + '</span> <span class="trail-s"></span></span>';
     return '<li><a href="' + esc(BASE + s.href) + '">' + face + '</a>'
-      + '<button type="button" class="trail-lock" aria-disabled="true" hidden>' + face + '</button></li>';
+      + '<button type="button" class="trail-lock" aria-disabled="true" data-n="' + s.n + '" hidden>' + face + '</button></li>';
   }).join('') + '</ol><p class="trail-part" hidden></p>'
     + '<p class="trail-note is-ahead" hidden>You have jumped ahead. <a href=""></a></p>'
     + '<p class="trail-note" role="status"></p>';
   const ahead = el.querySelector('.trail-note.is-ahead');
   T = {
-    el, now: el.querySelector('.trail-now'), nowHTML: null, part: el.querySelector('.trail-part'),
+    el, now: el.querySelector('.trail-now'), nowHTML: null, part: el.querySelector('.trail-part'), noteFor: 0,
     ahead, aheadLink: ahead.querySelector('a'), note: el.querySelector('.trail-note:not(.is-ahead)'),
     items: Array.from(el.querySelectorAll('.trail-list > li')).map(li => {
       const a = li.querySelector('a'), lock = li.querySelector('.trail-lock');
@@ -235,7 +235,7 @@ function buildTrail(el) {
   // A locked step says why when it is pressed: in the bar for the eye, and aloud (the note is a status).
   el.addEventListener('click', e => {
     const b = e.target.closest('.trail-lock');
-    if (b) T.note.textContent = b.dataset.why || '';
+    if (b) { T.note.textContent = b.dataset.why || ''; T.noteFor = Number(b.dataset.n); }
   });
 }
 
@@ -247,7 +247,6 @@ function drawTrail(j) {
   const nowHTML = '<span class="trail-case">' + esc(v.kase) + '</span> ' + (v.now.next ? 'Next: step ' : 'Step ') + v.now.n + ' of ' + STEPS.length
     + ': <b>' + esc(v.now.name) + '</b> <span class="trail-noir">' + esc(v.now.noir) + '</span>';
   if (T.nowHTML !== nowHTML) { T.now.innerHTML = nowHTML; T.nowHTML = nowHTML; }
-  let anyLocked = false;
   v.steps.forEach((s, i) => {
     const it = T.items[i];
     if (it.li.className !== s.cls) it.li.className = s.cls;
@@ -257,9 +256,9 @@ function drawTrail(j) {
     setWords(it.lockState, s.locked ? s.state : '');
     setAttr(it.a, 'aria-current', s.here ? 'step' : null);
     setAttr(it.lock, 'data-why', s.locked ? s.why : null);
-    if (s.locked) anyLocked = true;
   });
-  if (!anyLocked) setWords(T.note, '');
+  // The reason a step was locked goes once that step opens.
+  if (T.noteFor && !v.steps[T.noteFor - 1].locked) { setWords(T.note, ''); T.noteFor = 0; }
   const p = mounted.part;
   setHidden(T.part, !p);
   if (p) setWords(T.part, (p.of > 1 ? 'Part ' + p.i + ' of ' + p.of + ': ' : '') + p.label);

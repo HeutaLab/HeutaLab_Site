@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>document.documentElement.className+=' js'</script>
+<script>/* .js hides the links behind the Menu button; if journey.js never wires the button, they come back */
+document.documentElement.className+=' js';setTimeout(function(){var b=document.querySelector('.menu-btn'),d=document.documentElement;if(!b||b.hidden)d.className=d.className.replace(' js','')},4000)</script>
 <meta name="theme-color" content="#0a0e0f">
 <title>Resources: The Precinct</title>
 <meta name="description" content="The Precinct cast and places as downloads, the original 2023 comic, and related links.">

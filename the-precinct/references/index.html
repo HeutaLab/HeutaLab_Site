@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>document.documentElement.className+=' js'</script>
+<script>/* .js hides the links behind the Menu button; if journey.js never wires the button, they come back */
+document.documentElement.className+=' js';setTimeout(function(){var b=document.querySelector('.menu-btn'),d=document.documentElement;if(!b||b.hidden)d.className=d.className.replace(' js','')},4000)</script>
 <meta name="theme-color" content="#0a0e0f">
 <title>Look closely: The Precinct</title>
 <meta name="description" content="Step 1 of The Precinct: look closely. Describe a noir reference picture at basic, medium or advanced level, then take your description on to your case.">
@@ -153,6 +154,7 @@
           <h2 id="lensTitle"></h2>
           <p class="blurb" id="lensBlurb"></p>
           <p class="modehint" id="modeHint"></p>
+          <p class="handoff" id="deskNote" hidden></p>
           <ol class="qs" id="qs"></ol>
           <button type="button" class="btn ghost small revealall" id="revealAll" hidden>Reveal all</button>
 
@@ -196,10 +198,24 @@ import Jn from '/the-precinct/journey.js';
   const castById = id => THEME.cast.find(c => c.id === id);
 
   const state = { level: 'basic', mode: 'demo', exploreRef: null, revealed: {}, cast: {} };
-  // This is step 1 of the case on the desk, so it opens at that case's level.
+  // This is step 1 of the case on the desk. It opens at that case's level, and "Create" at that level
+  // shows the case's own picture, so a case that draws a place is looked at through a place. When the
+  // level's Demo picture is the other kind (a character for a place case, or the reverse), it opens on
+  // Create instead, or the description would belong to a different case.
   Jn.mount({ page: 'look', step: 1 });
-  const onDesk = Jn.caseOf(Jn.read().c);
-  if (onDesk && onDesk.tier && LEVELS[onDesk.tier]) state.level = onDesk.tier;
+  const saved = Jn.read(), onDesk = Jn.caseOf(saved.c), deskTier = onDesk && onDesk.tier && LEVELS[onDesk.tier] ? onDesk.tier : null;
+  const deskSubject = deskTier ? Jn.subjectOf(saved, onDesk) : null;
+  const deskRef = (() => {
+    if (!deskTier) return null;
+    const k = saved.ref[onDesk.n + ':' + deskSubject];
+    if (k && REFS[k] && REFS[k][1] === deskSubject) return k;   // "Another picture", chosen in the case file
+    const own = deskSubject === 'setting' && onDesk.refSetting ? onDesk.refSetting : onDesk.ref;
+    return REFS[own] ? own : null;
+  })();
+  if (deskTier) {
+    state.level = deskTier;
+    if (REFS[LEVELS[deskTier].demo[0]][1] !== deskSubject) state.mode = 'create';
+  }
   const answers = {};          // your own answers, kept per picture and level
   let manual = false;          // stop rebuilding the box once someone edits it by hand
 
@@ -217,7 +233,7 @@ import Jn from '/the-precinct/journey.js';
     const L = LEVELS[state.level];
     if (state.mode === 'demo') return L.demo[0];
     if (state.mode === 'guide') return L.guide[0];
-    if (state.mode === 'create') return L.create;
+    if (state.mode === 'create') return (state.level === deskTier && deskRef) || L.create;
     return state.exploreRef;
   }
   function modelAnswers(){
@@ -274,6 +290,11 @@ import Jn from '/the-precinct/journey.js';
     $('lensTitle').textContent = L.lens;
     $('lensBlurb').textContent = L.blurb;
     $('modeHint').textContent = MODES[state.mode].hint;
+    // Said when the picture is not the kind the case on the desk draws: where the description will go.
+    const other = deskTier && REFS[ref][1] !== deskSubject && !onDesk.swap;
+    $('deskNote').hidden = !other;
+    if (other) $('deskNote').textContent = 'Case 0' + onDesk.n + ' draws a ' + (deskSubject === 'setting' ? 'place' : 'character') + ', and this picture is a '
+      + (REFS[ref][1] === 'setting' ? 'place' : 'character') + '. Choose Create for the case’s own picture, or carry on and this description goes to the case that matches it.';
     $('revealAll').hidden = state.mode !== 'guide';
 
     const mine = answers[key()] || (answers[key()] = {});

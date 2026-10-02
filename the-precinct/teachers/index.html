@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>document.documentElement.className+=' js'</script>
+<script>/* .js hides the links behind the Menu button; if journey.js never wires the button, they come back */
+document.documentElement.className+=' js';setTimeout(function(){var b=document.querySelector('.menu-btn'),d=document.documentElement;if(!b||b.hidden)d.className=d.className.replace(' js','')},4000)</script>
 <meta name="theme-color" content="#0a0e0f">
 <title>Teachers: The Precinct</title>
 <meta name="description" content="A lesson outline for The Precinct, what students learn, what to have ready, the three levels, and what the site sends and stores.">
@@ -153,7 +154,7 @@
       <li>The pictures they add at Step 4 and in the comic builder, and the differences and changes they write at Step 4.</li>
       <li>The workshop code and the level it opens.</li>
     </ul>
-    <p style="margin-top:8px">It does not follow a student to another device. On a shared computer, use &ldquo;Start this case again&rdquo; in the case file, and &ldquo;Start again&rdquo; in the comic builder, when a student finishes.</p>
+    <p style="margin-top:8px">It does not follow a student to another device. On a shared computer, when a student finishes: use &ldquo;Start this case again&rdquo; in each case they used (it clears that case&rsquo;s choices, words, brief and pictures), and &ldquo;Start again&rdquo; in the comic builder (it clears the page). The workshop code stays until the browser&rsquo;s site data is cleared.</p>
     <h3>Sent to the AI service</h3>
     <p>When a student presses &ldquo;Get my brief&rdquo;, their description and their idea go to a Cloudflare Worker for this site and then to Anthropic&rsquo;s API. The desk&rsquo;s optional compare check sends the brief and the descriptions pasted into it the same way. The workshop code is checked by the Worker only. Nothing a student types is kept on the server or shown to anyone else. Pictures are never sent: the site cannot see them.</p>
     <p>With your own AI key, the key and what is typed go straight from the browser to that service (Google, OpenAI or Anthropic) and never to this site.</p>

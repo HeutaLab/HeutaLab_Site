@@ -7,11 +7,13 @@
 /* Links made when the whole site was one page (#teachers, #cases, #brief and
    so on) go to the page that part now has. */
 (function(){
-  var to={teachers:'teachers/',privacy:'teachers/#privacy',about:'about/',resources:'resources/',cases:'case/',
+  var old={teachers:'teachers/',privacy:'teachers/#privacy',about:'about/',resources:'resources/',cases:'case/',
     brief:'case/#brief',cast:'case/#cast',characters:'case/#cast',settings:'case/#settings',palettes:'case/#palettes',
-    compare:'case/#compare',check:'case/#check'}[location.hash.slice(1)];
-  if(to)location.replace('/the-precinct/'+to);
-  document.documentElement.className+=' js';
+    compare:'case/#compare',check:'case/#check'},h=location.hash.slice(1),d=document.documentElement;
+  if(Object.prototype.hasOwnProperty.call(old,h))location.replace('/the-precinct/'+old[h]);
+  /* .js hides the links behind the Menu button; if journey.js never wires the button, they come back */
+  d.className+=' js';
+  setTimeout(function(){var b=document.querySelector('.menu-btn');if(!b||b.hidden)d.className=d.className.replace(' js','')},4000);
 })();
 </script>
 <meta name="theme-color" content="#0a0e0f">
