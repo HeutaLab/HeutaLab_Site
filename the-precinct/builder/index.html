@@ -41,6 +41,8 @@ document.documentElement.className+=' js';setTimeout(function(){var b=document.q
   .dock .sg{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
   .dock .sg > b{font-family:var(--label);font-weight:600;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--paper-lo);margin-right:4px;position:relative}
   .dock .pill{padding:6px 10px;font-size:12px;position:relative;background:var(--panel-2);border:1px solid var(--frame);color:var(--ink)}
+  /* a tool's name, and under it what it does */
+  .dock .pill small{display:block;margin-top:2px;font-size:10.5px;letter-spacing:normal;text-transform:none;opacity:.72;white-space:nowrap}
   .dock .pill:hover{background:var(--panel-2);border-color:var(--paper)}
   .dock .pill.active{background:var(--paper-hi);border-color:var(--paper-hi);color:var(--ink-p)}
   .dock .sw{width:26px;height:26px;border-radius:50%;border:2px solid var(--frame);cursor:pointer;padding:0}
@@ -91,9 +93,39 @@ document.documentElement.className+=' js';setTimeout(function(){var b=document.q
   .tray .own button{font-family:var(--label);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
   /* the sticker tray: the cast cut out of their sheets, one row of thumbnails per character */
   .tray.stk{grid-template-columns:1fr}
-  .tray.stk .w button{width:78px;height:104px;padding:4px;background:#1b2526;display:flex;align-items:center;justify-content:center}
-  .tray.stk .w button.on{border-color:var(--yellow);outline:2px solid var(--yellow)}
-  .tray.stk .w img{max-width:100%;max-height:100%;pointer-events:none}
+  /* three groups side by side where they fit (whole body, faces, things), each named, each sticker named */
+  .tray.stk .w{gap:8px 22px;align-items:flex-start}
+  .tray.stk .kind h4{margin:0 0 5px;font-family:var(--label);font-weight:600;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim)}
+  .tray.stk .tiles{display:flex;flex-wrap:wrap;gap:6px}
+  .tray.stk .stk-tile{width:84px;height:auto;padding:4px 3px 6px;background:#1b2526;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .tray.stk .stk-tile.on{border-color:var(--yellow);outline:2px solid var(--yellow)}
+  .tray.stk .stk-tile img{width:70px;height:80px;object-fit:contain;pointer-events:none}
+  .tray.stk .stk-tile span{font-family:var(--label);font-size:10.5px;line-height:1.15;text-align:center;color:var(--ink);pointer-events:none;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  /* My characters: an Add tile, the learner's own stickers (each with a remove button), and the form that cuts a new one out */
+  .tray.stk .who .own-ico{width:34px;height:34px;background:var(--yellow);color:#14110c;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1}
+  .tray.stk .own-new{justify-content:center;border-style:dashed}
+  .tray.stk .own-new b{font-size:34px;line-height:80px;height:80px;font-weight:400;color:var(--paper-hi)}
+  .tray.stk .own-t{position:relative}
+  .tray.stk .own-rm{position:absolute;top:-7px;right:-7px;width:26px;height:26px;padding:0;border-radius:50%;background:var(--panel-2);color:var(--ink);
+    font-family:var(--label);font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center}
+  .tray.stk p.own-say,.tray.stk p.own-err{flex-basis:100%;margin:6px 0 0;font-family:inherit;font-size:13px;letter-spacing:normal;text-transform:none;color:var(--ink-dim)}
+  .tray.stk p.own-err{color:var(--danger)}
+  .tray.stk p.own-err:empty{display:none}
+  .tray.stk .own-add{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:flex-start}
+  .tray.stk .own-pre{width:180px;height:180px;flex:none;display:flex;align-items:center;justify-content:center;padding:6px;border:1px solid var(--frame);
+    background:conic-gradient(#3a4544 25%,#222b2b 0 50%,#3a4544 0 75%,#222b2b 0) 0 0/16px 16px}   /* the chequers are what will be see-through */
+  .tray.stk .own-pre img{max-width:100%;max-height:100%}
+  .tray.stk .own-f{flex:1 1 260px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;font-size:14px}
+  .tray.stk .own-l{font-family:var(--label);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim)}
+  .tray.stk .own-f input[type=text]{width:min(100%,320px);padding:7px 10px;font:inherit;font-size:15px;color:var(--ink);background:var(--panel-2);border:1px solid var(--frame)}
+  .tray.stk .own-chk{display:flex;align-items:center;gap:8px}
+  .tray.stk .own-chk input{width:18px;height:18px;accent-color:var(--red-hi)}
+  .tray.stk .own-tol{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-dim)}
+  .tray.stk .own-tol[hidden]{display:none}
+  .tray.stk .own-tol input{width:180px;accent-color:var(--red-hi)}
+  .tray.stk .own-acts{display:flex;gap:8px;margin:2px 0 0;flex-wrap:wrap}
+  .tray.stk .own-acts [data-own="save"]{background:var(--paper-hi);color:var(--ink-p);border-color:var(--paper-hi)}
   .tray.stk .who{display:flex;flex-wrap:wrap;gap:6px;padding-bottom:2px}
   .tray.stk .who button{flex:none;display:flex;align-items:center;gap:8px;font-family:var(--label);font-size:12px;letter-spacing:.12em;text-transform:uppercase;line-height:1;padding:3px 12px 3px 3px}
   .tray.stk .who button[aria-selected=true]{background:var(--yellow);border-color:var(--yellow);color:#14110c}
@@ -400,6 +432,7 @@ document.documentElement.className+=' js';setTimeout(function(){var b=document.q
   </div>
 </dialog>
 <input type="file" id="fileIn" accept="image/*" hidden>
+<input type="file" id="ownIn" accept="image/png,image/webp,image/jpeg,image/*" aria-label="Choose a character picture from this device" hidden>
 <div class="tray" id="sfxBank" hidden aria-label="Sound effects"></div>
 <div class="tray stk" id="stkTray" hidden aria-label="Stickers"></div>
 <div class="dock" id="dock" role="toolbar" aria-label="Builder tools"></div>
@@ -435,7 +468,14 @@ import Pics from '/the-precinct/pictures.js';
   // plus flip (faces the other way), plain (no white border) and rot. Its height follows the picture.
   const STICKERS = new Map();
   THEME.stickers.forEach(g => g.items.forEach(([file, label, w, kind]) => STICKERS.set(g.dir + '/' + file, { dir: g.dir, file, label, w, kind: kind || 'pose', who: g.who })));
-  const stickerSrc = it => { const s = STICKERS.get(it.src); return s ? THEME.stickerPath(s.dir, s.file, !it.plain) : ''; };
+  // My characters (see "My characters" below) are 'own/<id>', and their pictures are on this device, not in img/.
+  const ownUrls = {};   // id -> { plain, border } object URLs
+  const stickerSrc = it => {
+    const s = STICKERS.get(it.src);
+    if (!s) return '';
+    if (s.own) { const u = ownUrls[s.file]; return u ? (it.plain ? u.plain : u.border) : ''; }
+    return THEME.stickerPath(s.dir, s.file, !it.plain);
+  };
   const PH = { caption: 'Meanwhile, at the precinct...', speech: 'Type what they say', thought: 'What are they thinking?', sfx: 'Type a sound' };
   const blank = () => ({ img: null, fit: { x: 50, y: 50, z: 1 }, items: [] });
   const fresh = () => ({
@@ -526,16 +566,30 @@ import Pics from '/the-precinct/pictures.js';
     return (urls[img.id] = URL.createObjectURL(blob));
   }
 
-  // Big phone photos are shrunk to 1600px so the page stays quick and saves reliably.
-  async function shrink(file){
+  // A picture drawn onto a canvas no more than max pixels on its longer side. Null if the browser can't read it.
+  async function fitCanvas(file, max){
     try {
       const bmp = await createImageBitmap(file);
-      const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+      const k = Math.min(1, max / Math.max(bmp.width, bmp.height));
       const c = document.createElement('canvas');
-      c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+      c.width = Math.max(1, Math.round(bmp.width * k)); c.height = Math.max(1, Math.round(bmp.height * k));
       c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
-      return await new Promise(r => c.toBlob(r, 'image/jpeg', 0.9));
-    } catch (e) { return file; }
+      return c;
+    } catch (e) { return null; }
+  }
+  // True when some of the picture is see-through (a PNG with its background removed, say).
+  function seeThrough(c){
+    const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+    for (let i = 3; i < d.length; i += 4) if (d[i] < 250) return true;
+    return false;
+  }
+  const toBlob = (c, type, q) => new Promise(r => c.toBlob(r, type, q));
+  // Big phone photos are shrunk to 1600px so the page stays quick and saves reliably. A picture with see-through
+  // parts stays a PNG: a JPEG has no see-through, and those parts would come out black.
+  async function shrink(file){
+    const c = await fitCanvas(file, 1600);
+    if (!c) return file;
+    return (await toBlob(c, seeThrough(c) ? 'image/png' : 'image/jpeg', 0.9)) || file;
   }
 
   // ---------- rendering ----------
@@ -682,10 +736,11 @@ import Pics from '/the-precinct/pictures.js';
 
   function itemHTML(it, j, on, ghost){
     if (it.type === 'sticker') {
-      const s = STICKERS.get(it.src), ink = S.level !== 'prose' && look().ink;
+      const s = STICKERS.get(it.src), ink = S.level !== 'prose' && look().ink, src = stickerSrc(it);
+      if (!src) return '';   // one of My characters that has been removed from this device
       return '<div class="it it-sticker' + (it.flip ? ' flip' : '') + (on ? ' sel' : '') + (ghost ? ' ghost' : '') + '" data-j="' + j + '" style="left:' + it.x + '%;top:' + it.y + '%;width:' + it.w + '%'
         + (it.rot ? ';transform:rotate(' + it.rot + 'deg)' : '') + '">'
-        + '<img src="' + stickerSrc(it) + '" alt="' + esc(s ? s.who + ', ' + s.label.toLowerCase() : 'A sticker') + '" draggable="false"' + (ink ? ' style="filter:' + ink + '"' : '') + '>'
+        + '<img src="' + src + '" alt="' + esc(!s ? 'A sticker' : s.own ? s.label : s.who + ', ' + s.label.toLowerCase()) + '" draggable="false"' + (ink ? ' style="filter:' + ink + '"' : '') + '>'
         + '<span class="rs-h" title="Drag to make it bigger or smaller"></span>'
         + '<span class="rot-h" title="Drag to tilt it (hold Shift for steps of 15°)">&#8635;</span>'
         + '<span class="it-ctl"><button type="button" data-act="flip" title="Face the other way" aria-label="Face the other way">&#8646;</button>'
@@ -819,7 +874,7 @@ import Pics from '/the-precinct/pictures.js';
   }
   const imgEl = i => bench.querySelector('[data-i="' + i + '"]:not(.wl) > .pnl-inner > img');
   const empty = on => on
-    ? '<div class="pnl-empty"><span class="picks"><button type="button" data-pick="up">Upload</button><button type="button" data-pick="lib">Library</button></span><small>or paste or drop a picture here</small></div>'
+    ? '<div class="pnl-empty"><span class="picks"><button type="button" data-pick="lib">Library</button><button type="button" data-pick="up">Upload your own</button></span><small>or paste or drop a picture here</small></div>'
     : '<div class="pnl-empty"><b>+</b>Tap to add a picture</div>';
 
   // The layers over panel i: its stickers (stk), or its words and the picture's turn handle. Both cover the panel's box.
@@ -1198,6 +1253,8 @@ import Pics from '/the-precinct/pictures.js';
     const ed = e.target.closest && e.target.closest('[contenteditable=true]');
     if (file) {
       e.preventDefault();
+      // with My characters open, a pasted picture becomes a new character, not the panel's picture
+      if (!$('stkTray').hidden && stkWho === 'own') { startOwn(file); return; }
       const i = sel.p != null ? sel.p : panelList().findIndex(p => !p.img);
       if (i < 0) { note('Tap the panel you want the picture in, then paste again.'); return; }
       note(''); sel = { p: i, it: null }; setPicture(i, file);
@@ -1244,7 +1301,7 @@ import Pics from '/the-precinct/pictures.js';
     $('mine').hidden = !mine.length && !facts.length;
     $('mineWho').textContent = 'Case 0' + c.n + (facts.length ? ': ' + facts.join(' · ') + '. ' : '. ')
       + (mine.length ? 'Tap a picture to put it in the chosen panel, or in the first empty one.' : 'No pictures added at Step 4 yet: upload, paste or drop one on a panel.')
-      + (who.length && S.level !== 'prose' ? ' Stickers of ' + who.map(x => x.short).join(' and ') + ' are under Add, once a panel has a picture.' : '');
+      + (who.length && S.level !== 'prose' ? ' Stickers of ' + who.map(x => x.short).join(' and ') + ' are under Add, then Characters, once a panel has a picture.' : '');
     const btn = (m, i) => '<button type="button" data-mine="' + i + '"><img src="' + (m.url = m.url || URL.createObjectURL(m.blob)) + '" alt="">Case 0' + m.n + ': ' + Pics.SLOT_NAMES[m.slot].toLowerCase() + '</button>';
     $('minePics').innerHTML = mine.map(btn).join('');
     $('libMineGrid').innerHTML = mine.map((m, i) => '<button type="button" data-mine="' + i + '" aria-label="Case 0' + m.n + ': ' + Pics.SLOT_NAMES[m.slot].toLowerCase() + '"><img src="' + m.url + '" alt=""></button>').join('');
@@ -1354,7 +1411,10 @@ import Pics from '/the-precinct/pictures.js';
   }
 
   // ---------- the dock: page tools, then panel tools, then box styles, as each is chosen ----------
-  const ADD_NAMES = { caption: 'Caption box', speech: 'Speech balloon', thought: 'Thought bubble', sfx: 'Sound effect', sticker: 'Sticker' };
+  const ADD_NAMES = { caption: 'Caption box', speech: 'Speech balloon', thought: 'Thought bubble', sfx: 'Sound effect', sticker: 'Characters' };
+  // What each tool does, in a few words under its name, so no button has to be guessed.
+  const ADD_SAYS = { caption: 'the narrator', speech: 'someone talks', thought: 'someone thinks', sfx: 'BANG! WHOOSH!', sticker: 'put the cast in' };
+  const two = (name, says) => name + ' <small>' + says + '</small>';
   const NEW = '<i class="new">NEW</i>';
   let exporting = false, shownGroups = [], moreOpen = false;
   const chosenItem = () => sel.it != null && S.level !== 'prose' && S.panels[sel.p] && S.panels[sel.p].items[sel.it];
@@ -1375,17 +1435,24 @@ import Pics from '/the-precinct/pictures.js';
     let done = '';
     if (it) { h = styleHTML(it); done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this box (Esc)&#10;&#10;Keyboard, with a box chosen:&#10;Delete: remove it&#10;Arrow keys: nudge it (hold Shift for bigger steps)&#10;Ctrl/&#8984;+D: duplicate it&#10;Enter: edit the words&#10;[ and ]: tilt it&#10;Ctrl/&#8984;+Z: undo, Shift+Ctrl/&#8984;+Z: redo' }); }
     else if (p) {
+      // In the order a panel is made: the picture behind, then the characters in it, then the words. Within the
+      // picture, where it comes from first, then how it sits, then taking it out. A narrow screen folds the flips,
+      // Straighten and Remove behind More tools.
       h = '<span class="what">' + (S.level === 'prose' ? 'Frame ' : 'Panel ') + (sel.p + 1) + '</span>'
-        + g('picture', '<b>Picture</b>' + (p.img
-          ? b('upload', 'Replace') + b('lib', 'Library') + b('more', moreOpen ? 'Fewer tools' : 'More tools', { cls: 'pill morebtn', exp: moreOpen })
-            + b('flip', 'Flip &#8646;', { cls: 'pill xtra', v: 'flip', on: p.fit.flip, title: 'Flip the picture left to right, so a character faces the other way' })
-            + b('flip', 'Flip &#8645;', { cls: 'pill xtra', v: 'flipY', on: p.fit.flipY, title: 'Flip the picture upside down, for a reflection in a puddle or a window' })
-            + (p.fit.r ? '<span class="note xtra">' + p.fit.r + '°</span>' + b('straighten', 'Straighten', { cls: 'pill xtra' }) : '') + b('clear', 'Remove', { cls: 'pill xtra' })
-            + '<label class="zoom">Zoom <input type="range" id="zoom" min="1" max="3" step="0.05" value="' + p.fit.z + '"></label>'
-          : b('upload', 'Upload') + b('lib', 'From our library') + '<span class="note">or paste (Ctrl/&#8984;+V) or drop a picture on the panel</span>'));
-      if (addReady()) h += g('add', '<b>Add</b>' + (S.level === 'advanced' ? ['caption', 'speech', 'thought', 'sfx', 'sticker'] : ['caption', 'speech', 'sticker'])
-        .map(k => { const tray = k === 'sfx' ? bankOpen() : k === 'sticker' ? stkTrayOpen() : null;
-          return b('add', ADD_NAMES[k], { v: k, isNew: !seen('n:' + k), on: !!tray, exp: tray }); }).join(''));
+        + g('picture', '<b>Picture</b>' + b('lib', two('Library', 'your case pictures and ours')) + b('upload', two('Upload your own', 'a picture you made'))
+          + (p.img
+            ? b('more', moreOpen ? 'Fewer tools' : 'More tools', { cls: 'pill morebtn', exp: moreOpen })
+              + b('flip', two('Flip &#8646;', 'face the other way'), { cls: 'pill xtra', v: 'flip', on: p.fit.flip, title: 'Flip the picture left to right, so a character faces the other way' })
+              + b('flip', two('Flip &#8645;', 'upside down'), { cls: 'pill xtra', v: 'flipY', on: p.fit.flipY, title: 'Flip the picture upside down, for a reflection in a puddle or a window' })
+              + (p.fit.r ? '<span class="note xtra">' + p.fit.r + '°</span>' + b('straighten', two('Straighten', 'level it again'), { cls: 'pill xtra' }) : '')
+              + b('clear', two('Remove', 'empty the panel'), { cls: 'pill xtra' })
+              + '<label class="zoom">Zoom <input type="range" id="zoom" min="1" max="3" step="0.05" value="' + p.fit.z + '"></label>'
+            : '<span class="note">or paste (Ctrl/&#8984;+V) or drop a picture on the panel</span>'));
+      if (addReady()) {
+        const add = k => { const tray = k === 'sfx' ? bankOpen() : k === 'sticker' ? stkTrayOpen() : null;
+          return b('add', two(ADD_NAMES[k], ADD_SAYS[k]), { v: k, isNew: !seen('n:' + k), on: !!tray, exp: tray }); };
+        h += g('add', '<b>Add</b>' + ['sticker'].concat(S.level === 'advanced' ? ['speech', 'thought', 'caption', 'sfx'] : ['speech', 'caption']).map(add).join(''));
+      }
       done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this panel (Esc)&#10;&#10;Keyboard, with a panel chosen:&#10;Ctrl/&#8984;+V: paste a picture you have copied&#10;Ctrl + scroll, or pinch on a trackpad: zoom the picture&#10;[ and ]: turn the picture&#10;Ctrl/&#8984;+Z: undo, Shift+Ctrl/&#8984;+Z: redo' });
     } else {
       h = '<span class="what">Page</span>'
@@ -1542,17 +1609,31 @@ import Pics from '/the-precinct/pictures.js';
   // (keeping its place, and its size in step with the new one's).
   // One character at a time: a row of the cast to choose from, then that character's stickers.
   let stkOpen = false, stkWho = THEME.stickers[0].dir;
+  // Each character's stickers in three named groups, by the kind theme.js gives them, each sticker with its name under it.
+  const STK_KINDS = [['pose', 'Whole body'], ['face', 'Faces, for close-ups'], ['thing', 'Things']];
   function stkTrayHTML(){
-    const g = THEME.stickers.find(x => x.dir === stkWho) || THEME.stickers[0];
+    const own = stkWho === 'own', g = own ? null : THEME.stickers.find(x => x.dir === stkWho) || THEME.stickers[0];
+    const tile = ([file, label]) => '<button type="button" class="stk-tile" data-stk="' + esc(g.dir + '/' + file) + '" title="' + esc(label) + '" aria-label="' + esc(g.who + ': ' + label) + '">'
+      + '<img src="' + THEME.stickerPath(g.dir, file, true) + '" alt=""><span aria-hidden="true">' + esc(label) + '</span></button>';
     return '<div class="own"><span>Pick a character, then tap a sticker to add it to the chosen panel. With a sticker chosen, tapping another one swaps it.</span></div>'
       + '<div class="who" role="tablist" aria-label="Characters">' + THEME.stickers.map(x => '<button type="button" role="tab" aria-selected="' + (x === g) + '" data-who="' + esc(x.dir) + '">'
-        + '<img src="' + THEME.stickerPath(x.dir, x.items[0][0], true) + '" alt="">' + esc(x.who) + '</button>').join('') + '</div>'
-      + '<div class="w" role="tabpanel" aria-label="' + esc(g.who) + '">' + g.items.map(([file, label]) => '<button type="button" data-stk="' + esc(g.dir + '/' + file) + '" title="' + esc(label) + '" aria-label="' + esc(g.who + ': ' + label) + '">'
-        + '<img src="' + THEME.stickerPath(g.dir, file, true) + '" alt=""></button>').join('') + '</div>';
+        + '<img src="' + THEME.stickerPath(x.dir, x.items[0][0], true) + '" alt="">' + esc(x.who) + '</button>').join('')
+        + '<button type="button" role="tab" aria-selected="' + own + '" data-who="own"><span class="own-ico" aria-hidden="true">+</span>My characters</button></div>'
+      + '<div class="w" role="tabpanel" aria-label="' + (own ? 'My characters' : esc(g.who)) + '">' + (own ? ownHTML() : STK_KINDS.map(([k, name]) => {
+        const items = g.items.filter(i => (i[3] || 'pose') === k);
+        return items.length ? '<div class="kind" role="group" aria-label="' + name + '"><h4 aria-hidden="true">' + name + '</h4><div class="tiles">' + items.map(tile).join('') + '</div></div>' : '';
+      }).join('')) + '</div>';
   }
   $('stkTray').addEventListener('click', e => {
     const wb = e.target.closest('[data-who]');
     if (wb) { stkWho = wb.dataset.who; return renderDock(); }
+    const ob = e.target.closest('[data-own]');
+    if (ob) {
+      if (ob.dataset.own === 'pick') return $('ownIn').click();
+      if (ob.dataset.own === 'cancel') { ownDraft = null; return showOwn(); }
+      if (ob.dataset.own === 'save') return saveOwn();
+    }
+    const rb = e.target.closest('[data-rmown]'); if (rb) return removeOwn(rb.dataset.rmown);
     const b = e.target.closest('[data-stk]'); if (!b || sel.p == null) return;
     markSeen('stickers');
     const cur = chosenSticker(), next = STICKERS.get(b.dataset.stk);
@@ -1564,6 +1645,177 @@ import Pics from '/the-precinct/pictures.js';
     }
     addSticker(b.dataset.stk);
   });
+
+  // ---------- My characters: pictures a learner adds to the Characters tray, kept on this device ----------
+  // The list is 'chars' in the store, and each picture is two PNGs, 'char:<id>' and 'char:<id>-b' (with a white
+  // border, like the cast's), cut to the character and padded alike so the two swap in place. tidyImages() clears
+  // only 'img:' keys and Start again keeps them; the × on each removes one. ("mine" is taken here: it is the case
+  // pictures from pictures.js, so these are "own".) Nothing here is sent anywhere.
+  const OWN_MAX = 24, OWN_PX = 900, OWN_NAME = 30;
+  let ownChars = [], ownDraft = null;   // ownDraft: the picture being added, { src, small, clear, cut, tol, name }, or { error }
+  const ownSticker = c => STICKERS.set('own/' + c.id, { dir: 'own', file: c.id, label: c.name, w: c.w, kind: 'pose', who: c.name, own: true });
+  async function loadOwn(){
+    const list = await get('chars');
+    const ok = await Promise.all((Array.isArray(list) ? list : []).filter(c => c && typeof c.id === 'string' && c.name).map(async c => {
+      const [a, b] = await Promise.all([get('char:' + c.id), get('char:' + c.id + '-b')]);
+      if (!a || !b) return null;
+      ownUrls[c.id] = { plain: URL.createObjectURL(a), border: URL.createObjectURL(b) };
+      ownSticker(c);
+      return c;
+    }));
+    ownChars = ok.filter(Boolean);
+  }
+  const showOwn = () => { $('stkTray').dataset.shows = ''; renderDock(); };
+  const ownSay = t => { const el = $('ownErr'); if (el) el.textContent = t; };
+
+  // The colour round the edge of the picture, as most of the edge has it (see-through edge pixels don't count).
+  function edgeColour(d, w, h){
+    const tally = new Map();
+    const take = p => {
+      const i = p * 4; if (d[i + 3] < 200) return;
+      const k = (d[i] >> 4) << 8 | (d[i + 1] >> 4) << 4 | d[i + 2] >> 4, t = tally.get(k) || [0, 0, 0, 0];
+      t[0]++; t[1] += d[i]; t[2] += d[i + 1]; t[3] += d[i + 2]; tally.set(k, t);
+    };
+    for (let x = 0; x < w; x++) { take(x); take((h - 1) * w + x); }
+    for (let y = 1; y < h - 1; y++) { take(y * w); take(y * w + w - 1); }
+    let best = null;
+    tally.forEach(t => { if (!best || t[0] > best[0]) best = t; });
+    return best ? [best[1] / best[0], best[2] / best[0], best[3] / best[0]] : null;
+  }
+  // Takes away a plain background: a flood from every edge pixel through colours within tol of the edge colour,
+  // so a pale face inside the outline is kept. A pixel that touches the background and is only a little past tol
+  // is left part see-through, which softens the cut edge.
+  function cutPlain(src, tol){
+    const w = src.width, h = src.height, img = src.getContext('2d').getImageData(0, 0, w, h), d = img.data;
+    const bg0 = edgeColour(d, w, h);
+    const out = document.createElement('canvas'); out.width = w; out.height = h;
+    if (!bg0) { out.getContext('2d').drawImage(src, 0, 0); return out; }
+    const dist = i => Math.hypot(d[i] - bg0[0], d[i + 1] - bg0[1], d[i + 2] - bg0[2]);
+    const bg = new Uint8Array(w * h), stack = [];
+    const reach = p => { if (bg[p]) return; const i = p * 4; if (d[i + 3] < 20 || dist(i) <= tol) { bg[p] = 1; stack.push(p); } };
+    for (let x = 0; x < w; x++) { reach(x); reach((h - 1) * w + x); }
+    for (let y = 0; y < h; y++) { reach(y * w); reach(y * w + w - 1); }
+    while (stack.length) {
+      const p = stack.pop(), x = p % w;
+      if (x > 0) reach(p - 1); if (x < w - 1) reach(p + 1); if (p >= w) reach(p - w); if (p < w * (h - 1)) reach(p + w);
+    }
+    for (let p = 0; p < w * h; p++) {
+      const i = p * 4;
+      if (bg[p]) { d[i + 3] = 0; continue; }
+      const x = p % w;
+      if ((x > 0 && bg[p - 1]) || (x < w - 1 && bg[p + 1]) || (p >= w && bg[p - w]) || (p < w * (h - 1) && bg[p + w])) {
+        const t = (dist(i) - tol) / tol;
+        if (t < 1) d[i + 3] = Math.round(d[i + 3] * Math.max(0, t));
+      }
+    }
+    out.getContext('2d').putImageData(img, 0, 0);
+    return out;
+  }
+  // Crops to the character, pads it, and makes the twin with a white border round its shape, the same size, as the
+  // cast's stickers have. Null when nothing is left to show.
+  function finishSticker(c){
+    const w = c.width, h = c.height, d = c.getContext('2d').getImageData(0, 0, w, h).data;
+    let x0 = w, y0 = h, x1 = -1, y1 = -1;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (d[(y * w + x) * 4 + 3] > 12) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+    if (x1 < 0) return null;
+    const cw = x1 - x0 + 1, ch = y1 - y0 + 1, pad = Math.max(4, Math.round(Math.max(cw, ch) * 0.014)), W = cw + pad * 2, H = ch + pad * 2;
+    const make = () => { const k = document.createElement('canvas'); k.width = W; k.height = H; return k; };
+    const plain = make(), white = make(), border = make();
+    plain.getContext('2d').drawImage(c, x0, y0, cw, ch, pad, pad, cw, ch);
+    const wx = white.getContext('2d');
+    wx.drawImage(plain, 0, 0); wx.globalCompositeOperation = 'source-in'; wx.fillStyle = '#fff'; wx.fillRect(0, 0, W, H);
+    const bx = border.getContext('2d');
+    [pad - 1, (pad - 1) / 2].forEach((r, ring) => { for (let a = 0; a < (ring ? 12 : 24); a++) {
+      const t = a / (ring ? 12 : 24) * 2 * Math.PI; bx.drawImage(white, Math.round(Math.cos(t) * r), Math.round(Math.sin(t) * r)); } });
+    bx.drawImage(plain, 0, 0);
+    return { plain, border };
+  }
+
+  async function startOwn(file){
+    const src = await fitCanvas(file, OWN_PX);
+    if (!src) { ownDraft = { error: 'That file isn’t a picture this browser can open. Try a PNG or a JPEG.' }; return showOwn(); }
+    const k = Math.min(1, 320 / Math.max(src.width, src.height)), small = document.createElement('canvas');
+    small.width = Math.max(1, Math.round(src.width * k)); small.height = Math.max(1, Math.round(src.height * k));
+    small.getContext('2d').drawImage(src, 0, 0, small.width, small.height);
+    const clear = seeThrough(src);
+    ownDraft = { src, small, clear, cut: !clear, tol: 44, name: '' };
+    showOwn();
+    const n = $('ownName'); if (n) n.focus();
+  }
+  // The preview is cut from a small copy, so the slider answers at once; Add cuts the full picture the same way.
+  const ownPreview = () => (ownDraft.cut ? cutPlain(ownDraft.small, ownDraft.tol) : ownDraft.small).toDataURL('image/png');
+  function ownHTML(){
+    const d = ownDraft;
+    if (d && d.src) {
+      return '<div class="own-add"><div class="own-pre"><img id="ownPre" src="' + ownPreview() + '" alt="How your character will look"></div><div class="own-f">'
+        + '<label class="own-l" for="ownName">Name</label><input type="text" id="ownName" maxlength="' + OWN_NAME + '" autocomplete="off" placeholder="My character" value="' + esc(d.name) + '">'
+        + '<label class="own-chk"><input type="checkbox" id="ownCut"' + (d.cut ? ' checked' : '') + '> Remove the plain background</label>'
+        + '<label class="own-tol" id="ownTolRow"' + (d.cut ? '' : ' hidden') + '><span>Less</span><input type="range" id="ownTol" min="10" max="120" step="2" value="' + d.tol + '" aria-label="How much of the background to remove"><span>More</span></label>'
+        + '<p class="own-say">' + (d.clear ? 'Its background is already see-through, so you can leave the box unticked.'
+          : 'The chequered parts will be see-through. If some of your character goes too, slide towards Less. If some background stays, slide towards More.') + '</p>'
+        + '<p class="own-acts"><button type="button" data-own="save">Add to My characters</button><button type="button" data-own="cancel">Cancel</button></p>'
+        + '<p class="own-err" role="alert" id="ownErr"></p></div></div>';
+    }
+    return (d && d.error ? '<p class="own-err" role="alert">' + esc(d.error) + '</p>' : '')
+      + '<div class="tiles"><button type="button" class="stk-tile own-new" data-own="pick"><b aria-hidden="true">+</b><span>Add your own</span></button>'
+      + ownChars.map(c => '<div class="own-t"><button type="button" class="stk-tile" data-stk="own/' + esc(c.id) + '" title="' + esc(c.name) + '" aria-label="My characters: ' + esc(c.name) + '">'
+        + '<img src="' + ownUrls[c.id].border + '" alt=""><span aria-hidden="true">' + esc(c.name) + '</span></button>'
+        + '<button type="button" class="own-rm" data-rmown="' + esc(c.id) + '" title="Remove" aria-label="Remove ' + esc(c.name) + ' from My characters">&times;</button></div>').join('') + '</div>'
+      + '<p class="own-say">' + (ownChars.length ? 'Your characters stay in this browser. Tap one to put it in the panel.'
+        : 'Add a character you made. A PNG with a see-through background works best. A picture with a plain background works too: this page can take the background away.') + '</p>';
+  }
+  async function saveOwn(){
+    const d = ownDraft;
+    if (!d || !d.src || d.busy) return;
+    if (ownChars.length >= OWN_MAX) return ownSay('That is enough characters for now. Remove one first.');
+    const name = d.name.trim().replace(/\s+/g, ' ').slice(0, OWN_NAME) || 'My character ' + (ownChars.length + 1);
+    // Cutting out a big picture takes a moment on a slow laptop: the button says so, and comes back if it fails.
+    d.busy = true;
+    const btn = $('stkTray').querySelector('[data-own="save"]'), label = btn ? btn.textContent : '';
+    const fail = t => { d.busy = false; if (btn) { btn.disabled = false; btn.textContent = label; } ownSay(t); };
+    if (btn) { btn.disabled = true; btn.textContent = 'Adding…'; }
+    await new Promise(r => requestAnimationFrame(() => setTimeout(r)));   // let "Adding…" show before the work starts
+    const f = finishSticker(d.cut ? cutPlain(d.src, d.tol) : d.src);
+    if (!f) return fail('Nothing was left of the picture. Slide towards Less, or untick Remove the plain background.');
+    const [a, b] = await Promise.all([toBlob(f.plain, 'image/png'), toBlob(f.border, 'image/png')]);
+    if (!a || !b) return fail('This browser couldn’t make the picture. Try a smaller one.');
+    const id = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+    const c = { id, name, w: Math.max(12, Math.min(70, Math.round(62 * f.plain.width / f.plain.height))) };
+    if (db) { await put('char:' + id, a); await put('char:' + id + '-b', b); }
+    ownUrls[id] = { plain: URL.createObjectURL(a), border: URL.createObjectURL(b) };
+    ownChars.push(c); ownSticker(c);
+    if (db) await put('chars', ownChars);
+    ownDraft = null;
+    markSeen('stickers');
+    $('stkTray').dataset.shows = '';   // the tray closes below: next time it opens it must show the tiles, not this form
+    // straight into the chosen panel
+    if (sel.p != null && S.level !== 'prose') { addSticker('own/' + id); Jn.announce(name + ' is in My characters, and in this panel.'); }
+    else { showOwn(); Jn.announce(name + ' is in My characters.'); }
+  }
+  async function removeOwn(id){
+    const c = ownChars.find(x => x.id === id);
+    if (!c || !confirm('Remove ' + c.name + ' from My characters? A page that uses it will lose it.')) return;
+    ownChars = ownChars.filter(x => x !== c);
+    STICKERS.delete('own/' + id);
+    const u = ownUrls[id]; delete ownUrls[id];
+    if (db) { await put('chars', ownChars); await del('char:' + id); await del('char:' + id + '-b'); }
+    let gone = false;
+    S.panels.forEach(p => { const n = p.items.length; p.items = p.items.filter(it => it.src !== 'own/' + id); gone = gone || p.items.length !== n; });
+    if (gone) { if (sel.it != null) sel = { p: sel.p, it: null }; save(); render(); }
+    if (u) { URL.revokeObjectURL(u.plain); URL.revokeObjectURL(u.border); }
+    showOwn();
+    Jn.announce(c.name + ' has been removed.');
+  }
+  $('stkTray').addEventListener('input', e => {
+    const d = ownDraft;
+    if (!d || !d.src) return;
+    if (e.target.id === 'ownName') { d.name = e.target.value; return; }
+    if (e.target.id === 'ownCut') { d.cut = e.target.checked; $('ownTolRow').hidden = !d.cut; }
+    else if (e.target.id === 'ownTol') d.tol = +e.target.value;
+    else return;
+    $('ownPre').src = ownPreview();
+  });
+  $('ownIn').addEventListener('change', () => { const f = $('ownIn').files[0]; $('ownIn').value = ''; if (f) startOwn(f); });
 
   // ---------- one-time tips: each tool is introduced once, and the browser remembers ----------
   const SEEN = 'precinct-builder-seen';
@@ -1580,11 +1832,11 @@ import Pics from '/the-precinct/pictures.js';
     { id: 'advanced', at: 'dock', when: () => S.level === 'advanced' && sel.p == null,
       title: 'Advanced unlocked', text: 'Press Style down here to give the whole page the look of a comics era, from 1940s noir to 1990s Image. Choose a panel for thought bubbles and sound effects.' },
     { id: 'picture', at: 'dock', when: () => sel.p != null && !chosenItem() && !panelList()[sel.p].img,
-      title: 'Bring a picture in', text: 'Upload one, pick from our library, or copy a picture in ChatGPT, Gemini or Copilot and paste it here with Ctrl/⌘+V.' },
+      title: 'Bring a picture in', text: 'Pick one from the Library, upload your own, or copy a picture in ChatGPT, Gemini or Copilot and paste it here with Ctrl/⌘+V.' },
     { id: 'add', at: 'dock', when: addReady,
-      title: 'Now tell the story', text: 'Add a caption box for the narrator and a speech balloon for whoever is talking. Drag the picture to frame it.' },
+      title: 'Now tell the story', text: 'Put the cast in with Characters. Then add words: a speech balloon for whoever is talking, a caption box for the narrator. Drag the picture to frame it.' },
     { id: 'stickers', at: 'tray', when: () => stkTrayOpen() && !chosenSticker(),
-      title: 'Stickers', text: 'Tap a sticker to put it in this panel. Pick a place from our library first and the cast can stand in it.' },
+      title: 'Characters', text: 'Tap a sticker to put it in this panel. Pick a place from the Library first and the cast can stand in it. Your own go under My characters.' },
     { id: 'stickersize', at: 'rs', when: () => !!chosenSticker(),
       title: 'Make it fit', text: 'Drag the sticker to move it, and the yellow dot in its corner to make it bigger or smaller. ⇆ turns it to face the other way.' },
     { id: 'stickerclip', at: 'dock', when: () => { const s = chosenSticker(); return !!s && seen('stickersize') && !s.clip; },
@@ -1831,6 +2083,7 @@ import Pics from '/the-precinct/pictures.js';
     if (saved && saved.panels) S = Object.assign(fresh(), saved);
     migrate();
     await loadMine();
+    try { await loadOwn(); } catch (e) {}
     render();
     tidyImages();
     if (document.fonts) document.fonts.ready.then(fitTitle);   // measure the title again once its lettering has loaded

@@ -4,7 +4,7 @@
 // 'precinct-builder', store 'kv'), so the builder has them waiting. Nothing
 // here is sent anywhere.
 //
-// Keys are 'case:<n>:first' and 'case:<n>:improved', each a JPEG Blob. The
+// Keys are 'case:<n>:first' and 'case:<n>:improved', each a JPEG Blob (a PNG when it has see-through parts). The
 // builder's own pictures are 'img:<id>', and its tidy-up only ever removes
 // those, so a case picture stays until its case is started again.
 
@@ -39,15 +39,20 @@ function run(mode, fn) {
   }));
 }
 
-// Big pictures are shrunk to 1600px, as the builder does, so they save reliably.
+// Big pictures are shrunk to 1600px, as the builder does, so they save reliably. A picture with see-through
+// parts stays a PNG, as in the builder: a JPEG has no see-through, and those parts would come out black.
 export async function shrink(file) {
   try {
     const bmp = await createImageBitmap(file);
     const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
     const c = document.createElement('canvas');
     c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
-    c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
-    return await new Promise(r => c.toBlob(r, 'image/jpeg', 0.9));
+    const ctx = c.getContext('2d');
+    ctx.drawImage(bmp, 0, 0, c.width, c.height);
+    const d = ctx.getImageData(0, 0, c.width, c.height).data;
+    let clear = false;
+    for (let i = 3; i < d.length && !clear; i += 4) clear = d[i] < 250;
+    return await new Promise(r => c.toBlob(r, clear ? 'image/png' : 'image/jpeg', 0.9));
   } catch (e) { return file; }
 }
 
