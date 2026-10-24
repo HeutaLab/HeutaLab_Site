@@ -201,7 +201,7 @@ document.documentElement.className+=' js';setTimeout(function(){var b=document.q
               <label class="tool"><input type="radio" name="platform" value="gemini"> Gemini</label>
               <label class="tool"><input type="radio" name="platform" value="chatgpt"> ChatGPT</label>
               <label class="tool"><input type="radio" name="platform" value="copilot"> Copilot</label>
-              <label class="tool"><input type="radio" name="platform" value="nanobanana"> Nano Banana</label>
+              <label class="tool"><input type="radio" name="platform" value="canva"> Canva</label>
               <label class="tool"><input type="radio" name="platform" value="midjourney"> Midjourney</label>
             </fieldset>
             <p class="step-note">The brief is tuned for the tool you pick. Use the one your teacher or facilitator has approved.</p>
@@ -330,6 +330,7 @@ document.documentElement.className+=' js';setTimeout(function(){var b=document.q
               <div class="ask">
                 <b>Ask your tool first</b>
                 <p>The desk can&rsquo;t see your picture, but your image tool can. Give it the picture it made, and only the picture, and ask:</p>
+                <p class="step-note">Canva&rsquo;s Dream Lab can&rsquo;t describe pictures. With Canva, ask an AI chat that can look at images, such as Gemini or ChatGPT.</p>
                 <p class="ask-line"><q id="askText">Describe only what you see in this image, as a prompt that would recreate it.</q>
                   <button type="button" class="btn ghost small" id="askCopy">Copy</button></p>
                 <p class="step-note">Don&rsquo;t paste your brief into that request, or it will just hand your own words back. Then paste what it says below, and the desk puts it next to what you asked for.</p>
@@ -1154,7 +1155,7 @@ import Pics from '/the-precinct/pictures.js';
     gemini:     { name: 'Gemini',      url: 'https://gemini.google.com/',     how: 'Start a new chat in Gemini. Paste your brief and send it. If it answers in words only, ask it to make the image.' },
     chatgpt:    { name: 'ChatGPT',     url: 'https://chatgpt.com/',           how: 'Start a new chat in ChatGPT. Paste your brief and send it.' },
     copilot:    { name: 'Copilot',     url: 'https://copilot.microsoft.com/', how: 'Start a new chat in Copilot. Paste your brief and send it.' },
-    nanobanana: { name: 'Nano Banana', url: 'https://aistudio.google.com/',   how: 'Nano Banana is in Google AI Studio. Open it, choose the Nano Banana image model, paste your brief and run it.' },
+    canva:      { name: 'Canva',       url: 'https://www.canva.com/dream-lab', how: 'Canva makes images in Dream Lab. Open it, paste your brief and generate.' },
     midjourney: { name: 'Midjourney',  url: 'https://www.midjourney.com/',    how: 'Midjourney is a paid tool, used here for demonstrations. Paste your brief into its Create box.' },
   };
   const ticks = () => { const w = W(); return (w.ticks && typeof w.ticks === 'object') ? w.ticks : (w.ticks = {}); };
@@ -1629,6 +1630,7 @@ import Pics from '/the-precinct/pictures.js';
 
   // ---- start up ----
   const incoming = location.hash;   // goStep() rewrites the address, so keep what the page was opened with
+  if (J.platform === 'nanobanana') J.platform = 'gemini';   // Nano Banana is Gemini's image model: one choice since 24 Oct 2026
   if (typeof J.platform === 'string' && owns(TOOLS, J.platform)) state.platform = J.platform;
   // Show the last known level straight away, then ask the Worker what the saved code really opens.
   applyLevel(level);

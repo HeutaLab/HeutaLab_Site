@@ -4,7 +4,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../worker.js";
-import { cleanBrief, TIMEOUT_MS } from "../the-precinct/desk.js";
+import { cleanBrief, readBrief, buildSystemPrompt, TIMEOUT_MS } from "../the-precinct/desk.js";
 
 const SHOT1 = "Shot one: she sits in a booth beside the tall windows, glancing back at the door.";
 const SHOT2 = "Shot two: same booth, a few minutes later, she is writing in the notebook.";
@@ -53,4 +53,16 @@ test("the Worker sends the tidied brief, or a stock one when nothing usable came
 
 test("the brief has room to finish after the gate", () => {
   assert.ok(TIMEOUT_MS.brief - TIMEOUT_MS.gate >= 25000);
+});
+
+test("the image tools: Canva is one, Nano Banana is now Gemini's and not a choice of its own", () => {
+  const body = (platform) => ({ platform, tier: "basic", subject: "setting", idea: "an empty office at night",
+    attempt: "A dark office with a desk lamp, a window with blinds, rain outside and a coat on a stand by the door." });
+  assert.equal(readBrief(body("canva")).platform, "canva");
+  assert.equal(readBrief(body("midjourney")).platform, "midjourney");
+  assert.equal(readBrief(body("nanobanana")).error, "Unknown platform");
+  const sys = buildSystemPrompt();
+  assert.match(sys, /^- canva: /m);
+  assert.match(sys, /^- gemini: the Gemini app, whose image model is Nano Banana/m);
+  assert.doesNotMatch(sys, /^- nanobanana:/m);
 });

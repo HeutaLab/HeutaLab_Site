@@ -9,7 +9,8 @@ import THEME from "./theme.js";
 import { checkCopy, words } from "./copycheck.js";
 
 export const TIER_LEVEL = { basic: 1, medium: 2, advanced: 3 };
-export const PLATFORMS = ["gemini", "chatgpt", "copilot", "midjourney", "nanobanana"];
+// Nano Banana is Gemini's own image model, so it is Gemini here (the case page moves an old pick across).
+export const PLATFORMS = ["gemini", "chatgpt", "copilot", "canva", "midjourney"];
 export const SUBJECTS = ["character", "setting"];
 export const ATTEMPT_MIN_WORDS = 15;
 export const DESCRIPTION_MIN_WORDS = 8;
@@ -300,11 +301,11 @@ TIER RULES:
 - advanced: an anchor paragraph plus THREE OR MORE short shot prompts appended to it, forming a mini sequence (establishing shot, then two or more follow-on shots). Note that attendees should ideally plan the shot list with an LLM as co-writer before generating.
 
 PLATFORM KNOWLEDGE (apply this specifically, do not give generic advice):
-- gemini: strongly tends to auto-populate scenes with extra people, dialogue balloons, captions and sound effects unless explicitly told not to. Always include an explicit negative instruction ("no characters, no text, no dialogue, no captions") when the goal is an empty setting or a single subject. Gemini can also invent incidental details (weather, props) and then hold them consistent across a session unprompted, which is a feature to mention but not rely on. Responds well to named artist + era + medium for style-locking.
+- gemini: the Gemini app, whose image model is Nano Banana. Strongly tends to auto-populate scenes with extra people, dialogue balloons, captions and sound effects unless explicitly told not to. Always include an explicit negative instruction ("no characters, no text, no dialogue, no captions") when the goal is an empty setting or a single subject. Gemini can also invent incidental details (weather, props) and then hold them consistent across a session unprompted, which is a feature to mention but not rely on. Responds well to named artist + era + medium for style-locking.
 - chatgpt: generally more literal and compliant with explicit constraints than Gemini, but weaker at holding consistency across separate, unlinked generations. If the tier needs consistency (medium/advanced), recommend uploading the first generated image back in as a reference for the next prompt rather than relying on text alone.
 - copilot: similar compliance to chatgpt (same underlying image model family) but defaults toward a glossier, more "digital painting" look. Needs an explicit style correction such as "flat ink illustration, hatching and cross-hatching shading, not digital painting or airbrush" to avoid that.
 - midjourney: parameter-driven and the most literal about art-style keywords and named artists. Mention relevant parameters where useful (e.g. --ar 1:1 for a character sheet, --ar 16:9 for a wide establishing shot). Best consistency tool of the set via image-prompting or --seed, but requires a paid plan, which is why it's a look-only demo in this workshop rather than the hands-on tool.
-- nanobanana: Google's image model accessed via API/AI Studio rather than the consumer Gemini app; generally more literal and compliant with negative constraints than the consumer Gemini chat app, closer to chatgpt/copilot behaviour than to Gemini's chat behaviour.
+- canva: Canva's own image model (Craft, in Canva's Dream Lab, released October 2026). Trained on Canva's design templates and built to plan layouts and set text, so it is likely to drift toward a poster, cover or social-post layout with a title, lettering or a border. Always include an explicit "a single comic panel illustration, not a poster or design layout, no text, no lettering, no border" line. Too new for its habits to be confirmed: present this as likely, not proven.
 
 PALETTE RULES (the palette line in the request is the attendee's choice; honour it exactly):
 - Put the palette in every prompt in so many words, as a "limited palette" line. For medium and advanced tiers it belongs in the anchor, word for word, so every generation carries it.
