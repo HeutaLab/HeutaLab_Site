@@ -64,6 +64,8 @@
   .dock .sg{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
   .dock .sg > b{font-family:var(--script);font-weight:400;font-size:17px;color:#fff6dc;margin-right:4px;position:relative}
   .dock .pill{padding:5px 12px;font-size:16px;position:relative}
+  /* a tool's name, and under it what it does */
+  .dock .pill small{display:block;margin-top:1px;font-size:11.5px;line-height:1.1;opacity:.78;white-space:nowrap}
   .dock .sw{width:26px;height:26px;border-radius:50%;border:2px solid #fff;cursor:pointer;padding:0}
   .dock .sw.active{outline:3px solid var(--yellow);outline-offset:2px}
   .dock .what{font-family:var(--brush);color:var(--yellow);font-size:20px;margin-right:2px}
@@ -109,9 +111,15 @@
   .tray .own button{font-family:var(--label);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
   /* the sticker tray: the gang cut out of their sheets, one row of thumbnails per character */
   .tray.stk{grid-template-columns:1fr}
-  .tray.stk .w button{width:74px;height:74px;padding:4px;background:#fff6dc;display:flex;align-items:center;justify-content:center}
+  /* three groups side by side where they fit (whole body, faces, things), each named, each sticker named */
+  .tray.stk .w{gap:8px 22px;align-items:flex-start}
+  .tray.stk .kind h4{margin:0 0 5px;font-family:var(--label);font-weight:400;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-dim)}
+  .tray.stk .tiles{display:flex;flex-wrap:wrap;gap:6px}
+  .tray.stk .w button{width:82px;height:auto;padding:4px 3px 5px;background:#fff6dc;display:flex;flex-direction:column;align-items:center;gap:3px}
   .tray.stk .w button.on{border-color:var(--blue);outline:2px solid var(--blue)}
-  .tray.stk .w img{max-width:100%;max-height:100%;pointer-events:none}
+  .tray.stk .w img{width:64px;height:58px;object-fit:contain;pointer-events:none}
+  .tray.stk .w button span{font-family:var(--label);font-size:11.5px;line-height:1.12;text-align:center;color:var(--ink);pointer-events:none;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .tray.stk .who{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
   .tray.stk .who button{flex:none;display:flex;align-items:center;gap:6px;font-family:var(--label);font-size:15px;line-height:1;padding:3px 12px 3px 3px;background:#fff;border-radius:999px}
   .tray.stk .who button[aria-selected=true]{background:var(--yellow);border-color:var(--ink)}
@@ -410,12 +418,12 @@
 </footer>
 
 <dialog class="lib" id="libDlg" aria-labelledby="libDlg-h">
-  <div class="lib-head"><h2 id="libDlg-h">Pick a picture</h2><button type="button" class="btn ghost small" id="libClose">Close</button></div>
+  <div class="lib-head"><h2 id="libDlg-h">Backgrounds: pick a place</h2><button type="button" class="btn ghost small" id="libClose">Close</button></div>
   <div class="lib-grid" id="libGrid"></div>
 </dialog>
 <input type="file" id="fileIn" accept="image/*" aria-label="Choose a picture from this device" hidden>
 <div class="tray" id="sfxBank" hidden role="group" aria-label="Sound effects"></div>
-<div class="tray stk" id="stkTray" hidden role="group" aria-label="Stickers"></div>
+<div class="tray stk" id="stkTray" hidden role="group" aria-label="Characters"></div>
 <div class="dock" id="dock" role="toolbar" aria-label="Builder tools" tabindex="-1"></div>
 <div class="tip" id="tip" hidden role="status"></div>
 <div class="scard" id="styleCard" hidden role="group" aria-label="About this page style"></div>
@@ -857,7 +865,7 @@ import shelf from '../shelf.js';
   }
   const imgEl = i => bench.querySelector('[data-i="' + i + '"]:not(.wl) > .pnl-inner > img');
   const empty = on => on
-    ? '<div class="pnl-empty"><span class="picks"><button type="button" data-pick="up">Upload</button><button type="button" data-pick="lib">Library</button></span><small>or paste or drop a picture here</small></div>'
+    ? '<div class="pnl-empty"><span class="picks"><button type="button" data-pick="lib">Backgrounds</button><button type="button" data-pick="up">Upload your own</button></span><small>or paste or drop a picture here</small></div>'
     : '<div class="pnl-empty"><b>+</b>Tap to add a picture</div>';
 
   // The layers over panel i: its stickers (stk), or its words and the picture's turn handle. Both cover the panel's box.
@@ -1393,7 +1401,10 @@ import shelf from '../shelf.js';
   }
 
   // ---------- the dock: page tools, then panel tools, then box styles, as each is chosen ----------
-  const ADD_NAMES = { caption: 'Caption box', speech: 'Speech balloon', thought: 'Thought bubble', sfx: 'Sound effect', sticker: 'Sticker' };
+  const ADD_NAMES = { caption: 'Caption box', speech: 'Speech balloon', thought: 'Thought bubble', sfx: 'Sound effect', sticker: 'Characters' };
+  // What each tool does, in a few words under its name, so no button has to be guessed.
+  const ADD_SAYS = { caption: 'the narrator', speech: 'someone talks', thought: 'someone thinks', sfx: 'BANG! WHOOSH!', sticker: 'put the gang in' };
+  const two = (name, says) => name + '<span class="vh">: </span><small>' + says + '</small>';
   const NEW = '<i class="new">NEW</i>';
   let exporting = false, shownGroups = [];
   const chosenItem = () => sel.it != null && S.level !== 'prose' && S.panels[sel.p] && S.panels[sel.p].items[sel.it];
@@ -1416,16 +1427,23 @@ import shelf from '../shelf.js';
     let done = '';
     if (it) { h = styleHTML(it); done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this box (Esc)&#10;&#10;Keyboard, with a box chosen:&#10;Delete: remove it&#10;Arrow keys: nudge it (hold Shift for bigger steps)&#10;Ctrl/&#8984;+D: duplicate it&#10;Enter: edit the words&#10;[ and ]: tilt it&#10;Ctrl/&#8984;+Z: undo, Shift+Ctrl/&#8984;+Z: redo' }); }
     else if (p) {
+      // In the order a panel is made: the picture behind, then the characters in it, then the words.
+      // Within the picture, where it comes from first, then how it sits, then taking it out.
       h = '<span class="what">' + (S.level === 'prose' ? 'Frame ' : 'Panel ') + (sel.p + 1) + '</span>'
-        + g('picture', '<b>Picture</b>' + (p.img
-          ? b('upload', 'Replace') + b('lib', 'Library') + b('flip', 'Flip &#8646;', { v: 'flip', on: p.fit.flip, say: 'Flip left to right', title: 'Flip the picture left to right, so a character faces the other way' })
-            + b('flip', 'Flip &#8645;', { v: 'flipY', on: p.fit.flipY, say: 'Flip upside down', title: 'Flip the picture upside down, for a reflection in a puddle or a window' })
-            + (p.fit.r ? '<span class="note">' + p.fit.r + '°</span>' + b('straighten', 'Straighten') : '') + b('clear', 'Remove')
-            + '<label class="zoom">Zoom <input type="range" id="zoom" min="1" max="3" step="0.05" value="' + p.fit.z + '"></label>'
-          : b('upload', 'Upload') + b('lib', 'From our library') + '<span class="note">or paste (Ctrl/&#8984;+V) or drop a picture on the panel</span>'));
-      if (addReady()) h += g('add', '<b>Add</b>' + (S.level === 'advanced' ? ['caption', 'speech', 'thought', 'sfx', 'sticker'] : ['caption', 'speech', 'sticker'])
-        .map(k => { const tray = k === 'sfx' ? bankOpen() : k === 'sticker' ? stkTrayOpen() : null;
-          return b('add', ADD_NAMES[k], { v: k, isNew: !seen('n:' + k), on: !!tray, exp: tray, ctl: k === 'sfx' ? 'sfxBank' : 'stkTray' }); }).join(''));
+        + g('picture', '<b>Picture</b>' + b('lib', two('Backgrounds', p.img ? 'change the place' : 'pick a place'))
+          + b('upload', two('Upload your own', 'a picture you made'))
+          + (p.img
+            ? '<label class="zoom">Zoom <input type="range" id="zoom" min="1" max="3" step="0.05" value="' + p.fit.z + '"></label>'
+              + b('flip', two('Flip &#8646;', 'face the other way'), { v: 'flip', on: p.fit.flip, say: 'Flip left to right', title: 'Flip the picture left to right, so a character faces the other way' })
+              + b('flip', two('Flip &#8645;', 'upside down'), { v: 'flipY', on: p.fit.flipY, say: 'Flip upside down', title: 'Flip the picture upside down, for a reflection in a puddle or a window' })
+              + (p.fit.r ? '<span class="note">' + p.fit.r + '°</span>' + b('straighten', two('Straighten', 'level it again')) : '')
+              + b('clear', two('Remove', 'empty the panel'))
+            : '<span class="note">or paste (Ctrl/&#8984;+V) or drop a picture on the panel</span>'));
+      if (addReady()) {
+        const add = k => { const tray = k === 'sfx' ? bankOpen() : k === 'sticker' ? stkTrayOpen() : null;
+          return b('add', two(ADD_NAMES[k], ADD_SAYS[k]), { v: k, isNew: !seen('n:' + k), on: !!tray, exp: tray, ctl: k === 'sfx' ? 'sfxBank' : 'stkTray' }); };
+        h += g('add', '<b>Add</b>' + ['sticker'].concat(S.level === 'advanced' ? ['speech', 'thought', 'caption', 'sfx'] : ['speech', 'caption']).map(add).join(''));
+      }
       done = b('done', 'Done', { cls: 'btn ghost small', title: 'Let go of this panel (Esc)&#10;&#10;Keyboard, with a panel chosen:&#10;Ctrl/&#8984;+V: paste a picture you have copied&#10;Ctrl + scroll, or pinch on a trackpad: zoom the picture&#10;[ and ]: turn the picture&#10;Ctrl/&#8984;+Z: undo, Shift+Ctrl/&#8984;+Z: redo' });
     } else {
       h = '<span class="what">Page</span>'
@@ -1562,13 +1580,21 @@ import shelf from '../shelf.js';
   // (keeping its place, and its size in step with the new one's).
   // One character at a time: a row of the gang to choose from, then that character's stickers.
   let stkOpen = false, stkWho = THEME.stickers[0].dir;
+  // Each character's stickers in three named groups, each sticker with its name under it. A face is a file
+  // that starts "face-"; a thing is small to start with (14% of the panel or less); the rest are the whole body.
+  const STK_KINDS = [['body', 'Whole body'], ['face', 'Faces, for close-ups'], ['thing', 'Things']];
+  const stkKind = ([file, , w]) => (file.startsWith('face-') ? 'face' : w <= 14 ? 'thing' : 'body');
   function stkTrayHTML(){
     const g = THEME.stickers.find(x => x.dir === stkWho) || THEME.stickers[0];
+    const tile = ([file, label]) => '<button type="button" data-stk="' + esc(g.dir + '/' + file) + '" title="' + esc(label) + '" aria-label="' + esc(g.who + ': ' + label) + '">'
+      + '<img src="' + THEME.stickerPath(g.dir, file, true) + '" alt=""><span aria-hidden="true">' + esc(label) + '</span></button>';
     return '<div class="own"><span>Pick a character, then tap a sticker to add it to the chosen panel. With a sticker chosen, tapping another one swaps it.</span></div>'
       + '<div class="who" role="tablist" aria-label="Characters">' + THEME.stickers.map(x => '<button type="button" role="tab" aria-selected="' + (x === g) + '" data-who="' + esc(x.dir) + '">'
         + '<img src="' + THEME.stickerPath(x.dir, x.items[0][0], true) + '" alt="">' + esc(x.who) + '</button>').join('') + '</div>'
-      + '<div class="w" role="tabpanel" aria-label="' + esc(g.who) + '">' + g.items.map(([file, label]) => '<button type="button" data-stk="' + esc(g.dir + '/' + file) + '" title="' + esc(label) + '" aria-label="' + esc(g.who + ': ' + label) + '">'
-        + '<img src="' + THEME.stickerPath(g.dir, file, true) + '" alt=""></button>').join('') + '</div>';
+      + '<div class="w" role="tabpanel" aria-label="' + esc(g.who) + '">' + STK_KINDS.map(([k, name]) => {
+        const items = g.items.filter(i => stkKind(i) === k);
+        return items.length ? '<div class="kind" role="group" aria-label="' + name + '"><h4 aria-hidden="true">' + name + '</h4><div class="tiles">' + items.map(tile).join('') + '</div></div>' : '';
+      }).join('') + '</div>';
   }
   $('stkTray').addEventListener('click', e => {
     const wb = e.target.closest('[data-who]');
@@ -1600,11 +1626,11 @@ import shelf from '../shelf.js';
     { id: 'advanced', at: 'dock', when: () => S.level === 'advanced' && sel.p == null,
       title: 'Super maker unlocked', text: 'Press Style down here to change the whole page layout. Choose a panel for thought bubbles and sound effects.' },
     { id: 'picture', at: 'dock', when: () => sel.p != null && !chosenItem() && !panelList()[sel.p].img,
-      title: 'Bring a picture in', text: 'Upload one, pick from our library, or copy a picture from your image tool and paste it here with Ctrl/⌘+V.' },
+      title: 'Bring a picture in', text: 'Pick a place from Backgrounds, upload your own, or copy a picture from your image tool and paste it here with Ctrl/⌘+V.' },
     { id: 'add', at: 'dock', when: addReady,
-      title: 'Now tell the story', text: 'Add a caption box for the narrator and a speech balloon for whoever is talking. Drag the picture to frame it.' },
+      title: 'Now tell the story', text: 'Put the gang in with Characters. Then add words: a speech balloon for whoever is talking, a caption box for the narrator. Drag the picture to frame it.' },
     { id: 'stickers', at: 'tray', when: () => stkTrayOpen() && !chosenSticker(),
-      title: 'Stickers', text: 'Tap a sticker to put it in this panel. Pick a place from our library first and the gang can stand in it.' },
+      title: 'Characters', text: 'Tap a sticker to put it in this panel. Pick a place from Backgrounds first and the gang can stand in it.' },
     { id: 'stickersize', at: 'rs', when: () => !!chosenSticker(),
       title: 'Make it fit', text: 'Drag the sticker to move it, and the yellow dot in its corner to make it bigger or smaller. ⇆ turns it to face the other way.' },
     { id: 'stickerclip', at: 'dock', when: () => { const s = chosenSticker(); return !!s && seen('stickersize') && !s.clip; },
