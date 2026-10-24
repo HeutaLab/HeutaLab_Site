@@ -120,6 +120,26 @@ a.chip:hover { background: #ded8c9; }
 }
 .motion-toggle:hover { background: rgba(6, 14, 27, .88); }
 .motion-toggle:focus-visible { outline: 3px solid var(--lime); outline-offset: 3px; }
+
+/* A picture that changes on a clock (js/main.js, "Timed pictures"). The
+   countdown sits where .motion-toggle does and wears the same pill. The
+   holder shrinks to the picture so the pill stays on its corner when the
+   picture is narrower than the column. */
+.timed-pic { position: relative; width: fit-content; max-width: 100%; }
+.timed-pic img { display: block; margin: 0; }
+.timed-pic-timer {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  padding: 7px 15px;
+  border-radius: 999px;
+  background: rgba(6, 14, 27, .74);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
 .prose figcaption { margin-top: var(--space-2); color: var(--muted); font-size: var(--text-sm); line-height: 1.5; }
 .prose blockquote {
   margin: 1.4em 0;
