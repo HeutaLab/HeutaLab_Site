@@ -22,8 +22,10 @@
 .pic-levels{grid-template-columns:repeat(auto-fit,minmax(190px,1fr));max-width:720px}
 /* place and colour pictures fill their frame; the gang's portraits are shown whole */
 .pic-cover img{object-fit:cover}
-/* the card that opens the make-a-character form is not one of the gang, so its outline is dashed */
-.pic-own-btn{justify-content:center;border-style:dashed}
+/* the card that opens the make-a-character form is not one of the gang, so its outline is dashed; so is the
+   practice character from Look Closely, whose card shows the picture that was looked at */
+.pic-own-btn,.pic-practice{border-style:dashed}
+.pic-own-btn{justify-content:center}
 .pic-own-btn.is-open{background:var(--panel-2)}
 .pic-own{margin:18px 0 0}
 .pic-own h4{margin:0 0 4px;font-family:var(--brush);font-weight:400;font-size:19px;line-height:1.15;letter-spacing:.03em;text-transform:uppercase}
@@ -150,7 +152,7 @@
       <div class="task-body">
         <h3 id="q-subject">A character or a place? <span class="q-rule">(pick one)</span></h3>
         <div class="choices pic-wide" role="group" aria-labelledby="q-subject" id="subjectChoices">
-          <button type="button" class="choice" aria-pressed="false" data-val="character"><span class="choice-t">A character</span><span class="choice-sub">One of the gang, or one you make up.</span><span class="choice-tick" aria-hidden="true"></span></button>
+          <button type="button" class="choice" aria-pressed="false" data-val="character"><span class="choice-t">A character</span><span class="choice-sub">The one you looked at, one of the gang, or one you make up.</span><span class="choice-tick" aria-hidden="true"></span></button>
           <button type="button" class="choice" aria-pressed="false" data-val="setting"><span class="choice-t">A place</span><span class="choice-sub">Somewhere in Doodleville, or a place of your own, with nobody in it.</span><span class="choice-tick" aria-hidden="true"></span></button>
         </div>
 
@@ -667,7 +669,7 @@ const setField = (el, v) => { if (document.activeElement !== el && el.value !== 
 
 // One pressable card. Chosen is the class "active" and aria-pressed, set together (pencil.js redraws on the class).
 function choice(o) {
-  return '<button type="button" class="choice' + (o.on ? ' active' : '') + (o.locked ? ' is-locked' : '') + '" aria-pressed="' + (o.on ? 'true' : 'false') + '"'
+  return '<button type="button" class="choice' + (o.cls ? ' ' + o.cls : '') + (o.on ? ' active' : '') + (o.locked ? ' is-locked' : '') + '" aria-pressed="' + (o.on ? 'true' : 'false') + '"'
     + (o.locked ? ' aria-disabled="true"' : '') + ' data-val="' + esc(o.val) + '">'
     + (o.img ? '<img alt="" src="' + esc(o.img) + '" loading="lazy">' : '')
     + '<span class="choice-t">' + esc(o.t) + '</span>' + (o.sub ? '<span class="choice-sub">' + esc(o.sub) + '</span>' : '')
@@ -850,8 +852,10 @@ function aimRows(p, withIdea) {
 // The picture the learner studied in Look Closely, beside the words it led to.
 function refFigure(j) {
   const ref = j.look && typeof j.look.ref === 'string' && Object.hasOwn(THEME.refs, j.look.ref) ? j.look.ref : '';
+  const same = ref && j.pick.cast.includes('ref-' + ref);
   return ref ? '<figure class="pic-ref"><img src="' + esc(THEME.refPath(ref)) + '" alt="The picture you looked at" loading="lazy">'
-    + '<figcaption>This is the picture you looked at. Your picture will be different: these words show the helper how well you look.</figcaption></figure>' : '';
+    + '<figcaption>' + (same ? 'This is the character you looked at, and the one in your picture. Your words help the helper draw it again, doing your idea.'
+      : 'This is the picture you looked at. Your picture will be different: these words show the helper how well you look.') + '</figcaption></figure>' : '';
 }
 
 // ---------- step 2, who or where ----------
@@ -869,15 +873,22 @@ function drawPlaceLook(p) {
   setShown(box, !!pl);
   box.innerHTML = pl ? lookHTML('These exact words go in every prompt, so the place stays the same.', [pl]) : '';
 }
+// The character in the Look Closely picture, when there is one, comes before the gang: making the one you
+// described is the plainest first picture. One already in the picture stays on show, so it can be unpicked.
+function practiceCast(j) {
+  const keys = [j.look && j.look.ref].concat(j.pick.cast.filter(id => id.startsWith('ref-')).map(id => id.slice(4)));
+  return keys.map(k => gang.practice(k)).filter((c, i, all) => c && all.findIndex(x => x && x.id === c.id) === i);
+}
 function drawWho() {
-  const p = J.get().pick, isChar = p.subject === 'character';
+  const j = J.get(), p = j.pick, isChar = p.subject === 'character';
   paint(subjectChoices, v => v === p.subject);
   setShown($('whoBlock'), isChar);
   setShown($('placeBlock'), isChar || p.subject === 'setting');
   if (isChar) {
     say($('castRule'), maxCast(p) === 2 ? '(pick up to 2)' : '(pick one)');
     const open = !$('ownWrap').hidden;
-    fill(castChoices, gang.all().map(c => choice({ val: c.id, t: c.name, sub: c.tag, img: c.img || THEME.castPlaceholder, on: p.cast.includes(c.id) })).join('')
+    fill(castChoices, practiceCast(j).map(c => choice({ val: c.id, t: c.name, sub: c.tag, img: c.img, cls: 'pic-practice', on: p.cast.includes(c.id) })).join('')
+      + gang.all().map(c => choice({ val: c.id, t: c.name, sub: c.tag, img: c.img || THEME.castPlaceholder, on: p.cast.includes(c.id) })).join('')
       + '<button type="button" class="choice pic-own-btn' + (open ? ' is-open' : '') + '" id="ownBtn" aria-expanded="' + (open ? 'true' : 'false') + '" aria-controls="ownWrap">'
       + '<span class="choice-t">I’ll make my own</span><span class="choice-sub">Invent a character. You can skip this.</span></button>');
     drawCastLook(p);

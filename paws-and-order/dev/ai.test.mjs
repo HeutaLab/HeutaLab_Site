@@ -180,6 +180,24 @@ test("the cast travels as ids: the theme supplies everything for the gang", () =
   assert.deepEqual(AI.readBrief(input({ cast: [{ name: nettle.name, role: nettle.role, look: "anything at all", story: "x" }] })).cast, []);
 });
 
+test("the practice character from Look Closely travels as an id, and the theme supplies its name and look", async () => {
+  const penguin = THEME.practice["penguin-postie"];
+  assert.deepEqual(AI.readBrief(input({ cast: [{ id: "ref-penguin-postie", name: "Someone", look: "CHANGED" }] })).cast,
+    [{ id: "ref-penguin-postie", mine: false, practice: true, name: penguin.name, look: penguin.look }]);
+  // only the three practice pictures: not the gang picture, not a place, not a made-up name
+  for (const id of ["ref-gang", "ref-moon-base", "ref-nobody", "ref-constructor", "ref-__proto__"]) {
+    assert.deepEqual(AI.readBrief(input({ cast: [{ id }] })).cast, [], id);
+  }
+  // with one of the gang at Level 3
+  assert.equal(AI.readBrief(input({ tier: "advanced", cast: [{ id: "ref-owl-inventor" }, { id: "hero" }] })).cast.length, 2);
+
+  await AI.makeBrief(own(), input({ cast: [{ id: "ref-penguin-postie" }] }));
+  assert.ok(sent[0].user.includes("Cast in this picture (a practice character from Look Closely):\n- Penguin Postie. Fixed look: " + penguin.look + "."));
+  assert.ok(sent[0].system.includes("never carry its subject into the prompt"));
+  // the starter prompt, when the AI cannot answer, is of the penguin too
+  assert.ok(AI.stockBrief("character", "basic", "pop", [{ id: "ref-penguin-postie" }], null).prompts[0].includes(penguin.look));
+});
+
 test("the request to the AI: settings first, then the child's words, and a constant system prompt", async () => {
   await AI.makeBrief(own(), input({ tier: "advanced", place: "library", cast: [{ id: "buddy" }, { id: "mine-k3", name: "Zog", look: "a small green robot" }] }));
   const rocco = THEME.cast.find((c) => c.id === "buddy"), library = THEME.places.find((p) => p.id === "library");

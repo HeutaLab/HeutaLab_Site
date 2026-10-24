@@ -204,6 +204,17 @@ export default {
     'rain-soaked-street': ['A rainy street of bright coloured shops with glowing windows, a tilted lamp post, puddles, a small blue car and a welcome mat', 'setting'],
     'police-pound':   ['The front of a blue police station with a star sign, orange steps, a police car and a doughnut in the bin', 'setting'],
   },
+  // The practice characters in Look Closely. They are not the gang. A learner who wants to make the one they
+  // described picks it in step 2 (as "ref-" and the picture's name), and the helper takes its name and look
+  // from here, as it does the gang's. Each look was written from its picture, in the worked answers' words.
+  practice: {
+    'penguin-postie': { name: 'Penguin Postie',
+      look: 'a round penguin with dark blue feathers, a white tummy and an orange beak and feet, wearing a blue postie cap with a badge and a red satchel with a gold buckle across its body' },
+    'robot-chef':     { name: 'Robot Chef',
+      look: 'a boxy silver-grey robot with a square head, glowing round yellow eyes, little antennae on top (one of them bent) and a round dial on its chest, wearing a tall pleated white chef’s hat and a red apron with a heart on it' },
+    'owl-inventor':   { name: 'Owl Inventor',
+      look: 'a fluffy brown owl with a paler speckled tummy, two feather tufts like ears, a heart-shaped face patch and big round eyes, with round goggles pushed up on its head and a leather tool belt across its middle' },
+  },
   refPath: name => IMG + 'ref/' + name + (/^(sheet-|place-sheet|puddle|pound-|sunset|milkshake|wonky|rooftop|wet-|police-pound|rain-soaked|gang|harbour|playground|duck-pond|funfair|library|doughnut|penguin|robot|owl|treehouse|bus-stop|moon)/.test(name) ? '.jpg' : '.svg'),
 
   // Three ways of looking. Each level has a Watch picture with worked answers,

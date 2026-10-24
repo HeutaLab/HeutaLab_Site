@@ -292,6 +292,9 @@ test("on a code, a brief goes to the site's API with the code, the browser id an
   // The cast as gang.forPrompt gives it, or with extra fields a page left on: the same thing is sent.
   await W.makeBrief(input({ tier: "advanced", cast: [{ id: "hero", img: "data:PICTURE", look: "changed", story: "s" }, { id: "mine-a1", name: "Zog", look: "a robot", img: "data:PICTURE" }] }));
   assert.deepEqual(api.calls[1].body.cast, [{ id: "hero" }, { id: "mine-a1", name: "Zog", look: "a robot" }]);
+  // The practice character from Look Closely goes as its id alone, as one of the gang does, from a plain id or a whole object.
+  await W.makeBrief(input({ tier: "advanced", cast: ["ref-penguin-postie", { id: "ref-owl-inventor", look: "changed" }] }));
+  assert.deepEqual(api.calls[2].body.cast, [{ id: "ref-penguin-postie" }, { id: "ref-owl-inventor" }]);
   // "My own place", or anything that is not one of the places, is sent as no place at all.
   for (const place of ["own", null, "atlantis", 7]) {
     await W.makeBrief(input({ place }));

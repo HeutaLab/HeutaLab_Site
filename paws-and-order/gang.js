@@ -28,6 +28,14 @@ function fromTheme(c) {
   if (c.arc) out.arc = c.arc;
   return out;
 }
+// A practice character from Look Closely, by its picture's name. Not one of the gang, so not in all():
+// the picture page offers it in step 2 to a learner who looked at it. Its id is "ref-" and that name.
+function fromPractice(key) {
+  const p = typeof key === 'string' && THEME.practice && Object.hasOwn(THEME.practice, key) ? THEME.practice[key] : null;
+  return p ? { id: 'ref-' + key, name: p.name, short: p.name, role: 'From Look Closely', tag: 'The one you looked at', story: '', look: p.look,
+    img: THEME.refPath(key), mine: false, practice: true } : null;
+}
+const practiceKey = id => (typeof id === 'string' && id.startsWith('ref-') ? id.slice(4) : '');
 function fromStore(c) {
   const name = String(c.name);
   return { id: c.id, name, short: name.split(' ')[0], role: 'My character', tag: 'Made by me', story: '', look: String(c.look),
@@ -50,7 +58,9 @@ export const gang = {
   // The site's gang, then the learner's own.
   all() { return THEME.cast.filter(c => !c.placeholder).map(fromTheme).concat(stored().map(fromStore)); },
   mine() { return stored().map(fromStore); },
-  byId(id) { return gang.all().find(c => c.id === id) || null; },
+  byId(id) { return fromPractice(practiceKey(id)) || gang.all().find(c => c.id === id) || null; },
+  // The practice character in a Look Closely picture, or null when the picture has none.
+  practice(ref) { return fromPractice(ref); },
 
   // { ok: true, id } or { ok: false, message, field? }. The message is ready to show to a child.
   add(input) {
@@ -77,12 +87,13 @@ export const gang = {
     return next.length !== list.length && store.set(CAST_KEY, JSON.stringify(next));
   },
 
-  // What travels to the prompt helper as input.cast: only an id for one of the gang (the helper looks the rest
-  // up itself), and id, name and look for a learner-made character. Never a picture. Unknown ids are dropped.
+  // What travels to the prompt helper as input.cast: only an id for one of the gang or a practice character
+  // (the helper looks the rest up itself), and id, name and look for a learner-made character. Never a picture.
+  // Unknown ids are dropped.
   forPrompt(ids) {
     const mine = stored();
     return (Array.isArray(ids) ? ids : []).map(id => {
-      if (THEME.cast.some(c => c.id === id && !c.placeholder)) return { id };
+      if (THEME.cast.some(c => c.id === id && !c.placeholder) || fromPractice(practiceKey(id))) return { id };
       const m = mine.find(c => c.id === id);
       return m ? { id: m.id, name: String(m.name).slice(0, NAME_MAX), look: String(m.look).slice(0, LOOK_MAX) } : null;
     }).filter(Boolean);
