@@ -854,8 +854,31 @@ import shelf from '../shelf.js';
   // so only its outer half shows: that is what joins a tail to its balloon with no line across the join.
   const SPREAD = 0.34;                                  // half-width of a tail's base, in radians of the ellipse
   const DOTS = [[0.25, 3.2], [0.6, 2.1], [0.92, 1.2]];  // thought trail: [share of the way to the tip, diameter in cqw]
-  function geom(w, h, it, cq){
-    const bw = 0.3 * cq, cx = w / 2, cy = h / 2, g = { bw, cx, cy, rx: cx - bw, ry: cy - bw, tip: null };
+  // The words must sit inside the outline. INK: the part of a line box the letters fill (top of the capitals to the
+  // bottom of the descenders). ROOM: how far out from the middle the letters may reach, as a share of the outline.
+  // INNER: where a burst's spikes and a cloud's scallops start, as a share of the ellipse they are drawn round.
+  const INK = [0.1, 0.88], ROOM = 0.95, INNER = { shout: 0.78, cloud: 0.84 };
+  // widths: each line's width in px, top to bottom (lineWidths() on the page; drawItem() has its own lines).
+  function geom(w, h, it, cq, widths = []){
+    const bw = 0.3 * cq, cx = w / 2, cy = h / 2, g = { bw, cx, cy, rx: cx - bw, ry: cy - bw, tip: null }, shape = st(it, 'shape');
+    // Each line's farthest corners from the middle of the box: captions are set left, everything else centred.
+    const [padX, padY] = padOf(it).map(p => p * cq), lh = textSize(it) * cq * 1.15, ends = [];
+    widths.forEach((lw, k) => {
+      const x = it.type === 'caption' ? Math.max(cx - padX, Math.abs(padX + lw - cx)) : lw / 2;
+      INK.forEach(s => ends.push([x, Math.abs(padY + (k + s) * lh - cy)]));
+    });
+    if (shape === 'round' || shape === 'cut') {
+      // A big box's corners would cut into its first and last lines, so a corner is never bigger than lets them clear it by bw.
+      g.r = Math.min(g.rx, g.ry) * (shape === 'round' ? 0.6 : 0.45);
+      ends.forEach(([x, y]) => {
+        const px = g.rx - x - bw, py = g.ry - y - bw;
+        if (px > 0 && py > 0) g.r = Math.min(g.r, shape === 'round' ? px + py + Math.sqrt(2 * px * py) : px + py);
+      });
+    } else if (shape !== 'rect') {
+      // Balloons, bursts and clouds grow round their words when the words would poke out (a long line at the top or bottom).
+      const k = Math.max(0, ...ends.map(([x, y]) => Math.hypot(x / g.rx, y / g.ry))) / ((INNER[shape] || 1) * ROOM);
+      if (k > 1) { g.rx *= k; g.ry *= k; }
+    }
     if (it.tail !== 'none' && it.tip) {
       g.tip = [cx + it.tip.x * cq, h + it.tip.y * cq];
       const nx = (g.tip[0] - cx) / g.rx, ny = (g.tip[1] - cy) / g.ry;
@@ -872,7 +895,7 @@ import shelf from '../shelf.js';
     const { cx, cy, rx, ry } = g, x0 = cx - rx, y0 = cy - ry, x1 = cx + rx, y1 = cy + ry;
     if (shape === 'rect') return 'M' + x0 + ',' + y0 + 'H' + x1 + 'V' + y1 + 'H' + x0 + 'Z';
     if (shape === 'round' || shape === 'cut') {
-      const r = Math.min(rx, ry) * (shape === 'round' ? 0.6 : 0.45);
+      const r = g.r;
       const turn = shape === 'round' ? (x, y) => 'A' + r + ',' + r + ' 0 0 1 ' + x + ',' + y : (x, y) => 'L' + x + ',' + y;
       return 'M' + (x0 + r) + ',' + y0 + 'H' + (x1 - r) + turn(x1, y0 + r) + 'V' + (y1 - r) + turn(x1 - r, y1)
         + 'H' + (x0 + r) + turn(x0, y1 - r) + 'V' + (y0 + r) + turn(x0 + r, y0) + 'Z';
@@ -903,12 +926,21 @@ import shelf from '../shelf.js';
   }
   const dashOf = (it, g) => st(it, 'shape') === 'whisper' ? [6 * g.bw, 4.5 * g.bw] : null;
 
+  // A box's lines as the page shows them, measured on a canvas with wrap(), as drawItem() measures them for the PNG.
+  const measurer = document.createElement('canvas').getContext('2d');
+  function lineWidths(it, text, w, cq){
+    const f = fontOf(it), words = String(text).trim();
+    if (!words) return [];
+    measurer.font = f.weight + ' ' + textSize(it) * cq + 'px ' + f.family;
+    return wrap(measurer, f.upper ? words.toUpperCase() : words, w - 2 * padOf(it)[0] * cq).map(l => measurer.measureText(l).width);
+  }
+
   function drawBox(itEl){
     const sheet = itEl && itEl.closest('.sheet'); if (!sheet) return;
     const it = S.panels[+itEl.closest('.pnl').dataset.i].items[+itEl.dataset.j]; if (!it || it.type === 'sfx') return;
     const cq = sheet.clientWidth / 100, tx = itEl.querySelector('.it-text'), w = tx.offsetWidth, h = tx.offsetHeight;
     if (!cq || !w) return;   // not laid out yet (e.g. mid-reload); the ResizeObserver calls again once it is
-    const g = geom(w, h, it, cq), c = colourOf(it), parts = pieces(it, g, cq), dash = dashOf(it, g), hd = itEl.querySelector('.tip-h');
+    const g = geom(w, h, it, cq, lineWidths(it, tx.innerText, w, cq)), c = colourOf(it), parts = pieces(it, g, cq), dash = dashOf(it, g), hd = itEl.querySelector('.tip-h');
     if (hd && it.tip) { hd.style.left = (w / 2 + it.tip.x * cq) + 'px'; hd.style.top = (h + it.tip.y * cq) + 'px'; }
     const svg = itEl.querySelector('.bal');
     svg.setAttribute('width', w); svg.setAttribute('height', h);
@@ -2098,7 +2130,7 @@ import shelf from '../shelf.js';
     if (!it.fw) w = Math.min(w, Math.max(...lines.map(l => ctx.measureText(l).width)) + 2 * padX + 2);
     const h = lines.length * lh + 2 * padY;
     if (it.rot) { const cx = x + w / 2, cy = y + h / 2; ctx.translate(cx, cy); ctx.rotate(it.rot * Math.PI / 180); ctx.translate(-cx, -cy); }
-    const g = geom(w, h, it, cq), parts = pieces(it, g, cq), dash = dashOf(it, g);
+    const g = geom(w, h, it, cq, lines.map(l => ctx.measureText(l).width)), parts = pieces(it, g, cq), dash = dashOf(it, g);
     ctx.save(); ctx.translate(x, y);
     ctx.lineWidth = 2 * g.bw; ctx.strokeStyle = c.line; ctx.lineJoin = 'round';
     if (dash) ctx.setLineDash(dash);
