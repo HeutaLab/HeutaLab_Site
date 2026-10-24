@@ -85,6 +85,12 @@
 .pic-eye h4{margin:0 0 8px;font-family:var(--serif);font-weight:400;font-size:18px;line-height:1.35}
 .pic-eye .choices{grid-template-columns:repeat(2,minmax(0,180px))}
 .callout ul{margin:0;padding-left:22px}
+/* the idea box's help: a sentence with gaps, then examples made from the learner's own choices */
+.idea-help{margin:0 0 12px}
+.idea-help > b:not(:first-child){display:block;margin:12px 0 4px;font-family:var(--brush);font-weight:400;font-size:15px;line-height:1.15;letter-spacing:.04em;text-transform:uppercase}
+.idea-help li + li{margin-top:4px}
+.idea-help .idea-own{margin:8px 0 0;color:var(--ink-dim)}
+.idea-gap{padding:0 4px;border-bottom:2px dashed var(--ink-dim);color:var(--ink-dim);font-style:italic}
 .pic-hints{margin:10px 0 0;padding-left:22px;font-size:17px;line-height:1.4;color:var(--ink-dim)}
 
 /* the two ways step 4 can end, side by side, and what comes after either */
@@ -226,10 +232,18 @@
           <div id="refFig"></div>
         </div>
         <div class="field2">
-          <label for="idea">Your idea</label>
-          <p class="hint2" id="idea-h">What should your picture show? Do not type real names, your school or where you live. Keep it friendly and silly.</p>
-          <textarea id="idea" maxlength="800" aria-describedby="idea-h idea-c"></textarea>
+          <label for="idea">Your idea: what happens in your picture</label>
+          <p class="hint2" id="idea-h">Write one or two sentences. Say what your character is doing, where they are, and how they feel.</p>
+          <div class="callout idea-help">
+            <b>Try this</b>
+            <p class="idea-frame" id="ideaFrame"></p>
+            <b>For example</b>
+            <ul id="ideaEx"></ul>
+            <p class="idea-own">Change one to make it yours, or write your own.</p>
+          </div>
+          <textarea id="idea" maxlength="800" aria-describedby="idea-h idea-safe idea-c"></textarea>
           <p class="count2" id="idea-c">0 of 800 letters</p>
+          <p class="pic-under" id="idea-safe">Do not type real names, your school or where you live. Keep it friendly and silly.</p>
         </div>
       </div>
       <div class="stepnav">
@@ -1000,10 +1014,68 @@ function drawAttemptNotes(j) {
   setShown($('noLook'), !look);
   setShown($('useLook'), !!look);
 }
+// The idea is the one thing written from nothing, so the box says what goes in it, gives a sentence with
+// gaps, and shows examples made from the learner's own choices. [gap] is a gap to fill; {who} is the first
+// character's short name and {place} the place's (both a gap when there is none, as with My own place).
+const IDEA_HELP = {
+  character: {
+    say: 'Say what your character is doing, where they are, and how they feel. Add one funny detail. You do not need to say what they look like: the helper adds that for you.',
+    basic: { task: 'One picture of your character.',
+      frame: '{who} is [doing what] in [which place], feeling [how].',
+      ex: ['{who} is fishing in a puddle with a tiny rod, looking very hopeful.',
+           '{who} is balancing a tower of doughnut boxes on one finger, looking worried.',
+           '{who} has found a giant muddy paw print and is staring at it through a magnifying glass, very surprised.'] },
+    medium: { task: 'Two pictures: your character in two different places.',
+      frame: 'Picture 1: {who} is [doing what] at [one place]. Picture 2: {who} is [doing what] at [another place].',
+      ex: ['Picture 1: {who} buys a huge ice cream at the harbour. Picture 2: {who} is in the park, looking sad, with the ice cream on the grass.',
+           'Picture 1: {who} reads a treasure map in the library. Picture 2: {who} is digging in the sandpit at the playground, very excited.'] },
+    advanced: { task: 'Three pictures that tell a little story.',
+      frame: 'First, {who} [does what]. Next, [what happens]. Last, [how it ends].',
+      ex: ['First, {who} spots a kite stuck in a tall tree. Next, {who} climbs a wobbly ladder to reach it. Last, the kite flies again and {who} cheers.',
+           'First, {who} finds a trail of sprinkles on the pavement. Next, {who} follows it to the doughnut factory. Last, {who} finds a seagull with a doughnut on its head.'] },
+  },
+  setting: {
+    say: 'Say the time of day, the weather, and one or two things you would see there. Keep characters out: this picture is just the place.',
+    basic: { task: 'One picture of a place, with nobody in it.',
+      frame: '{place} at [what time of day], in [what weather], with [two things you would see].',
+      ex: ['{place} at night in the rain, with one lamp still on and nobody there.',
+           '{place} early on a sunny morning, with long shadows and a lost red balloon.'],
+      own: ['A secret clubhouse inside a giant teapot, at night, with fairy lights and a tiny round door.',
+            'An underwater bakery on a sunny morning, with bubbly windows and trays of seaweed buns.'] },
+    medium: { task: 'Two pictures of the same place: two rooms, or two views.',
+      frame: 'Picture 1: [one room or view] of {place}. Picture 2: [another room or view], at the same time of day.',
+      ex: ['Picture 1: outside {place} on a rainy evening. Picture 2: inside, the same evening, with rain running down the windows.'],
+      own: ['Picture 1: the kitchen of a castle made of cake, in the morning. Picture 2: the castle’s bedroom, the same morning, with a jelly bed.'] },
+    advanced: { task: 'Three pictures of the same place, like shots in a film.',
+      frame: 'Shot 1: a wide view of {place} at [what time]. Shot 2: a closer look at [one thing]. Shot 3: [what changes].',
+      ex: ['Shot 1: a wide view of {place} at sunset. Shot 2: a closer look at one glowing window. Shot 3: the same spot when the lamps come on.'],
+      own: ['Shot 1: a wide view of a street on the moon at sunrise. Shot 2: a closer look at a shop that sells space socks. Shot 3: the same street when the Earth comes up.'] },
+  },
+};
+const gapHTML = t => '<span class="idea-gap">' + esc(t) + '</span>';
+// Each {key} becomes the name, or a gap. Away from the start of a sentence a name loses its capital
+// "The" ("outside the Milkshake Bar"); at the start a gap gains one.
+const named = (html, key, name, gap) => html.split(key).reduce((out, part) => {
+  const start = /(^|[.:] )$/.test(out);
+  return out + (name ? (start ? name : name.replace(/^The /, 'the ')) : gapHTML(start ? gap[0].toUpperCase() + gap.slice(1) : gap)) + part;
+});
+function drawIdeaHelp(p) {
+  const setting = p.subject === 'setting', S = IDEA_HELP[setting ? 'setting' : 'character'];
+  const L = S[IDEA_HELP.character[p.tier] ? p.tier : 'basic'];
+  const c = castOf(p)[0], pl = placeOf(p.place);
+  const fill = t => {
+    const s = named(esc(t).replace(/\[([^\]]+)\]/g, (m, g) => gapHTML(g)), '{who}', c ? esc(c.short || c.name) : '', 'your character');
+    return named(s, '{place}', pl ? esc(pl.name) : '', 'your place');
+  };
+  say($('idea-h'), L.task + ' ' + S.say);
+  $('ideaFrame').innerHTML = fill(L.frame);
+  $('ideaEx').innerHTML = (setting && !pl && L.own ? L.own : L.ex).map(t => '<li>' + fill(t) + '</li>').join('');
+}
 function drawWords() {
   const j = J.get();
   setField(attempt, j.pick.attempt);
   setField(idea, j.pick.idea);
+  drawIdeaHelp(j.pick);
   $('refFig').innerHTML = refFigure(j);
   drawAttemptNotes(j);
   count(attempt, $('attempt-c'), ATTEMPT_MIN, false);
