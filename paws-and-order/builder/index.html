@@ -334,11 +334,31 @@
     .tray button,.tip button{min-width:44px;min-height:44px}
     .scard .x{top:0;right:0;min-width:44px;min-height:44px}
     .dock .sw{width:44px;height:44px}}
+  /* the comic's pages: one button each, Add a page, then what can be done to the page on the desk */
+  .pages{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 14px}
+  .pages .pg-h{font-family:var(--brush);font-size:19px;margin-right:2px}
+  .pages button{font-family:var(--label);font-size:15px;line-height:1.1;padding:6px 12px;background:#fff;color:var(--ink);border:3px solid var(--frame);border-radius:12px;cursor:pointer}
+  .pages button:disabled{background:#e6dfc9;color:var(--ink-dim);cursor:default}
+  .pages .pg{display:flex;flex-direction:column;align-items:center;min-width:66px;padding:4px 10px 6px}
+  .pages .pg b{font-family:var(--brush);font-size:21px;font-weight:400;line-height:1.2}
+  .pages .pg span{font-size:11.5px;color:var(--ink-dim);white-space:nowrap}
+  .pages .pg[aria-current=page]{background:var(--yellow);border-color:var(--ink)}
+  .pages .pg[aria-current=page] span{color:var(--ink)}
+  .pages .pg-add{border-style:dashed;align-self:stretch}
+  .pages .pg-full{font-size:14px;color:var(--ink-dim)}
+  .pages .pg-tools{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+  .pages .pg-tools button{font-size:13.5px;padding:5px 10px}
+  .print-book{display:none}
   /* None of it prints: this adds to the Comic Maker's own list above. */
   @media print{
     /* p.caption is the intro the block above still calls .sub-intro: without it here the comic prints on page 2 */
-    .pagehead,.caption,.cm-need,.cm-tpls,.cm-opening,.cm-finish{display:none !important}
+    .pagehead,.caption,.cm-need,.cm-tpls,.cm-opening,.cm-finish,.pages{display:none !important}
     .sheet .pnl:focus-visible,.prose-page .pframe .pnl-inner:focus-visible{outline:none;box-shadow:none}
+    /* Print or save as PDF prints every page, drawn as pictures, one to a sheet: then only those show */
+    body.print-book > *:not(.print-book){display:none !important}
+    body.print-book .print-book{display:block}
+    .print-book img{display:block;height:calc(100vh - 1mm);width:auto;max-width:100%;margin:0 auto;object-fit:contain;break-after:page}
+    .print-book img:last-child{break-after:auto}
   }
 </style>
 </head>
@@ -391,7 +411,7 @@
         </div>
         <details class="cm-tpls">
           <summary>Start from a template</summary>
-          <p class="hint2">A template is a page with the places, the gang and a first line already in it. If you have started a page, it is kept in My comics first.</p>
+          <p class="hint2">A template is a page with the places, the gang and a first line already in it. If you have started a comic, it is kept in My comics first.</p>
           <div id="tplRow"></div>
         </details>
       </section>
@@ -399,6 +419,7 @@
 
       <section class="workbench" aria-labelledby="bench-h">
         <h2 class="vh" id="bench-h">Your comic</h2>
+        <nav class="pages" id="pagesBar" aria-label="Pages of your comic"></nav>
         <div id="bench"></div>
       </section>
 
@@ -452,6 +473,7 @@
 <div class="tray stk" id="stkTray" hidden role="group" aria-label="Characters"></div>
 <div class="dock" id="dock" role="toolbar" aria-label="Builder tools" tabindex="-1"></div>
 <div class="tip" id="tip" hidden role="status"></div>
+<div class="print-book" id="printBook" aria-hidden="true"></div>
 <div class="scard" id="styleCard" hidden role="group" aria-label="About this page style"></div>
 
 <script type="module">
@@ -498,32 +520,50 @@ import shelf from '../shelf.js';
     prose: Array.from({ length: 3 }, () => ({ img: null, fit: { x: 50, y: 50, z: 1 }, text: '' })),
   });
 
-  let S = fresh();
+  // The comic: up to ten pages, each with its own layout and style. S is the page on the desk and is always
+  // book.pages[book.at], so everything that draws or changes a page works on S. The comic carries comicId (it came
+  // from My comics) and pristine (an untouched template). It is saved as 'state'; a page saved before there were
+  // pages (or kept in My comics then) is read as a comic of one page.
+  const PAGES_MAX = 10;
+  function bookOf(st){
+    const list = st && Array.isArray(st.pages) ? st.pages : st && st.panels ? [st] : [];
+    const pages = list.filter(p => p && p.panels).slice(0, PAGES_MAX).map(p => { const pg = Object.assign(fresh(), p); delete pg.comicId; delete pg.pristine; return pg; });
+    if (!pages.length) pages.push(fresh());
+    const at = Math.max(0, Math.min(pages.length - 1, Math.floor(Number(st && st.at)) || 0));
+    return Object.assign({ pages, at }, st && st.comicId ? { comicId: st.comicId } : {}, st && st.pristine ? { pristine: true } : {});
+  }
+  let book = bookOf(null);
+  let S = book.pages[0];
+  const setBook = b => { book = b; S = book.pages[book.at]; };
   let sel = { p: null, it: null };   // selected panel (or prose frame) and item
   let ready = false;   // true once start-up has put the right page on the desk; until then nothing may change the page that is there
 
   // Pages saved before tails could be dragged had tail: 'bl' | 'br' | 'none'.
   function migrate(){
-    // Pages from before styles had a layout (grid6, splash...); styles bring their own panels now.
-    if (!STYLE_KEYS_ORDER.includes(S.style)) S.style = 'classic';
-    S.panels.forEach(p => p.items.forEach(it => {
-      if ((it.type === 'speech' || it.type === 'thought') && !it.tip) {
-        it.tip = { x: it.tail === 'br' ? 8 : -8, y: it.type === 'speech' ? 5.5 : 7 };
-        if (it.tail !== 'none') delete it.tail;
-      }
-    }));
+    book.pages.forEach(pg => {
+      // Pages from before styles had a layout (grid6, splash...); styles bring their own panels now.
+      if (!STYLE_KEYS_ORDER.includes(pg.style)) pg.style = 'classic';
+      pg.panels.forEach(p => p.items.forEach(it => {
+        if ((it.type === 'speech' || it.type === 'thought') && !it.tip) {
+          it.tip = { x: it.tail === 'br' ? 8 : -8, y: it.type === 'speech' ? 5.5 : 7 };
+          if (it.tail !== 'none') delete it.tail;
+        }
+      }));
+    });
   }
 
-  // ---------- undo: snapshots of S taken before each change ----------
+  // ---------- undo: snapshots of the whole comic taken before each change ----------
   let past = [], future = [];
   function checkpoint(){
-    past.push(JSON.stringify(S)); if (past.length > 100) past.shift();
-    delete S.pristine;   // a template has been changed, so it is worth keeping
+    past.push(JSON.stringify(book)); if (past.length > 100) past.shift();
+    delete book.pristine;   // a template has been changed, so it is worth keeping
     future = []; syncUndo();
   }
   function travel(from, to){
     if (!from.length) return;
-    to.push(JSON.stringify(S)); S = JSON.parse(from.pop());
+    const was = book.at;
+    to.push(JSON.stringify(book)); setBook(JSON.parse(from.pop()));
+    if (book.at !== was) sel = NONE();   // undo went back to another page
     save(); render(); syncUndo();   // render() lets go of a selection that no longer exists
   }
   const undo = () => travel(past, future), redo = () => travel(future, past);
@@ -556,7 +596,7 @@ import shelf from '../shelf.js';
 
   let saveT = null;
   let wiped = false;   // Start again has removed the comics from this device: nothing more is written, or the page on screen would go straight back
-  const writeState = () => { saveT = null; return put('state', JSON.parse(JSON.stringify(S))); };
+  const writeState = () => { saveT = null; return put('state', JSON.parse(JSON.stringify(book))); };
   function save(){
     if (wiped) return;
     clearTimeout(saveT);
@@ -947,10 +987,65 @@ import shelf from '../shelf.js';
     if (el) el.focus({ preventScroll: true });
   }
 
+  // ---------- the pages: a button for each, Add a page, and Copy, Move and Delete for the page on the desk ----------
+  const pageName = pg => pg.level === 'prose' ? 'Storybook' : pg.level === 'medium' ? 'Four panels' : (THEME.pageStyles.find(s => s.key === pg.style) || {}).name || 'Super maker';
+  const titlePh = () => book.at === 0 ? 'Your title' : 'Page title, or leave it empty';
+  function renderPages(){
+    const n = book.pages.length, i = book.at;
+    $('pagesBar').innerHTML = '<span class="pg-h">Pages</span>'
+      + book.pages.map((pg, k) => '<button type="button" class="pg" data-pg="' + k + '"' + (k === i ? ' aria-current="page"' : '')
+        + ' aria-label="Page ' + (k + 1) + ': ' + esc(pageName(pg)) + (k === i ? ', on the desk' : '') + '"><b>' + (k + 1) + '</b><span>' + esc(pageName(pg)) + '</span></button>').join('')
+      + (n < PAGES_MAX ? '<button type="button" class="pg-add" data-pgdo="add">+ Add a page</button>' : '<span class="pg-full">' + PAGES_MAX + ' pages is the most.</span>')
+      + '<span class="pg-tools" role="group" aria-label="This page"><button type="button" data-pgdo="dup"' + (n >= PAGES_MAX ? ' disabled' : '') + '>Copy this page</button>'
+      + (n > 1 ? '<button type="button" data-pgdo="left"' + (i === 0 ? ' disabled' : '') + ' aria-label="Move this page earlier">&larr; Move</button>'
+        + '<button type="button" data-pgdo="right"' + (i === n - 1 ? ' disabled' : '') + ' aria-label="Move this page later">Move &rarr;</button>'
+        + '<button type="button" data-pgdo="del">Delete this page</button>' : '') + '</span>';
+    // the finish panel's buttons say what they make
+    $('finish').querySelector('[data-fin="png"]').textContent = n > 1 ? 'Download this page (PNG)' : 'Download PNG';
+    $('finish').querySelector('[data-fin="print"]').textContent = n > 1 ? 'Print or save as PDF (all ' + n + ' pages)' : 'Print or save as PDF';
+  }
+  // Puts page i on the desk. Moving between pages is not a change, so it is not undone; the page on the desk is saved.
+  function goPage(i, say, focus){
+    book.at = i; S = book.pages[i]; sel = NONE(); cardOpen = false;
+    save(); render();
+    if (say) J.announce(say);
+    const b = focus && $('pagesBar').querySelector(focus === 'page' ? '[data-pg="' + i + '"]' : '[data-pgdo="' + focus + '"]');
+    if (b && !b.disabled) b.focus({ preventScroll: true });
+  }
+  $('pagesBar').addEventListener('click', e => {
+    if (!ready || exporting) return;
+    const go = e.target.closest('[data-pg]'), b = e.target.closest('[data-pgdo]');
+    if (go) { const k = +go.dataset.pg; if (k !== book.at) goPage(k, 'Page ' + (k + 1) + '.', 'page'); return; }
+    if (!b || b.disabled) return;
+    const i = book.at, n = book.pages.length, act = b.dataset.pgdo;
+    if (act === 'add' || act === 'dup') {
+      if (n >= PAGES_MAX) return;
+      checkpoint();
+      // a new page starts with the same layout and lettering as the one on the desk; a copy is the whole page
+      const pg = act === 'dup' ? JSON.parse(JSON.stringify(S)) : Object.assign(fresh(), { level: S.level, style: S.style }, S.last ? { last: JSON.parse(JSON.stringify(S.last)) } : {});
+      book.pages.splice(i + 1, 0, pg);
+      return goPage(i + 1, act === 'dup' ? 'Page ' + (i + 2) + ' is a copy of page ' + (i + 1) + '.' : 'Page ' + (i + 2) + ' added.', 'page');
+    }
+    if (act === 'left' || act === 'right') {
+      const j = act === 'left' ? i - 1 : i + 1;
+      if (j < 0 || j >= n) return;
+      checkpoint();
+      [book.pages[i], book.pages[j]] = [book.pages[j], book.pages[i]];
+      return goPage(j, 'This is now page ' + (j + 1) + '.', act);
+    }
+    if (act === 'del') {
+      if (n < 2 || (!pageBlank(S) && !confirm('Delete page ' + (i + 1) + '? Undo brings it back.'))) return;
+      checkpoint();
+      book.pages.splice(i, 1);
+      return goPage(Math.min(i, n - 2), 'Page ' + (i + 1) + ' deleted.', 'page');
+    }
+  });
+
   async function render(){
     const fb = benchFocus();
+    renderPages();
     document.querySelectorAll('#levelRow .pill').forEach(b => { const on = b.dataset.val === S.level; b.classList.toggle('active', on); b.setAttribute('aria-pressed', on); });
-    $('levelNote').textContent = LEVEL_NOTES[S.level];
+    $('levelNote').textContent = (book.pages.length > 1 ? 'Page ' + (book.at + 1) + '. ' : '') + LEVEL_NOTES[S.level];
     const list = panelList();
     if (sel.p != null && sel.p >= list.length) sel = { p: null, it: null };
     if (sel.it != null && (S.level === 'prose' || !S.panels[sel.p].items[sel.it])) sel.it = null;
@@ -961,7 +1056,7 @@ import shelf from '../shelf.js';
     const srcs = await Promise.all(list.map(p => urlFor(p.img)));
 
     if (S.level === 'prose') {
-      bench.innerHTML = '<div class="prose-page"><div class="ttl-prose" style="transform:rotate(' + titleTurn() + 'deg)"><div class="prose-title" contenteditable="true" spellcheck="false"' + TTL_A + ' data-ph="Your title" id="titleEl">' + esc(S.title) + '</div>' + TTL_H + '</div>'
+      bench.innerHTML = '<div class="prose-page"><div class="ttl-prose" style="transform:rotate(' + titleTurn() + 'deg)"><div class="prose-title" contenteditable="true" spellcheck="false"' + TTL_A + ' data-ph="' + titlePh() + '" id="titleEl">' + esc(S.title) + '</div>' + TTL_H + '</div>'
         + list.map((f, i) => '<div class="pframe' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '">'
           + '<div class="pnl-inner"' + pickAttrs(i, list.length, srcs[i]) + '>' + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + picStyle(i) + '">'
             + (sel.p === i ? '<span class="prot-h" title="Drag to turn the picture (hold Shift for steps of 15°)" style="left:94%;top:13%">&#8635;</span>' : '')
@@ -975,7 +1070,7 @@ import shelf from '../shelf.js';
     }
 
     const lk = look();
-    bench.innerHTML = '<div class="sheet" id="sheet" style="background:' + lk.page + '"><div class="ttl" style="transform:rotate(' + titleTurn() + 'deg)"><div class="sheet-title" contenteditable="true" spellcheck="false"' + TTL_A + ' data-ph="Your title" id="titleEl" style="'
+    bench.innerHTML = '<div class="sheet" id="sheet" style="background:' + lk.page + '"><div class="ttl" style="transform:rotate(' + titleTurn() + 'deg)"><div class="sheet-title" contenteditable="true" spellcheck="false"' + TTL_A + ' data-ph="' + titlePh() + '" id="titleEl" style="'
       + titleCss(lk.title) + '">' + esc(S.title) + '</div>' + TTL_H + '</div>'
       + lk.panels.map((poly0, i) => {
         const b = bbox(poly0), rough = q => wob(poly0, q).map(([x, y]) => [x - b.x, y - b.y]);
@@ -1289,7 +1384,7 @@ import shelf from '../shelf.js';
   async function tidyImages(){
     const keys = await idb('readonly', st => st.getAllKeys()) || [];
     const comics = (await Promise.all(keys.filter(k => String(k).startsWith('comic:')).map(get))).filter(c => c && c.state);
-    const pages = [S].concat(comics.map(c => c.state)).flatMap(s => (s.panels || []).concat(s.prose || []));
+    const pages = book.pages.concat(comics.flatMap(c => bookOf(c.state).pages)).flatMap(s => (s.panels || []).concat(s.prose || []));
     const used = new Set(pages.filter(p => p && p.img && p.img.id).map(p => 'img:' + p.img.id));
     keys.filter(k => String(k).startsWith('img:') && !used.has(k)).forEach(del);
   }
@@ -1502,8 +1597,8 @@ import shelf from '../shelf.js';
             { cls: 'stylebtn', title: 'Change the whole page layout' })
           + b('about', 'About this style', { cls: 'btn ghost small', on: cardOpen, exp: cardOpen, ctl: 'styleCard' })) : '')
         + g('page', (db ? b('savecomic', 'Save to My comics', { cls: 'btn small', title: 'Keep this page in My comics (in Explore), on this device only' }) : '')
-          + b('png', 'Download PNG <span class="arr">&darr;</span>', { cls: 'btn small', id: 'pngBtn', off: exporting })
-          + b('print', 'Print or save as PDF', { cls: 'btn ghost small' }) + b('reset', 'Start again', { cls: 'btn ghost small' }));
+          + b('png', (book.pages.length > 1 ? 'Download this page' : 'Download PNG') + ' <span class="arr">&darr;</span>', { cls: 'btn small', id: 'pngBtn', off: exporting })
+          + b('print', book.pages.length > 1 ? 'Print or save as PDF (all pages)' : 'Print or save as PDF', { cls: 'btn ghost small', off: exporting }) + b('reset', 'Start again', { cls: 'btn ghost small' }));
     }
     h += '<div class="sg undo">' + done + b('undo', 'Undo', { cls: 'btn ghost small', id: 'undoBtn', off: !past.length, title: 'Undo (Ctrl/&#8984;+Z)' })
       + b('redo', 'Redo', { cls: 'btn ghost small', id: 'redoBtn', off: !future.length, title: 'Redo (Shift+Ctrl/&#8984;+Z)' }) + '</div>';
@@ -1595,12 +1690,12 @@ import shelf from '../shelf.js';
         save(); return render();
       }
       case 'png': sel = NONE(); render(); return exportPNG();
-      case 'print': sel = NONE(); return render().then(() => print());
+      case 'print': sel = NONE(); return render().then(printAll);
       case 'reset':
-        if (!isBlank() && !confirm(db ? 'Start a new page? This one will be kept in My comics (in Explore).' : 'Clear this page and start again? It can’t be saved in this browser, so it will be lost.')) return;
+        if (!isBlank() && !confirm(db ? 'Start a new comic? This one will be kept in My comics (in Explore).' : 'Clear this comic and start again? It can’t be saved in this browser, so it will be lost.')) return;
         return saveComic(true).then(kept => {
-          S = fresh(); sel = NONE(); past = []; future = [];
-          save(); tidyImages(); note(kept ? 'Your last page is safe in My comics (in Explore).' : ''); render();
+          setBook(bookOf(null)); sel = NONE(); past = []; future = [];
+          save(); tidyImages(); note(kept ? 'Your last comic is safe in My comics (in Explore).' : ''); render();
         });
       case 'savecomic': sel = NONE(); render(); return saveComic(false);
     }
@@ -2091,6 +2186,7 @@ import shelf from '../shelf.js';
     }
   }
 
+  // The page on the desk as a PNG. In a comic of several pages the file name says which page.
   async function exportPNG(){
     exporting = true; renderDock();
     try {
@@ -2098,30 +2194,60 @@ import shelf from '../shelf.js';
       const blob = await new Promise(r => c.toBlob(r, 'image/png'));
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = (S.title.trim() || 'my-police-pound-comic').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.png';
+      a.download = (comicTitle() || S.title.trim() || 'my-police-pound-comic').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+        + (book.pages.length > 1 ? '-page-' + (book.at + 1) : '') + '.png';
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(a.href), 4000);
     } catch (e) {
       note('Sorry, the download didn’t work in this browser. Try "Print or save as PDF" instead.');
     } finally { exporting = false; renderDock(); }
   }
+  // Print or save as PDF: every page of the comic, each on a sheet of its own, drawn as the PNG download draws it.
+  // paint() draws S, so each page is put on the desk in turn while nothing else may change (exporting holds the dock).
+  let printed = [];
+  async function printAll(){
+    if (exporting) return;
+    exporting = true; renderDock();
+    const box = $('printBook'), here = book.at;
+    try {
+      note(book.pages.length > 1 ? 'Getting your ' + book.pages.length + ' pages ready to print. This can take a moment.' : '');
+      const blobs = [];
+      for (const pg of book.pages) { S = pg; blobs.push(await toBlob(await paint(), 'image/png')); }
+      S = book.pages[here];
+      printed.forEach(u => URL.revokeObjectURL(u));
+      printed = blobs.map(b => URL.createObjectURL(b));
+      box.innerHTML = printed.map((u, i) => '<img src="' + u + '" alt="Page ' + (i + 1) + '">').join('');
+      await Promise.all([...box.querySelectorAll('img')].map(im => im.decode().catch(() => {})));
+      note('');
+      document.body.classList.add('print-book');
+      print();
+    } catch (e) {
+      note('Sorry, this browser couldn’t get the pages ready to print. Download each page as a PNG instead.');
+    } finally { S = book.pages[here]; exporting = false; renderDock(); }
+  }
+  addEventListener('afterprint', () => document.body.classList.remove('print-book'));
 
-  // ---------- My comics: finished pages kept in this browser (IndexedDB 'comic:<id>'), shown in Explore ----------
-  const isBlank = () => !S.title.trim() && S.panels.every(p => !p.img && !p.items.length) && S.prose.every(f => !f.img && !(f.text || '').trim());
+  // ---------- My comics: finished comics kept in this browser (IndexedDB 'comic:<id>'), shown in Explore ----------
+  const pageBlank = pg => !pg.title.trim() && pg.panels.every(p => !p.img && !p.items.length) && pg.prose.every(f => !f.img && !(f.text || '').trim());
+  const isBlank = () => book.pages.every(pageBlank);
+  const comicTitle = () => (book.pages.find(pg => pg.title.trim()) || { title: '' }).title.trim();
+  // The thumbnail is the first page.
   async function thumbOf(){
-    const c = await paint(), t = document.createElement('canvas'), k = 360 / c.width;
+    let c;
+    try { S = book.pages[0]; c = await paint(); } finally { S = book.pages[book.at]; }
+    const t = document.createElement('canvas'), k = 360 / c.width;
     t.width = 360; t.height = Math.round(c.height * k);
     t.getContext('2d').drawImage(c, 0, 0, t.width, t.height);
     return new Promise(r => t.toBlob(r, 'image/jpeg', 0.82));
   }
-  // Saves the page (again, if it came from My comics) and says so unless quiet. False when there is nothing to keep.
+  // Saves the comic (again, if it came from My comics) and says so unless quiet. False when there is nothing to keep.
   async function saveComic(quiet){
-    if (!db || isBlank() || (quiet && S.pristine)) return false;   // an untouched template is not kept automatically
-    const id = S.comicId || (Date.now().toString(36) + Math.random().toString(36).slice(2, 6));
-    S.comicId = id;
+    if (!db || isBlank() || (quiet && book.pristine)) return false;   // an untouched template is not kept automatically
+    const id = book.comicId || (Date.now().toString(36) + Math.random().toString(36).slice(2, 6));
+    book.comicId = id;
     let thumb = null;
     try { thumb = await thumbOf(); } catch (e) {}
-    await put('comic:' + id, { id, title: S.title.trim(), when: Date.now(), state: JSON.parse(JSON.stringify(S)), thumb });
+    await put('comic:' + id, { id, title: comicTitle(), when: Date.now(), state: JSON.parse(JSON.stringify(book)), thumb });
     save();
     if (!quiet) note('Saved in My comics (in Explore).');
     return true;
@@ -2132,11 +2258,10 @@ import shelf from '../shelf.js';
     // Every sticker is loaded first, and all together: its shape sets its size. Nothing waits once the desk has changed hands.
     const srcs = [...new Set(t.panels.flatMap(tp => (tp.stickers || []).map(([src]) => src)))].filter(src => STICKERS.has(src));
     const shapes = new Map(await Promise.all(srcs.map(async src => { const s = STICKERS.get(src); return [src, await loadImg(THEME.stickerPath(s.dir, s.file, true))]; })));
-    S = fresh();
+    setBook({ pages: [fresh()], at: 0, pristine: true });   // a template is a comic of one page
     S.level = t.level === 'advanced' ? 'advanced' : 'medium';
     if (t.style && LOOKS[t.style]) S.style = t.style;
     S.title = t.title || t.name;
-    S.pristine = true;
     if (S.level === 'advanced') applyLetters(S.style);   // captions and balloons in the style's own lettering
     const polys = look().panels;
     for (let i = 0; i < polys.length; i++) {
@@ -2173,13 +2298,13 @@ import shelf from '../shelf.js';
     history.replaceState(null, '', location.pathname);   // so a reload keeps the page instead of starting it again
     const comic = cid ? await get('comic:' + cid) : null, tpl = tkey ? (THEME.templates || []).find(t => t.key === tkey) : null;
     if (!(comic && comic.state) && !tpl) { note('That comic is not on this device.'); return false; }
-    if (comic && S.comicId === cid) return true;   // already on the desk
-    opening(comic ? comic.title || 'your comic' : tpl.name, comic ? comic.state && comic.state.level : tpl.level === 'advanced' ? 'advanced' : 'medium');
+    if (comic && book.comicId === cid) return true;   // already on the desk
+    opening(comic ? comic.title || 'your comic' : tpl.name, comic ? bookOf(comic.state).pages[0].level : tpl.level === 'advanced' ? 'advanced' : 'medium');
     const kept = await saveComic(true);
-    if (comic) { S = Object.assign(fresh(), comic.state); S.comicId = cid; }
+    if (comic) { const b = bookOf(comic.state); b.at = 0; b.comicId = cid; delete b.pristine; setBook(b); }
     else await fromTemplate(tpl);
     migrate(); past = []; future = []; sel = NONE(); save();
-    note(kept ? 'Your last page is safe in My comics (in Explore).' : '');
+    note(kept ? 'Your last comic is safe in My comics (in Explore).' : '');
     return true;
   }
 
@@ -2253,7 +2378,7 @@ import shelf from '../shelf.js';
     goStep('share');
     said.textContent = '';
     sel = NONE(); note('');
-    if (b.dataset.fin === 'print') { await render(); print(); return; }
+    if (b.dataset.fin === 'print') { await render(); await printAll(); return; }
     render();
     if (b.dataset.fin === 'png') {
       tell('Getting your download ready. This can take a moment.');
@@ -2335,12 +2460,12 @@ import shelf from '../shelf.js';
     // Whatever goes wrong while the saved page or a link is opened, the desk still ends up with a page that works.
     try {
       const saved = await get('state');
-      if (saved && saved.panels) S = Object.assign(fresh(), saved);
+      if (saved && (saved.panels || saved.pages)) setBook(bookOf(saved));
       migrate();
       opened = await openFromLink();
     } catch (e) {}
     ready = true;
-    try { if (!asked) pageForLevel(); await render(); } catch (e) { S = fresh(); sel = NONE(); await render(); }
+    try { if (!asked) pageForLevel(); await render(); } catch (e) { setBook(bookOf(null)); sel = NONE(); await render(); }
     if (opened) goStep('pictures');
     if (asked) J.scrollTo($('notice').hidden ? bench.parentElement : $('notice'));   // straight to the comic, or to why there is none
     tidyImages();
