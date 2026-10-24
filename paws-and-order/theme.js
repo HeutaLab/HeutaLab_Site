@@ -173,8 +173,8 @@ export default {
                hint: 'Explore: any picture, any level. Shuffle to see another, then answer what you like.' },
   },
 
-  // Starter reference pictures: alt text, then character or setting, then (for a
-  // character picture that stands in for one of the gang) the cast id.
+  // Starter reference pictures: alt text, then character or setting. Look Closely
+  // is practice at looking; who is in your own picture is asked in step 2.
   refs: {
     'penguin-postie': ['A round penguin in a blue postie cap with a red satchel, holding up a letter and smiling', 'character'],
     'robot-chef':     ['A boxy grey robot in a tall chef’s hat holding a spatula, with a cheeky lopsided grin', 'character'],

@@ -70,8 +70,8 @@
   .lk-bq{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:0;padding:12px 0 0;border-top:2px dashed var(--frame)}
   .lk-bq p{margin:0;font-family:var(--label);font-size:calc(17px * var(--k));color:var(--ink-dim)}
   .lk-bq .lk-on{margin-left:auto}
-  .lk-cast,.lk-own,.lk-ex{margin-top:14px;border-top:2px dashed var(--frame)}
-  .lk-act .lk-cast h3,.lk-act .lk-ex h3{margin:14px 0 8px}
+  .lk-own,.lk-ex{margin-top:14px;border-top:2px dashed var(--frame)}
+  .lk-act .lk-ex h3{margin:14px 0 8px}
   .lk-own .field2{margin-top:14px}
   .lk-tools{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin:6px 0 0}
   .lk-extext{margin:0;padding:12px 14px;background:#fffef8;border:3px solid var(--frame);border-radius:12px;font-size:calc(18px * var(--k));line-height:1.45;
@@ -191,11 +191,6 @@
           </div>
           <p class="lk-all"><button type="button" class="btn back" id="revealAll" hidden>Reveal all</button></p>
 
-          <div class="lk-cast" id="castPick" hidden>
-            <h3 id="lk-cast-h">Could this be one of the gang? <span class="q-rule">(you can skip this)</span></h3>
-            <div class="choices lk-chips" role="group" aria-labelledby="lk-cast-h" id="castPickRow"></div>
-          </div>
-
           <div class="lk-own" id="ownBox" hidden>
             <div class="field2">
               <label for="desc">Your description</label>
@@ -256,7 +251,6 @@ import THEME from '../theme.js';
   const { levels: LEVELS, modes: MODES, refs: REFS } = THEME;
   const MODE_IDS = Object.keys(MODES);          // demo, guide, create, explore
   const TIER_IDS = Object.keys(LEVELS);         // basic, medium, advanced
-  const castById = id => THEME.cast.find(c => c.id === id);
   const MIN_WORDS = 10;                         // step 2 asks for ten words before the helper will answer; here they must be your own
   const MAX_DESC = 1500, MAX_ANSWER = 200;
 
@@ -271,7 +265,7 @@ import THEME from '../theme.js';
   const LOCKED = 'Locked. Your teacher opens this level.';
   const PLAIN_ALT = 'Reference picture for this activity';
 
-  const state = { level: 'basic', mode: 'demo', exploreRef: null, revealed: {}, cast: {}, big: false, q: 0 };
+  const state = { level: 'basic', mode: 'demo', exploreRef: null, revealed: {}, big: false, q: 0 };
   let answers = {};            // your own answers, kept per picture and level
   let agreed = {};             // Together: what the class agreed before each reveal, kept the same way
   let edits = {};              // a description changed by hand, per picture and level: nothing rebuilds over it
@@ -281,7 +275,7 @@ import THEME from '../theme.js';
 
   const $ = id => document.getElementById(id);
   const img = $('refImg'), cap = $('refCap'), qs = $('qs'), desc = $('desc');
-  const modeRow = $('modeRow'), levelRow = $('levelRow'), castRow = $('castPickRow'), bigBtn = $('bigBtn');
+  const modeRow = $('modeRow'), levelRow = $('levelRow'), bigBtn = $('bigBtn');
   const esc = J.esc;
   const has = (o, k) => Object.prototype.hasOwnProperty.call(o, k);   // Object.hasOwn came with Safari 15.4: older school iPads lack it
   // pencil.js walks the page on every class, hidden or text change, so nothing is written unless it differs
@@ -294,7 +288,6 @@ import THEME from '../theme.js';
     + '</span><span class="choice-sub">' + esc(says) + '</span><span class="choice-tick" aria-hidden="true"></span></button>';
   modeRow.innerHTML = MODE_IDS.map(m => choice(m, MODES[m].label, MODES[m].sub)).join('');
   levelRow.innerHTML = TIER_IDS.map(id => choice(id, LEVELS[id].name, LEVEL_SAYS[id] || LEVELS[id].short)).join('');
-  castRow.innerHTML = THEME.cast.map(c => choice(c.id, c.short, c.role.replace(/^The /, '').toLowerCase())).join('');
 
   const isOwn = () => state.mode === 'create' || state.mode === 'explore';
   // Levels 1 and 2 ask about a character and Level 3 about a place: each level's Solo picture says which.
@@ -315,34 +308,27 @@ import THEME from '../theme.js';
   }
   const key = () => currentRef() + '|' + state.level;
   const isCharacter = () => REFS[currentRef()][1] === 'character';
-  // The cast member this picture is being read as: your pick, or the picture's own suggestion.
-  function pickedCast(){
-    const k = currentRef();
-    if (!isCharacter()) return null;
-    const id = has(state.cast, k) ? state.cast[k] : (REFS[k][2] || null);
-    return id && castById(id) ? id : null;
-  }
 
   // One line for each answered question, under a line saying what the picture is of.
-  function describe(read, who){
+  // Who is in your own picture is asked in step 2, not here.
+  function describe(read){
     const lines = [];
     LEVELS[state.level].qs.forEach(([id, , short]) => {
       const a = String(read(id) || '').trim();
       if (a) lines.push(short + ': ' + a);
     });
     if (!lines.length) return '';
-    const head = who ? castById(who).name + ', based on a reference picture.'
-      : (isCharacter() ? 'A character' : 'A setting') + ' based on a reference picture.';
+    const head = (isCharacter() ? 'A character' : 'A setting') + ' based on a reference picture.';
     return (head + '\n' + lines.join('\n')).slice(0, MAX_DESC);
   }
   function assemble(){
     const mine = answers[key()] || {};
-    return describe(id => mine[id], pickedCast());
+    return describe(id => mine[id]);
   }
   // The worked example: every model answer, revealed or not.
   function exampleText(){
     const model = modelAnswers();
-    return model ? describe(id => model[id], null) : '';
+    return model ? describe(id => model[id]) : '';
   }
   const ownText = () => (has(edits, key()) ? edits[key()] : assemble());
   // The words that count towards the ten are the learner's own: not the line that says what the picture is of,
@@ -366,7 +352,7 @@ import THEME from '../theme.js';
     if (dead || !dirty) return;
     dirty = false;
     J.save({ lookDraft: { tier: state.level, mode: state.mode, ref: currentRef(), answers, desc: isOwn() ? desc.value : '',
-      manual: isOwn() && has(edits, key()), cast: state.cast, agreed, edits } });
+      manual: isOwn() && has(edits, key()), agreed, edits } });
   }
   function touch(){
     if (dead) return;
@@ -407,10 +393,6 @@ import THEME from '../theme.js';
     if (MODE_IDS.includes(d.mode)) state.mode = d.mode;
     const ref = typeof d.ref === 'string' && has(REFS, d.ref) ? d.ref : null;
     if (ref && state.mode === 'explore') state.exploreRef = ref;
-    if (d.cast && typeof d.cast === 'object') Object.keys(REFS).forEach(r => {
-      const id = has(d.cast, r) ? d.cast[r] : null;
-      if (id === '' || (typeof id === 'string' && castById(id))) state.cast[r] = id;
-    });
     // a draft that only carries the one hand-changed description it was showing
     const k = ref + '|' + state.level;
     if (ref && d.manual && typeof d.desc === 'string' && d.desc.trim() && !has(edits, k)) edits[k] = d.desc.slice(0, MAX_DESC);
@@ -460,10 +442,6 @@ import THEME from '../theme.js';
       setText(b.querySelector('.choice-sub'), locked ? LOCKED : LEVEL_SAYS[id] || LEVELS[id].short);
     });
   }
-  function syncCast(){
-    const who = pickedCast();
-    castRow.querySelectorAll('.choice').forEach(b => press(b, b.dataset.val === who));
-  }
   function syncCode(){
     const a = W.access();
     setText($('codeState'), a.mode === 'code' ? 'Your code is in.' : a.mode === 'own' ? 'No code needed on this device.' : '');
@@ -483,7 +461,7 @@ import THEME from '../theme.js';
   }
 
   // The question list is rebuilt only when the picture, the level or the way of working changes: a press that
-  // does that is never inside the list. Reveal, typing and the cast pick change one thing in place, so the
+  // does that is never inside the list. Reveal and typing change one thing in place, so the
   // focus stays where it was.
   function render(){
     const L = LEVELS[state.level], ref = currentRef(), model = modelAnswers(), own = isOwn(), k = key();
@@ -518,10 +496,6 @@ import THEME from '../theme.js';
     showQ();
     setHidden($('revealAll'), state.mode !== 'guide' || state.big);
     syncRevealAll();
-
-    // Only your own readings of a character picture ask which cast member it is.
-    setHidden($('castPick'), !(own && isCharacter()));
-    syncCast();
 
     setHidden($('ownBox'), !own);
     setHidden($('exBox'), own);
@@ -600,16 +574,14 @@ import THEME from '../theme.js';
   function carryOn(example){
     const text = (example ? exampleText() : desc.value).trim().slice(0, MAX_DESC);
     if (!text) return;
-    const ref = currentRef(), subject = REFS[ref][1], who = example ? null : pickedCast();
+    const ref = currentRef(), subject = REFS[ref][1];
     const had = J.get().pick, pick = { attempt: text, attemptIsExample: example };
-    // A level, a subject or a character already chosen in step 2 is the learner's own choice: looking again
-    // never undoes it. Saying here who the picture could be is a choice too, so that one does carry.
+    // A level or a subject already chosen in step 2 is the learner's own choice: looking again never undoes it.
     if (!had.tier) pick.tier = state.level;
-    if (who) { pick.subject = 'character'; pick.cast = [who]; }
-    else if (!had.subject) pick.subject = subject;
+    if (!had.subject) pick.subject = subject;
     dirty = true;
     saveDraft();
-    J.save({ look: { text, tier: state.level, subject, cast: who ? [who] : [], ref, mode: state.mode, example, at: new Date().toISOString() }, pick });
+    J.save({ look: { text, tier: state.level, subject, cast: [], ref, mode: state.mode, example, at: new Date().toISOString() }, pick });
     J.markDone(1);
     location.href = J.hrefFor(2);
   }
@@ -638,16 +610,6 @@ import THEME from '../theme.js';
     render();
     touch();
     J.announce('Here is another picture.');
-  });
-
-  castRow.addEventListener('click', e => {
-    const b = e.target.closest('.choice'); if (!b) return;
-    const k = currentRef();
-    state.cast[k] = pickedCast() === b.dataset.val ? '' : b.dataset.val;   // press again to clear
-    syncCast();
-    if (!has(edits, key())) setDesc(assemble());
-    syncSub();
-    touch();
   });
 
   qs.addEventListener('click', e => {
