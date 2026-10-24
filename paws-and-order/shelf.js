@@ -65,11 +65,18 @@ export async function comics() {
   }));
 }
 
-// Empties the Comic Maker's store: the page on the desk, the saved comics and the uploaded pictures.
-// It clears the store and never deletes the database, which a page with the Comic Maker open would block.
-export function clearAll() {
-  return withStore('readwrite', st => { st.clear(); });
+// Empties the Comic Maker's store: the page on the desk, the saved comics and the uploaded pictures. The
+// learner's own characters ('chars' and their 'char:' pictures) stay: clearCharacters() is the reset for those.
+// Neither deletes the database, which a page with the Comic Maker open would block.
+const isChar = k => k === 'chars' || String(k).startsWith('char:');
+function clearWhere(keep) {
+  return withStore('readwrite', st => {
+    const rq = st.openCursor();
+    rq.onsuccess = () => { const c = rq.result; if (!c) return; if (!keep(c.key)) c.delete(); c.continue(); };
+  });
 }
+export function clearAll() { return clearWhere(isChar); }
+export function clearCharacters() { return clearWhere(k => !isChar(k)); }
 
 // Writes the template cards into el.
 export function renderTemplates(el) {
@@ -137,5 +144,5 @@ export async function renderComics(el, opts) {
   st.arrows();
 }
 
-const shelf = { templates, comics, renderTemplates, renderComics, clearAll };
+const shelf = { templates, comics, renderTemplates, renderComics, clearAll, clearCharacters };
 export default shelf;

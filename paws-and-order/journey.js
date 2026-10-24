@@ -282,10 +282,15 @@ export async function reset(opts) {
   if (o.code) store.del('paws_workshop_v1');
   if (o.characters) store.del('police_pound_cast_v1');
   if (o.teacher) store.del('paws_teacher_v1');
-  if (o.comics) {
-    // shelf.js is fetched only here, so the two files never import each other
-    try { const m = await import('./shelf.js'); await m.default.clearAll(); } catch (e) {}
-    store.del('police-pound-builder-seen');
+  if (o.comics || o.characters) {
+    // shelf.js is fetched only here, so the two files never import each other. Characters made in the
+    // Comic Maker live in its store too: "characters I made" covers those as well as step 2's.
+    try {
+      const m = await import('./shelf.js');
+      if (o.comics) await m.default.clearAll();
+      if (o.characters) await m.default.clearCharacters();
+    } catch (e) {}
+    if (o.comics) store.del('police-pound-builder-seen');
   }
   const at = iso();
   store.set(RESET_AT, at);
