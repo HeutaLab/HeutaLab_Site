@@ -1790,11 +1790,16 @@ import shelf from '../shelf.js';
     if (!draft || !draft.src || draft.busy) return;
     if (mine.length >= MINE_MAX) return mineSay('That is enough characters for now. Remove one first.');
     const name = draft.name.trim().replace(/\s+/g, ' ').slice(0, MINE_NAME) || 'My character ' + (mine.length + 1);
+    // Cutting out a big picture takes a moment on a slow laptop: the button says so, and comes back if it fails.
     draft.busy = true;
-    const f = finishSticker(draft.cut ? cutPlain(draft.src, draft.tol) : draft.src);
-    if (!f) { draft.busy = false; return mineSay('Nothing was left of the picture. Slide towards Less, or untick Remove the plain background.'); }
+    const d = draft, btn = $('stkTray').querySelector('[data-mine="save"]'), label = btn ? btn.textContent : '';
+    const fail = t => { d.busy = false; if (btn) { btn.disabled = false; btn.textContent = label; } mineSay(t); };
+    if (btn) { btn.disabled = true; btn.textContent = 'Adding…'; }
+    await new Promise(r => requestAnimationFrame(() => setTimeout(r)));   // let "Adding…" show before the work starts
+    const f = finishSticker(d.cut ? cutPlain(d.src, d.tol) : d.src);
+    if (!f) return fail('Nothing was left of the picture. Slide towards Less, or untick Remove the plain background.');
     const [a, b] = await Promise.all([toBlob(f.plain, 'image/png'), toBlob(f.border, 'image/png')]);
-    if (!a || !b) { draft.busy = false; return mineSay('This browser couldn’t make the picture. Try a smaller one.'); }
+    if (!a || !b) return fail('This browser couldn’t make the picture. Try a smaller one.');
     const id = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
     const c = { id, name, w: Math.max(12, Math.min(70, Math.round(62 * f.plain.width / f.plain.height))) };
     if (db) { await put('char:' + id, a); await put('char:' + id + '-b', b); }
@@ -1803,6 +1808,7 @@ import shelf from '../shelf.js';
     if (db) await put('chars', mine);
     draft = null;
     markSeen('stickers');
+    $('stkTray').dataset.shows = '';   // the tray closes below: next time it opens it must show the tiles, not this form
     // straight into the chosen panel, as a character made in step 2 goes straight into the picture
     if (sel.p != null && S.level !== 'prose') { addSticker('mine/' + id); J.announce(name + ' is in My characters, and in this panel.'); }
     else { showMine(); J.announce(name + ' is in My characters.'); }
