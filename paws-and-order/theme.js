@@ -48,11 +48,16 @@ export default {
 
   // The image tools the prompts can be tuned for. Teachers: check the age rules
   // of any tool before children use it. Most ask for 13+ or a school account.
+  // Nano Banana is Gemini's own image model, so it is Gemini here (journey.js
+  // moves an old 'nanobanana' pick across). `open` and `describe` replace step 3's
+  // "Open <tool>." and the Result step's "In <tool>, start a new chat." for a tool
+  // that is not a chat.
   platforms: [
     { id: 'gemini', label: 'Gemini' },
     { id: 'chatgpt', label: 'ChatGPT' },
     { id: 'copilot', label: 'Copilot' },
-    { id: 'nanobanana', label: 'Nano Banana' },
+    { id: 'canva', label: 'Canva', open: 'Open Canva and go to Dream Lab.',
+      describe: 'Canva’s Dream Lab makes pictures but does not describe them. If you may use an AI chat that can look at pictures, start a new chat there. If not, press “My tool cannot describe pictures” below.' },
     { id: 'any', label: 'Any image maker' },
   ],
 

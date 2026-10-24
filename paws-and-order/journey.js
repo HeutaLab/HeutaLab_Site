@@ -103,6 +103,7 @@ function normalise(raw) {
   j.lookDraft = isObj(raw.lookDraft) ? fill({}, raw.lookDraft) : null;
   if (j.lookDraft && j.lookDraft.desc != null) j.lookDraft.desc = text(j.lookDraft.desc, 1500);
   j.pick = fill(blankPick(), raw.pick);
+  if (j.pick.platform === 'nanobanana') j.pick.platform = 'gemini';   // Nano Banana is Gemini's image model: one choice since 24 Oct 2026
   j.pick.cast = Array.isArray(j.pick.cast) ? j.pick.cast.filter(id => typeof id === 'string') : [];
   j.pick.attempt = text(j.pick.attempt, 1500);
   j.pick.idea = text(j.pick.idea, 800);

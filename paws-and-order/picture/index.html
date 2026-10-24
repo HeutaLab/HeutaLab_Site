@@ -1250,8 +1250,8 @@ $('redoOff').addEventListener('click', () => {
 
 // ---------- step 3, use your image tool, and come back ----------
 function drawTool() {
-  const j = J.get(), name = toolName(j.pick), text = j.used && j.used.text ? j.used.text : '';
-  say($('toolOpen'), name ? 'Open ' + name + '.' : 'Open your image tool.');
+  const j = J.get(), name = toolName(j.pick), text = j.used && j.used.text ? j.used.text : '', t = toolOf(j.pick.platform);
+  say($('toolOpen'), t && t.open ? t.open : name ? 'Open ' + name + '.' : 'Open your image tool.');
   setShown($('usedBox'), !!text);
   say($('usedText'), text);
 }
@@ -1302,7 +1302,8 @@ typed(cmpPrompt, v => J.save({ check: { prompt: v } }), () => say($('cmpPromptNo
 // ---------- step 4, result ----------
 function drawResultStep() {
   const j = J.get();
-  say($('resOpen'), 'In ' + (toolName(j.pick) || 'your image tool') + ', start a new chat.');
+  const t = toolOf(j.pick.platform);
+  say($('resOpen'), t && t.describe ? t.describe : 'In ' + (toolName(j.pick) || 'your image tool') + ', start a new chat.');
   setField(cmpDesc, j.check.description);
   setField(cmpRef, j.check.reference);
   setShown($('cmpRefWrap'), j.pick.tier === 'advanced');   // the reference description is a Storyteller step

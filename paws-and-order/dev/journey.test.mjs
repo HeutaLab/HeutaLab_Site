@@ -86,6 +86,13 @@ test("a stored journey with bad parts is repaired, not thrown away", () => {
   assert.equal(J.get().sub, "who");
 });
 
+test("an old Nano Banana pick becomes Gemini, its image model", () => {
+  device({ [KEY]: stored({ pick: { platform: "nanobanana" } }) });
+  assert.equal(J.get().pick.platform, "gemini");
+  device({ [KEY]: stored({ pick: { platform: "canva" } }) });
+  assert.equal(J.get().pick.platform, "canva");
+});
+
 test("save merges the top level and stamps the time", () => {
   const s = device();
   const before = Date.now();
