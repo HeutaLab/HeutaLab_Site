@@ -279,6 +279,21 @@ document.documentElement.className+=' js';setTimeout(function(){var b=document.q
   /* Print: one comic page on one sheet of paper. The page is 2:3 and paper is squatter (A4 and US Letter are
      about 1:1.3), so fitting the width overflows the bottom; fit the height instead and let the width follow. */
   @page{margin:10mm}
+  /* the comic's pages: one button each, Add a page, then what can be done to the page on the desk */
+  .pages{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:14px 16px 0}
+  .pages .pg-h{font-family:var(--label);font-weight:600;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--paper-lo);margin-right:4px}
+  .pages button{font-family:var(--label);font-size:12px;letter-spacing:.08em;text-transform:uppercase;line-height:1.15;padding:6px 10px;background:var(--panel-2);color:var(--ink);border:1px solid var(--frame);cursor:pointer}
+  .pages button:hover:not(:disabled){border-color:var(--paper)}
+  .pages button:disabled{opacity:.4;cursor:not-allowed}
+  .pages .pg{display:flex;flex-direction:column;align-items:center;min-width:64px;padding:4px 9px 6px}
+  .pages .pg b{font-size:17px;font-weight:700;letter-spacing:0}
+  .pages .pg span{font-size:10px;letter-spacing:.06em;text-transform:none;color:var(--ink-dim);white-space:nowrap}
+  .pages .pg[aria-current=page]{background:var(--paper-hi);border-color:var(--paper-hi);color:var(--ink-p)}
+  .pages .pg[aria-current=page] span{color:var(--ink-p)}
+  .pages .pg-add{border-style:dashed;align-self:stretch}
+  .pages .pg-full{font-size:12.5px;color:var(--ink-dim)}
+  .pages .pg-tools{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+  .print-book{display:none}
   @media print{
     html,body{background:#fff !important}
     body{padding:0 !important}
@@ -295,6 +310,12 @@ document.documentElement.className+=' js';setTimeout(function(){var b=document.q
     .pnl-empty{visibility:hidden}
     .pnl-inner{background:#fff}   /* an empty panel prints as a white frame to draw in, not a block of ink */
     .sheet-title:empty::before,.prose-title:empty::before,.it-text:empty::before{content:none}   /* placeholders stay on screen */
+    .pages{display:none !important}
+    /* Print or save as PDF prints every page, drawn as pictures, one to a sheet: then only those show */
+    body.print-book > *:not(.print-book){display:none !important}
+    body.print-book .print-book{display:block}
+    .print-book img{display:block;height:calc(100vh - 1mm);width:auto;max-width:100%;margin:0 auto;object-fit:contain;break-after:page}
+    .print-book img:last-child{break-after:auto}
   }
 
   @media (max-width:880px){.howto ol{grid-template-columns:minmax(0,1fr)}}
@@ -401,6 +422,7 @@ document.documentElement.className+=' js';setTimeout(function(){var b=document.q
     <p class="notice" id="notice" hidden></p>
 
     <section class="workbench">
+      <nav class="pages" id="pagesBar" aria-label="Pages of your comic"></nav>
       <div id="bench"></div>
     </section>
   </main>
@@ -437,6 +459,7 @@ document.documentElement.className+=' js';setTimeout(function(){var b=document.q
 <div class="tray stk" id="stkTray" hidden aria-label="Stickers"></div>
 <div class="dock" id="dock" role="toolbar" aria-label="Builder tools"></div>
 <div class="tip" id="tip" hidden role="status"></div>
+<div class="print-book" id="printBook" aria-hidden="true"></div>
 <div class="scard" id="styleCard" hidden role="dialog" aria-label="About this page style"></div>
 
 <script type="module">
@@ -484,32 +507,48 @@ import Pics from '/the-precinct/pictures.js';
     prose: Array.from({ length: 3 }, () => ({ img: null, fit: { x: 50, y: 50, z: 1 }, text: '' })),
   });
 
-  let S = fresh();
+  // The comic: up to ten pages, each with its own level and style. S is the page on the desk and is always
+  // book.pages[book.at], so everything that draws or changes a page works on S. It is saved as 'state' ({ pages, at });
+  // a page saved before there were pages is read as a comic of one page.
+  const PAGES_MAX = 10;
+  function bookOf(st){
+    const list = st && Array.isArray(st.pages) ? st.pages : st && st.panels ? [st] : [];
+    const pages = list.filter(p => p && p.panels).slice(0, PAGES_MAX).map(p => Object.assign(fresh(), p));
+    if (!pages.length) pages.push(fresh());
+    return { pages, at: Math.max(0, Math.min(pages.length - 1, Math.floor(Number(st && st.at)) || 0)) };
+  }
+  let book = bookOf(null);
+  let S = book.pages[0];
+  const setBook = b => { book = b; S = book.pages[book.at]; };
   let sel = { p: null, it: null };   // selected panel (or prose frame) and item
 
   // Pages saved before tails could be dragged had tail: 'bl' | 'br' | 'none'.
   function migrate(){
-    // Pages from before styles had a layout (grid6, splash...); styles bring their own panels now.
-    if (!STYLE_KEYS_ORDER.includes(S.style)) S.style = 'williamson';
-    // A library picture that has since been taken off the site: the panel goes back to empty, its words and stickers stay.
-    S.panels.concat(S.prose).forEach(p => { if (p.img && p.img.lib && !LIB.includes(p.img.lib)) p.img = null; });
-    S.panels.forEach(p => p.items.forEach(it => {
-      if ((it.type === 'speech' || it.type === 'thought') && !it.tip) {
-        it.tip = { x: it.tail === 'br' ? 8 : -8, y: it.type === 'speech' ? 5.5 : 7 };
-        if (it.tail !== 'none') delete it.tail;
-      }
-    }));
+    book.pages.forEach(pg => {
+      // Pages from before styles had a layout (grid6, splash...); styles bring their own panels now.
+      if (!STYLE_KEYS_ORDER.includes(pg.style)) pg.style = 'williamson';
+      // A library picture that has since been taken off the site: the panel goes back to empty, its words and stickers stay.
+      pg.panels.concat(pg.prose).forEach(p => { if (p.img && p.img.lib && !LIB.includes(p.img.lib)) p.img = null; });
+      pg.panels.forEach(p => p.items.forEach(it => {
+        if ((it.type === 'speech' || it.type === 'thought') && !it.tip) {
+          it.tip = { x: it.tail === 'br' ? 8 : -8, y: it.type === 'speech' ? 5.5 : 7 };
+          if (it.tail !== 'none') delete it.tail;
+        }
+      }));
+    });
   }
 
-  // ---------- undo: snapshots of S taken before each change ----------
+  // ---------- undo: snapshots of the whole comic taken before each change ----------
   let past = [], future = [];
   function checkpoint(){
-    past.push(JSON.stringify(S)); if (past.length > 100) past.shift();
+    past.push(JSON.stringify(book)); if (past.length > 100) past.shift();
     future = []; syncUndo();
   }
   function travel(from, to){
     if (!from.length) return;
-    to.push(JSON.stringify(S)); S = JSON.parse(from.pop());
+    const was = book.at;
+    to.push(JSON.stringify(book)); setBook(JSON.parse(from.pop()));
+    if (book.at !== was) sel = NONE();   // undo went back to another page
     save(); render(); syncUndo();   // render() lets go of a selection that no longer exists
   }
   const undo = () => travel(past, future), redo = () => travel(future, past);
@@ -544,7 +583,7 @@ import Pics from '/the-precinct/pictures.js';
   function save(){
     clearTimeout(saveT);
     saveT = setTimeout(async () => {
-      saveFailed = (await put('state', JSON.parse(JSON.stringify(S)))) == null;   // null: the browser refused the write
+      saveFailed = (await put('state', JSON.parse(JSON.stringify(book)))) == null;   // null: the browser refused the write
       savedAt = Date.now(); showSaved();
     }, 400);
   }
@@ -888,9 +927,65 @@ import Pics from '/the-precinct/pictures.js';
       + (!stk && sel.p === i && sel.it == null && S.panels[i].img ? protHTML(poly, b) : '') + '</div></div>';
   }
 
+  // ---------- the pages: a button for each, Add a page, and Copy, Move and Delete for the page on the desk ----------
+  const pageName = pg => pg.level === 'prose' ? 'Prose' : pg.level === 'medium' ? 'Medium' : (THEME.pageStyles.find(s => s.key === pg.style) || {}).name || 'Advanced';
+  const titlePh = () => book.at === 0 ? 'Your title' : 'Page title, or leave it empty';
+  const pageBlank = pg => !pg.title.trim() && pg.panels.every(p => !p.img && !p.items.length) && pg.prose.every(f => !f.img && !(f.text || '').trim());
+  function renderPages(){
+    const n = book.pages.length, i = book.at;
+    $('pagesBar').innerHTML = '<span class="pg-h">Pages</span>'
+      + book.pages.map((pg, k) => '<button type="button" class="pg" data-pg="' + k + '"' + (k === i ? ' aria-current="page"' : '')
+        + ' aria-label="Page ' + (k + 1) + ': ' + esc(pageName(pg)) + (k === i ? ', on the desk' : '') + '"><b>' + (k + 1) + '</b><span>' + esc(pageName(pg)) + '</span></button>').join('')
+      + (n < PAGES_MAX ? '<button type="button" class="pg-add" data-pgdo="add">+ Add a page</button>' : '<span class="pg-full">' + PAGES_MAX + ' pages is the most.</span>')
+      + '<span class="pg-tools" role="group" aria-label="This page"><button type="button" data-pgdo="dup"' + (n >= PAGES_MAX ? ' disabled' : '') + '>Copy this page</button>'
+      + (n > 1 ? '<button type="button" data-pgdo="left"' + (i === 0 ? ' disabled' : '') + ' aria-label="Move this page earlier">&larr; Move</button>'
+        + '<button type="button" data-pgdo="right"' + (i === n - 1 ? ' disabled' : '') + ' aria-label="Move this page later">Move &rarr;</button>'
+        + '<button type="button" data-pgdo="del">Delete this page</button>' : '') + '</span>';
+    // the Case closed card's buttons say what they make
+    $('finishDlg').querySelector('[data-finish="png"]').innerHTML = (n > 1 ? 'Download this page (PNG)' : 'Download PNG') + ' <span class="arr">&darr;</span>';
+    $('finishDlg').querySelector('[data-finish="print"]').textContent = n > 1 ? 'Print or save as PDF (all ' + n + ' pages)' : 'Print or save as PDF';
+  }
+  // Puts page i on the desk. Moving between pages is not a change, so it is not undone; the page on the desk is saved.
+  function goPage(i, say, focus){
+    book.at = i; S = book.pages[i]; sel = NONE(); cardOpen = false;
+    save(); render();
+    if (say) Jn.announce(say);
+    const b = focus && $('pagesBar').querySelector(focus === 'page' ? '[data-pg="' + i + '"]' : '[data-pgdo="' + focus + '"]');
+    if (b && !b.disabled) b.focus({ preventScroll: true });
+  }
+  $('pagesBar').addEventListener('click', e => {
+    if (exporting) return;
+    const go = e.target.closest('[data-pg]'), b = e.target.closest('[data-pgdo]');
+    if (go) { const k = +go.dataset.pg; if (k !== book.at) goPage(k, 'Page ' + (k + 1) + '.', 'page'); return; }
+    if (!b || b.disabled) return;
+    const i = book.at, n = book.pages.length, act = b.dataset.pgdo;
+    if (act === 'add' || act === 'dup') {
+      if (n >= PAGES_MAX) return;
+      checkpoint();
+      // a new page starts with the same level, style and lettering as the one on the desk; a copy is the whole page
+      const pg = act === 'dup' ? JSON.parse(JSON.stringify(S)) : Object.assign(fresh(), { level: S.level, style: S.style }, S.last ? { last: JSON.parse(JSON.stringify(S.last)) } : {});
+      book.pages.splice(i + 1, 0, pg);
+      return goPage(i + 1, act === 'dup' ? 'Page ' + (i + 2) + ' is a copy of page ' + (i + 1) + '.' : 'Page ' + (i + 2) + ' added.', 'page');
+    }
+    if (act === 'left' || act === 'right') {
+      const j = act === 'left' ? i - 1 : i + 1;
+      if (j < 0 || j >= n) return;
+      checkpoint();
+      [book.pages[i], book.pages[j]] = [book.pages[j], book.pages[i]];
+      return goPage(j, 'This is now page ' + (j + 1) + '.', act);
+    }
+    if (act === 'del') {
+      if (n < 2 || (!pageBlank(S) && !confirm('Delete page ' + (i + 1) + '? Undo brings it back.'))) return;
+      checkpoint();
+      book.pages.splice(i, 1);
+      return goPage(Math.min(i, n - 2), 'Page ' + (i + 1) + ' deleted.', 'page');
+    }
+  });
+
   async function render(){
+    renderPages();
     document.querySelectorAll('#levelRow .pill').forEach(b => b.classList.toggle('active', b.dataset.val === S.level));
-    $('levelNote').textContent = LEVEL_NOTES[S.level];
+    $('levelNote').textContent = (book.pages.length > 1 ? 'Page ' + (book.at + 1) + '. ' : '') + LEVEL_NOTES[S.level];
     const list = panelList();
     if (sel.p != null && sel.p >= list.length) sel = { p: null, it: null };
     if (sel.it != null && (S.level === 'prose' || !S.panels[sel.p].items[sel.it])) sel.it = null;
@@ -901,7 +996,7 @@ import Pics from '/the-precinct/pictures.js';
     const srcs = await Promise.all(list.map(p => urlFor(p.img)));
 
     if (S.level === 'prose') {
-      bench.innerHTML = '<div class="prose-page"><div class="ttl-prose" style="transform:rotate(' + titleTurn() + 'deg)"><div class="prose-title" contenteditable="true" spellcheck="false" data-ph="Your title" id="titleEl">' + esc(S.title) + '</div>' + TTL_H + '</div>'
+      bench.innerHTML = '<div class="prose-page"><div class="ttl-prose" style="transform:rotate(' + titleTurn() + 'deg)"><div class="prose-title" contenteditable="true" spellcheck="false" data-ph="' + titlePh() + '" id="titleEl">' + esc(S.title) + '</div>' + TTL_H + '</div>'
         + list.map((f, i) => '<div class="pframe' + (sel.p === i ? ' sel' : '') + '" data-i="' + i + '">'
           + '<div class="pnl-inner">' + (srcs[i] ? '<img src="' + srcs[i] + '" alt="" style="' + picStyle(i) + '">'
             + (sel.p === i ? '<span class="prot-h" title="Drag to turn the picture (hold Shift for steps of 15°)" style="left:94%;top:13%">&#8635;</span>' : '')
@@ -914,7 +1009,7 @@ import Pics from '/the-precinct/pictures.js';
     }
 
     const lk = look();
-    bench.innerHTML = '<div class="sheet" id="sheet" style="background:' + lk.page + '"><div class="ttl" style="transform:rotate(' + titleTurn() + 'deg)"><div class="sheet-title" contenteditable="true" spellcheck="false" data-ph="Your title" id="titleEl" style="'
+    bench.innerHTML = '<div class="sheet" id="sheet" style="background:' + lk.page + '"><div class="ttl" style="transform:rotate(' + titleTurn() + 'deg)"><div class="sheet-title" contenteditable="true" spellcheck="false" data-ph="' + titlePh() + '" id="titleEl" style="'
       + titleCss(lk.title) + '">' + esc(S.title) + '</div>' + TTL_H + '</div>'
       + lk.panels.map((poly, i) => {
         const p = S.panels[i], b = bbox(poly), local = poly.map(([x, y]) => [x - b.x, y - b.y]);
@@ -1217,7 +1312,7 @@ import Pics from '/the-precinct/pictures.js';
   // Pictures stay stored while undo might bring them back; tidyImages() clears the unused ones on the next visit.
   async function tidyImages(){
     const keys = await idb('readonly', st => st.getAllKeys()) || [];
-    const used = new Set(S.panels.concat(S.prose).filter(p => p.img && p.img.id).map(p => 'img:' + p.img.id));
+    const used = new Set(book.pages.flatMap(pg => pg.panels.concat(pg.prose)).filter(p => p.img && p.img.id).map(p => 'img:' + p.img.id));
     keys.filter(k => String(k).startsWith('img:') && !used.has(k)).forEach(del);
   }
 
@@ -1461,9 +1556,9 @@ import Pics from '/the-precinct/pictures.js';
             { cls: 'stylebtn', title: 'Give the whole page the look of the next comics era' })
           + b('about', 'About this style', { cls: 'btn ghost small', on: cardOpen })) : '')
         // The page's two main actions. Print and Start again sit with Undo and Redo: the second row on a narrow screen.
-        + g('page', b('png', 'Download PNG <span class="arr">&darr;</span>', { cls: 'btn small', id: 'pngBtn', off: exporting })
+        + g('page', b('png', (book.pages.length > 1 ? 'Download this page' : 'Download PNG') + ' <span class="arr">&darr;</span>', { cls: 'btn small', id: 'pngBtn', off: exporting })
           + b('finish', 'Finish', { cls: 'btn small', title: 'Close the case: keep your page, then start the next one' }));
-      done = b('print', 'Print<span class="long"> or save as PDF</span>', { cls: 'btn ghost small', title: 'Print the page, or save it as a PDF' }) + b('reset', 'Start again', { cls: 'btn ghost small' });
+      done = b('print', 'Print<span class="long"> or save as PDF' + (book.pages.length > 1 ? ' (all pages)' : '') + '</span>', { cls: 'btn ghost small', off: exporting, title: book.pages.length > 1 ? 'Print every page, or save them all as one PDF' : 'Print the page, or save it as a PDF' }) + b('reset', 'Start again', { cls: 'btn ghost small' });
     }
     h += '<div class="sg undo">' + done + b('undo', 'Undo', { cls: 'btn ghost small', id: 'undoBtn', off: !past.length, title: 'Undo (Ctrl/&#8984;+Z)' })
       + b('redo', 'Redo', { cls: 'btn ghost small', id: 'redoBtn', off: !future.length, title: 'Redo (Shift+Ctrl/&#8984;+Z)' })
@@ -1556,10 +1651,11 @@ import Pics from '/the-precinct/pictures.js';
       case 'more': { moreOpen = !moreOpen; renderDock(); const m = $('dock').querySelector('[data-cmd="more"]'); if (m) m.focus(); return; }   // the dock is redrawn: keep the focus on the button
       case 'finish': return finish();
       case 'png': sel = NONE(); render(); return exportPNG();
-      case 'print': sel = NONE(); return render().then(() => print());
+      case 'print': sel = NONE(); return render().then(printAll);
       case 'reset':
-        if (!confirm('Clear this page and start again? The pictures on this page will be removed from this browser. Pictures you added in a case stay with that case.')) return;
-        S = fresh(); sel = NONE(); past = []; future = [];
+        if (!confirm(book.pages.length > 1 ? 'Clear all ' + book.pages.length + ' pages and start again? Their pictures will be removed from this browser. Pictures you added in a case stay with that case.'
+          : 'Clear this page and start again? The pictures on this page will be removed from this browser. Pictures you added in a case stay with that case.')) return;
+        setBook(bookOf(null)); sel = NONE(); past = []; future = [];
         save(); tidyImages(); return render();
     }
   });
@@ -1584,7 +1680,7 @@ import Pics from '/the-precinct/pictures.js';
     const b = e.target.closest('[data-finish]'); if (!b) return;
     $('finishDlg').close();
     if (b.dataset.finish === 'png') exportPNG();
-    if (b.dataset.finish === 'print') print();
+    if (b.dataset.finish === 'print') printAll();
   });
   // The dock was redrawn while the card was open: put the focus back on Finish, not at the top of the page.
   $('finishDlg').addEventListener('close', () => { const f = $('dock').querySelector('[data-cmd="finish"]'); if (f) f.focus({ preventScroll: true }); });
@@ -2011,9 +2107,9 @@ import Pics from '/the-precinct/pictures.js';
     ctx.restore();
   }
 
-  async function exportPNG(){
-    exporting = true; renderDock();
-    try {
+  // The page on the desk drawn on a canvas W pixels wide: the PNG download, and each sheet of Print or save as PDF.
+  async function paint(){
+    {
       await Promise.all(['40px Knewave', '40px "Libre Baskerville"', '300 40px Oswald', '700 40px Oswald'].concat(Object.values(FONTS).map(f => f.weight + ' 40px ' + f.family)).map(f => document.fonts.load(f).catch(() => {})));
       const list = panelList();
       const ims = await Promise.all(list.map(async p => loadImg(await urlFor(p.img))));
@@ -2064,23 +2160,58 @@ import Pics from '/the-precinct/pictures.js';
         boxes.forEach((b, i) => S.panels[i].items.forEach(it => { if (it.type === 'sticker' && !it.clip) drawSticker(ctx, it, stkIms.get(stickerSrc(it)), b.x, b.y, b.w, b.h, lk.ink); }));
         boxes.forEach((b, i) => S.panels[i].items.forEach(it => { if (it.type !== 'sticker') drawItem(ctx, it, b.x, b.y, b.w, b.h); }));
       }
+      return c;
+    }
+  }
+
+  // The page on the desk as a PNG. In a comic of several pages the file name says which page.
+  const comicTitle = () => (book.pages.find(pg => pg.title.trim()) || { title: '' }).title.trim();
+  async function exportPNG(){
+    exporting = true; renderDock();
+    try {
+      const c = await paint();
       const blob = await new Promise(r => c.toBlob(r, 'image/png'));
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = (S.title.trim() || 'my-precinct-comic').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.png';
+      a.download = (comicTitle() || 'my-precinct-comic').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+        + (book.pages.length > 1 ? '-page-' + (book.at + 1) : '') + '.png';
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(a.href), 4000);
     } catch (e) {
       note('Sorry, the download didn’t work in this browser. Try "Print or save as PDF" instead.');
     } finally { exporting = false; renderDock(); }
   }
+  // Print or save as PDF: every page of the comic, each on a sheet of its own, drawn as the PNG download draws it.
+  // paint() draws S, so each page is put on the desk in turn while nothing else may change (exporting holds the dock).
+  let printed = [];
+  async function printAll(){
+    if (exporting) return;
+    exporting = true; renderDock();
+    const box = $('printBook'), here = book.at;
+    try {
+      note(book.pages.length > 1 ? 'Getting your ' + book.pages.length + ' pages ready to print. This can take a moment.' : '');
+      const blobs = [];
+      for (const pg of book.pages) { S = pg; blobs.push(await toBlob(await paint(), 'image/png')); }
+      S = book.pages[here];
+      printed.forEach(u => URL.revokeObjectURL(u));
+      printed = blobs.map(b => URL.createObjectURL(b));
+      box.innerHTML = printed.map((u, i) => '<img src="' + u + '" alt="Page ' + (i + 1) + '">').join('');
+      await Promise.all([...box.querySelectorAll('img')].map(im => im.decode().catch(() => {})));
+      note('');
+      document.body.classList.add('print-book');
+      print();
+    } catch (e) {
+      note('Sorry, this browser couldn’t get the pages ready to print. Download each page as a PNG instead.');
+    } finally { S = book.pages[here]; exporting = false; renderDock(); }
+  }
+  addEventListener('afterprint', () => document.body.classList.remove('print-book'));
 
   // ---------- start ----------
   (async () => {
     db = await openDB();
     if (!db) note('This browser won’t let the page save, so download your page before you close it.');
     const saved = await get('state');
-    if (saved && saved.panels) S = Object.assign(fresh(), saved);
+    if (saved && (saved.panels || saved.pages)) setBook(bookOf(saved));
     migrate();
     await loadMine();
     try { await loadOwn(); } catch (e) {}
