@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Walkthrough: Paws &amp; Order</title>
+<meta name="description" content="A step-by-step guide to Paws &amp; Order, to keep open beside the site.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Gochi+Hand&family=Luckiest+Guy&family=Patrick+Hand&display=swap">
+<style>
+/* Layout: the site's own look (cream page, dark left rail, thick wobbly outlines, hard shadows, yellow accent) with a paint-by-numbers walkthrough: every drawn screen carries numbered pins that match the numbered steps beside it. */
+:root{
+  --bg:#fff6dc; --panel:#ffffff; --panel2:#fff1c2; --frame:#141414; --shade:#141414;
+  --ink:#161616; --dim:#5a5140; --link:#5b21b6; --focus:#6d28d9;
+  --yellow:#ffd23f; --on-yellow:#141414; --blue:#2ec4f1; --orange:#ff7b1c; --green:#3ccf5a; --purple:#8a4fff; --ok:#137a2c;
+  --night:#101014; --dots:rgba(20,20,20,.07);
+  --brush:'Luckiest Guy','Impact',sans-serif;
+  --label:'Patrick Hand','Comic Sans MS',cursive;
+  --script:'Gochi Hand','Patrick Hand',cursive;
+  --mono:'Comic Neue','Comic Sans MS',sans-serif;
+  --wobble:14px 5px 16px 6px / 6px 16px 5px 14px;
+  --wob2:12px 5px 13px 6px / 6px 13px 5px 12px;
+  /* the drawn screens always show the site itself, so they keep the site's light colours */
+  --mk-bg:#ffffff; --mk-cream:#fff6dc; --mk-ink:#161616; --mk-dim:#5a5140; --mk-frame:#141414; --mk-field:#fffef8;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1b1912; --panel:#26231a; --panel2:#322d20; --frame:#efe6c8; --shade:#000;
+  --ink:#f6f0dc; --dim:#bdb298; --link:#ffd23f; --focus:#ffd23f; --ok:#6fdc8a; --dots:rgba(255,255,255,.05); color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#1b1912; --panel:#26231a; --panel2:#322d20; --frame:#efe6c8; --shade:#000;
+  --ink:#f6f0dc; --dim:#bdb298; --link:#ffd23f; --focus:#ffd23f; --ok:#6fdc8a; --dots:rgba(255,255,255,.05); color-scheme:dark;}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(var(--dots) 1.5px,transparent 2px) 0 0/10px 10px,var(--bg);background-color:var(--bg);color:var(--ink);
+  font-family:var(--label);font-size:18px;line-height:1.5;padding-inline:16px;padding-block:16px 56px}
+img{display:block;max-width:100%}
+a{color:var(--link)}
+p{margin:0;max-width:64ch}
+h1,h2,h3,h4{margin:0;font-weight:400}
+:focus-visible{outline:4px solid var(--focus);outline-offset:2px}
+.shell{max-width:1240px;margin-inline:auto;display:grid;gap:18px}
+.frame{border:3px solid var(--frame);background:var(--panel);border-radius:var(--wobble);box-shadow:5px 5px 0 var(--shade);min-width:0}
+.eyebrow{font-family:var(--brush);text-transform:uppercase;letter-spacing:.05em;font-size:.82rem;color:var(--ink)}
+.h-big{font-family:var(--brush);text-transform:uppercase;line-height:1;text-wrap:balance;transform:rotate(-1.5deg);transform-origin:left;color:var(--yellow);
+  -webkit-text-stroke:6px #141414;paint-order:stroke fill;text-shadow:4px 4px 0 #141414}
+.btn{display:inline-flex;align-items:center;gap:12px;background:var(--yellow);color:var(--on-yellow);text-decoration:none;font-family:var(--brush);font-size:.95rem;letter-spacing:.05em;text-transform:uppercase;
+  padding:.68em 1.05em .4em;border:3px solid #141414;border-radius:var(--wob2);cursor:pointer;box-shadow:3px 3px 0 #141414;line-height:1}
+.btn:hover{background:#ffe27a}
+
+/* hero */
+.hero{position:relative;display:grid;grid-template-columns:minmax(0,58%) minmax(0,1fr);min-height:270px;border:4px solid #141414;border-radius:var(--wobble);box-shadow:6px 6px 0 #141414;overflow:hidden;background:#2f7de0 url(img/banner.jpg) right bottom/cover no-repeat}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(18,58,168,.92) 0%,rgba(24,80,190,.72) 40%,rgba(24,80,190,0) 66%)}
+.hero .copy{position:relative;z-index:2;padding:22px 26px 24px 30px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:12px}
+.hero h1{font-family:var(--brush);text-transform:uppercase;color:#ffd23f;line-height:.86;font-size:clamp(2.6rem,6vw,5rem);transform:rotate(-3deg);transform-origin:left bottom;-webkit-text-stroke:8px #141414;paint-order:stroke fill;text-shadow:6px 6px 0 #141414}
+.hero h1 small{display:block;font-size:.34em;letter-spacing:.14em;color:#fff;margin-top:.5em;-webkit-text-stroke:4px #141414;text-shadow:none}
+.hero .verbs{font-family:var(--brush);font-size:clamp(1rem,2vw,1.4rem);letter-spacing:.08em;color:#fff;-webkit-text-stroke:4px #141414;paint-order:stroke fill;transform:rotate(-2deg);transform-origin:left}
+.hero .verbs span{color:#ffd23f;margin:0 .3em}
+.hero .tag{background:#fff;color:#141414;border:3px solid #141414;border-radius:var(--wob2);box-shadow:4px 4px 0 #141414;padding:8px 14px 9px;font-size:1.05rem;line-height:1.3;transform:rotate(-1.2deg);max-width:34ch}
+.hero .art{position:relative;z-index:2;min-height:250px}
+.hero .art>img{position:absolute;right:26%;bottom:-4%;height:105%;width:auto;max-width:none;filter:drop-shadow(6px 6px 0 rgba(0,0,0,.5));transform:scaleX(-1)}
+.burst{position:absolute;right:10px;top:10px;width:clamp(130px,15vw,190px);aspect-ratio:1;transform:rotate(8deg);filter:drop-shadow(4px 4px 0 #141414)}
+.burst svg{width:100%;height:100%}
+.burst b{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font-family:var(--brush);font-weight:400;font-size:clamp(.9rem,1.5vw,1.25rem);line-height:1.05;color:#141414;text-transform:uppercase;padding:0 18%}
+@media(max-width:700px){.hero{grid-template-columns:1fr}.hero .art{display:none}.hero::before{background:rgba(18,58,168,.8)}.hero .verbs{display:flex;flex-wrap:wrap}}
+
+/* rail and layout */
+.cols{display:grid;grid-template-columns:210px minmax(0,1fr);gap:18px;align-items:start}
+.rail{position:sticky;top:16px;background:var(--night);color:#fff;overflow:hidden;border-color:#141414}
+.rail .brand{display:block;padding:16px 16px 14px;color:#fff;text-decoration:none;font-family:var(--brush);font-size:1.6rem;line-height:.9;border-bottom:1px solid rgba(255,255,255,.16)}
+.rail .brand span{display:block}
+.rail nav{display:grid;padding:6px 0}
+.rail nav a{display:flex;align-items:center;gap:12px;margin:0 8px;padding:9px 8px;color:#fff;text-decoration:none;font-size:1.05rem;line-height:1.1;border-bottom:1px solid rgba(255,255,255,.14)}
+.rail nav a i{font-style:normal;font-family:var(--brush);width:26px;height:26px;flex:none;display:grid;place-items:center;border:2px solid rgba(255,255,255,.5);border-radius:50%;font-size:.8rem;padding-top:2px}
+.rail nav a:hover{background:rgba(255,255,255,.08)}
+.rail nav a.on{background:#ffd23f;color:#141414;border:3px solid #141414;border-radius:12px 5px 13px 6px / 6px 13px 5px 12px;margin:3px 6px;box-shadow:3px 3px 0 #000}
+.rail nav a.on i{border-color:#141414}
+.rail .foot{padding:12px 16px 16px;font-size:.9rem;color:rgba(255,255,255,.75);border-top:1px solid rgba(255,255,255,.16)}
+@media(max-width:900px){.cols{grid-template-columns:1fr}.rail{position:static}.rail .brand,.rail .foot{display:none}.rail nav{display:flex;overflow-x:auto;padding:4px 0}.rail nav a{flex:none;white-space:nowrap;border-bottom:0}}
+main{display:grid;gap:18px;min-width:0}
+.rule{display:flex;align-items:center;gap:16px;margin-top:14px;font-family:var(--brush);text-transform:uppercase;font-size:clamp(1.3rem,3vw,1.9rem);letter-spacing:.03em;transform:rotate(-.6deg);scroll-margin-top:16px}
+.rule::after{content:"";flex:1;border-top:5px dotted var(--frame);opacity:.6}
+
+/* learn, glossary, map */
+.learn,.gloss{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));overflow:hidden}
+.learn>div,.gloss>div{padding:16px 18px;border-right:2px dashed var(--frame);border-bottom:2px dashed var(--frame);margin:0 -2px -2px 0;min-width:0;display:grid;gap:6px;align-content:start}
+.learn .k{font-family:var(--brush);font-size:2.4rem;line-height:.9;color:var(--yellow);-webkit-text-stroke:3px #141414;paint-order:stroke fill;text-shadow:2px 2px 0 #141414}
+.learn h3{font-family:var(--brush);text-transform:uppercase;letter-spacing:.04em;font-size:1.05rem;line-height:1.1}
+.learn p,.gloss>div{font-size:1rem;line-height:1.4;color:var(--dim)}
+.gloss b{display:block;font-family:var(--brush);font-weight:400;text-transform:uppercase;letter-spacing:.04em;font-size:.95rem;color:var(--ink)}
+.intro{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media(max-width:800px){.intro{grid-template-columns:1fr}}
+.box{padding:20px;display:grid;gap:12px;align-content:start}
+.box h3{font-family:var(--brush);text-transform:uppercase;font-size:1.5rem;line-height:1;transform:rotate(-1deg);transform-origin:left}
+.urlbar{display:flex;align-items:center;gap:10px;background:var(--mk-bg);color:var(--mk-ink);border:3px solid #141414;border-radius:999px;padding:8px 16px;font-family:var(--mono);font-size:1.05rem;flex-wrap:wrap;min-width:0}
+.urlbar .lock{width:13px;height:13px;border:2px solid #777;border-radius:3px;flex:none}
+.urlbar b{overflow-wrap:anywhere}
+.need{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.need li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;font-size:1rem}
+.need li::before{content:"";width:16px;height:16px;border:3px solid var(--frame);border-radius:4px;margin-top:4px}
+.map{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));overflow:hidden}
+@media(max-width:1000px){.map{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.map a{padding:12px;border-right:2px dashed var(--frame);border-bottom:2px dashed var(--frame);margin:0 -2px -2px 0;text-decoration:none;color:var(--ink);display:grid;gap:2px;align-content:start}
+.map a:hover{background:var(--panel2)}
+.map small{font-family:var(--brush);text-transform:uppercase;font-size:.72rem;letter-spacing:.06em;color:var(--dim)}
+.map strong{font-family:var(--brush);font-weight:400;font-size:1.05rem;text-transform:uppercase;line-height:1.1}
+.map em{font-style:normal;font-size:.9rem;color:var(--dim)}
+.split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media(max-width:760px){.split{grid-template-columns:1fr}}
+.prompt{font-family:var(--mono);font-size:1rem;line-height:1.85;background:var(--mk-bg);color:var(--mk-ink);border:3px dashed #141414;border-radius:12px;padding:12px 14px}
+.chip{background:rgba(255,210,63,.55);border-bottom:3px solid #141414;padding:0 3px}
+.legend{display:flex;flex-wrap:wrap;gap:6px}
+.legend i{font-style:normal;border:2px solid var(--frame);border-radius:999px;padding:0 10px;font-size:.9rem;color:var(--dim)}
+.result{position:relative;aspect-ratio:16/10;max-width:100%;overflow:hidden;border:3px solid var(--frame);border-radius:12px;display:grid;place-items:center;background:#fff}
+.result img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.result.gen{background:repeating-linear-gradient(135deg,#2a3f66 0 14px,#3a2a5c 14px 28px)}
+.result.gen b{position:relative;font-family:var(--brush);font-weight:400;text-transform:uppercase;letter-spacing:.05em;font-size:.9rem;color:#fff;background:rgba(0,0,0,.65);padding:8px 12px;text-align:center}
+.dim{color:var(--dim)}
+
+/* pace bar */
+.bar{position:sticky;top:8px;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;background:var(--panel);border:3px solid var(--frame);border-radius:var(--wob2);padding:8px 12px;box-shadow:4px 4px 0 var(--shade)}
+.bar .seg{display:inline-flex;border:3px solid var(--frame);border-radius:999px;overflow:hidden}
+.bar .seg button{font-family:var(--brush);text-transform:uppercase;letter-spacing:.04em;font-size:.78rem;padding:9px 14px 6px;border:0;background:transparent;color:var(--ink);cursor:pointer;min-height:40px}
+.bar .seg button[aria-pressed="true"]{background:var(--yellow);color:var(--on-yellow)}
+.bar .prog{font-family:var(--brush);text-transform:uppercase;letter-spacing:.04em;font-size:.82rem}
+.bar .meter{flex:1 1 90px;min-width:70px;height:12px;border:2px solid var(--frame);border-radius:999px;overflow:hidden;background:var(--panel2)}
+.bar .meter i{display:block;height:100%;width:0;background:var(--green)}
+.bar .mini{font-family:var(--brush);text-transform:uppercase;letter-spacing:.04em;font-size:.78rem;padding:9px 12px 6px;border:3px solid #141414;border-radius:var(--wob2);background:var(--yellow);color:var(--on-yellow);cursor:pointer;min-height:40px}
+.bar .mini.ghost{background:var(--panel);color:var(--ink);border-color:var(--frame)}
+
+/* parts */
+.part{display:grid;scroll-margin-top:80px;overflow:hidden}
+.part-top{display:flex;align-items:flex-end;gap:16px;padding:20px 24px 14px;flex-wrap:wrap;border-bottom:3px solid var(--frame);background:var(--panel2)}
+.part-top .num{font-family:var(--brush);font-size:4.4rem;line-height:.8;color:var(--yellow);-webkit-text-stroke:7px #141414;paint-order:stroke fill;text-shadow:4px 4px 0 #141414;padding-right:6px}
+.part-top h2{font-size:clamp(1.7rem,4vw,2.7rem)}
+.part-top p{flex:1 1 260px;color:var(--dim);font-size:1.05rem}
+.part-meta{display:flex;flex-wrap:wrap;gap:4px 14px;padding:8px 24px;border-bottom:3px solid var(--frame);font-family:var(--brush);text-transform:uppercase;letter-spacing:.05em;font-size:.76rem}
+.part-meta .t{color:var(--ink)}
+.part-meta .lv{color:var(--dim)}
+.part-body{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:start}
+@media(max-width:940px){.part-body{grid-template-columns:1fr}}
+.part-vis{padding:18px;border-right:3px dashed var(--frame);display:grid;gap:14px;position:sticky;top:64px;min-width:0}
+@media(max-width:940px){.part-vis{position:static;border-right:0;border-bottom:3px dashed var(--frame)}}
+.part-steps{padding:6px 22px 20px;min-width:0}
+
+/* pins */
+.pn{display:inline-grid;place-items:center;flex:none;min-width:26px;height:26px;padding:2px 4px 0;border-radius:13px;background:#ffd23f;color:#141414;border:2.5px solid #141414;font-family:var(--brush);font-weight:400;font-size:.8rem;line-height:1;vertical-align:middle}
+
+/* steps */
+.st{display:grid;grid-template-columns:46px minmax(0,1fr);gap:14px;padding:16px 0;border-top:2px dashed var(--frame)}
+.st:first-child{border-top:0}
+.st .n{width:44px;height:44px;border-radius:50%;background:var(--yellow);color:var(--on-yellow);border:3px solid #141414;font-family:var(--brush);font-size:1.15rem;display:grid;place-items:center;padding-top:3px;cursor:pointer;user-select:none;box-shadow:2px 2px 0 var(--shade)}
+.st.done .n{background:var(--green)}
+.st.done .n::after{content:"\2713";position:absolute;font-family:system-ui,sans-serif;color:#141414;font-size:1.3rem}
+.st.done .n{color:transparent;position:relative}
+.st.done .do{opacity:.55}
+.st .do{font-size:1.15rem;line-height:1.4}
+.st .do em,.tip em,.see em{font-style:normal;background:rgba(255,210,63,.55);border-bottom:3px solid var(--frame);padding:0 3px;color:var(--ink)}
+.st .say{position:relative;margin-top:10px;background:var(--mk-bg);color:var(--mk-ink);border:3px dashed #141414;border-radius:12px;padding:10px 82px 10px 12px;font-family:var(--mono);font-size:.98rem;line-height:1.5}
+.st .say .lbl{display:block;font-family:var(--brush);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:#7a5c00;margin-bottom:2px}
+.st .say button{position:absolute;right:8px;top:8px;background:#ffd23f;color:#141414;border:3px solid #141414;border-radius:var(--wob2);font-family:var(--brush);font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;padding:6px 10px 3px;cursor:pointer;box-shadow:2px 2px 0 #141414}
+.st .see{margin-top:8px;font-size:1rem;color:var(--dim);line-height:1.4}
+.st .see::before{content:"You should see  ";font-family:var(--brush);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+.st .tip{margin-top:8px;font-size:1rem;border-left:5px solid var(--yellow);padding:2px 0 2px 10px}
+.st.flash{animation:flash 1.6s ease-out}
+@keyframes flash{0%,60%{background:rgba(255,210,63,.35)}100%{background:transparent}}
+.newbie,.stretch{margin-top:16px;padding:12px 14px;border:3px dashed var(--frame);border-radius:12px;display:grid;gap:6px;font-size:1rem;background:var(--panel2)}
+.stretch{display:none;border-style:solid}
+.newbie p,.stretch p{max-width:none}
+details.stuck{margin-top:14px;border:3px solid var(--frame);border-radius:12px}
+details.stuck summary{cursor:pointer;padding:10px 14px 7px;font-family:var(--brush);text-transform:uppercase;letter-spacing:.05em;font-size:.82rem}
+details.later{margin-top:18px}
+details.stuck ul{margin:0;padding:4px 18px 14px 34px;font-size:1rem;display:grid;gap:6px}
+html[data-pace="pro"] .st:not(.key){display:none}
+html[data-pace="pro"] .newbie,html[data-pace="pro"] .st .tip{display:none}
+html[data-pace="pro"] .stretch{display:grid}
+@media (prefers-reduced-motion:reduce){.st.flash{animation:none;background:rgba(255,210,63,.35)}html{scroll-behavior:auto}}
+
+/* drawn screens (always the site's light colours) */
+.mock{background:var(--mk-bg);color:var(--mk-ink);border:3px solid #141414;border-radius:var(--wobble);box-shadow:4px 4px 0 var(--shade);padding:14px;display:grid;gap:9px;min-width:0;font-size:1rem;line-height:1.35}
+.mock.plain{background:var(--mk-cream)}
+.mock .ml{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:var(--brush);font-size:.8rem;letter-spacing:.04em;text-transform:uppercase;margin-top:4px}
+.mock .ml small{font-family:var(--label);text-transform:none;letter-spacing:0;color:var(--mk-dim);font-size:.9rem}
+.mock .ml.dark{color:#fff}
+.mock .mh{font-family:var(--brush);text-transform:uppercase;font-size:1.5rem;line-height:1;color:var(--mk-ink)}
+.mock .mh.sm{font-size:1.15rem}
+.mock .fld{border:3px solid #141414;border-radius:10px;background:var(--mk-field);padding:7px 11px;font-size:.98rem;color:var(--mk-ink);overflow-wrap:anywhere}
+.mock .fld.ph{color:#8a8270}
+.mock .fld.sm{font-size:.88rem;padding:5px 9px}
+.mock .fld.sel::after{content:"\25BE";float:right}
+.mock .ct{font-size:.85rem;color:var(--mk-dim);text-align:right}
+.mock .ct.ok{color:var(--ok);text-align:left}
+.mock .chk{display:flex;align-items:center;gap:8px;font-size:.95rem}
+.mock .chk .box{width:18px;height:18px;border:3px solid #141414;border-radius:4px;display:inline-block;background:#fff;padding:0}
+.mock .mrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.mock .pill{display:inline-flex;align-items:center;gap:6px;background:#fff;border:3px solid #141414;border-radius:999px;padding:4px 12px 3px;font-size:.92rem;color:var(--mk-ink)}
+.mock .pill small{font-size:.8rem;opacity:.75}
+.mock .pill.on{background:#ffd23f;box-shadow:3px 3px 0 #141414}
+.mock .pill .dot{width:12px;height:12px;border-radius:50%;border:2px solid #141414;display:inline-block}
+.mock .mbtn{display:inline-flex;align-items:center;gap:8px;justify-self:start;background:#ffd23f;color:#141414;border:3px solid #141414;border-radius:var(--wob2);box-shadow:3px 3px 0 #141414;padding:7px 12px 4px;font-family:var(--brush);font-size:.85rem;letter-spacing:.05em;text-transform:uppercase;line-height:1}
+.mock .mbtn.ghost{background:#fff}
+.mock .mbtn.small{font-size:.7rem;padding:6px 9px 3px;box-shadow:2px 2px 0 #141414}
+.mock .okline{color:var(--ok);font-size:.95rem}
+.mock .m2{display:grid;grid-template-columns:150px minmax(0,1fr);gap:10px}
+@media(max-width:520px){.mock .m2{grid-template-columns:1fr}}
+.mock .menu2{background:#101014;border-radius:10px;padding:8px;display:grid;gap:2px;align-content:start}
+.mock .mi{display:flex;align-items:center;justify-content:space-between;gap:6px;color:#fff;font-size:.9rem;padding:4px 6px;border-bottom:1px solid rgba(255,255,255,.15)}
+.mock .mi.on{background:#ffd23f;color:#141414;border-radius:8px;border:2px solid #141414}
+.mock .mi.gu{outline:2px dashed #ffd23f;outline-offset:-2px}
+.mock .heroart{position:relative;min-height:170px;border:3px solid #141414;border-radius:10px;overflow:hidden;background:#2f7de0}
+.mock .heroart>img:first-child{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:right bottom}
+.mock .heroart i{position:absolute;left:10px;top:10px;font-style:normal;font-family:var(--brush);text-transform:uppercase;font-size:1.5rem;line-height:.9;color:#ffd23f;-webkit-text-stroke:5px #141414;paint-order:stroke fill;transform:rotate(-4deg)}
+.mock .heroart .wh{position:absolute;left:6%;bottom:-8%;height:70%;width:auto;filter:drop-shadow(3px 3px 0 rgba(0,0,0,.5))}
+.mock .modes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media(max-width:520px){.mock .modes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.mock .mc{position:relative;height:96px;border:3px solid #141414;border-radius:10px;display:grid;align-content:end;overflow:hidden;padding:0 0 4px;text-align:center;box-shadow:3px 3px 0 #141414}
+.mock .mc.c1{background:#ffd23f}.mock .mc.c2{background:#5ec8f2}.mock .mc.c3{background:#ff9a3c}.mock .mc.c4{background:#b18cff}
+.mock .mc img{position:absolute;left:50%;top:4px;height:62px;width:auto;transform:translateX(-50%)}
+.mock .mc b{position:relative;font-family:var(--brush);font-weight:400;text-transform:uppercase;font-size:.85rem;color:#141414}
+.mock .two{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:10px;align-items:start}
+@media(max-width:520px){.mock .two{grid-template-columns:1fr}}
+.mock .pic{border:3px solid #141414;border-radius:6px;overflow:hidden;background:#5ec8f2;padding:6px}
+.mock .pic img{width:100%;height:auto;border:2px solid #141414;background:#fff}
+.mock .qq{display:flex;align-items:center;gap:6px;font-family:var(--script);font-size:1.05rem;margin-top:4px}
+.mock .qq b{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;border:2px solid #141414;background:#ffd23f;font-family:var(--brush);font-weight:400;font-size:.68rem;padding-top:2px}
+.mock .qq span:empty{width:22px}
+.mock .lbx{display:block;font-family:var(--brush);text-transform:uppercase;font-size:.68rem;letter-spacing:.05em;margin:4px 0 3px}
+.mock .notes3{font-size:.92rem}
+.mock .gatebox{border:3px solid #141414;border-radius:10px;background:var(--mk-cream);padding:8px 10px;font-size:.92rem}
+.mock .chatbox{border:3px solid #141414;border-radius:12px;background:#f2f2f2;padding:10px;display:grid;gap:10px;color:#161616}
+.mock .msg{display:flex;gap:8px;align-items:flex-start;font-size:.92rem}
+.mock .msg.you{background:#dfe9ff;border-radius:12px;padding:8px 10px}
+.mock .msg.ai{display:grid;gap:6px}
+.mock .msg.ai img{border:3px solid #141414;border-radius:8px;max-height:220px;width:auto;margin-inline:auto}
+.mock .cap{font-size:.9rem;color:var(--mk-dim)}
+.mock .askbox{border:3px solid #141414;border-radius:10px;background:var(--mk-cream);padding:9px 11px;display:grid;gap:6px}
+.mock .askbox b{font-family:var(--brush);font-weight:400;text-transform:uppercase;font-size:.85rem}
+.mock .askline{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.mock .askline q{font-family:var(--mono);font-size:.85rem;flex:1 1 200px;quotes:none}
+.mock .cmp3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media(max-width:520px){.mock .cmp3{grid-template-columns:1fr}}
+.mock .cmp3>div{border:3px solid #141414;border-radius:10px;padding:6px 9px;font-size:.88rem;background:#fff}
+.mock .cmp3 b{display:block;font-family:var(--brush);font-weight:400;text-transform:uppercase;font-size:.66rem;letter-spacing:.04em;margin-bottom:2px}
+.mock .chipm{background:#ffd23f;border:2px solid #141414;border-radius:999px;padding:0 8px;font-size:.85rem}
+.mock .lvc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media(max-width:520px){.mock .lvc{grid-template-columns:1fr}}
+.mock .lv{border:3px solid #141414;border-radius:10px;padding:6px 8px;font-size:.82rem;background:#fff;line-height:1.25}
+.mock .lv b{display:block;font-family:var(--brush);font-weight:400;text-transform:uppercase;font-size:.8rem;margin-bottom:2px}
+.mock .lv.on{background:#ffd23f;box-shadow:3px 3px 0 #141414}
+.mock .sheet{border:3px solid #141414;border-radius:8px;background:#fff8e0;padding:8px}
+.mock .ttl{font-family:var(--brush);font-size:1rem;text-transform:uppercase;text-align:center;margin-bottom:6px;color:#8a8270}
+.mock .pnls{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.mock .pnls .p{position:relative;aspect-ratio:4/3;border:3px solid #141414;border-radius:4px;background:#ddd center/cover no-repeat;overflow:hidden}
+.mock .pnls .p.sel{outline:3px dashed #ffd23f;outline-offset:2px}
+.mock .pnls .p img{position:absolute;bottom:-3%;left:50%;height:78%;width:auto;transform:translateX(-50%);filter:drop-shadow(2px 2px 0 rgba(0,0,0,.35))}
+.mock .cap2,.mock .th,.mock .sp{position:absolute;z-index:2;font-size:.66rem;line-height:1.1;background:#fff;border:2px solid #141414;padding:2px 5px;color:#141414}
+.mock .cap2{left:4px;top:4px;background:#fff1c9;max-width:70%}
+.mock .th{left:4px;top:4px;border-radius:12px}
+.mock .sp{right:4px;top:4px;border-radius:12px;max-width:60%}
+.mock .pnl{position:absolute;left:4px;top:4px;z-index:3}
+.mock .dock{display:flex;flex-wrap:wrap;gap:6px;align-items:center;border:3px solid #141414;border-radius:10px;padding:6px 8px;background:var(--mk-cream)}
+.mock .dk{font-family:var(--brush);text-transform:uppercase;font-size:.68rem;letter-spacing:.05em}
+
+/* levels, checklist, band */
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px}
+.tier{display:grid;grid-template-rows:auto 1fr;overflow:hidden}
+.tier .ph{aspect-ratio:16/10;overflow:hidden;background:#5ec8f2;border-bottom:3px solid var(--frame);position:relative}
+.tier .ph>img{width:100%;height:100%;object-fit:cover}
+.tier .ph .stk{position:absolute;bottom:-4%;left:50%;height:88%;width:auto;transform:translateX(-50%);filter:drop-shadow(3px 3px 0 rgba(0,0,0,.4))}
+.tier .tx{padding:14px 16px 16px;display:grid;gap:6px;align-content:start}
+.tier h3{font-family:var(--brush);text-transform:uppercase;font-size:1.3rem;line-height:1.05}
+.tier p{font-size:1rem;color:var(--dim);line-height:1.4}
+.tier p b{color:var(--ink);font-weight:400;font-family:var(--brush);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;display:block}
+.checks{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));overflow:hidden}
+.checks li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:12px;padding:14px 18px;border-right:2px dashed var(--frame);border-bottom:2px dashed var(--frame);margin:0 -2px -2px 0}
+.checks li::before{content:"";width:20px;height:20px;border:3px solid var(--frame);border-radius:4px;margin-top:3px}
+.checks b{display:block;font-family:var(--brush);font-weight:400;text-transform:uppercase;letter-spacing:.04em;font-size:.9rem}
+.checks span{font-size:1rem;color:var(--dim);line-height:1.4;display:block;margin-top:2px}
+.band{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;overflow:hidden;background:#2f7de0 url(img/banner.jpg) right bottom/cover no-repeat;min-height:130px;border:4px solid #141414;color:#fff}
+.band::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(18,58,168,.92),rgba(24,80,190,.5) 60%,rgba(24,80,190,0))}
+.band q{position:relative;align-self:center;padding:20px 26px;font-family:var(--script);font-size:clamp(1.6rem,3vw,2.3rem);line-height:1.05;quotes:none;-webkit-text-stroke:0}
+.band .stamp{position:relative;align-self:stretch;display:grid;align-content:center;padding:14px 22px;background:#ffd23f;color:#141414;border-left:4px solid #141414;font-family:var(--brush);text-transform:uppercase;letter-spacing:.05em;font-size:1.05rem;line-height:1.25;max-width:220px}
+@media(max-width:560px){.band{grid-template-columns:1fr}.band .stamp{border-left:0;border-top:4px solid #141414;max-width:none}}
+.foot{display:flex;flex-wrap:wrap;gap:6px 24px;font-size:.92rem;color:var(--dim)}
+
+/* additions for the rebuilt walkthrough */
+.mock .codebox{border:3px solid #141414;border-radius:10px;background:var(--mk-cream);padding:10px 12px;display:grid;gap:6px}
+.mock .say2{font-size:.95rem}
+.mock .trail{display:flex;flex-wrap:wrap;gap:5px}
+.mock .trail span{border:2px solid #141414;border-radius:999px;padding:1px 9px;font-size:.82rem;background:#fff}
+.mock .trail span.on{background:#ffd23f}
+.mock .steplist{margin:0;padding-left:22px;font-size:.92rem;display:grid;gap:2px}
+.mock .note2{font-size:.88rem;color:var(--mk-dim)}
+.mock .pic.yel{background:#ffd23f}
+.mock .pic.org{background:#ff9a3c}
+</style>
+<style>
+.splitbox{margin-top:16px;padding:12px 14px;border:3px solid var(--frame);border-radius:12px;display:grid;gap:6px;font-size:1rem;background:var(--panel2)}
+.splitbox p{max-width:none}
+</style>
+</head>
+<body>
+
+
+
+<div class="shell" id="top">
+
+  <header class="hero">
+    <div class="copy">
+      <h1>Paws &amp;<br>Order<small>WALKTHROUGH</small></h1>
+      <div class="verbs">Look<span>&middot;</span>Choose<span>&middot;</span>Create<span>&middot;</span>Check<span>&middot;</span>Build</div>
+      <p class="tag">Follow the numbers. Every drawn screen has numbered pins, and every pin matches a numbered step.</p>
+    </div>
+    <div class="art">
+      <img src="img/hero.png" alt="Inspector Nettle, a hedgehog detective in a blue jacket and glasses">
+      <div class="burst" aria-hidden="true"><svg viewBox="0 0 200 200"><path d="M100 4l17 40 38-24-6 44 44 2-34 28 36 26-44 6 12 42-40-20-23 38-17-40-38 24 6-44-44-2 34-28-36-26 44-6-12-42 40 20z" fill="#ffd23f" stroke="#141414" stroke-width="6" stroke-linejoin="round"/></svg><b>Follow the numbers!</b></div>
+    </div>
+  </header>
+
+  <div class="cols">
+    <aside class="frame rail" aria-label="Guide navigation">
+      <a class="brand" href="#top"><span>Heuta</span><span>Lab</span></a>
+      <nav id="nav">
+        <a href="#top" class="on"><i>&#8962;</i>Home</a>
+        <a href="#learn"><i>?</i>You will learn</a>
+        <a href="#new"><i>i</i>New here?</a>
+        <a href="#pace"><i>&#9201;</i>Choose your pace</a>
+        <a href="#pA"><i>A</i>Open the site</a><a href="#pB"><i>B</i>Look closely</a><a href="#pC"><i>C</i>Choose and describe</a><a href="#pD"><i>D</i>Create with AI</a><a href="#pE"><i>E</i>Check and improve</a><a href="#pF"><i>F</i>Build and share</a>
+        <a href="#levels"><i>3</i>Three levels</a>
+        <a href="#school"><i>&#10003;</i>Use in school</a>
+      </nav>
+      <div class="foot">Paws &amp; Order<br>Part of HeutaLab</div>
+    </aside>
+
+    <main>
+      <div class="rule" id="learn">What you will learn</div>
+      <section class="frame learn" aria-label="Eight skills"><div><span class="k">1</span><h3>Look before you prompt</h3><p>Study a picture and say what is really there before you ask an AI for anything.</p></div><div><span class="k">2</span><h3>Describe precisely</h3><p>Pick exact words, so your picture comes out the way you planned. The helper wants 10 words of your own.</p></div><div><span class="k">3</span><h3>Keep a character the same</h3><p>Use the same words for your character in every prompt, so the same face and clothes come back.</p></div><div><span class="k">4</span><h3>Pin the colours</h3><p>Choose one set of colours. The colour words go into every prompt, word for word.</p></div><div><span class="k">5</span><h3>Say what to leave out</h3><p>No words, no captions, no speech bubbles, no other characters, or the tool fills the gaps with its own ideas.</p></div><div><span class="k">6</span><h3>Check what the AI made</h3><p>Ask your tool to describe the picture, then find what was asked for and not seen, and what turned up unasked.</p></div><div><span class="k">7</span><h3>Change one thing at a time</h3><p>A single change shows which word did the work. That is how prompt skill grows.</p></div><div><span class="k">8</span><h3>Tell a story</h3><p>Put pictures and words in order on a comic page.</p></div></section>
+
+      <div class="rule" id="new">New here?</div>
+      <section class="intro" aria-label="What the site is">
+        <div class="frame box">
+          <h3>What is Paws &amp; Order?</h3>
+          <p>A free website made by Glenn Malcolm for children aged 9 to 12, and for the teachers who run it. It works in five steps: look closely at a picture, choose and describe, create with AI, check and improve, then build your comic.</p>
+          <p>Paws &amp; Order helps you with the words. Your picture is made in a separate image tool. The characters are all original: Inspector Nettle, Sergeant Rocco, Chief Grumbleton and their friends in Doodleville.</p>
+          <p class="dim">Working through every part takes about 45 to 50 minutes. Today you add one picture and one character to a comic page. The rest of the Comic Maker is for later.</p>
+        </div>
+        <div class="frame box">
+          <h3>Where is it?</h3>
+          <p>Type this address into any web browser:</p>
+          <div class="urlbar"><span class="lock"></span><b>heutalab.com/paws-and-order/</b></div>
+          <h3 style="margin-top:6px">What you need</h3>
+          <ul class="need">
+            <li><span><b>A computer or tablet</b> with a web browser.</span></li>
+            <li><span><b>Today&rsquo;s workshop code</b> from your facilitator: three words and a number. Part A shows where it goes.</span></li>
+            <li><span><b>An image tool</b> you can sign in to: Gemini, ChatGPT, Copilot, Canva or any image maker.</span></li>
+          </ul>
+          <p class="dim">Teachers who run it in class make their own workshop code on the site&rsquo;s Teachers page.</p>
+        </div>
+      </section>
+
+      <div class="rule">Words you will meet</div>
+      <section class="frame gloss" aria-label="Glossary"><div><b>Prompt</b>The exact words you give your image tool.</div><div><b>Image tool</b>The separate AI that makes your picture: Gemini, ChatGPT, Copilot, Canva or any image maker.</div><div><b>Workshop code</b>Three words and a number from your teacher. It switches on the prompt helper.</div><div><b>Prompt helper</b>The AI on Paws &amp; Order that turns your brief into a prompt and compares what you asked for with what you got.</div><div><b>Brief</b>Your plan in words: who or where, the colours, and your idea.</div><div><b>Level</b>How big your job is: Doodler, Sketcher or Storyteller.</div><div><b>Colours</b>One of six sets. You choose one and keep it.</div><div><b>Drift word</b>A word in the tool&rsquo;s description that pulled away from what you asked for.</div><div><b>Panel</b>One picture box on a comic page.</div><div><b>Sticker</b>A cut-out of one of the gang that you place in a panel.</div></section>
+
+      <div class="rule">The route</div>
+      <nav class="frame map" aria-label="Six parts"><a href="#pA"><small>Part A</small><strong>Open the site</strong><em>Steps 1 to 5</em></a><a href="#pB"><small>Part B</small><strong>Look closely</strong><em>Steps 6 to 11</em></a><a href="#pC"><small>Part C</small><strong>Choose and describe</strong><em>Steps 12 to 20</em></a><a href="#pD"><small>Part D</small><strong>Create with AI</strong><em>Steps 21 to 28</em></a><a href="#pE"><small>Part E</small><strong>Check and improve</strong><em>Steps 29 to 37</em></a><a href="#pF"><small>Part F</small><strong>Build and share</strong><em>Steps 38 to 42</em></a></nav>
+
+      <div class="rule">Why detail matters</div>
+      <section class="split" aria-label="Vague versus detailed prompt">
+        <div class="frame box">
+          <h3>Vague prompt</h3>
+          <div class="prompt">A police officer for a comic</div>
+          <div class="result gen" role="img" aria-label="Placeholder standing in for a shiny realistic result"><b>Shiny, realistic picture<br>(placeholder, not yet tested here)</b></div>
+          <p class="dim">Without style words, image tools drift to a shiny, realistic look.</p>
+        </div>
+        <div class="frame box">
+          <h3>Detailed prompt</h3>
+          <div class="prompt">A character reference sheet of <span class="chip">a young hedgehog detective in big round glasses</span>, full body, standing facing us, one big clear expression. <span class="chip">Hand-drawn children&rsquo;s comic book illustration, thick slightly wobbly black ink outlines, flat bright colours with coarse halftone dot shading.</span> <span class="chip">Colours: bright flat comic colours only, no other colours.</span> <span class="chip">Plain pale background.</span> <span class="chip">No words, no captions, no speech bubbles, no other characters.</span></div>
+          <div class="legend"><i>subject</i><i>format</i><i>pose</i><i>style</i><i>colours</i><i>background</i><i>leave out</i></div>
+          <div class="result"><img src="img/sheet-inspector-nettle.jpg" alt="A character sheet of Inspector Nettle, a hedgehog detective in a blue jacket with a gold star badge"></div>
+          <p class="dim">The kind of result these words aim for: Inspector Nettle&rsquo;s own character sheet from the site.</p>
+        </div>
+      </section>
+
+      <div class="rule" id="pace">Choose your pace</div>
+      <section class="intro" aria-label="Choose your pace">
+        <div class="frame box"><h3>New to AI, or want every step</h3><p>Do every step in order. The yellow numbered circles say what to do. Boxes marked &ldquo;New to AI?&rdquo; explain the basics. Press a circle to tick it off, and the guide remembers where you are.</p></div>
+        <div class="frame box"><h3>I use AI already</h3><p>Show the quick path: only the key steps, about <span id="keycount">0</span> of <span id="allcount">0</span>. &ldquo;Going faster?&rdquo; challenges appear at the end of each part. The other steps are still here if you switch back.</p></div>
+      </section>
+      <div class="bar" id="bar" role="region" aria-label="Your pace and progress">
+        <div class="seg" role="group" aria-label="Pace">
+          <button type="button" data-mode="new" aria-pressed="true">Every step</button>
+          <button type="button" data-mode="pro" aria-pressed="false">Quick path</button>
+        </div>
+        <span class="prog" id="prog" aria-live="polite">0 done</span>
+        <span class="meter" aria-hidden="true"><i id="meter"></i></span>
+        <button type="button" class="mini" id="nextbtn">Next step</button>
+        <button type="button" class="mini ghost" id="resetbtn">Start over</button>
+      </div>
+
+<section class="frame part" id="pA" aria-labelledby="pAh">
+  <div class="part-top"><span class="num">A</span><h2 class="h-big" id="pAh">Open the site</h2><p>Put in today&rsquo;s workshop code. It switches on the prompt helper, so you never need an AI key.</p></div>
+  <div class="part-meta"><span class="t">About 4 minutes</span><span class="lv">Open to everyone</span></div>
+  <div class="part-body">
+    <div class="part-vis">
+<div class="mock" role="img" aria-label="Drawn copy of the Paws and Order home page and its workshop code box">
+  <span class="ml"><span class="pn">1</span> Address bar</span>
+  <div class="urlbar"><span class="lock"></span><b>heutalab.com/paws-and-order/</b></div>
+  <div class="mrow"><span class="ml"><span class="pn">2</span> Menu</span><span class="pill">Start</span><span class="pill">Look closely</span><span class="pill">Comic maker</span><span class="pill">Teachers</span><span class="pill">Explore</span></div>
+  <div class="heroart"><img src="img/banner.jpg" alt=""><i>Make your first<br>comic in five steps.</i><img class="wh" src="img/stk-nettle-pointing.webp" alt=""></div>
+  <div class="mrow"><span class="mbtn"><span class="pn">5</span> Start my comic</span><span class="mbtn ghost">I&rsquo;m teaching this</span></div>
+  <div class="codebox">
+    <span class="say2">Got a workshop code from your teacher? Type it here. It switches on the prompt helper for step 3. You can also do it later.</span>
+    <span class="ml"><span class="pn">3</span> I have a workshop code &rarr; Workshop code</span>
+    <span class="note2">Your teacher has it: three words and a number. You can type spaces between them. Capital letters do not matter.</span>
+    <div class="mrow"><div class="fld" style="flex:1 1 160px"><span class="pn">4</span> &nbsp;[your code]</div><span class="mbtn">Use this code</span></div>
+    <span class="okline">Code accepted. The prompt helper is on, up to Storyteller.</span>
+  </div>
+</div></div>
+    <div class="part-steps"><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 1">1</span><div><div class="do">Open a <em>new browser window</em>: press Ctrl+N (Cmd+N on a Mac). Click its <em>address bar</em>, type the address and press Enter.</div><div class="say"><span class="lbl">Type this</span><span class="tx">heutalab.com/paws-and-order/</span><button type="button" class="cp">Copy</button></div><div class="see">A bright cartoon page headed &ldquo;Make your first comic in five steps.&rdquo;</div></div></div><div class="splitbox"><span class="eyebrow">Put this guide beside the site</span><p>Keep this guide in one window and the site in another, side by side, so you never lose your place.</p><p><b>Mac:</b> hover over the green button at the top left of this window and choose to tile it to the left. Then pick the site&rsquo;s window for the right.</p><p><b>Windows:</b> click this window, press the Windows key and the left arrow, then pick the site&rsquo;s window.</p><p><b>Chromebook:</b> press Alt and [ for this window, then Alt and ] for the site&rsquo;s window.</p><p><b>iPad:</b> in Safari, tap the three dots at the top of the screen, then Split View.</p><p>Guide and site in one window, as two tabs? Drag the site&rsquo;s tab out, so it becomes a window of its own.</p></div><div class="st"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 2">2</span><div><div class="do">Find the <em>menu</em>: Start, Look closely, Comic maker, Teachers and Explore.</div><div class="see">The five steps are also listed further down the home page, each with a picture of the gang.</div><div class="tip">On a phone or a narrow window, press <em>Menu</em> to open it.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 3">3</span><div><div class="do">Press <em>I have a workshop code</em>.</div><div class="see">The page moves to a box labelled &ldquo;Workshop code&rdquo;, with the hint &ldquo;Your teacher has it: three words and a number.&rdquo;</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 4">4</span><div><div class="do">Type the code your facilitator gives you into the box, then press <em>Use this code</em>.</div><div class="see">&ldquo;Checking the code&hellip;&rdquo;, then &ldquo;Code accepted. The prompt helper is on, up to Storyteller.&rdquo; The level at the end is the highest one today&rsquo;s code opens.</div><div class="tip">You can type spaces between the words. Capital letters do not matter.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 5">5</span><div><div class="do">Press <em>Start my comic</em>.</div><div class="see">The Look closely page, with a picture and a set of questions.</div></div></div><div class="newbie"><span class="eyebrow">New to AI? Read this first</span><p>An AI image tool is a chat box that draws. You describe a picture and it makes one. Paws &amp; Order does not draw. It helps you write the description, called a <b>prompt</b>, and then helps you check what the image tool made.</p><p><b>Copy and paste:</b> select the text, press Ctrl+C (Cmd+C on a Mac), click where it should go, then press Ctrl+V (Cmd+V). On a tablet, press and hold the text and choose Copy, then press and hold in the new place and choose Paste.</p></div><details class="stuck"><summary>Stuck? Open this</summary><ul><li>&ldquo;That code did not work. Check the spelling with your teacher.&rdquo;: look again at the three words and the number.</li><li>&ldquo;That code has finished. Ask your teacher for today&rsquo;s code.&rdquo;: ask your facilitator.</li><li>&ldquo;Lots of people are checking codes. Wait a minute, then try again.&rdquo;: the whole room is typing at once. Wait, then press Use this code again.</li><li>No code at all? Carry on anyway. Step 3 offers a starter prompt made from your own words.</li></ul></details></div>
+  </div>
+</section>
+<section class="frame part" id="pB" aria-labelledby="pBh">
+  <div class="part-top"><span class="num">B</span><h2 class="h-big" id="pBh">Look closely</h2><p>Step 1 on the site. Look at a picture and put it into words before you ask an AI for anything.</p></div>
+  <div class="part-meta"><span class="t">About 8 minutes</span><span class="lv">Level 1 today</span></div>
+  <div class="part-body">
+    <div class="part-vis">
+<div class="mock" role="img" aria-label="Drawn copy of the Look closely page">
+  <div class="mh sm">Look closely</div>
+  <span class="ml"><span class="pn">6</span> How will you work? <small>(pick one)</small></span>
+  <div class="modes">
+    <span class="mc c1"><img src="img/stk-nettle-pointing.webp" alt=""><b>Watch</b></span>
+    <span class="mc c2"><img src="img/stk-nettle-standing.webp" alt=""><b>Together</b></span>
+    <span class="mc c3"><img src="img/stk-nettle-examining.webp" alt=""><b>Solo</b></span>
+    <span class="mc c4"><img src="img/stk-flash-running.webp" alt=""><b>Explore</b></span>
+  </div>
+  <span class="note2"><span class="pn">7</span> Watch: a finished example. Every answer is filled in, ready to talk through.</span>
+  <div class="mrow"><span class="ml">Which level?</span><span class="pill on">Level 1<small>what can you see?</small></span><span class="pill">Level 2</span><span class="pill">Level 3</span></div>
+  <div class="two">
+    <div class="pic"><img src="img/owl-inventor.jpg" alt="A brown owl in round goggles with a tool belt"></div>
+    <div>
+      <div class="qq"><b>1</b> What can you see? <span class="pn">9</span></div><div class="fld sm">A fluffy brown owl standing up straight.</div>
+      <div class="qq"><b>2</b> What do they wear or hold?</div><div class="fld sm">Round goggles and a tool belt&hellip;</div>
+    </div>
+  </div>
+  <span class="ml"><span class="pn">10</span> Your description</span>
+  <div class="fld">A fluffy brown owl standing up straight. Round goggles and a tool belt&hellip;</div>
+  <span class="ct">0 words of your own. Write 10 more.</span>
+  <div class="mrow"><span class="mbtn ghost"><span class="pn">8</span> Next: do one together</span><span class="mbtn ghost">Next: your turn</span><span class="mbtn"><span class="pn">11</span> Use my description</span></div>
+</div></div>
+    <div class="part-steps"><div class="st"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 6">6</span><div><div class="do">Check what is chosen. Under <em>How will you work?</em> it is <em>Watch</em>. Under <em>Which level?</em> it is <em>Level 1</em>.</div><div class="see">A round penguin postie, with the caption &ldquo;Level 1 &middot; Watch&rdquo; and every answer filled in.</div></div></div><div class="st"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 7">7</span><div><div class="do">Read a few answers aloud. Watch shows how a sharp-eyed detective of details looks at a picture.</div><div class="see">Under the questions: &ldquo;Put together, the answers make a description&rdquo;.</div><div class="tip">Level 1 asks &ldquo;What can you see?&rdquo;: only what you could point at. No guessing and no story yet.</div></div></div><div class="st"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 8">8</span><div><div class="do">Press <em>Next: do one together</em>. Agree an answer with your neighbour, type it in <em>Our answer</em> if you like, then press <em>Reveal</em> and compare.</div><div class="see">A robot chef. Each Reveal shows the model answer. <em>Reveal all</em> shows every one.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 9">9</span><div><div class="do">Press <em>Next: your turn</em>. Type a short answer into each question box. A few words is fine.</div><div class="say"><span class="lbl">Example answer</span><span class="tx">A fluffy brown owl standing up straight.</span><button type="button" class="cp">Copy</button></div><div class="see">An owl inventor. Your answers build the description box below as you type.</div></div></div><div class="st"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 10">10</span><div><div class="do">Read <em>Your description</em>. Change any words you like. It needs 10 words of your own.</div><div class="see">A count under the box, such as &ldquo;0 words of your own. Write 10 more.&rdquo; It changes to &ldquo;Your description has 10 words of your own&rdquo;.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 11">11</span><div><div class="do">Press <em>Use my description</em>.</div><div class="see">Step 2 opens at &ldquo;Who or where?&rdquo;</div></div></div><div class="newbie"><span class="eyebrow">No idea what to write?</span><p>Answer one question at a time. Point at things. Say what is there, what they wear or hold, what it is made of and what colours you can see. Short phrases are fine.</p></div><div class="stretch"><span class="eyebrow">Going faster? Try this</span><p>Choose <em>Explore</em> and press <em>Shuffle</em> for another picture at any level. Try Level 3, &ldquo;The world&rdquo;, on a place, then swap with a neighbour: whose words would let a stranger draw the same picture?</p></div><details class="stuck"><summary>Stuck? Open this</summary><ul><li>Short of time? Under Watch, press <em>Use this example and carry on</em>. It is a worked example, not your own words.</li><li>Want to go straight to your own picture? Press <em>Skip to my turn</em>.</li><li>A warning says &ldquo;This browser is not saving your work&rdquo;: tell your facilitator before you go on.</li></ul></details></div>
+  </div>
+</section>
+<section class="frame part" id="pC" aria-labelledby="pCh">
+  <div class="part-top"><span class="num">C</span><h2 class="h-big" id="pCh">Choose and describe</h2><p>Step 2. Pick who, the colours, a level and your image tool, then write your brief.</p></div>
+  <div class="part-meta"><span class="t">About 9 minutes</span><span class="lv">Doodler today</span></div>
+  <div class="part-body">
+    <div class="part-vis">
+<div class="mock" role="img" aria-label="Drawn copy of step 2, Choose and describe">
+  <div class="trail"><span class="on">Who or where</span><span>Colours</span><span>Level and tool</span><span>Your words</span><span>Read your brief</span></div>
+  <span class="ml"><span class="pn">12</span> A character or a place? <small>(pick one)</small></span>
+  <div class="mrow"><span class="pill on">A character</span><span class="pill">A place</span></div>
+  <span class="ml"><span class="pn">13</span> Who is in your picture? <small>(pick one)</small></span>
+  <div class="mrow"><span class="pill on">Owl Inventor</span><span class="pill">Nettle</span><span class="pill">Rocco</span><span class="pill">Grumbleton</span><span class="pill">Vivi</span><span class="pill">Flash</span><span class="pill">Mabel</span><span class="pill">Nana</span><span class="pill">Barnaby</span></div>
+  <span class="ml"><span class="pn">14</span> Where are they? <small>(you can skip this)</small></span>
+  <span class="ml"><span class="pn">15</span> Which colours? <small>(pick one)</small></span>
+  <div class="mrow"><span class="pill on"><i class="dot" style="background:#2ec4f1"></i>Comic pop</span><span class="pill"><i class="dot" style="background:#ffd23f"></i>Sunshine</span><span class="pill"><i class="dot" style="background:#1b6ca8"></i>Splash</span><span class="pill"><i class="dot" style="background:#3ccf5a"></i>Jungle</span><span class="pill"><i class="dot" style="background:#8a4fff"></i>Berry</span><span class="pill"><i class="dot" style="background:#1a1a1a"></i>Colour me in</span></div>
+  <span class="ml"><span class="pn">16</span> Which level? <small>(pick one)</small></span>
+  <div class="lvc"><span class="lv on"><b>Doodler</b>One character portrait.</span><span class="lv"><b>Sketcher</b>The same character in a place.</span><span class="lv"><b>Storyteller</b>A three-picture story.</span></div>
+  <span class="ml"><span class="pn">17</span> Which image tool will you use?</span>
+  <div class="mrow"><span class="pill on">Gemini</span><span class="pill">ChatGPT</span><span class="pill">Copilot</span><span class="pill">Canva</span><span class="pill">Any image maker</span></div>
+  <span class="ml"><span class="pn">18</span> Your description: what you noticed</span>
+  <div class="fld sm">A fluffy brown owl standing up straight. Round goggles and a tool belt&hellip;</div>
+  <span class="ml"><span class="pn">19</span> Your idea: what happens in your picture</span>
+  <div class="fld sm">My owl inventor fixing a wobbly robot in her workshop, looking proud.</div>
+  <span class="mbtn"><span class="pn">20</span> My brief is ready</span>
+</div></div>
+    <div class="part-steps"><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 12">12</span><div><div class="do">Under <em>A character or a place?</em>, press <em>A character</em>.</div><div class="see">&ldquo;Who is in your picture? (pick one)&rdquo; appears below.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 13">13</span><div><div class="do">Pick who is in your picture: the one you looked at, one of the gang, or one you make up under <em>Make your own character</em>.</div><div class="see">The gang: Inspector Nettle, Sergeant Rocco, Chief Grumbleton, Vivi Velvet, Flash the Crow, Mabel Mudge, Nana Shellby and Captain Barnaby Bubbles.</div><div class="tip">A character you make up needs a name and a few words about how they look.</div></div></div><div class="st"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 14">14</span><div><div class="do"><em>Where are they?</em> says &ldquo;you can skip this&rdquo;. Skip it for a Doodler portrait. Press <em>Next</em>.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 15">15</span><div><div class="do">Under <em>Which colours?</em>, press one of the six. Then press <em>Next</em>.</div><div class="see">&ldquo;Here is the same picture in six sets of colours.&rdquo; Comic pop, Sunshine, Splash, Jungle, Berry and Colour me in.</div><div class="tip">The colour words go into every prompt, word for word. Leave them out and your pictures stop matching.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 16">16</span><div><div class="do">Under <em>Which level?</em>, press <em>Doodler</em>: one character portrait.</div><div class="tip">Sketcher is the same character in a place. Storyteller is a three-picture story.</div></div></div><div class="st"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 17">17</span><div><div class="do">Under <em>Which image tool will you use?</em>, press the tool you will use. Then press <em>Next</em>.</div><div class="see">If the page says &ldquo;Your class is using&rdquo; a tool, today&rsquo;s code has chosen it and there is nothing to pick.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 18">18</span><div><div class="do">Check <em>Your description: what you noticed</em>. Your words from Look closely should already be there. It needs at least 10 words.</div><div class="see">A count under the box, such as &ldquo;0 words. 10 more to go.&rdquo;</div><div class="tip">Box empty? Press <em>Use my words from Look Closely</em>.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 19">19</span><div><div class="do">In <em>Your idea: what happens in your picture</em>, write one or two sentences: what your character is doing, where they are, and how they feel. Then press <em>Next</em>.</div><div class="say"><span class="lbl">Example idea</span><span class="tx">My owl inventor fixing a wobbly robot in her workshop, looking proud.</span><button type="button" class="cp">Copy</button></div><div class="tip">Do not type real names, your school or where you live. &ldquo;Try this&rdquo; and &ldquo;For example&rdquo; above the box give you ideas.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 20">20</span><div><div class="do">Read your brief, then press <em>My brief is ready</em>.</div><div class="see">Step 3 opens at &ldquo;Get your prompt&rdquo;.</div><div class="tip">A brief is your plan in words: who or where, the colours, and your idea.</div></div></div><div class="newbie"><span class="eyebrow">Why 10 words?</span><p>The prompt helper writes better prompts when you have looked properly first. If your words miss the basics, it asks a question or two before it writes anything. The looking is the lesson.</p></div><div class="stretch"><span class="eyebrow">Going faster? Try this</span><p>Do it again with <em>A place</em>. Doodler is one empty room, Sketcher is two rooms in one building, and Storyteller is one street in three shots, with the same time of day, weather and colours in every picture.</p></div><details class="stuck"><summary>Stuck? Open this</summary><ul><li>A button is faded: something is missing. The &ldquo;Still to do&rdquo; list on the brief says what.</li><li>You picked the wrong level or colours: press <em>Back</em> and change it. Nothing is lost.</li></ul></details></div>
+  </div>
+</section>
+<section class="frame part" id="pD" aria-labelledby="pDh">
+  <div class="part-top"><span class="num">D</span><h2 class="h-big" id="pDh">Create with AI</h2><p>Step 3. Get your prompt here, then make the picture in your image tool.</p></div>
+  <div class="part-meta"><span class="t">About 10 minutes</span><span class="lv">Any level</span></div>
+  <div class="part-body">
+    <div class="part-vis">
+<div class="mock" role="img" aria-label="Drawn copy of step 3, Get your prompt">
+  <div class="trail"><span class="on">Get your prompt</span><span>Use your image tool</span><span>Come back</span></div>
+  <span class="mbtn"><span class="pn">21</span> Get my prompt</span>
+  <div class="gatebox"><span class="pn">22</span> <b>Before the prompt: a question or two</b><br>What is the owl holding? What is the light like in the workshop?</div>
+  <span class="mh sm">Your prompt <span class="pn">23</span></span>
+  <div class="fld sm">A character reference sheet of a fluffy brown owl with round goggles&hellip; Plain pale background. No words, no captions, no speech bubbles, no other characters.</div>
+  <div class="mrow"><span class="mbtn small"><span class="pn">24</span> Copy</span><span class="note2">You copied this one.</span></div>
+  <div class="notes3"><b>Why this works</b> &middot; <b>On another tool</b> &middot; <b>Watch for</b></div>
+</div>
+<div class="mock plain" role="img" aria-label="Drawn example of an image tool chat box">
+  <span class="ml"><span class="pn">25</span> Your image tool, in a new tab</span>
+  <div class="chatbox"><div class="msg you"><span class="pn">26</span> <span>A character reference sheet of a fluffy brown owl with round goggles&hellip;</span></div>
+    <div class="msg ai"><img src="img/sheet-inspector-nettle.jpg" alt="A character sheet of a hedgehog detective in a blue jacket"><div><span class="pn">27</span> Save this picture</div></div></div>
+  <p class="cap">This picture is the site&rsquo;s own Inspector Nettle sheet, standing in for a result.</p>
+  <span class="ml"><span class="pn">28</span> Back on Paws &amp; Order: Did you make your picture?</span>
+  <div class="mrow"><span class="mbtn ghost">It did not work. Try the prompt again.</span><span class="mbtn">I made my picture</span></div>
+</div></div>
+    <div class="part-steps"><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 21">21</span><div><div class="do">Press <em>Get my prompt</em>.</div><div class="see">&ldquo;Working on it. This can take a minute.&rdquo; Then a section headed &ldquo;Your prompt&rdquo;.</div></div></div><div class="st"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 22">22</span><div><div class="do">If a box called <em>Before the prompt: a question or two</em> appears, add to your description, then press <em>Send it back to the helper</em>.</div><div class="see">This time the helper writes your prompt either way.</div></div></div><div class="st"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 23">23</span><div><div class="do">Read the result: the <em>Prompt</em>, then <em>Why this works</em>, <em>On another tool</em> and <em>Watch for</em>.</div><div class="tip">At Sketcher and Storyteller, a line &ldquo;These words are the same in every picture&rdquo; sits above each prompt. It keeps your character the same.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 24">24</span><div><div class="do">Press <em>Copy</em> on the prompt. Then press <em>Next</em>.</div><div class="see">&ldquo;You copied this one.&rdquo; under the prompt.</div></div></div><div class="st"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 25">25</span><div><div class="do">Open your image tool in a <em>new tab</em>, so Paws &amp; Order stays open. Sign in.</div><div class="tip">Most image tools ask users to be 13 or over, or to use a school account. In a primary class, a grown-up runs this step.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 26">26</span><div><div class="do">Paste the prompt into the chat box and send it.</div><div class="see">Your picture arrives after a few seconds.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 27">27</span><div><div class="do">Save the picture to this device. <em>Keep it, even if it missed.</em></div><div class="see">Some things match what you asked for. Some do not. Both are useful in step 4.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 28">28</span><div><div class="do">Back on Paws &amp; Order, under <em>Did you make your picture?</em>, press <em>I made my picture</em>.</div><div class="see">Step 4 opens at &ldquo;Aim: what I asked for&rdquo;.</div><div class="tip"><em>It did not work. Try the prompt again.</em> takes you back to your prompt.</div></div></div><div class="newbie"><span class="eyebrow">Not sure which tool?</span><p>Any of them will do: Gemini, ChatGPT, Copilot, Canva or any image maker. If a tool draws extras you did not ask for or adds words to the picture, that is normal, and it is exactly what step 4 is for.</p></div><details class="stuck"><summary>Stuck? Open this</summary><ul><li>&ldquo;The helper needs a workshop code. No code? You can still use a starter prompt.&rdquo;: press <em>Use a starter prompt</em>. It is your own brief, joined up, with no AI.</li><li>&ldquo;A starter prompt&rdquo; appears in the result: the helper could not answer in time. Put your own words into it before you copy.</li><li>The image tool refuses or asks you to sign in: try another tool, or pair with a neighbour.</li></ul></details></div>
+  </div>
+</section>
+<section class="frame part" id="pE" aria-labelledby="pEh">
+  <div class="part-top"><span class="num">E</span><h2 class="h-big" id="pEh">Check and improve</h2><p>Step 4. Compare what you asked for with what you got, then change one thing.</p></div>
+  <div class="part-meta"><span class="t">About 10 minutes</span><span class="lv">Any level</span></div>
+  <div class="part-body">
+    <div class="part-vis">
+<div class="mock" role="img" aria-label="Drawn copy of step 4, Check and improve">
+  <div class="trail"><span>Aim</span><span>Prompt</span><span class="on">Result</span><span>Compare</span><span>Why</span><span>Change one thing</span></div>
+  <span class="ml"><span class="pn">29</span> Aim: what I asked for &nbsp;<span class="pn">30</span> Prompt: the words I used</span>
+  <div class="askbox"><b>Ask your image tool what it sees</b>
+    <ol class="steplist"><li>In your image tool, start a new chat. <span class="pn">31</span></li><li>Add the picture you saved. Only the picture, not your prompt.</li><li>Ask it: Describe only what you can see in this picture.</li></ol>
+    <span class="mbtn small"><span class="pn">32</span> Copy the question</span></div>
+  <span class="ml"><span class="pn">33</span> What my tool says is in the picture</span>
+  <div class="fld sm">A brown owl in goggles holding a spanner, standing in a cluttered workshop with a small dog&hellip;</div>
+  <div class="mrow"><span class="mbtn"><span class="pn">34</span> Compare them</span><span class="mbtn ghost">Check it by eye instead</span></div>
+  <div class="cmp3"><div><b>Asked for, not seen</b>a wobbly robot</div><div><b>Turned up unasked</b>a small dog</div><div><b>Drift words</b><span class="chipm">cluttered</span></div></div>
+  <span class="ml"><span class="pn">35</span> Why: what happened? &nbsp;<span class="pn">36</span> Change one thing</span>
+  <div class="mrow"><span class="mbtn">Save my change</span><span class="mbtn ghost">It matches. I am keeping it.</span></div>
+  <span class="ml"><span class="pn">37</span> Step 4 is done</span>
+  <div class="mrow"><span class="mbtn ghost">Try again with my change</span><span class="mbtn">Build my comic</span></div>
+</div></div>
+    <div class="part-steps"><div class="st"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 29">29</span><div><div class="do"><em>Aim</em>: read &ldquo;What I asked for&rdquo;. Keep it in your head while you look at your picture. Press <em>Next</em>.</div></div></div><div class="st"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 30">30</span><div><div class="do"><em>Prompt</em>: &ldquo;The prompt I used&rdquo; shows the exact words you gave your image tool. Change them only if you used different words. Press <em>Next</em>.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 31">31</span><div><div class="do"><em>Result</em>: in your image tool, start a new chat and add the picture you saved. Only the picture, not your prompt.</div><div class="tip">If you paste your prompt in too, the tool just hands your own words back.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 32">32</span><div><div class="do">Press <em>Copy the question</em> on Paws &amp; Order, paste it into the new chat and send it.</div><div class="say"><span class="lbl">The question</span><span class="tx">Describe only what you can see in this picture.</span><button type="button" class="cp">Copy</button></div><div class="see">The tool answers with a description of your picture.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 33">33</span><div><div class="do">Copy the tool&rsquo;s answer. Paste it into <em>What my tool says is in the picture</em>. Press <em>Next</em>.</div><div class="see">It needs at least 8 words.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 34">34</span><div><div class="do"><em>Compare</em>: press <em>Compare them</em>.</div><div class="see">&ldquo;What the helper found&rdquo;: <em>Asked for, not seen</em>, <em>Turned up unasked</em>, <em>Drift words</em>, then <em>Questions for you</em>.</div></div></div><div class="st"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 35">35</span><div><div class="do"><em>Why</em>: have a guess about what happened (you can skip this). Press <em>Next</em>.</div><div class="see">Three ideas to help: the tool guesses when words are missing; some words pull the wrong way; tools add extras nobody asked for.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 36">36</span><div><div class="do"><em>Change one thing</em>: write the one thing you will change, then press <em>Save my change</em>. If it came out right, press <em>It matches. I am keeping it.</em></div><div class="tip">Change one thing at a time, so you can see what it did. The box needs at least 3 words.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 37">37</span><div><div class="do">Under <em>Step 4 is done</em>, press <em>Build my comic</em>.</div><div class="see">The Comic Maker opens.</div><div class="tip"><em>Try again with my change</em> takes your change back to step 3 for a new picture.</div></div></div><div class="newbie"><span class="eyebrow">What is a drift word?</span><p>A word in your tool&rsquo;s description that pulled away from what you asked for. If it says &ldquo;cluttered&rdquo; and your prompt never did, ask which word in your prompt could pull it back.</p></div><div class="stretch"><span class="eyebrow">Going faster? Try this</span><p>At Storyteller, a second box appears: &ldquo;What my tool says is in the reference picture&rdquo;. Ask the same question about the picture you were aiming for. The gap between the two answers is the gap you are closing.</p></div><details class="stuck"><summary>Stuck? Open this</summary><ul><li>Your tool cannot describe pictures (Canva&rsquo;s Dream Lab, for one): press <em>My tool cannot describe pictures</em>.</li><li>&ldquo;The helper needs a workshop code. No code? Check it by eye instead.&rdquo;: press <em>Check it by eye instead</em> and answer one thing at a time.</li></ul></details></div>
+  </div>
+</section>
+<section class="frame part" id="pF" aria-labelledby="pFh">
+  <div class="part-top"><span class="num">F</span><h2 class="h-big" id="pFh">Build and share</h2><p>Step 5. Put your picture in the Comic Maker and stand one of the gang in it. The rest is listed for later.</p></div>
+  <div class="part-meta"><span class="t">About 6 minutes</span><span class="lv">Four panels</span></div>
+  <div class="part-body">
+    <div class="part-vis">
+<div class="mock" role="img" aria-label="Drawn copy of the Comic Maker with one picture and one sticker">
+  <span class="mh sm">Comic Maker</span>
+  <span class="ml"><span class="pn">38</span> Pick a page</span>
+  <div class="lvc"><span class="lv"><b>Storybook</b>One picture and a few sentences under it.</span><span class="lv on"><b>Four panels</b>Four pictures, with captions and speech.</span><span class="lv"><b>Super maker</b>Page styles, stickers and sound effects.</span></div>
+  <div class="sheet">
+    <div class="ttl">Your comic</div>
+    <div class="pnls">
+      <div class="p sel" style="background-image:url(img/police-pound.jpg)"><span class="pnl"><span class="pn">39</span></span><img src="img/stk-nettle-pointing.webp" alt=""></div>
+      <div class="p"></div><div class="p"></div><div class="p"></div>
+    </div>
+  </div>
+  <div class="dock"><span class="dk">Panel 1</span><span class="dk">Picture</span><span class="mbtn small ghost">Backgrounds</span><span class="mbtn small">Upload your own</span>
+    <span class="dk">Add</span><span class="mbtn small"><span class="pn">40</span> Sticker</span><span class="mbtn small ghost">Speech balloon</span><span class="mbtn small ghost">Caption box</span><span class="mbtn small ghost"><span class="pn">42</span> Done</span></div>
+  <span class="cap"><span class="pn">41</span> Drag the sticker to move it, and the yellow dot in its corner to make it bigger or smaller.</span>
+</div></div>
+    <div class="part-steps"><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 38">38</span><div><div class="do">Under <em>Pick a page</em>, press <em>Four panels</em>.</div><div class="see">Your comic, with four empty panels. A note says how many pictures the page needs, and that the gang&rsquo;s stickers and the site&rsquo;s places can fill the gaps.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 39">39</span><div><div class="do">Click the first panel. Press <em>Upload your own</em> and choose the picture you saved.</div><div class="see">The picture fills the panel, and a toolbar headed &ldquo;Panel 1&rdquo; appears.</div><div class="tip">You can also paste a picture with Ctrl+V (Cmd+V), or drop it on the panel. <em>Backgrounds</em> borrows one of the site&rsquo;s places.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 40">40</span><div><div class="do">In the toolbar, under <em>Add</em>, press <em>Sticker</em>. Pick a character, then tap a sticker.</div><div class="see">The sticker lands in the panel.</div></div></div><div class="st"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 41">41</span><div><div class="do">Drag the sticker to move it. Drag the <em>yellow dot</em> in its corner to make it bigger or smaller. Press <em>Inside the frame</em> for a close-up, or <em>Pop out</em> to let it burst over the frame.</div><div class="see">Your character stands in your picture.</div></div></div><div class="st key"><span class="n" role="checkbox" aria-checked="false" tabindex="0" aria-label="Step 42">42</span><div><div class="do">Press <em>Done</em> to let go of the panel.</div><div class="see">The whole page again. It saves itself in this browser as you go.</div></div></div><div class="newbie"><span class="eyebrow">Not enough time for the rest?</span><p>That is fine. A picture with a character in it is a real first comic panel. The rest of the Comic Maker is listed in the box below for later.</p></div><div class="stretch"><span class="eyebrow">Going faster? Try this</span><p>Add a second picture in another panel with a different character. Then open the box below and try a <em>Speech balloon</em>.</p></div><details class="stuck"><summary>Stuck? Open this</summary><ul><li>No <em>Add</em> in the toolbar: choose a panel and give it a picture first.</li><li>A sticker is too big: press <em>Smaller</em>, or drag its yellow dot.</li></ul></details><details class="stuck later"><summary>For later or at home: the rest of the Comic Maker</summary><ul><li><b>Words.</b> With a panel chosen, press <em>Speech balloon</em> for a character or <em>Caption box</em> for the storyteller, and point the balloon at whoever is talking.</li><li><b>Super maker.</b> Adds thought bubbles and sound effects. <em>Style</em> changes the whole page layout.</li><li><b>Storybook and templates.</b> Storybook is one picture with a few sentences under it. <em>Start from a template</em> opens a page with the places, the gang and a first line already in it.</li><li><b>More pages.</b> <em>+ Add a page</em> builds a comic of up to ten pages, each with its own layout.</li><li><b>Keep it.</b> Under <em>Finished?</em>: <em>Save to My comics</em>, <em>Download PNG</em>, or <em>Print or save as PDF</em>. It all stays on this device.</li><li><b>Undo and redo.</b> Ctrl+Z (Cmd+Z) undoes. Shift with it redoes.</li></ul></details></div>
+  </div>
+</section>
+
+      <div class="rule" id="levels">Three levels</div>
+      <section class="tiers" aria-label="Three levels">
+        <article class="frame tier"><div class="ph"><img src="img/pound-office.jpg" alt=""><img class="stk" src="img/stk-nettle-notes.webp" alt=""></div><div class="tx"><h3>Level 1 Doodler</h3>
+          <p><b>Character</b>One character portrait. One character, one clear picture.</p><p><b>Place</b>One empty room, with nobody in it.</p><p><b>Look closely asks</b>What can you see?</p></div></article>
+        <article class="frame tier"><div class="ph"><img src="img/duck-pond-park.webp" alt=""><img class="stk" src="img/stk-vivi-dancing.webp" alt=""></div><div class="tx"><h3>Level 2 Sketcher</h3>
+          <p><b>Character</b>The same character in a place. Copy the shared words word for word every time, or your character will change.</p><p><b>Place</b>Two rooms, one building.</p><p><b>Look closely asks</b>The details.</p></div></article>
+        <article class="frame tier"><div class="ph"><img src="img/funfair.webp" alt=""><img class="stk" src="img/stk-flash-running.webp" alt=""></div><div class="tx"><h3>Level 3 Storyteller</h3>
+          <p><b>Character</b>A three-picture story. Plan the shots with an AI partner before you make anything.</p><p><b>Place</b>One street, three shots, with the same time of day, weather and colours in every picture.</p><p><b>Look closely asks</b>The world.</p></div></article>
+      </section>
+
+      <div class="rule" id="school">Take it back to school</div>
+      <ul class="frame checks">
+        <li><div><b>Make a workshop code the day before</b><span>On the Teachers page you give your own API key once and get a code of three words and a number. The key is a developer key from Anthropic, OpenAI or Google, not a chat subscription. Learners only ever type the code.</span></div></li>
+        <li><div><b>Choose the level and the tool</b><span>Set the highest level when you make the code, and change it during the lesson if you like. Choose the image tool there too, so learners are told which one to use.</span></div></li>
+        <li><div><b>Run Look closely in order</b><span>Watch, then Together, then their own turn. The looking comes before the prompting.</span></div></li>
+        <li><div><b>Check the image tool&rsquo;s age rules</b><span>Most ask users to be 13 or over, or to use a school account. If learners may not use it themselves, run step 3 as a class on your screen.</span></div></li>
+        <li><div><b>No key and no code?</b><span>The lesson still works. Learners get a starter prompt made from their own brief, and check their picture by eye.</span></div></li>
+        <li><div><b>Reset shared devices</b><span>At the end, show heutalab.com/paws-and-order/?reset=1. Each learner opens it and presses Yes, start again. End the workshop code on the Teachers page when you have finished with it.</span></div></li>
+      </ul>
+
+      <div class="band"><q>Every great story starts with a closer look&hellip;</q><div class="stamp">Look. Choose. Create. Check. Build.</div></div>
+      <div class="foot"><span>Paws &amp; Order Walkthrough</span><span>Part of HeutaLab</span><span>Screens are drawn to match the site</span></div>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  var KEY='pa-walkthrough-v2', root=document.documentElement;
+  var st={mode:'new',done:{}};
+  try{var raw=localStorage.getItem(KEY); if(raw){var p=JSON.parse(raw); if(p&&typeof p==='object'){st.mode=p.mode==='pro'?'pro':'new'; st.done=p.done||{};}}}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
+  var steps=[].slice.call(document.querySelectorAll('.st'));
+  var keys=steps.filter(function(s){return s.classList.contains('key');});
+  document.getElementById('keycount').textContent=keys.length;
+  document.getElementById('allcount').textContent=steps.length;
+  function num(s){return s.querySelector('.n').textContent.trim();}
+  function paint(){
+    root.setAttribute('data-pace',st.mode);
+    [].forEach.call(document.querySelectorAll('.bar .seg button'),function(b){b.setAttribute('aria-pressed',String(b.dataset.mode===st.mode));});
+    var pool=st.mode==='pro'?keys:steps, n=0;
+    steps.forEach(function(s){var d=!!st.done[num(s)]; s.classList.toggle('done',d); s.querySelector('.n').setAttribute('aria-checked',String(d));});
+    pool.forEach(function(s){if(st.done[num(s)])n++;});
+    document.getElementById('prog').textContent=n+' of '+pool.length+' done';
+    document.getElementById('meter').style.width=(pool.length?n/pool.length*100:0)+'%';
+  }
+  function toggle(s){var k=num(s); if(st.done[k])delete st.done[k]; else st.done[k]=1; save(); paint();}
+  steps.forEach(function(s){var c=s.querySelector('.n'); c.addEventListener('click',function(){toggle(s);}); c.addEventListener('keydown',function(e){if(e.key===' '||e.key==='Enter'){e.preventDefault();toggle(s);}});});
+  [].forEach.call(document.querySelectorAll('.bar .seg button'),function(b){b.addEventListener('click',function(){st.mode=b.dataset.mode; save(); paint();});});
+  document.getElementById('nextbtn').addEventListener('click',function(){
+    var pool=st.mode==='pro'?keys:steps, t=null;
+    for(var i=0;i<pool.length;i++){if(!st.done[num(pool[i])]){t=pool[i];break;}}
+    if(!t){document.getElementById('prog').textContent='All done';return;}
+    t.scrollIntoView({behavior:'smooth',block:'center'}); t.classList.remove('flash'); void t.offsetWidth; t.classList.add('flash');
+  });
+  var rb=document.getElementById('resetbtn'), armed=null;
+  rb.addEventListener('click',function(){
+    if(!armed){rb.textContent='Tap again to clear'; armed=setTimeout(function(){armed=null; rb.textContent='Start over';},3000); return;}
+    clearTimeout(armed); armed=null; rb.textContent='Start over'; st.done={}; save(); paint();
+  });
+  [].forEach.call(document.querySelectorAll('.st .cp'),function(b){
+    b.addEventListener('click',function(){
+      var tx=b.parentNode.querySelector('.tx'), text=tx.textContent;
+      function ok(){var o=b.textContent; b.textContent='Copied'; setTimeout(function(){b.textContent='Copy';},1200);}
+      function sel(){var r=document.createRange(); r.selectNodeContents(tx); var s=window.getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent='Selected'; setTimeout(function(){b.textContent='Copy';},1600);}
+      try{navigator.clipboard.writeText(text).then(ok,sel);}catch(e){sel();}
+    });
+  });
+  var links=[].slice.call(document.querySelectorAll('#nav a')), tg=links.map(function(a){return document.querySelector(a.getAttribute('href'));});
+  function mark(){var cur=0,best=-1e9; tg.forEach(function(t,i){if(!t)return; var top=t.getBoundingClientRect().top; if(top<160&&top>best){best=top;cur=i;}}); links.forEach(function(a,i){a.classList.toggle('on',i===cur);});}
+  addEventListener('scroll',mark,{passive:true}); mark(); paint();
+})();
+</script>
+
+
+</body></html>

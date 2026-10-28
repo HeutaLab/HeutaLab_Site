@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Walkthrough: The Precinct</title>
+<meta name="description" content="A step-by-step guide to The Precinct, to keep open beside the site.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Courier+Prime:wght@400;700&family=Knewave&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Oswald:wght@400;500;600&display=swap">
+<style>
+/* Layout: the Precinct's own console (banner, left rail, bordered panels), with a painting-by-numbers walkthrough: every screen shows numbered pins that match the numbered steps beside it. */
+:root{
+  --bg:#080b0b;
+  --panel:#0d1212;
+  --panel-2:#121919;
+  --line:#2b3535;
+  --fg:#e9e7df;
+  --muted:#a2aaa6;
+  --accent:#f5c518;
+  --accent-ink:#f5c518;
+  --on-accent:#0b0f0f;
+  --bad:#d97a68;
+  --f-title:'Knewave','Impact',sans-serif;
+  --f-label:'Oswald','Arial Narrow',Impact,sans-serif;
+  --f-body:'Libre Baskerville',Georgia,'Times New Roman',serif;
+  --f-code:'Courier Prime','Courier New',monospace;
+  --f-hand:'Caveat','Bradley Hand',cursive;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme:light){
+  :root:not([data-theme="dark"]){
+    --bg:#e9e6db;--panel:#f6f3e8;--panel-2:#ebe7d9;--line:#bdb8a6;--fg:#12171a;--muted:#525a57;
+    --accent:#f0bd0c;--accent-ink:#7a5c00;--bad:#a9412f;color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#e9e6db;--panel:#f6f3e8;--panel-2:#ebe7d9;--line:#bdb8a6;--fg:#12171a;--muted:#525a57;
+  --accent:#f0bd0c;--accent-ink:#7a5c00;--bad:#a9412f;color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15.5px;line-height:1.7;padding-inline:16px;padding-block:16px 48px}
+img{display:block;max-width:100%}
+a{color:var(--accent-ink)}
+p{margin:0;max-width:66ch}
+h1,h2,h3,h4{margin:0;font-weight:400}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.shell{max-width:1240px;margin-inline:auto;display:grid;gap:16px}
+.frame{border:1px solid var(--line);background:var(--panel);min-width:0}
+.eyebrow{font-family:var(--f-label);font-weight:500;text-transform:uppercase;letter-spacing:.2em;font-size:.76rem;color:var(--accent-ink)}
+.h-big{font-family:var(--f-title);text-transform:uppercase;line-height:1.02;color:var(--accent-ink);text-wrap:balance;transform:rotate(-1.5deg);transform-origin:left}
+.dim{color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:space-between;gap:18px;background:var(--accent);color:var(--on-accent);font-family:var(--f-label);font-weight:500;text-transform:uppercase;letter-spacing:.14em;font-size:.82rem;padding:10px 14px;text-decoration:none;border:0;cursor:pointer;min-height:40px}
+.btn:hover{filter:brightness(1.08)}
+.btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* banner */
+.banner{position:relative;min-height:250px;overflow:hidden;background:#050707;display:grid;align-items:end}
+.banner>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:75% 40%}
+.banner::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#050707 0%,rgba(5,7,7,.94) 32%,rgba(5,7,7,.35) 62%,rgba(5,7,7,0) 100%);z-index:1}
+.banner-in{position:relative;z-index:2;padding:30px 32px 26px;display:grid;gap:8px;max-width:640px}
+.title{font-family:var(--f-title);font-size:clamp(3rem,8.4vw,5.8rem);line-height:.86;text-transform:uppercase;color:#f5c518;text-shadow:3px 3px 0 #000;transform:rotate(-2deg);transform-origin:left}
+.title small{display:block;font-family:var(--f-label);font-size:.82rem;line-height:1.5;letter-spacing:.34em;color:#e9e7df;text-shadow:none;margin-top:16px;transform:none}
+.banner .tagline{color:#e9e7df;font-style:italic;font-size:.98rem;max-width:44ch}
+.banner .hand{position:absolute;right:22px;top:20px;z-index:2;font-family:var(--f-hand);font-weight:600;color:#f5c518;font-size:clamp(1.6rem,3.4vw,2.4rem);text-align:right;transform:rotate(-6deg);line-height:1}
+@media(max-width:640px){.banner::before{background:linear-gradient(0deg,#050707 8%,rgba(5,7,7,.6) 60%,rgba(5,7,7,.1) 100%)}.banner-in{padding:24px 18px}.banner .hand{display:none}}
+
+/* rail + main */
+.cols{display:grid;grid-template-columns:230px minmax(0,1fr);gap:16px;align-items:start}
+.rail{position:sticky;top:16px;overflow:hidden}
+.rail nav{display:grid}
+.rail a{display:flex;align-items:center;gap:12px;padding:11px 16px;font-family:var(--f-label);font-weight:500;text-transform:uppercase;letter-spacing:.13em;font-size:.8rem;color:var(--fg);text-decoration:none;border-bottom:1px solid var(--line)}
+.rail a i{font-style:normal;width:22px;height:22px;flex:none;display:grid;place-items:center;border:1px solid var(--line);font-size:.72rem}
+.rail a:hover{background:var(--panel-2)}
+.rail a.on{background:var(--accent);color:var(--on-accent);font-weight:600}
+.rail a.on i{border-color:var(--on-accent)}
+.rail-art{position:relative;aspect-ratio:1/.95;overflow:hidden;background:#050707}
+.rail-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55;filter:grayscale(.4)}
+.rail-art q{position:absolute;left:14px;right:12px;bottom:26px;z-index:2;font-family:var(--f-hand);font-weight:600;font-size:1.7rem;line-height:1;color:#e9e7df;quotes:none}
+.rail-art span{position:absolute;left:14px;bottom:10px;z-index:2;font-family:var(--f-label);font-size:.66rem;letter-spacing:.2em;color:#a2aaa6}
+@media(max-height:820px){.rail-art{display:none}}
+@media(max-width:900px){
+  .cols{grid-template-columns:1fr}
+  .rail{position:static}
+  .rail nav{display:flex;overflow-x:auto}
+  .rail a{border-bottom:0;border-right:1px solid var(--line);white-space:nowrap;flex:none}
+  .rail-art{display:none}
+}
+main{display:grid;gap:16px;min-width:0}
+.sec-head{display:flex;align-items:center;gap:16px;margin-top:20px;scroll-margin-top:16px}
+.sec-head h2{font-family:var(--f-label);font-weight:500;text-transform:uppercase;letter-spacing:.2em;font-size:1rem;white-space:nowrap}
+.sec-head::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* feature */
+.feature{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1fr);gap:16px}
+@media(max-width:800px){.feature{grid-template-columns:1fr}}
+.feat{position:relative;overflow:hidden;min-height:270px;display:grid;align-items:center;background:#050707;color:#e9e7df}
+.feat>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.feat .veil{position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,7,7,0) 0%,rgba(5,7,7,.78) 42%,rgba(5,7,7,.94) 100%)}
+.feat-in{position:relative;z-index:2;padding:26px;display:grid;gap:12px;justify-items:start}
+.feat.wide .feat-in{margin-left:auto;width:min(58%,470px)}
+@media(max-width:560px){.feat.wide .feat-in{width:100%;margin:0;padding-top:140px}.feat.wide .veil{background:linear-gradient(0deg,rgba(5,7,7,.96) 40%,rgba(5,7,7,0) 100%)}}
+.feat h2{font-size:clamp(1.7rem,3.2vw,2.4rem)}
+.feat p{font-size:.95rem}
+.feat.side{align-items:end}
+.feat.side .veil{background:linear-gradient(0deg,rgba(5,7,7,.95) 30%,rgba(5,7,7,.15) 100%)}
+.feat.side .feat-in{align-self:end;padding-top:140px}
+
+/* learn */
+.learn{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));border:1px solid var(--line);background:var(--panel)}
+.learn>div{padding:20px 18px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);margin:0 -1px -1px 0;min-width:0;display:grid;gap:8px;align-content:start}
+.learn .k{font-family:var(--f-title);font-size:2.3rem;line-height:.9;color:var(--accent-ink)}
+.learn h3{font-family:var(--f-label);font-weight:500;text-transform:uppercase;letter-spacing:.12em;font-size:.92rem}
+.learn p{font-size:.88rem;color:var(--muted);line-height:1.6}
+
+/* new here */
+.intro{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(max-width:800px){.intro{grid-template-columns:1fr}}
+.box{padding:20px;display:grid;gap:12px;align-content:start}
+.box h3{font-family:var(--f-title);text-transform:uppercase;font-size:1.5rem;line-height:1;color:var(--accent-ink)}
+.box p{font-size:.92rem}
+.urlbar{display:flex;align-items:center;gap:10px;background:#050707;border:1px solid #3d4848;padding:10px 12px;color:#e9e7df;font-family:var(--f-code);font-size:1rem;min-width:0;flex-wrap:wrap}
+.urlbar .lock{width:14px;height:14px;border:2px solid #8b938f;border-radius:3px;flex:none}
+.urlbar b{color:#f5c518;font-weight:700;overflow-wrap:anywhere}
+.need{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.need li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;font-size:.9rem;line-height:1.55}
+.need li::before{content:"";width:16px;height:16px;border:2px solid var(--accent);margin-top:4px}
+.need b{font-family:var(--f-label);font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.gloss{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));border:1px solid var(--line);background:var(--panel)}
+.gloss>div{padding:14px 16px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);margin:0 -1px -1px 0;font-size:.86rem;line-height:1.55;min-width:0}
+.gloss b{display:block;font-family:var(--f-label);font-weight:500;text-transform:uppercase;letter-spacing:.12em;font-size:.82rem;color:var(--accent-ink)}
+.map{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border:1px solid var(--line);background:var(--panel)}
+@media(max-width:900px){.map{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.map a{padding:14px 12px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);margin:0 -1px -1px 0;text-decoration:none;color:var(--fg);display:grid;gap:2px;align-content:start}
+.map a:hover{background:var(--panel-2)}
+.map small{font-family:var(--f-label);letter-spacing:.14em;text-transform:uppercase;font-size:.7rem;color:var(--accent-ink)}
+.map strong{font-family:var(--f-title);font-weight:400;font-size:1.05rem;text-transform:uppercase;line-height:1.1}
+.map em{font-style:normal;font-size:.76rem;color:var(--muted);line-height:1.4}
+
+/* big idea */
+.split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(max-width:760px){.split{grid-template-columns:1fr}}
+.box.weak h3{color:var(--bad)}
+.prompt{font-family:var(--f-code);font-size:1rem;line-height:1.9;background:#050707;color:#e9e7df;border:1px dashed #3a4545;padding:14px}
+.chip{background:rgba(245,197,24,.16);border-bottom:2px solid #f5c518;padding:0 3px}
+.legend{display:flex;flex-wrap:wrap;gap:6px}
+.legend i{font-style:normal;font-family:var(--f-label);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;border:1px solid var(--line);padding:2px 8px;color:var(--muted)}
+.result{position:relative;aspect-ratio:16/10;overflow:hidden;border:1px solid var(--line);background:#050707;display:grid;place-items:center}
+.result img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.result.gen{background:repeating-linear-gradient(135deg,#2a3f66 0 14px,#3a2a5c 14px 28px)}
+.result.gen b{position:relative;font-family:var(--f-label);font-weight:500;letter-spacing:.14em;text-transform:uppercase;font-size:.8rem;color:#fff;background:rgba(0,0,0,.6);padding:8px 12px;text-align:center}
+
+/* parts */
+.part{display:grid;scroll-margin-top:16px}
+.part-top{display:flex;align-items:flex-end;gap:16px;padding:22px 24px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.part-top .num{font-family:var(--f-title);font-size:4.6rem;line-height:.8;color:var(--accent-ink)}
+.part-top h2{font-size:clamp(1.9rem,4.4vw,3rem)}
+.part-top p{flex:1 1 280px;color:var(--muted);font-style:italic;font-size:.96rem}
+.part-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);align-items:start}
+@media(max-width:900px){.part-body{grid-template-columns:1fr}}
+.part-vis{padding:20px;border-right:1px solid var(--line);display:grid;gap:14px;position:sticky;top:16px;min-width:0}
+@media(max-width:900px){.part-vis{position:static;border-right:0;border-bottom:1px solid var(--line)}}
+.part-steps{padding:6px 22px 18px;min-width:0}
+figure{margin:0}
+figcaption{font-family:var(--f-label);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding-top:8px}
+
+/* pins in pictures */
+.pn{display:inline-grid;place-items:center;flex:none;min-width:26px;height:26px;padding-inline:4px;border-radius:13px;background:#f5c518;color:#0b0f0f;font-family:var(--f-label);font-weight:600;font-size:.82rem;line-height:1;box-shadow:0 0 0 2px rgba(5,7,7,.85);vertical-align:middle}
+.pn.abs{position:absolute;transform:translate(-50%,-50%);z-index:3}
+
+/* mock ui (always dark, depicts the site) */
+.mock{background:#050707;border:1px solid var(--line);color:#e9e7df;padding:14px;display:grid;gap:12px;min-width:0}
+.mock .lb{display:flex;align-items:center;gap:8px;font-family:var(--f-label);font-weight:500;font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:#f5c518}
+.mock .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.mock .pill{border:1px solid #3d4848;padding:4px 10px;font-family:var(--f-label);font-size:.8rem;letter-spacing:.06em;color:#c5c9c5;background:#0d1212}
+.mock .pill.on{background:#f5c518;color:#0b0f0f;border-color:#f5c518;font-weight:600}
+.mock .field{border:1px solid #3d4848;background:#0d1212;padding:9px 11px;font-family:var(--f-code);font-size:.84rem;color:#c5c9c5;line-height:1.55}
+.mock .field u{text-decoration:none;border-bottom:2px solid #f5c518}
+.mock .ct{font-family:var(--f-code);font-size:.72rem;color:#8b938f}
+.mock .go{justify-self:start;display:inline-flex;align-items:center;gap:10px;background:#f5c518;color:#0b0f0f;font-family:var(--f-label);font-weight:500;letter-spacing:.14em;text-transform:uppercase;font-size:.8rem;padding:8px 12px}
+.mock .go .pn{background:#0b0f0f;color:#f5c518;box-shadow:none}
+.mock .menu{display:flex;flex-wrap:wrap;gap:6px}
+.mock .pp{width:54px;aspect-ratio:1/1;object-fit:cover;border:1px solid #3d4848}
+.mock .pic{position:relative;border:1px solid #3d4848;overflow:hidden;aspect-ratio:16/10}
+.mock .pic img{width:100%;height:100%;object-fit:cover}
+.mock .pic .pn{position:absolute;left:10px;top:10px}
+.mock .sw{display:flex;gap:6px}
+.mock .sw img{width:44px;height:44px;object-fit:cover;border:1px solid #3d4848}
+.mock .sec{border:1px solid #3d4848;padding:9px 11px;font-size:.82rem;color:#c5c9c5;display:flex;gap:9px;align-items:flex-start;line-height:1.5}
+.mock .sec b{font-family:var(--f-label);font-weight:500;letter-spacing:.1em;text-transform:uppercase;font-size:.78rem;color:#f5c518;display:block}
+.mock .tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px}
+.mock .tools span{border:1px solid #3d4848;padding:8px;font-family:var(--f-label);font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;text-align:center;background:#0d1212}
+.mock .tools span small{display:block;font-size:.62rem;letter-spacing:.1em;color:#8b938f}
+.mock .split2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:480px){.mock .split2{grid-template-columns:1fr}}
+
+/* steps */
+.st{display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;padding:18px 0;border-top:1px solid var(--line)}
+.st:first-child{border-top:0}
+.st .n{width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--on-accent);font-family:var(--f-label);font-weight:600;font-size:1.25rem;display:grid;place-items:center}
+.st .do{font-weight:700;font-size:1rem;line-height:1.5}
+.st .do em{font-style:normal;background:rgba(245,197,24,.16);border-bottom:2px solid var(--accent);padding:0 3px}
+.st .say{position:relative;margin-top:10px;background:#050707;color:#e9e7df;border:1px dashed #3a4545;padding:10px 78px 10px 12px;font-family:var(--f-code);font-size:.94rem;line-height:1.6}
+.st .say button{position:absolute;right:6px;top:6px;background:var(--accent);color:var(--on-accent);border:0;font-family:var(--f-label);font-weight:500;letter-spacing:.12em;text-transform:uppercase;font-size:.7rem;padding:6px 10px;cursor:pointer}
+.st .say .lbl{display:block;font-family:var(--f-label);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:#f5c518;margin-bottom:2px}
+.st .see{margin-top:8px;font-size:.86rem;color:var(--muted);line-height:1.55}
+.st .see::before{content:"You should see  ";font-family:var(--f-label);font-weight:500;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-ink)}
+.st .tip{margin-top:8px;font-size:.84rem;border-left:3px solid var(--accent);padding:2px 0 2px 10px;color:var(--fg)}
+.st ul.links{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.st ul.links a{font-family:var(--f-label);font-weight:500;letter-spacing:.08em;text-transform:uppercase;font-size:.78rem;border:1px solid var(--line);padding:5px 10px;text-decoration:none;color:var(--fg);background:var(--panel-2)}
+.st ul.links a:hover{border-color:var(--accent)}
+.stcopy{position:relative}
+.status{font-family:var(--f-label);font-size:.74rem;letter-spacing:.1em;color:var(--muted)}
+
+/* tiers, checks, band */
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px}
+.tier{display:grid;grid-template-rows:auto 1fr;background:var(--panel);border:1px solid var(--line);min-width:0}
+.tier .ph{aspect-ratio:16/10;overflow:hidden;background:#050707}
+.tier .ph img{width:100%;height:100%;object-fit:cover}
+.tier .tx{padding:14px 16px 16px;display:grid;gap:6px;align-content:start}
+.tier h3{font-family:var(--f-title);text-transform:uppercase;font-size:1.35rem;line-height:1.05;color:var(--accent-ink)}
+.tier p{font-size:.86rem;color:var(--muted);line-height:1.55}
+.tier p b{color:var(--fg);font-weight:700}
+.checks{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));border:1px solid var(--line);background:var(--panel)}
+.checks li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:12px;padding:16px 18px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);margin:0 -1px -1px 0}
+.checks li::before{content:"";width:18px;height:18px;border:2px solid var(--accent);margin-top:4px}
+.checks b{display:block;font-family:var(--f-label);font-weight:500;text-transform:uppercase;letter-spacing:.1em;font-size:.86rem}
+.checks span{font-size:.88rem;color:var(--muted);line-height:1.55;display:block;margin-top:2px}
+.band{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;overflow:hidden;background:#050707;color:#e9e7df;min-height:140px}
+.band>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.7}
+.band::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,#050707 0%,rgba(5,7,7,.85) 38%,rgba(5,7,7,0) 100%)}
+.band q{position:relative;z-index:2;align-self:center;padding:22px 26px;font-family:var(--f-hand);font-weight:600;font-size:clamp(1.7rem,3vw,2.3rem);line-height:1.05;quotes:none}
+.band q small{display:block;font-family:var(--f-label);font-size:.66rem;letter-spacing:.2em;color:#a2aaa6;margin-top:6px}
+.band .stamp{position:relative;z-index:2;align-self:stretch;display:grid;align-content:center;padding:16px 22px;border-left:1px solid var(--line);background:rgba(5,7,7,.88);font-family:var(--f-label);font-weight:500;text-transform:uppercase;letter-spacing:.14em;font-size:clamp(.85rem,1.6vw,1.1rem);line-height:1.35;max-width:210px}
+@media(max-width:560px){.band{grid-template-columns:1fr}.band .stamp{border-left:0;border-top:1px solid var(--line);max-width:none}}
+.foot{font-family:var(--f-label);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 24px;padding-top:4px}
+
+/* pace bar, meta, helper blocks */
+.bar{position:sticky;top:8px;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;background:var(--panel);border:1px solid var(--accent);padding:8px 12px;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.bar .seg{display:inline-flex;border:1px solid var(--line)}
+.bar .seg button{font-family:var(--f-label);font-weight:500;letter-spacing:.1em;text-transform:uppercase;font-size:.78rem;padding:8px 12px;border:0;background:transparent;color:var(--fg);cursor:pointer;min-height:38px}
+.bar .seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);font-weight:600}
+.bar .prog{font-family:var(--f-label);letter-spacing:.12em;text-transform:uppercase;font-size:.78rem}
+.bar .meter{flex:1 1 90px;min-width:70px;height:8px;background:var(--panel-2);border:1px solid var(--line)}
+.bar .meter i{display:block;height:100%;width:0;background:var(--accent)}
+.bar .mini{font-family:var(--f-label);font-weight:500;letter-spacing:.12em;text-transform:uppercase;font-size:.76rem;padding:8px 12px;border:0;background:var(--accent);color:var(--on-accent);cursor:pointer;min-height:38px}
+.bar .mini.ghost{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.part-meta{display:flex;flex-wrap:wrap;gap:6px 10px;padding:10px 24px;border-bottom:1px solid var(--line);background:var(--panel-2);font-family:var(--f-label);font-size:.76rem;letter-spacing:.12em;text-transform:uppercase}
+.part-meta .t{color:var(--accent-ink);font-weight:600}
+.part-meta .lv{color:var(--muted)}
+.newbie,.callout,.stretch{margin-top:16px;padding:12px 14px;border:1px solid var(--line);display:grid;gap:6px;font-size:.88rem}
+.newbie{background:var(--panel-2);border-style:dashed}
+.callout{border-left:4px solid var(--accent);background:var(--panel-2)}
+.stretch{display:none;border-left:4px solid var(--accent);background:var(--panel-2)}
+.newbie p,.callout p,.stretch p{max-width:none}
+details.stuck{margin-top:14px;border:1px solid var(--line)}
+details.stuck summary{cursor:pointer;padding:10px 14px;font-family:var(--f-label);font-weight:500;letter-spacing:.14em;text-transform:uppercase;font-size:.78rem}
+details.stuck ul{margin:0;padding:4px 18px 14px 32px;font-size:.88rem;display:grid;gap:6px}
+html[data-pace="pro"] .st:not(.key){display:none}
+html[data-pace="pro"] .newbie{display:none}
+html[data-pace="pro"] .stretch{display:grid}
+html[data-pace="pro"] .st .tip{display:none}
+.st .n{cursor:pointer;border:2px solid var(--accent);user-select:none}
+.st.done .n{background:transparent;color:var(--accent-ink)}
+.st.done .do{opacity:.55}
+.st.flash{animation:flash 1.6s ease-out}
+@keyframes flash{0%,60%{background:rgba(245,197,24,.16)}100%{background:transparent}}
+@media (prefers-reduced-motion:reduce){.st.flash{animation:none;background:rgba(245,197,24,.16)}html{scroll-behavior:auto}}
+</style>
+<style>
+.mock .cast{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.mock .stk{display:flex;gap:8px;align-items:flex-end;background:#e9e7df;padding:8px;border:1px solid #3d4848}
+.mock .stk img{height:74px;width:auto;object-fit:contain}
+.mock .tick{display:flex;gap:8px;align-items:center;font-size:.84rem;color:#c5c9c5}
+.mock .tick i{width:14px;height:14px;border:1px solid #c5c9c5;display:inline-block}
+.mock .ok{font-family:var(--f-code);font-size:.78rem;color:#7fd18b}
+</style>
+</head>
+<body>
+<div class="shell" id="top">
+
+  <header class="frame banner">
+    <img src="img/novak-street.jpg" alt="Edward Novak on a rain-soaked street corner at night">
+    <div class="hand">Same city.<br>New case.<br>Your story.</div>
+    <div class="banner-in">
+      <h1 class="title">The<br>Precinct<small>WALKTHROUGH · FIVE STEPS · ONE CASE</small></h1>
+      <p class="tagline">Follow the numbers. Every screen has numbered pins, and every pin matches a numbered step.</p>
+    </div>
+  </header>
+
+  <div class="cols">
+    <aside class="frame rail" aria-label="Guide navigation">
+      <nav id="nav">
+        <a href="#top" class="on"><i>&#8962;</i>Home</a>
+        <a href="#learn"><i>?</i>You will learn</a>
+        <a href="#new"><i>i</i>New here?</a>
+        <a href="#pace"><i>&#9201;</i>Choose your pace</a>
+        <a href="#pA"><i>A</i>Open the site</a>
+        <a href="#pB"><i>B</i>Look closely</a>
+        <a href="#pC"><i>C</i>Choose and describe</a>
+        <a href="#pD"><i>D</i>Get your brief</a>
+        <a href="#pE"><i>E</i>Make the picture</a>
+        <a href="#pF"><i>F</i>Check and improve</a>
+        <a href="#pG"><i>G</i>Build and share</a>
+        <a href="#levels"><i>3</i>Three levels</a>
+        <a href="#reuse"><i>&#10003;</i>Use in school</a>
+      </nav>
+      <div class="rail-art"><img src="img/place-street-corner.jpg" alt=""><q>The truth is always in the last panel.</q><span>THE PRECINCT</span></div>
+    </aside>
+
+    <main>
+
+      <section class="feature" aria-labelledby="learn-h">
+        <div class="frame feat wide">
+          <img src="img/vera-ziggurat.jpg" alt="Vera Sinclair sitting alone in a booth at The Ziggurat" style="object-position:20% 40%">
+          <div class="veil"></div>
+          <div class="feat-in">
+            <span class="eyebrow">Before you start</span>
+            <h2 class="h-big" id="learn-h">What you will learn</h2>
+            <p>Eight skills that turn a vague request into a prompt that works. You practise each one on The Precinct, one numbered step at a time.</p>
+            <a class="btn" href="#learn">See the eight skills <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+        <div class="frame feat side">
+          <img src="img/tommy-steps.jpg" alt="Patrolman Tommy Doyle on the precinct steps at night" style="object-position:50% 40%">
+          <div class="veil"></div>
+          <div class="feat-in">
+            <h2 class="h-big">Your goal</h2>
+            <p>One picture you directed, and the steps to repeat it in your school.</p>
+            <a class="btn" href="#new">Start here <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+      </section>
+
+      <div class="sec-head" id="learn"><h2>You will learn</h2></div>
+      <section class="learn" aria-label="Eight skills">
+        <div><span class="k">1</span><h3>Look before you prompt</h3><p>Study a picture and put words to what you see: the subject, the details, the world around it.</p></div>
+        <div><span class="k">2</span><h3>Detail decides the result</h3><p>Era, medium, palette, camera and light get you close on the first try. A vague prompt returns a generic picture.</p></div>
+        <div><span class="k">3</span><h3>Keep characters consistent</h3><p>Use one description of a character, word for word, in every prompt.</p></div>
+        <div><span class="k">4</span><h3>Build a scene</h3><p>One empty room, then two rooms that read as one building, then a whole street.</p></div>
+        <div><span class="k">5</span><h3>Say what to leave out</h3><p>Ask for no extra people, no text and no other colours, or the AI fills the gaps with its own ideas.</p></div>
+        <div><span class="k">6</span><h3>Pin the palette</h3><p>Choose one colour palette, use it in every prompt and end the line with "no other colours".</p></div>
+        <div><span class="k">7</span><h3>Check and improve</h3><p>Put the result next to what you asked for, spot what drifted and find the word that caused it.</p></div>
+        <div><span class="k">8</span><h3>Change one thing at a time</h3><p>Single edits show which word did the work. That is how prompt skill grows.</p></div>
+      </section>
+
+      <div class="sec-head" id="new"><h2>New here?</h2></div>
+      <section class="intro" aria-label="What the site is">
+        <div class="frame box">
+          <h3>What is The Precinct?</h3>
+          <p>A free web page made by Glenn Malcolm for teachers. You look closely at a noir comic picture, describe it, and the site writes you a detailed <b>prompt</b>: the written instruction an AI image tool needs to draw it.</p>
+          <p>The site never draws. You paste the prompt into an image tool such as Gemini, make your picture, then come back to check it and put it in a comic panel.</p>
+          <p class="dim" style="font-size:.86rem">The hands-on part takes about 35 to 40 minutes. Work through it top to bottom.</p>
+        </div>
+        <div class="frame box">
+          <h3>Where is it?</h3>
+          <p>Type this address into any web browser:</p>
+          <div class="urlbar"><span class="lock"></span><b>heutalab.com/the-precinct/</b></div>
+          
+          <h3 style="margin-top:6px">What you need</h3>
+          <ul class="need">
+            <li><span><b>A computer or tablet</b> with a web browser.</span></li>
+            <li><span><b>The Rookie code.</b> Your facilitator puts it on screen. The site asks for it at Step 3, not before.</span></li>
+            <li><span><b>An image tool</b> you can sign in to: Gemini, ChatGPT or Copilot. The site also lists Canva and Midjourney.</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <div class="sec-head"><h2>Words you will meet</h2></div>
+      <section class="gloss" aria-label="Glossary">
+        <div><b>Prompt</b>The written instruction you give an AI image tool. The site calls yours a brief.</div>
+        <div><b>Image tool</b>The AI that draws the picture from your prompt. You choose it at Step 3.</div>
+        <div><b>Reference</b>A picture you study to learn what to describe.</div>
+        <div><b>Case</b>One piece of work: 01 Character, 02 Location, 03 Scene, 04 Page, 05 Review. Each case keeps its own work.</div>
+        <div><b>Briefing desk</b>The part of the site that reads your description and idea and writes your prompt.</div>
+        <div><b>Level</b>Rookie, Detective or Commissioner. Each opens with its own workshop code.</div>
+        <div><b>Palette</b>The colours a picture is allowed to use. You choose one of five.</div>
+        <div><b>Look</b>The fixed description of one character. It goes into every brief unchanged, so they stay recognisable.</div>
+        <div><b>Workshop code</b>A short code from your facilitator. The desk asks for it the first time it needs the AI.</div>
+      </section>
+
+      <div class="sec-head"><h2>The route</h2></div>
+      <nav class="map" aria-label="Seven parts">
+        <a href="#pA"><small>Part A</small><strong>Open the site</strong><em>Steps 1 to 3</em></a>
+        <a href="#pB"><small>Part B</small><strong>Look closely</strong><em>Steps 4 to 9</em></a>
+        <a href="#pC"><small>Part C</small><strong>Choose and describe</strong><em>Steps 10 to 17</em></a>
+        <a href="#pD"><small>Part D</small><strong>Get your brief</strong><em>Steps 18 to 24</em></a>
+        <a href="#pE"><small>Part E</small><strong>Make the picture</strong><em>Steps 25 to 29</em></a>
+        <a href="#pF"><small>Part F</small><strong>Check and improve</strong><em>Steps 30 to 38</em></a>
+        <a href="#pG"><small>Part G</small><strong>Build and share</strong><em>Steps 39 to 43</em></a>
+      </nav>
+
+      <div class="sec-head"><h2>Why detail matters</h2></div>
+      <section class="split" aria-label="Vague versus detailed prompt">
+        <div class="frame box weak">
+          <h3>Prompt A · 5 words</h3>
+          <div class="prompt">a detective in an alley</div>
+          <div class="result"><img src="img/prompt-a.jpg" alt="First result of prompt A: a colour photograph of a man smoking in an alley beside a neon bar sign"></div>
+          <p class="dim" style="font-size:.88rem">A colour photograph, not a comic, with a cigarette, a book and a bar sign nobody asked for.</p>
+        </div>
+        <div class="frame box">
+          <h3 style="color:var(--accent-ink)">Prompt B · 66 words</h3>
+          <div class="prompt">A <span class="chip">1950s Los Angeles film noir</span> comic panel, <span class="chip">black ink with halftone shading</span>, <span class="chip">black and grey only</span>. <span class="chip">Low angle</span> in a rain-slicked alley at night. A detective in a fedora and trench coat strikes a match; <span class="chip">its flame is the only light</span>, glowing up onto his face. The rest of the frame falls into deep shadow. Wide landscape panel. <span class="chip">No text, no captions, no speech balloons.</span></div>
+          <div class="legend"><i>era</i><i>medium</i><i>palette</i><i>camera</i><i>light</i><i>leave out</i></div>
+          <div class="result"><img src="img/prompt-b.jpg" alt="First result of prompt B: a black and white comic panel of a detective striking a match in an alley"></div>
+          <p class="dim" style="font-size:.88rem">Era, medium and palette held. The flame still came out yellow: the first render is a draft.</p>
+        </div>
+      </section>
+
+            <div class="sec-head" id="pace"><h2>Choose your pace</h2></div>
+      <section class="intro" aria-label="Choose your pace">
+        <div class="frame box">
+          <h3>New to AI, or want every step</h3>
+          <p>Do every step in order. Yellow numbered circles show what to do. Boxes marked "New to AI?" explain the basics. Tick each circle as you finish it, and the guide remembers where you are.</p>
+        </div>
+        <div class="frame box">
+          <h3>I use AI already</h3>
+          <p>Show the quick path: only the key steps, about <span id="keycount">29</span> of 43. "Going faster?" challenges appear at the end of some parts. The other steps are still here if you switch back.</p>
+        </div>
+      </section>
+      <div class="bar" id="bar" role="region" aria-label="Your pace and progress">
+        <div class="seg" role="group" aria-label="Pace">
+          <button type="button" data-mode="new" aria-pressed="true">Every step</button>
+          <button type="button" data-mode="pro" aria-pressed="false">Quick path</button>
+        </div>
+        <span class="prog" id="prog" aria-live="polite">0 of 43 done</span>
+        <span class="meter" aria-hidden="true"><i id="meter"></i></span>
+        <button type="button" class="mini" id="nextbtn">Next step</button>
+        <button type="button" class="mini ghost" id="resetbtn">Start over</button>
+      </div>
+
+      <section class="frame part" id="pA" aria-labelledby="pAh">
+        <div class="part-top"><span class="num">A</span><h2 class="h-big" id="pAh">Open the site</h2><p>Three steps. You finish on the Look closely page.</p></div>
+        <div class="part-meta"><span class="t">About 3 minutes</span><span class="lv">Open to everyone</span></div>
+        <div class="part-body">
+          <div class="part-vis">
+            <div class="mock" aria-label="Drawn copy of the home page">
+              <span class="lb"><span class="pn">1</span> Address bar</span>
+              <div class="urlbar"><span class="lock"></span><b>heutalab.com/the-precinct/</b></div>
+              <span class="lb"><span class="pn">2</span> The five steps</span>
+              <div class="menu"><span class="pill">1 Look closely</span><span class="pill">2 Choose and describe</span><span class="pill">3 Create with AI</span><span class="pill">4 Check and improve</span><span class="pill">5 Build and share</span></div>
+              <span class="go"><span class="pn">3</span>Start Case 01 →</span>
+            </div>
+            <figure><div class="frame" style="overflow:hidden"><img src="img/hero.jpg" alt="The site's banner: a detective in a fedora glancing back down a rainy street"></div><figcaption>The banner you will land on.</figcaption></figure></div>
+          <div class="part-steps">
+<div class="st key"><span class="n">1</span><div><div class="do">Open a <em>new browser window</em>: press Ctrl+N (Cmd+N on a Mac). Click its <em>address bar</em>, type the address below and press Enter.</div><div class="say"><span class="lbl">Type this</span><span class="tx">heutalab.com/the-precinct/</span><button type="button" class="cp">Copy</button></div><div class="see">A dark page titled The Precinct, headed "Make your first comic in 5 steps."</div></div></div>
+<div class="callout"><span class="eyebrow">Put this guide beside the site</span><p>Keep this guide in one window and the site in another, side by side, so you never lose your place.</p><p><b>Mac:</b> hover over the green button at the top left of this window and choose to tile it to the left. Then pick the site’s window for the right.</p><p><b>Windows:</b> click this window, press the Windows key and the left arrow, then pick the site’s window.</p><p><b>Chromebook:</b> press Alt and [ for this window, then Alt and ] for the site’s window.</p><p><b>iPad:</b> in Safari, tap the three dots at the top of the screen, then Split View.</p><p>Guide and site in one window, as two tabs? Drag the site’s tab out, so it becomes a window of its own.</p></div>
+<div class="st"><span class="n">2</span><div><div class="do">Read the <em>five steps</em> down the page. Steps 1, 2, 4 and 5 happen on The Precinct. Step 3 happens in your image tool.</div><div class="see">Look closely, Choose and describe, Create with AI, Check and improve, Build and share.</div></div></div>
+<div class="st key"><span class="n">3</span><div><div class="do">Press <em>Start Case 01 →</em>.</div><div class="see">The Look closely page: "Look first. Then prompt. The words you find here become your brief."</div></div></div>
+<div class="newbie"><span class="eyebrow">New to AI? Read this first</span><p>An AI image tool is a chat box that draws. You type a description and it makes a picture. The Precinct does not draw anything itself. It helps you write the description, called a <b>prompt</b>, and then helps you check what came back.</p><p><b>Copy and paste:</b> select the text, press Ctrl+C (Cmd+C on a Mac), click where it should go, then press Ctrl+V (Cmd+V). On a tablet, press and hold the text, then choose Copy. Press and hold again where it should go, then choose Paste.</p></div>
+<details class="stuck"><summary>Stuck? Open this</summary><ul><li>The page will not load: check the address has no spaces and ends with a slash. Try a different browser.</li><li>Still stuck: ask your facilitator to confirm the address.</li></ul></details>
+          </div>
+        </div>
+      </section>
+
+      <section class="frame part" id="pB" aria-labelledby="pBh">
+        <div class="part-top"><span class="num">B</span><h2 class="h-big" id="pBh">Step 1 · Look closely</h2><p>Describe a picture before you ask an AI for anything. You finish with a written description.</p></div>
+        <div class="part-meta"><span class="t">About 6 minutes</span><span class="lv">No code needed</span></div>
+        <div class="part-body">
+          <div class="part-vis">
+            <div class="mock" aria-label="Drawn copy of the Look closely page">
+              <span class="lb">Level</span>
+              <div class="row"><span class="pill on"><span class="pn">4</span> Basic</span><span class="pill">Medium</span><span class="pill">Advanced</span></div>
+              <span class="lb">Mode</span>
+              <div class="row"><span class="pill"><span class="pn">5</span> Demo</span><span class="pill">Guide</span><span class="pill on"><span class="pn">6</span> Create</span><span class="pill">Explore</span></div>
+              <div class="pic" style="aspect-ratio:1/1;max-width:320px"><img src="img/cop.jpg" alt="A police officer in a peaked cap with a badge, looking up and to one side, black and white ink"><span class="pn">7</span></div>
+              <div class="sec"><span class="pn">8</span><div><b>What do you see?</b><u>A police officer in a peaked cap, looking up and to one side.</u></div></div>
+              <span class="lb">Your description</span>
+              <div class="field">A police officer in a peaked cap, looking up and to one side. A peaked cap with a large badge…</div>
+              <span class="ct">0 /800</span>
+              <span class="go"><span class="pn">9</span>Next: Choose and describe →</span>
+            </div></div>
+          <div class="part-steps">
+<div class="st"><span class="n">4</span><div><div class="do">Under <em>Level</em>, choose <em>Basic</em>. Its question is "What do you see?"</div><div class="see">Six short questions: what you see, accessories, materials, colours, emotions and expressions.</div></div></div>
+<div class="st"><span class="n">5</span><div><div class="do">Under <em>Mode</em>, choose <em>Demo</em> to see a worked example first. Every answer is filled in.</div><div class="tip">Your facilitator may show Demo from the front instead. Skip this step if so.</div></div></div>
+<div class="st key"><span class="n">6</span><div><div class="do">Switch <em>Mode</em> to <em>Create</em> ("Your turn").</div><div class="see">A new picture with an empty box under each question.</div></div></div>
+<div class="st key"><span class="n">7</span><div><div class="do">Look at the picture for a full minute before you type anything. Say out loud what you notice.</div><div class="tip">This minute is the point of the session. The AI gives answers in seconds; this is where the thinking happens.</div></div></div>
+<div class="st key"><span class="n">8</span><div><div class="do">Answer each question in a short phrase. Your answers build <em>Your description</em> underneath.</div><div class="say"><span class="lbl">Example</span><span class="tx">A police officer in a peaked cap, looking up and to one side.</span><button type="button" class="cp">Copy</button></div><div class="tip">Only what you could point at. No guessing, no story yet.</div></div></div>
+<div class="st key"><span class="n">9</span><div><div class="do">Read <em>Your description</em>, change any words you like, then press <em>Next: Choose and describe →</em>.</div><div class="see">Your case file opens: "Case 01 · Build your character · Rookie level."</div></div></div>
+<div class="newbie"><span class="eyebrow">No idea what to write?</span><p>Go round the picture in order: the person, then what they wear, then the light, then the colours. One short phrase for each is enough.</p></div>
+<div class="stretch"><span class="eyebrow">Going faster? Try this</span><p>Switch <em>Level</em> to <em>Medium</em> ("The details") and answer about hair, clothing, camera angle and lighting. Those are the details that decide whether the AI draws your character or a stranger.</p></div>
+<details class="stuck"><summary>Stuck? Open this</summary><ul><li>Want a different picture? In Explore mode, press <em>Shuffle ↻</em>.</li><li>Description messed up: press <em>Rebuild from my answers</em>.</li></ul></details>
+          </div>
+        </div>
+      </section>
+
+      <section class="frame part" id="pC" aria-labelledby="pCh">
+        <div class="part-top"><span class="num">C</span><h2 class="h-big" id="pCh">Step 2 · Choose and describe</h2><p>Pick a character and a palette, then put what you notice into at least 15 words of your own.</p></div>
+        <div class="part-meta"><span class="t">About 7 minutes</span><span class="lv">No code needed</span></div>
+        <div class="part-body">
+          <div class="part-vis">
+            <div class="mock" aria-label="Drawn copy of the case file, Step 2">
+              <span class="lb"><span class="pn">10</span> Case 01 · Build your character · Rookie level</span>
+              <span class="lb">Choose a character</span>
+              <div class="cast"><span class="pn">11</span><img class="pp" src="img/vance-card.jpg" alt="Commissioner Harlan Vance"><img class="pp" src="img/novak-card.jpg" alt="Edward Novak"><img class="pp" src="img/rourke-card.jpg" alt="Sergeant Frank Rourke"><img class="pp" src="img/vera-card.jpg" alt="Vera Sinclair"><span class="pill">See three more characters</span></div>
+              <span class="lb">Does this picture need a place?</span>
+              <div class="row"><span class="pill on"><span class="pn">12</span> Not yet</span><span class="pill">Choose a place</span></div>
+              <span class="lb">Choose a palette</span>
+              <div class="sw"><span class="pn">13</span><img src="img/pal-bw.jpg" alt="Black and white"><img src="img/pal-yellow.jpg" alt="Yellow"><img src="img/pal-green.jpg" alt="Green"><img src="img/pal-blue.jpg" alt="Blue"><img src="img/pal-red.jpg" alt="Red and amber"></div>
+              <span class="lb"><span class="pn">14</span> Write what you notice</span>
+              <div class="sec"><div><b>What you see</b>Who or what, and what they are doing.</div></div>
+              <div class="sec"><div><b>The details</b>Clothes, objects, faces, materials.</div></div>
+              <div class="sec"><div><b>The world around it</b>Place, light, time, weather.</div></div>
+              <div class="field"><span class="pn">15</span> <u>Your description from Look closely is in the box…</u></div>
+              <span class="ct">0 words, 15 to go</span>
+              <span class="go"><span class="pn">17</span>Next →</span>
+            </div></div>
+          <div class="part-steps">
+<div class="st"><span class="n">10</span><div><div class="do">Check the top of the page: <em>Case 01</em>, <em>Build your character</em>, <em>Rookie level</em>.</div><div class="see">A <em>Change case</em> button sits beside it. Leave it for now.</div></div></div>
+<div class="st key"><span class="n">11</span><div><div class="do">Under <em>Choose a character</em>, click one of the cast. Four show first; <em>See three more characters</em> shows the rest. Then press <em>Next</em>.</div><div class="tip">Each card shows the look that goes into every brief for that character, word for word.</div></div></div>
+<div class="st"><span class="n">12</span><div><div class="do">At "Does this picture need a place?", choose <em>Not yet</em> for a single portrait. Press <em>Next</em>.</div><div class="tip">Rookie is one character, one picture. A place comes at Detective.</div></div></div>
+<div class="st key"><span class="n">13</span><div><div class="do">Under <em>Choose a palette</em>, pick one of the five: Black &amp; white, Yellow, Green, Blue, or Red &amp; amber. Press <em>Next</em>.</div><div class="tip">Yellow is the house style: black ink and grey tones with a single yellow accent.</div></div></div>
+<div class="st"><span class="n">14</span><div><div class="do">On <em>Write what you notice</em>, look at the reference beside the three prompts: what you see, the details, the world around it.</div></div></div>
+<div class="st key"><span class="n">15</span><div><div class="do">Your description from Look closely is already in the box. Read it, then add to it until you have at least <em>15 words</em> of your own.</div><div class="see">The counter under the box counts down: "0 words, 15 to go".</div></div></div>
+<div class="st"><span class="n">16</span><div><div class="do">Want to see what a good one looks like? Press <em>Show an example</em>.</div></div></div>
+<div class="st key"><span class="n">17</span><div><div class="do">Check <em>Your case file so far</em>, then press <em>Next</em>.</div><div class="see">Step 3: "Get my brief".</div></div></div>
+<div class="newbie"><span class="eyebrow">Why 15 words?</span><p>The desk reads your words before it writes anything. Fifteen of your own makes you do the looking first, which is the skill this whole session practises.</p></div>
+<div class="stretch"><span class="eyebrow">Going faster? Try this</span><p>Go back and choose <em>Choose a place</em> instead of Not yet. Pick one of the ten places from the story and its look goes into your brief for you.</p></div>
+<details class="stuck"><summary>Stuck? Open this</summary><ul><li>Next stays greyed out: you have skipped a choice above. Scroll up and pick one.</li><li>Lost your words: press <em>Back</em>. Nothing is cleared.</li></ul></details>
+          </div>
+        </div>
+      </section>
+
+      <section class="frame part" id="pD" aria-labelledby="pDh">
+        <div class="part-top"><span class="num">D</span><h2 class="h-big" id="pDh">Step 3 · Get your brief</h2><p>Tell the desk your tool and your idea. It writes your prompt.</p></div>
+        <div class="part-meta"><span class="t">About 4 minutes</span><span class="lv">Rookie code needed at step 21</span></div>
+        <div class="part-body">
+          <div class="part-vis">
+            <div class="mock" aria-label="Drawn copy of Get my brief">
+              <span class="lb"><span class="pn">18</span> Which image tool will you use?</span>
+              <div class="tools"><span style="background:#f5c518;color:#0b0f0f">Gemini</span><span>ChatGPT</span><span>Copilot</span><span>Canva</span><span>Midjourney</span></div>
+              <span class="lb"><span class="pn">19</span> Your idea</span>
+              <div class="field"><u>A patrolman alone on the precinct steps, just before dawn.</u></div>
+              <span class="go"><span class="pn">20</span>Get my brief</span>
+              <div class="sec"><span class="pn">21</span><div><b>Enter your workshop code</b>Workshop code ▢▢▢▢ · <span class="pill">Check code</span><br><span class="ok">Rookie code accepted</span></div></div>
+              <div class="sec"><span class="pn">23</span><div><b>Your brief</b>Your description · Why this works · On another platform · Watch for</div></div>
+            </div></div>
+          <div class="part-steps">
+<div class="st key"><span class="n">18</span><div><div class="do">Under <em>Which image tool will you use?</em>, pick the one you have open: Gemini, ChatGPT, Copilot, Canva or Midjourney.</div><div class="tip">The brief is tuned for the tool you pick. Use the one your school has approved.</div></div></div>
+<div class="st key"><span class="n">19</span><div><div class="do">In <em>Your idea</em>, write one sentence about the picture you want.</div><div class="say"><span class="lbl">Example</span><span class="tx">A patrolman alone on the precinct steps, just before dawn.</span><button type="button" class="cp">Copy</button></div></div></div>
+<div class="st key"><span class="n">20</span><div><div class="do">Press <em>Get my brief</em>.</div></div></div>
+<div class="st key"><span class="n">21</span><div><div class="do">The first time, a box asks you to <em>Enter your workshop code</em>. Type the Rookie code from the slide and press <em>Check code</em> (or Enter).</div><div class="see">"Rookie code accepted", and the desk carries on writing your brief.</div></div></div>
+<div class="st"><span class="n">22</span><div><div class="do">If "Before the brief: a question or two" appears, either add to your description and send it again, or send it as it is. The desk writes your brief either way the second time.</div></div></div>
+<div class="st key"><span class="n">23</span><div><div class="do">Read <em>Your brief</em>, then <em>Why this works</em>, <em>On another platform</em> and <em>Watch for</em>.</div><div class="tip">"Watch for" tells you what this tool tends to get wrong. Remember it for Step 4.</div></div></div>
+<div class="st"><span class="n">24</span><div><div class="do">Press <em>Next</em>.</div><div class="see">"Make the picture".</div></div></div>
+<div class="newbie"><span class="eyebrow">What is the briefing desk?</span><p>It is the part of The Precinct that reads your description and idea and writes a full prompt for your tool. The code lets it use the AI account for the workshop.</p></div>
+<details class="stuck"><summary>Stuck? Open this</summary><ul><li>"That code is not right": check the spelling on the slide and try again.</li><li>"Too many tries": the whole room shares one connection. Wait a minute, then try again.</li><li>A "stock brief" appears because the desk is busy: swap in your own words before you paste it, and tell the facilitator.</li></ul></details>
+          </div>
+        </div>
+      </section>
+
+      <section class="frame part" id="pE" aria-labelledby="pEh">
+        <div class="part-top"><span class="num">E</span><h2 class="h-big" id="pEh">Step 3 · Make the picture</h2><p>This part happens in your image tool. Keep the first result, whatever comes back.</p></div>
+        <div class="part-meta"><span class="t">About 5 minutes</span><span class="lv">In your image tool</span></div>
+        <div class="part-body">
+          <div class="part-vis">
+            <div class="mock" aria-label="Drawn copy of Make the picture">
+              <span class="lb">In your AI image tool</span>
+              <div class="sec"><span class="pn">25</span><div><b>Your brief</b>A 1940s film noir comic panel… <span class="pill">Copy brief</span></div></div>
+              <span class="go"><span class="pn">26</span>Open Gemini ↗</span>
+              <div class="tick"><i></i><span class="pn">27</span> Paste the brief</div>
+              <div class="tick"><i></i>Make the picture</div>
+              <div class="tick"><i></i><span class="pn">28</span> Save or copy it</div>
+              <span class="go"><span class="pn">29</span>I’ve made my picture →</span>
+            </div></div>
+          <div class="part-steps">
+<div class="st key"><span class="n">25</span><div><div class="do">Press <em>Copy brief</em>.</div><div class="see">"Brief copied. Now paste it into your image tool. This tab will wait for you."</div></div></div>
+<div class="st key"><span class="n">26</span><div><div class="do">Press <em>Open Gemini</em> (it names the tool you picked). It opens in a new tab.</div></div></div>
+<div class="st key"><span class="n">27</span><div><div class="do">In your image tool, paste the brief and send it. Tick <em>Paste the brief</em> and <em>Make the picture</em> as you go.</div></div></div>
+<div class="st key"><span class="n">28</span><div><div class="do">Save the picture, or copy it. Keep it even if it missed. Tick <em>Save or copy it</em>.</div><div class="tip">A picture that missed is the material for Step 4.</div></div></div>
+<div class="st key"><span class="n">29</span><div><div class="do">Come back to The Precinct tab and press <em>I’ve made my picture →</em>.</div><div class="see">"Check and improve".</div></div></div>
+<div class="newbie"><span class="eyebrow">Saving a picture</span><p>On a computer, right-click the picture and choose Save image or Copy image. On a tablet, press and hold the picture. In some tools there is a download button under the picture.</p></div>
+<details class="stuck"><summary>Stuck? Open this</summary><ul><li>Your tool refused the brief: try your other tool, or pair with a neighbour.</li><li>Out of free pictures: paste the same brief into your other tab.</li></ul></details>
+          </div>
+        </div>
+      </section>
+
+      <section class="frame part" id="pF" aria-labelledby="pFh">
+        <div class="part-top"><span class="num">F</span><h2 class="h-big" id="pFh">Step 4 · Check and improve</h2><p>Put what came back next to what you asked for. Find one difference, change one thing, make it again.</p></div>
+        <div class="part-meta"><span class="t">About 7 minutes</span><span class="lv">Back on The Precinct</span></div>
+        <div class="part-body">
+          <div class="part-vis">
+            <div class="mock" aria-label="Drawn copy of Check and improve">
+              <div class="split2">
+                <div><span class="lb"><span class="pn">30</span> What you asked for</span><div class="field" style="font-size:.74rem">This is your brief. A 1940s film noir comic panel…</div></div>
+                <div><span class="lb"><span class="pn">31</span> What came back</span><div class="pic" style="aspect-ratio:16/9"><img src="img/prompt-b.jpg" alt="A first result: a detective in a fedora striking a match in an alley, black and white ink"></div></div>
+              </div>
+              <span class="lb"><span class="pn">32</span> A difference I can see</span>
+              <div class="field"><u>The match flame came out yellow, not grey.</u> <span class="pill">Add it</span></div>
+              <span class="lb"><span class="pn">33</span> The one thing I will change in my brief</span>
+              <div class="field"><u>Say the flame is white, like the rest of the light.</u></div>
+              <span class="pill" style="justify-self:start"><span class="pn">34</span> Change my brief and try again</span>
+              <div class="sec"><span class="pn">35</span><div><b>Ask the desk to compare (optional)</b>What your tool saw · <span class="pill">Compare</span></div></div>
+              <span class="go"><span class="pn">38</span>Next: Build my comic →</span>
+            </div></div>
+          <div class="part-steps">
+<div class="st"><span class="n">30</span><div><div class="do">Look at <em>What you asked for</em>. Your brief is already there.</div><div class="see">"This is your brief. Change it here if you ran something else."</div></div></div>
+<div class="st key"><span class="n">31</span><div><div class="do">Under <em>What came back</em>, press <em>Add your picture</em>. Choose the file, paste it with Ctrl or ⌘ + V, or drop it on the box.</div><div class="tip">It stays in this browser and will be waiting for you in the comic builder.</div></div></div>
+<div class="st key"><span class="n">32</span><div><div class="do">Look at one thing at a time: style, era, people, text, light, colour. Type <em>A difference I can see</em> and press <em>Add it</em>.</div><div class="say"><span class="lbl">Example</span><span class="tx">The match flame came out yellow, not grey.</span><button type="button" class="cp">Copy</button></div></div></div>
+<div class="st key"><span class="n">33</span><div><div class="do">In <em>The one thing I will change in my brief</em>, write one change only.</div><div class="tip">One change, so you can see what it did.</div></div></div>
+<div class="st key"><span class="n">34</span><div><div class="do">Press <em>Change my brief and try again</em>. It takes you back to Get my brief. Make the change, make the picture again, then add it under <em>Improved result</em> with <em>Add the new picture</em>.</div></div></div>
+<div class="st"><span class="n">35</span><div><div class="do">Optional: open <em>Ask the desk to compare</em> and press <em>Copy</em> on the question it gives you.</div><div class="say"><span class="lbl">The question</span><span class="tx">Describe only what you see in this image, as a prompt that would recreate it.</span><button type="button" class="cp">Copy</button></div></div></div>
+<div class="st"><span class="n">36</span><div><div class="do">Give your image tool the picture it made, and only the picture, with that question. Paste what it says into <em>What your tool saw</em> and press <em>Compare</em>.</div><div class="tip">Do not paste your brief into that request, or it will hand your own words back.</div></div></div>
+<div class="st"><span class="n">37</span><div><div class="do">Optional: under <em>What did your change do?</em>, say in a few words what happened.</div></div></div>
+<div class="st key"><span class="n">38</span><div><div class="do">Press <em>Next: Build my comic →</em>.</div><div class="see">The comic builder: "Your pictures. Your words. Build the page panel by panel."</div></div></div>
+<div class="newbie"><span class="eyebrow">Why only one change?</span><p>If you change three things and the picture improves, you will not know which word did it. One change at a time is how prompt skill grows.</p></div>
+<div class="stretch"><span class="eyebrow">Going faster? Try this</span><p>Using Canva? Its Dream Lab cannot describe pictures. Ask an AI chat that can look at images, such as Gemini or ChatGPT, for step 36 instead.</p></div>
+<details class="stuck"><summary>Stuck? Open this</summary><ul><li>Add your picture does nothing: copy the picture in your tool, click the box, then press Ctrl or ⌘ + V.</li></ul></details>
+          </div>
+        </div>
+      </section>
+
+      <section class="frame part" id="pG" aria-labelledby="pGh">
+        <div class="part-top"><span class="num">G</span><h2 class="h-big" id="pGh">Step 5 · Build and share</h2><p>Put your picture and a character into a comic panel.</p></div>
+        <div class="part-meta"><span class="t">About 4 minutes</span><span class="lv">Back on The Precinct</span></div>
+        <div class="part-body">
+          <div class="part-vis">
+            <div class="mock" aria-label="Drawn copy of the comic builder">
+              <span class="lb">Level</span>
+              <div class="row"><span class="pill on">Prose</span><span class="pill">Medium</span><span class="pill">Advanced</span></div>
+              <div class="pic"><img src="img/rourke-interview.jpg" alt="A panel: Sergeant Frank Rourke leaning over the table in the interview room"><span class="pn">39</span></div>
+              <span class="lb">Picture</span>
+              <div class="row"><span class="pill on"><span class="pn">40</span> Library</span><span class="pill">Upload your own</span></div>
+              <span class="lb">Add</span>
+              <div class="row"><span class="pill on"><span class="pn">41</span> Characters</span><span class="pill">Caption box</span><span class="pill">Speech balloon</span></div>
+              <div class="stk"><img src="img/stk-vance.webp" alt="Harlan Vance sticker"><img src="img/stk-novak.webp" alt="Edward Novak sticker"><img src="img/stk-rourke.webp" alt="Frank Rourke sticker"><img src="img/stk-vera.webp" alt="Vera Sinclair sticker"><img src="img/stk-hattie.webp" alt="Hattie Cole sticker"><img src="img/stk-tommy.webp" alt="Tommy Doyle sticker"><img src="img/stk-charlotte.webp" alt="Lottie Woning sticker"></div>
+              <span class="ct"><span class="pn">42</span> Drag to move · yellow dot to resize · ⇆ to face the other way</span>
+            </div></div>
+          <div class="part-steps">
+<div class="st key"><span class="n">39</span><div><div class="do">Tap a <em>panel</em> on the page.</div><div class="see">A tip: "Bring a picture in".</div></div></div>
+<div class="st key"><span class="n">40</span><div><div class="do">Under <em>Picture</em>, press <em>Library</em> and pick the picture from your case. Or press <em>Upload your own</em>.</div><div class="tip">The picture you added at Step 4 is waiting under Library, with your case pictures.</div></div></div>
+<div class="st key"><span class="n">41</span><div><div class="do">Press <em>Add</em>, then <em>Characters</em>. Tap a sticker to put it in the panel.</div><div class="tip">Each of the seven characters has poses, faces and props.</div></div></div>
+<div class="st"><span class="n">42</span><div><div class="do">Drag the sticker to move it, and drag the yellow dot in its corner to make it bigger or smaller. ⇆ turns it to face the other way.</div></div></div>
+<div class="st key"><span class="n">43</span><div><div class="do">That is today done. The page saves itself in this browser as you go.</div><div class="tip">A full page needs several pictures, so plan it as the next lesson.</div></div></div>
+<details class="stuck"><summary>For later or at home</summary><ul><li>For later or at home: change <em>Level</em> to Medium for captions and speech balloons, or Advanced for thoughts and sound effects. Press <em>Inside the frame</em> to crop a sticker like a close-up. When the page is done, press <em>Finish</em>, then <em>Download PNG ↓</em> or <em>Print or save as PDF</em>.</li></ul></details>
+          </div>
+        </div>
+      </section>
+
+      <div class="sec-head" id="levels"><h2>Three levels</h2></div>
+      <section class="tiers" aria-label="Levels">
+        <article class="tier"><div class="ph"><img src="img/vance-card.jpg" alt="A single character portrait" style="object-position:50% 25%"></div><div class="tx"><h3>Rookie · Cases 01 and 02</h3><p><b>Character:</b> one portrait. <b>Location:</b> one empty room, lit like something just happened there.</p></div></article>
+        <article class="tier"><div class="ph"><img src="img/rourke-interview.jpg" alt="A character in a room"></div><div class="tx"><h3>Detective · Case 03</h3><p>The same face in a new room. The look goes in word for word, every time, or the face walks off the job.</p></div></article>
+        <article class="tier"><div class="ph"><img src="img/hattie-docks.jpg" alt="A character on the docks"></div><div class="tx"><h3>Commissioner · Case 04</h3><p>Three panels, one story, then the page. Plan the shots with an AI as your partner before anything gets drawn.</p></div></article>
+      </section>
+      <p class="dim" style="font-size:.92rem">When your facilitator gives out the next code, press <em>Change case</em> at the top of your case file and pick the next case. At Step 3 the desk asks for that level’s code. Case 05, Review, is the check on its own, for any picture.</p>
+
+      <div class="sec-head" id="reuse"><h2>Take it back to school</h2></div>
+      <section aria-label="Run it in your school">
+        <ul class="checks">
+          <li><div><b>Choose a reference image</b><span>Something your class knows: a painting, a photo, a scene from a text.</span></div></li>
+          <li><div><b>Describe before prompting</b><span>Pairs write what they see, the details and the world around it. Hold them to 15 words.</span></div></li>
+          <li><div><b>Write one look per character</b><span>One reusable description for each character or place.</span></div></li>
+          <li><div><b>Pin era, medium, palette</b><span>Add the leave-out line: no text, no other colours.</span></div></li>
+          <li><div><b>Generate and keep everything</b><span>The misses are the material for the next step.</span></div></li>
+          <li><div><b>Check, then change one thing</b><span>Ask the tool to describe the picture, then edit a single phrase.</span></div></li>
+          <li><div><b>Teaching ages 9 to 12?</b><span>Paws &amp; Order runs the same five steps: heutalab.com/paws-and-order/</span></div></li>
+        </ul>
+      </section>
+
+      <section class="frame band" aria-label="Closing">
+        <img src="img/place-alley.jpg" alt="">
+        <q>It's not just a comic. It's a case.<small>THE PRECINCT</small></q>
+        <div class="stamp">Real stories.<br>Your panels.</div>
+      </section>
+
+      <div class="foot"><span>Tools: Gemini · ChatGPT · Copilot · Canva · Midjourney (look only)</span><span>Human Creativity, AI Precision · heutalab.com</span></div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  function get(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+  function put(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+  function copyText(t,btn){
+    var old=btn.textContent;
+    function ok(){btn.textContent='Copied';setTimeout(function(){btn.textContent=old;},1600);}
+    function fail(){
+      try{var r=document.createRange();r.selectNodeContents(btn.parentNode.querySelector('.tx'));var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
+      btn.textContent='Selected';setTimeout(function(){btn.textContent=old;},1800);
+    }
+    try{navigator.clipboard.writeText(t).then(ok,fail);}catch(e){fail();}
+  }
+  [].slice.call(document.querySelectorAll('button.cp')).forEach(function(b){
+    b.addEventListener('click',function(){copyText(b.parentNode.querySelector('.tx').textContent,b);});
+  });
+
+  var steps=[].slice.call(document.querySelectorAll('.st'));
+  var done={};
+  try{done=JSON.parse(get('pc2-done')||'{}')||{};}catch(e){done={};}
+  var mode=get('pc2-mode')==='pro'?'pro':'new';
+  var prog=document.getElementById('prog'),meter=document.getElementById('meter');
+  var kc=document.getElementById('keycount');
+  if(kc)kc.textContent=document.querySelectorAll('.st.key').length;
+
+  steps.forEach(function(st){
+    var n=st.querySelector('.n');var num=n.textContent.trim();
+    st.setAttribute('data-num',num);
+    n.setAttribute('role','checkbox');n.setAttribute('tabindex','0');n.setAttribute('aria-label','Step '+num+', tick when done');n.title='Tick when done';
+    function paint(){
+      var d=!!done[num];
+      st.classList.toggle('done',d);
+      n.setAttribute('aria-checked',d?'true':'false');
+      n.textContent=d?'\u2713':num;
+    }
+    function toggle(){
+      if(done[num])delete done[num];else done[num]=1;
+      put('pc2-done',JSON.stringify(done));paint();count();
+    }
+    n.addEventListener('click',toggle);
+    n.addEventListener('keydown',function(e){if(e.key===' '||e.key==='Enter'){e.preventDefault();toggle();}});
+    st._paint=paint;paint();
+  });
+  function visible(){return steps.filter(function(st){return mode==='new'||st.classList.contains('key');});}
+  function count(){
+    var v=visible(),d=v.filter(function(st){return done[st.getAttribute('data-num')];}).length;
+    prog.textContent=d+' of '+v.length+' done';
+    meter.style.width=(v.length?Math.round(d*100/v.length):0)+'%';
+  }
+  function setMode(m){
+    mode=m;root.setAttribute('data-pace',m);put('pc2-mode',m);
+    [].slice.call(document.querySelectorAll('#bar .seg button')).forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-mode')===m?'true':'false');});
+    count();
+  }
+  [].slice.call(document.querySelectorAll('#bar .seg button')).forEach(function(b){b.addEventListener('click',function(){setMode(b.getAttribute('data-mode'));});});
+  setMode(mode);
+
+  document.getElementById('nextbtn').addEventListener('click',function(){
+    var t=visible().filter(function(st){return !done[st.getAttribute('data-num')];})[0];
+    if(!t){prog.textContent='All steps done';return;}
+    t.scrollIntoView({block:'center',behavior:'smooth'});
+    t.classList.remove('flash');void t.offsetWidth;t.classList.add('flash');
+  });
+  var rb=document.getElementById('resetbtn'),armed=false,tm;
+  rb.addEventListener('click',function(){
+    if(!armed){armed=true;rb.textContent='Tap again to clear';tm=setTimeout(function(){armed=false;rb.textContent='Start over';},3000);return;}
+    clearTimeout(tm);armed=false;rb.textContent='Start over';
+    done={};put('pc2-done','{}');steps.forEach(function(st){st._paint();});count();
+  });
+
+  try{
+    var links=[].slice.call(document.querySelectorAll('#nav a'));
+    var map={};links.forEach(function(a){map[a.getAttribute('href').slice(1)]=a;});
+    var ids=Object.keys(map).map(function(i){return document.getElementById(i);}).filter(Boolean);
+    if('IntersectionObserver' in window){
+      var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(l){l.classList.remove('on');});map[e.target.id].classList.add('on');}});},{rootMargin:'-15% 0px -75% 0px'});
+      ids.forEach(function(el){io.observe(el);});
+    }
+  }catch(e){}
+})();
+</script>
+
+</body></html>
