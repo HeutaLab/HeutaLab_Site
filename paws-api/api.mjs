@@ -7,7 +7,7 @@
 //   workshop/status, workshop/end, workshop/level   the teacher's controls
 //
 // Every code is made by a teacher on the Teachers page and runs on that teacher's own AI key
-// (see vault.mjs for how it is kept). The one exception is the house code below, for one day.
+// (see vault.mjs for how it is kept). The one exception is the house code below, open while The Precinct's shared desk is.
 // What is asked of the AI is in paws-and-order/ai.js, the same file a teacher's own-key
 // browser uses, called here with opts.server.
 //
@@ -53,14 +53,14 @@ const KEY_TESTS_A_DAY = 400;      // live key tests per UTC day, per data centre
 const KEY_TESTS_EACH = 20;        // ... and from any one address, so one address cannot use up everybody's
 const CODES_A_DAY = 200;          // new codes per UTC day, everywhere
 
-// The house code, for Glenn's AIFE workshop on 31 October 2026: The Precinct's master code
+// The house code, for Glenn's AIFE workshop (31 October 2026) and the week after: The Precinct's master code
 // (the WORKSHOP_CODE secret) also opens Paws at every level, on a key of Glenn's kept for Paws
-// alone (the PAWS_HOUSE_KEY secret, an Anthropic key). It has no row in the table. It finishes
-// at `until`, or at once if either secret is deleted, and its daily total is counted in the
+// alone (the PAWS_HOUSE_KEY secret, an Anthropic key). It has no row in the table. It closes with
+// The Precinct's shared desk (PERSONAL_KEYS_FROM in the-precinct/desk.js; a test checks the two match), or at once if either secret is deleted, and its daily total is counted in the
 // data centre's cache like the six-hour count per browser. Claude thinks before it answers, so
 // it is asked for low effort and given extraTokens of room on top of each reply's cap.
-const HOUSE = {
-  id: "house", until: Date.parse("2026-11-01T00:00:00+07:00"), level: 3, cap: 1500,
+export const HOUSE = {
+  id: "house", until: Date.parse("2026-11-09T00:00:00+07:00"), level: 3, cap: 1500,
   provider: "anthropic", model: "claude-opus-5-5", effort: "low", extraTokens: 6000,
 };
 const isHouse = (q, code) =>

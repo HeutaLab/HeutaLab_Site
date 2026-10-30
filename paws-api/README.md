@@ -42,9 +42,9 @@ Do not keep a copy. If it is ever lost or changed, every code made before stops 
 
 Then, on the live site: open the Teachers page, make a code with a real key, and type it into the code box on the home page.
 
-## The house code (31 October 2026 only)
+## The house code (AIFE, to the end of 8 November 2026)
 
-For the AIFE workshop, The Precinct's master code (the `WORKSHOP_CODE` secret) also opens Paws at every level, so attendees need no teacher's code. It runs on a key of Glenn's kept for Paws alone, the `PAWS_HOUSE_KEY` secret (an Anthropic key), on `claude-opus-5-5` at low effort. It has no row in the table, a total of 1,500 helper requests per UTC day, and no teacher's controls. It finishes by itself at midnight at the end of 31 October in Bangkok (`HOUSE.until` in `api.mjs`); after that a learner who types it is told it has finished. To stop it sooner:
+For the AIFE workshop, The Precinct's master code (the `WORKSHOP_CODE` secret) also opens Paws at every level, so attendees need no teacher's code. It runs on a key of Glenn's kept for Paws alone, the `PAWS_HOUSE_KEY` secret (an Anthropic key), on `claude-opus-5-5` at low effort. It has no row in the table, a total of 1,500 helper requests per UTC day, and no teacher's controls. It closes by itself with The Precinct's shared desk, at midnight at the end of 8 November in Bangkok (`PERSONAL_KEYS_FROM` in `the-precinct/desk.js`, which `HOUSE.until` reads); after that a learner who types it is told it has finished. To stop it sooner:
 
 ```
 npx wrangler secret delete PAWS_HOUSE_KEY

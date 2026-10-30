@@ -9,7 +9,8 @@ import {
   setNow, realTime, settle, waiting, TEACHER_KEY, SESSION, ATTEMPT, VAULT_KEY,
 } from "./harness.mjs";
 import worker from "../worker.js";
-import { sweepPaws, PAWS_API } from "./api.mjs";
+import { sweepPaws, PAWS_API, HOUSE } from "./api.mjs";
+import { PERSONAL_KEYS_FROM } from "../the-precinct/desk.js";
 import THEME from "../paws-and-order/theme.js";
 
 beforeEach(() => { resetAI(); logged.length = 0; replies.length = 0; });
@@ -1093,7 +1094,7 @@ test("Paws writes only to its own table, and never a row per request", async () 
   for (const leak of ["hedgehog", "penguin", "Nettle", SESSION, "203.0.113.9", w.code, VAULT_KEY]) assert.ok(!stored.includes(leak), leak);
 });
 
-// ---------- the house code (31 October 2026) ----------
+// ---------- the house code (AIFE, to the end of 8 November 2026) ----------
 
 // A made-up master code: the real one is a secret, and this repository is public.
 const HOUSE_CODE = "harbour77";
@@ -1101,7 +1102,7 @@ const HOUSE_KEY = "sk-ant-test-HOUSEKEY-0123456789abcdefABCDEF";
 const houseEnv = (over = {}) => makeEnv({ WORKSHOP_CODE: HOUSE_CODE, PAWS_HOUSE_KEY: HOUSE_KEY, ...over });
 const WORKSHOP_DAY = "2026-10-31T09:00:00+07:00";
 
-test("the house code opens every level however it is typed, until midnight after the workshop", async () => {
+test("the house code opens every level however it is typed, until The Precinct's shared desk closes", async () => {
   setNow(WORKSHOP_DAY);
   const env = houseEnv();
   for (const typed of ["harbour77", "Harbour 77", "  HARBOUR-77 ", "harbour 77"]) {
@@ -1109,12 +1110,12 @@ test("the house code opens every level however it is typed, until midnight after
     assert.equal(r.status, 200, typed);
     assert.equal(r.data.level, 3);
     assert.equal(r.data.platform, null, "learners choose their own image tool");
-    assert.equal(r.data.until, "2026-10-31T17:00:00.000Z");
+    assert.equal(r.data.until, "2026-11-08T17:00:00.000Z");
   }
   assert.equal(ai.sent.length, 0, "checking a code calls no AI");
   assert.equal(env.USAGE.sqlite.prepare("SELECT COUNT(*) AS n FROM paws_workshops").get().n, 0, "the house code has no row");
 
-  setNow("2026-11-01T00:00:00+07:00");
+  setNow("2026-11-09T00:00:00+07:00");
   const late = await call(env, "code", { code: HOUSE_CODE, session: SESSION });
   assert.equal(late.status, 410);
   assert.equal(late.data.reason, "expired");
@@ -1185,4 +1186,8 @@ test("the house code has a daily total of its own, and no teacher's controls", a
     const m = await call(env, route, { code: HOUSE_CODE, manage: "0".repeat(32), level: 1 });
     assert.notEqual(m.status, 200, route);
   }
+});
+
+test("the house code closes at the same moment as The Precinct's shared desk", () => {
+  assert.equal(HOUSE.until, Date.parse(PERSONAL_KEYS_FROM));
 });
