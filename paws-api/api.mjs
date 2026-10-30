@@ -6,8 +6,8 @@
 //   workshop/create   a teacher makes a code (their AI key is tested, then locked away)
 //   workshop/status, workshop/end, workshop/level   the teacher's controls
 //
-// There are no house codes and no key of Glenn's: every code is made by a teacher on the
-// Teachers page and runs on that teacher's own AI key (see vault.mjs for how it is kept).
+// Every code is made by a teacher on the Teachers page and runs on that teacher's own AI key
+// (see vault.mjs for how it is kept). The one exception is the house code below, for one day.
 // What is asked of the AI is in paws-and-order/ai.js, the same file a teacher's own-key
 // browser uses, called here with opts.server.
 //
@@ -22,7 +22,8 @@
 //   - If it is not fully set up (a rate-limit binding, the vault secret or the table is
 //     missing) every route answers "not open" rather than running half-guarded.
 //
-// One secret, set by Glenn by hand (see README.md): PAWS_VAULT_KEY.
+// One secret, set by Glenn by hand (see README.md): PAWS_VAULT_KEY. The house code also reads
+// PAWS_HOUSE_KEY and The Precinct's WORKSHOP_CODE.
 
 import THEME from "../paws-and-order/theme.js";
 import { PROVIDERS, readBrief, readCompare, makeBrief, compare, testConnection } from "../paws-and-order/ai.js";
@@ -51,6 +52,20 @@ const SIX_HOURS = 21600;
 const KEY_TESTS_A_DAY = 400;      // live key tests per UTC day, per data centre
 const KEY_TESTS_EACH = 20;        // ... and from any one address, so one address cannot use up everybody's
 const CODES_A_DAY = 200;          // new codes per UTC day, everywhere
+
+// The house code, for Glenn's AIFE workshop on 31 October 2026: The Precinct's master code
+// (the WORKSHOP_CODE secret) also opens Paws at every level, on a key of Glenn's kept for Paws
+// alone (the PAWS_HOUSE_KEY secret, an Anthropic key). It has no row in the table. It finishes
+// at `until`, or at once if either secret is deleted, and its daily total is counted in the
+// data centre's cache like the six-hour count per browser. Claude thinks before it answers, so
+// it is asked for low effort and given extraTokens of room on top of each reply's cap.
+const HOUSE = {
+  id: "house", until: Date.parse("2026-11-01T00:00:00+07:00"), level: 3, cap: 1500,
+  provider: "anthropic", model: "claude-opus-5-5", effort: "low", extraTokens: 6000,
+};
+const isHouse = (q, code) =>
+  code !== "" && typeof q.env.WORKSHOP_CODE === "string" && typeof q.env.PAWS_HOUSE_KEY === "string"
+  && q.env.PAWS_HOUSE_KEY.trim() !== "" && code === normalise(q.env.WORKSHOP_CODE);
 
 // The page shows its own words for most of these (workshop.js); they are here so a reply
 // always says something a person can read.
@@ -264,7 +279,10 @@ async function spend(q, id) {
   if (await limited(q.env.PAWS_SESSION_LIMIT, q.session)) return refuse(true, 429, "busy");
   const cap = Math.floor(Number(q.env.PAWS_SESSION_CAP)) >= 1 ? Math.floor(Number(q.env.PAWS_SESSION_CAP)) : DEFAULT_SESSION_CAP;
   if (await overCount(q.url, await sha256Hex(q.session), cap, SIX_HOURS)) return refuse(true, 429, "device_cap");
-  if (!(await charge(q.db, id, q.now))) return refuse(true, 429, "used_up");
+  const charged = id === HOUSE.id
+    ? !(await overCount(q.url, "house-" + dayOf(q.now), HOUSE.cap, 90000))
+    : await charge(q.db, id, q.now);
+  if (!charged) return refuse(true, 429, "used_up");
   return null;
 }
 
@@ -276,6 +294,15 @@ const NOT_A_CODE = { ok: false, status: 401, reason: "wrong" };
 // the two routes that call the AI ask for it).
 async function resolve(q, codeText, withKey) {
   const code = normalise(codeText);
+  if (isHouse(q, code)) {
+    if (q.now >= HOUSE.until) return { ok: false, status: 410, reason: "expired" };
+    const out = { ok: true, id: HOUSE.id, level: HOUSE.level, until: isoOf(HOUSE.until), platform: null };
+    if (withKey) {
+      out.settings = { provider: HOUSE.provider, model: HOUSE.model, key: q.env.PAWS_HOUSE_KEY.trim(),
+        effort: HOUSE.effort, extraTokens: HOUSE.extraTokens };
+    }
+    return out;
+  }
   if (!CODE_SHAPE.test(code)) return NOT_A_CODE;   // no database read for something that cannot be a code
   const id = await codeId(q.keys, code);
   const row = await readRow(q.db, id);

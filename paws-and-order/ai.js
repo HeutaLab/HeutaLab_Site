@@ -173,9 +173,13 @@ export async function callModel(s, ask, opts) {
     const headers = Object.assign({ 'x-api-key': key, 'anthropic-version': '2023-06-01' }, json);
     // Anthropic's opt-in for calls made straight from a browser. The Worker is not one.
     if (o.server !== true) headers['anthropic-dangerous-direct-browser-access'] = 'true';
+    // effort and extraTokens come only from the Worker's house code (paws-api/api.mjs): a model
+    // that thinks before it answers needs room for the thinking on top of the reply.
+    const req = { model, max_tokens: maxTokens + (Number(s.extraTokens) >= 1 ? Math.floor(Number(s.extraTokens)) : 0), system, messages: [{ role: 'user', content: user }] };
+    if (str(s.effort)) req.output_config = { effort: str(s.effort) };
     const r = await fetchJSON('https://api.anthropic.com/v1/messages', {
       method: 'POST', headers,
-      body: JSON.stringify({ model, max_tokens: maxTokens, system, messages: [{ role: 'user', content: user }] }),
+      body: JSON.stringify(req),
     }, timeoutMs, strict);
     if (r.fail) return { fail: r.fail };
     if (r.body.stop_reason === 'refusal') return { fail: 'refusal' };

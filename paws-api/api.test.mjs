@@ -1092,3 +1092,97 @@ test("Paws writes only to its own table, and never a row per request", async () 
   const stored = JSON.stringify(env.USAGE.sqlite.prepare("SELECT * FROM paws_workshops").all());
   for (const leak of ["hedgehog", "penguin", "Nettle", SESSION, "203.0.113.9", w.code, VAULT_KEY]) assert.ok(!stored.includes(leak), leak);
 });
+
+// ---------- the house code (31 October 2026) ----------
+
+// A made-up master code: the real one is a secret, and this repository is public.
+const HOUSE_CODE = "harbour77";
+const HOUSE_KEY = "sk-ant-test-HOUSEKEY-0123456789abcdefABCDEF";
+const houseEnv = (over = {}) => makeEnv({ WORKSHOP_CODE: HOUSE_CODE, PAWS_HOUSE_KEY: HOUSE_KEY, ...over });
+const WORKSHOP_DAY = "2026-10-31T09:00:00+07:00";
+
+test("the house code opens every level however it is typed, until midnight after the workshop", async () => {
+  setNow(WORKSHOP_DAY);
+  const env = houseEnv();
+  for (const typed of ["harbour77", "Harbour 77", "  HARBOUR-77 ", "harbour 77"]) {
+    const r = await call(env, "code", { code: typed, session: SESSION });
+    assert.equal(r.status, 200, typed);
+    assert.equal(r.data.level, 3);
+    assert.equal(r.data.platform, null, "learners choose their own image tool");
+    assert.equal(r.data.until, "2026-10-31T17:00:00.000Z");
+  }
+  assert.equal(ai.sent.length, 0, "checking a code calls no AI");
+  assert.equal(env.USAGE.sqlite.prepare("SELECT COUNT(*) AS n FROM paws_workshops").get().n, 0, "the house code has no row");
+
+  setNow("2026-11-01T00:00:00+07:00");
+  const late = await call(env, "code", { code: HOUSE_CODE, session: SESSION });
+  assert.equal(late.status, 410);
+  assert.equal(late.data.reason, "expired");
+  const brief = await call(env, "brief", briefBody(HOUSE_CODE));
+  assert.equal(brief.status, 410);
+  assert.equal(ai.sent.length, 0);
+});
+
+test("the house code runs on the house key, on Claude at low effort with room to think", async () => {
+  setNow(WORKSHOP_DAY);
+  const env = houseEnv();
+  const r = await call(env, "brief", briefBody(HOUSE_CODE, { round: 1, tier: "advanced", provider: "google", key: "attacker-key-0123456789-0123456789" }));
+  assert.equal(r.status, 200);
+  assert.equal(ai.sent.length, 2, "the coach, then the helper");
+  for (const s of ai.sent) {
+    assert.equal(s.url, "https://api.anthropic.com/v1/messages");
+    assert.equal(s.headers["x-api-key"], HOUSE_KEY);
+    assert.equal(s.body.model, "claude-opus-5-5");
+    assert.deepEqual(s.body.output_config, { effort: "low" });
+    assert.ok(!("thinking" in s.body));
+  }
+  assert.deepEqual(ai.sent.map((s) => s.body.max_tokens), [7500, 9000]);
+  const c = await call(env, "compare", compareBody(HOUSE_CODE));
+  assert.equal(c.status, 200);
+  assert.equal(ai.sent.at(-1).body.max_tokens, 9500);
+  assert.ok(!gave(HOUSE_KEY), "the house key is in no reply and no log line");
+  assert.ok(!JSON.stringify(ai.sent).includes("attacker"));
+});
+
+test("a teacher's code is unchanged beside it: no effort, no extra tokens", async () => {
+  setNow(WORKSHOP_DAY);
+  const env = houseEnv();
+  const w = await makeWorkshop(env);
+  resetAI();
+  await call(env, "brief", briefBody(w.code, { round: 1 }));
+  assert.deepEqual(ai.sent.map((s) => s.body.max_tokens), [1500, 3000]);
+  assert.ok(ai.sent.every((s) => !("output_config" in s.body)));
+  assert.ok(ai.sent.every((s) => s.headers["x-api-key"] === TEACHER_KEY));
+});
+
+test("without either secret the house code is just a wrong code", async () => {
+  setNow(WORKSHOP_DAY);
+  for (const env of [houseEnv({ PAWS_HOUSE_KEY: undefined }), houseEnv({ PAWS_HOUSE_KEY: "  " }), houseEnv({ WORKSHOP_CODE: undefined })]) {
+    const r = await call(env, "code", { code: HOUSE_CODE, session: SESSION });
+    assert.equal(r.status, 401);
+    const b = await call(env, "brief", briefBody(HOUSE_CODE));
+    assert.equal(b.status, 401);
+  }
+  // An empty master code never matches an empty or junk entry.
+  const blank = houseEnv({ WORKSHOP_CODE: "" });
+  assert.equal((await call(blank, "code", { code: "---", session: SESSION })).status, 401);
+  assert.equal(ai.sent.length, 0);
+});
+
+test("the house code has a daily total of its own, and no teacher's controls", async () => {
+  setNow(WORKSHOP_DAY);
+  const store = fakeCaches();
+  const env = houseEnv();
+  store.set("https://paws.test" + PAWS_API + "_cap/house-2026-10-31", "1500");
+  const r = await call(env, "brief", briefBody(HOUSE_CODE));
+  assert.equal(r.status, 429);
+  assert.equal(r.data.reason, "used_up");
+  assert.equal(ai.sent.length, 0);
+  // The total runs by the UTC day, which starts at 7 am in Bangkok: 6.30 am is the day before.
+  setNow("2026-10-31T06:30:00+07:00");
+  assert.equal((await call(env, "brief", briefBody(HOUSE_CODE))).status, 200);
+  for (const route of ["workshop/status", "workshop/end", "workshop/level"]) {
+    const m = await call(env, route, { code: HOUSE_CODE, manage: "0".repeat(32), level: 1 });
+    assert.notEqual(m.status, 200, route);
+  }
+});
